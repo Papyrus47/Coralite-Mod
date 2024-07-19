@@ -18,7 +18,7 @@ namespace Coralite.Content.Items.Gels
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
-            Item.damage = 30;
+            Item.damage = 31;
             Item.useTime = 9;
             Item.useAnimation = 9;
             Item.knockBack = 0.5f;
@@ -108,8 +108,7 @@ namespace Coralite.Content.Items.Gels
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 8;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 8);
         }
 
         public override void SetDefaults()

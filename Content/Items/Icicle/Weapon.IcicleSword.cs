@@ -1,4 +1,5 @@
-﻿using Coralite.Core;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Core;
 using Coralite.Helpers;
 using System;
 using Terraria;
@@ -26,12 +27,13 @@ namespace Coralite.Content.Items.Icicle
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.DamageType = DamageClass.Melee;
             Item.value = Item.sellPrice(0, 1, 0, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarityID.Green;
             Item.shoot = ProjectileType<IcicleSwordSplash>();
 
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool CanUseItem(Player player)
@@ -94,21 +96,10 @@ namespace Coralite.Content.Items.Icicle
         {
             CreateRecipe()
             .AddIngredient<IcicleCrystal>(2)
+            .AddIngredient<IcicleScale>()
+            .AddIngredient<IcicleBreath>(2)
             .AddTile(TileID.IceMachine)
             .Register();
-
-            Recipe recipe = CreateRecipe();
-            recipe.ReplaceResult(ItemID.IceMachine);
-            recipe.AddIngredient<IcicleCrystal>();
-            recipe.AddTile(TileID.Anvils);
-            recipe.Register();
-
-            recipe = CreateRecipe();
-            recipe.ReplaceResult(ItemID.IceRod);
-            recipe.AddIngredient<IcicleCrystal>();
-            recipe.AddTile(TileID.IceMachine);
-            recipe.Register();
-
         }
     }
 }

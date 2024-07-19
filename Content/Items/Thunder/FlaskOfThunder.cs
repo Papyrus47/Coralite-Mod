@@ -55,7 +55,7 @@ namespace Coralite.Content.Items.Thunder
         public override void Update(Player player, ref int buffIndex)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
-                cp.flaskOfThunder = true;
+                cp.AddEffect(nameof(FlaskOfThunderBuff));
         }
     }
 }

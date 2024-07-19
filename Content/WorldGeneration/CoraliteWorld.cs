@@ -21,9 +21,12 @@ namespace Coralite.Content.WorldGeneration
 
             if (ShiniesIndex != -1)
             {
+                tasks.Insert(ShiniesIndex - 1, new PassLegacy("Coralite Basalt Small Biome", GenBasaltSmallBiome));
+                ShiniesIndex++;
                 tasks.Insert(ShiniesIndex - 1, new PassLegacy("Coralite Magic Crystal Cave", GenMagicCrystalCave));
-                tasks.Insert(ShiniesIndex + 2, new PassLegacy("CoreKeeper Clear Gemstone Maze", GenClearGemstoneMaze));
-                tasks.Insert(ShiniesIndex + 3, new PassLegacy("CoreKeeper Chipped Blade Temple", GenChippedBladeTemple));
+                ShiniesIndex++;
+                tasks.Insert(ShiniesIndex + 1, new PassLegacy("CoreKeeper Clear Gemstone Maze", GenClearGemstoneMaze));
+                tasks.Insert(ShiniesIndex + 2, new PassLegacy("CoreKeeper Chipped Blade Temple", GenChippedBladeTemple));
             }
 
             int EvilBiome = tasks.FindIndex(genpass => genpass.Name.Equals("Corruption"));
@@ -50,6 +53,12 @@ namespace Coralite.Content.WorldGeneration
             //{
             //}
 
+            int PlaceFallenLog = tasks.FindIndex(genpass => genpass.Name.Equals("Place Fallen Log"));
+            if (PlaceFallenLog != -1)
+            {
+                tasks.Insert(PlaceFallenLog + 1, new PassLegacy("Coralite Wind Stone Tablet", GenWindStoneTablet));
+            }
+
             int FinalCleanup = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
             if (FinalCleanup != -1)
             {
@@ -66,7 +75,7 @@ namespace Coralite.Content.WorldGeneration
                 if (SettleLiquids != -1)
                     tasks.Insert(SettleLiquids - 1, new PassLegacy("Coralite CoralCat World", CoralCatWorldGen));
                 if (SettleLiquids != -1)
-                    tasks.Insert(FinalCleanup2 -1, new PassLegacy("Coralite CoralCat World Spawn", CoralCatWorldSpawn));
+                    tasks.Insert(FinalCleanup2 - 1, new PassLegacy("Coralite CoralCat World Spawn", CoralCatWorldSpawn));
             }
         }
 

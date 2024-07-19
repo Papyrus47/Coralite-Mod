@@ -1,4 +1,5 @@
-﻿using Coralite.Content.Particles;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
@@ -50,6 +51,7 @@ namespace Coralite.Content.Items.Icicle
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool AltFunctionUse(Player player) => true;
@@ -116,13 +118,15 @@ namespace Coralite.Content.Items.Icicle
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
-        public FrostySwordSlash() : base(MathHelper.PiOver4, trailLength: 48) { }
+        public FrostySwordSlash() : base(MathHelper.PiOver4, trailCount: 48) { }
 
         public int delay;
         public int alpha;
 
         public override void SetDefs()
         {
+            Projectile.coldDamage = true;
+
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
             Projectile.width = 40;
@@ -301,7 +305,7 @@ namespace Coralite.Content.Items.Icicle
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -388,10 +392,9 @@ namespace Coralite.Content.Items.Icicle
 
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
-                Particle p = Particle.NewParticleDirect(pos, Vector2.Zero, CoraliteContent.ParticleType<Strike>(), new Color(129, 216, 243), Main.rand.NextFloat(0.75f, 1.2f));
-                p.rotation = _Rotation + 2.2f;
+                Particle p = Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<Strike>(), new Color(129, 216, 243), Main.rand.NextFloat(0.75f, 1.2f));
+                p.Rotation = _Rotation + 2.2f;
             }
-
         }
 
         public static void DrawFrostTrail(List<VertexPositionColorTexture> bars, RasterizerState originalState)
@@ -436,6 +439,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefs()
         {
+            Projectile.coldDamage = true;
+
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 36;
             Projectile.width = 40;
@@ -574,7 +579,7 @@ namespace Coralite.Content.Items.Icicle
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -603,10 +608,12 @@ namespace Coralite.Content.Items.Icicle
         private int howmany;
         public int alpha;
 
-        public FrostySwordRightSlash() : base(MathHelper.PiOver4, trailLength: 48) { }
+        public FrostySwordRightSlash() : base(MathHelper.PiOver4, trailCount: 48) { }
 
         public override void SetDefs()
         {
+            Projectile.coldDamage = true;
+
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
             Projectile.width = 40;
@@ -645,9 +652,9 @@ namespace Coralite.Content.Items.Icicle
 
             if (useShadowTrail || useSlashTrail)
             {
-                oldRotate = new float[trailLength];
-                oldDistanceToOwner = new float[trailLength];
-                oldLength = new float[trailLength];
+                oldRotate = new float[trailCount];
+                oldDistanceToOwner = new float[trailCount];
+                oldLength = new float[trailCount];
                 InitializeCaches();
             }
 
@@ -731,7 +738,7 @@ namespace Coralite.Content.Items.Icicle
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -778,12 +785,13 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 12;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 12);
         }
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.width = Projectile.height = 16;
             Projectile.timeLeft = 600;
             Projectile.aiStyle = -1;
@@ -906,6 +914,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.width = Projectile.height = 32;
             Projectile.timeLeft = 1200;
             Projectile.aiStyle = -1;

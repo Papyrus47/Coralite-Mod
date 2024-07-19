@@ -1,4 +1,4 @@
-﻿using Coralite.Content.Items.Accessories.FlyingShields;
+﻿using Coralite.Content.Items.FlyingShields.Accessories;
 using Coralite.Core.Systems.MagikeSystem.CraftConditions;
 using Terraria.ID;
 using static Coralite.Core.Systems.MagikeSystem.MagikeSystem;
@@ -59,6 +59,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Remodels
             AddRemodelRecipe(ItemID.GoldChest, 150, ItemID.Extractinator, selfStack: 3);
             AddRemodelRecipe(ItemID.GoldChest, 300, ItemID.LavaCharm, selfStack: 10);
             AddRemodelRecipe<FlyingShieldMaintenanceGuide>(0f, ItemID.GoldChest, 250, selfStack: 3);
+            AddRemodelRecipe<FlyingShieldBattleGuide>(0f, ItemID.GoldChest, 250, selfStack: 3);
             AddRemodelRecipe<HeavyWedges>(0f, ItemID.GoldChest, 100, selfStack: 3);
 
             //沙漠箱子

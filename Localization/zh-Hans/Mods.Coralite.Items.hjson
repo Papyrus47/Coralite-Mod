@@ -44,10 +44,10 @@ ChainedEye: {
 }
 
 CrystallineGel: {
-	DisplayName: 结晶的明胶
+	DisplayName: 王后的象征
 	Tooltip:
 		'''
-		史莱姆皇后的核心部位，尝起来很美味但是有点硬
+		这史莱姆族群中象征着王后的威严，拥有它就拥有了无上的荣耀
 		在神圣地形召唤史莱姆皇后，不消耗
 		'''
 }
@@ -89,10 +89,10 @@ ImmortalDoll: {
 }
 
 MachinerySoars: {
-	DisplayName: 飞升的头骨
+	DisplayName: 带刺的耳机
 	Tooltip:
 		'''
-		血肉苦楚，机械飞升
+		戴上后就会进入电子世界无法逃离，即使肉体已经变成骷髅
 		在夜晚召唤机械骷髅王，不消耗
 		'''
 }
@@ -138,7 +138,7 @@ TheTwinsBond: {
 	DisplayName: 双子的牵绊
 	Tooltip:
 		'''
-		机械的双子，它们形影不离
+		只有其中一个的话很多游戏就没法玩了
 		在夜晚召唤双子魔眼，不消耗
 		'''
 }
@@ -457,7 +457,7 @@ RedJadeShrine: {
 	DisplayName: 赤玉祭坛
 	Tooltip:
 		'''
-		召唤小赤玉
+		召唤小赤玉，右键短暂激活小赤玉的爆破能量
 		[c/00bbff:消耗1召唤栏]
 		'''
 }
@@ -1270,7 +1270,7 @@ SlimeEmperorSoulBox: {
 
 ANewBirthOfIce: {
 	DisplayName: 冰雪的新生
-	Tooltip: 击败世界中的邪恶BOSS后，一个小小生命在冰龙巢中出现了
+	Tooltip: 击败克苏鲁之眼后，一个小小生命在冰龙巢中出现了
 }
 
 HiddenRed: {
@@ -2336,6 +2336,7 @@ FlyingShieldToolbox: {
 		让飞盾能够在敌人间弹射一次
 		增加飞盾飞行速度
 		增加飞盾右键格挡能力
+		盾冲与格挡变得更加自由
 		'''
 }
 
@@ -2366,7 +2367,7 @@ FlyingShieldToolboxProMax: {
 		让飞盾能够在敌人间弹射一次
 		增加飞盾飞行速度
 		增加飞盾右键格挡能力
-		飞盾未回归时也可以使用右键格挡
+		盾冲与格挡变得更加自由
 		'''
 }
 
@@ -2453,11 +2454,7 @@ PowerliftExoskeleton: {
 
 HolyCharm: {
 	DisplayName: 神圣荣耀
-	Tooltip:
-		'''
-		[c/8aebff:举起盾牌的瞬间能够进行完美格挡并释放神圣盾冲]
-		飞盾未回归时也可以使用右键格挡
-		'''
+	Tooltip: "[c/8aebff:举起盾牌的瞬间能够进行完美格挡并释放神圣盾冲]"
 }
 
 Terracrest: {
@@ -2465,7 +2462,6 @@ Terracrest: {
 	Tooltip:
 		'''
 		[c/8aebff:举起盾牌的瞬间能够进行完美格挡并释放泰拉魔刺]
-		飞盾未回归时也可以使用右键格挡
 		+18% 飞盾格挡时减少弹幕穿透数的概率
 		增加飞盾格挡能力
 		增加举盾速度
@@ -2516,7 +2512,7 @@ Leonids: {
 }
 
 Solleonis: {
-	DisplayName: 狮煌 破日
+	DisplayName: 狮煌-破日
 	Tooltip: “释放吞噬太阳的巨狮”
 }
 
@@ -2549,7 +2545,7 @@ NanoAmplifier: {
 		+2 飞盾在敌人间弹射次数
 		大幅增加飞盾飞行速度
 		增加飞盾右键格挡能力
-		飞盾未回归时也可以使用右键格挡
+		盾冲与格挡变得更加自由
 		'''
 }
 
@@ -2588,7 +2584,7 @@ MineShield: {
 
 ShanHai: {
 	DisplayName: 山海无极
-	Tooltip: ""
+	Tooltip: 格挡时生成阴阳鱼
 }
 
 IcicleArrowItem: {
@@ -2616,7 +2612,11 @@ AncientFurnace: {
 
 Hephaesth: {
 	DisplayName: 炼心城
-	Tooltip: 传说中远古时期所有的盾牌均由这个锻造炉打造而出
+	Tooltip:
+		'''
+		传说中远古时期所有的盾牌均由这个锻造炉打造而出
+		在背包内时可提供远古锻造炉制造站的效果
+		'''
 }
 
 RedJadeFountain: {
@@ -2626,7 +2626,7 @@ RedJadeFountain: {
 
 SandWall: {
 	DisplayName: 古沙之壁
-	Tooltip: 防御时生成沙龙卷
+	Tooltip: 格挡时生成沙龙卷
 }
 
 GelFiberTable: {
@@ -2738,7 +2738,7 @@ PirateKingHat: {
 		[c/807b7d:(2)件套]
 		[c/69a777:5%概率触发]
 		[c/69a777:2] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:150%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
 		'''
 	PirateKingSoul3Part:
 		'''
@@ -2746,7 +2746,7 @@ PirateKingHat: {
 		[c/807b7d:(3)件套]
 		[c/69a777:10%概率触发]
 		[c/69a777:1] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:275%] [c/807b7d:伤害]
 		'''
 	NotHasLuckyStar: 幸运星：装备至少2件套后触发效果
 	LuckyStar2Part:
@@ -3029,7 +3029,7 @@ PirateKingCoat: {
 		[c/807b7d:(2)件套]
 		[c/69a777:5%概率触发]
 		[c/69a777:2] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:150%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
 		'''
 	PirateKingSoul3Part:
 		'''
@@ -3037,7 +3037,7 @@ PirateKingCoat: {
 		[c/807b7d:(3)件套]
 		[c/69a777:10%概率触发]
 		[c/69a777:1] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:275%] [c/807b7d:伤害]
 		'''
 	NotHasLuckyStar: 幸运星：装备至少2件套后触发效果
 	LuckyStar2Part:
@@ -3068,7 +3068,7 @@ PirateKingShoes: {
 		[c/807b7d:(2)件套]
 		[c/69a777:5%概率触发]
 		[c/69a777:2] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:150%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
 		'''
 	PirateKingSoul3Part:
 		'''
@@ -3076,7 +3076,7 @@ PirateKingShoes: {
 		[c/807b7d:(3)件套]
 		[c/69a777:10%概率触发]
 		[c/69a777:1] [c/807b7d:秒冷却时间]
-		[c/807b7d:造成] [c/9e82b5:200%] [c/807b7d:伤害]
+		[c/807b7d:造成] [c/9e82b5:275%] [c/807b7d:伤害]
 		'''
 	NotHasLuckyStar: 幸运星：装备至少2件套后触发效果
 	LuckyStar2Part:
@@ -3135,7 +3135,7 @@ MedusaLightArmor: {
 
 MedusaMask: {
 	DisplayName: 美杜莎面罩
-	Tooltip: 远程伤害增加 6%
+	Tooltip: +6% 远程伤害
 	NotHasMedusaSoul: 美杜莎之魂：装备至少2件套后触发效果
 	MedusaSoul2Part:
 		'''
@@ -3166,12 +3166,16 @@ MedusaMask: {
 		[c/807b7d:分裂等级] [c/9e82b5:+2]
 		[c/807b7d:伤害补正] [c/9e82b5:55%]
 		'''
-	MedusaBonus: 隐秘行动：远程暴击率，移动速度各增加5%
+	MedusaBonus: 隐秘行动：远程伤害，远程暴击率，移动速度各增加5%
 }
 
 MedusaSlippers: {
 	DisplayName: 美杜莎便鞋
-	Tooltip: 移动速度增加10%
+	Tooltip:
+		'''
+		+6% 远程伤害
+		移动速度增加10%
+		'''
 	NotHasMedusaSoul: 美杜莎之魂：装备至少2件套后触发效果
 	MedusaSoul2Part:
 		'''
@@ -3228,7 +3232,7 @@ FlamingLamps: {
 	DisplayName: 烈焰灯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
 		冲刺过程中无视击退
 		冲刺命中第一个敌人时产生火焰爆破
@@ -3239,7 +3243,7 @@ LavaLamp: {
 	DisplayName: 狱炎灯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
 		冲刺过程中无视击退
 		冲刺命中第一个敌人时产生岩浆喷发
@@ -3250,7 +3254,7 @@ PiezoArmorPanel: {
 	DisplayName: 压电装甲板
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
 		冲刺过程中无视击退
 		冲刺命中第一个敌人时产生电圈，并提升冲刺速度，延长冲刺时间
@@ -3290,7 +3294,7 @@ ForbiddenLamp: {
 	DisplayName: 忘却之灯芯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
 		冲刺过程中无视击退
 		冲刺命中敌人时产生灯火爆破和鎏金碎片
@@ -3301,7 +3305,7 @@ SolarTwinkle: {
 	DisplayName: 太阳的闪烁
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
 		冲刺过程中无视击退
 		冲刺命中敌人时产生太阳爆破
@@ -3313,7 +3317,7 @@ OniMask: {
 	DisplayName: 骸骨面具
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
 		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
 		冲刺开始时丢出骨头
@@ -3325,7 +3329,7 @@ KamonFlag: {
 	DisplayName: 忍者氏族旗
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
 		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
 		冲刺开始时生成灰黑冤魂
@@ -3336,7 +3340,7 @@ SolarPanel: {
 	DisplayName: 太阳能护板
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
 		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
 		冲刺途中生成带电爆破弹
@@ -3352,7 +3356,7 @@ OldClockwork: {
 	DisplayName: 旧发条
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
 		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
 		冲刺命中后给予“拧紧发条”BUFF
@@ -3364,7 +3368,7 @@ ChronoHeart: {
 	DisplayName: 时轮之心
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾并完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
 		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
 		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
 		冲刺时生成时针
@@ -3774,7 +3778,7 @@ MedalOfLife: {
 	DisplayName: 生命勋章
 	Tooltip:
 		'''
-		接近满血时获得增加10%伤害，5%攻击速度，5%移动速度
+		接近满血时获得增加7%伤害，5%攻击速度，5%移动速度
 		生命值上限与生命值相差小于20点时生效
 		'''
 }
@@ -3784,9 +3788,680 @@ LifePulseDevice: {
 	Tooltip:
 		'''
 		生命值大于40时持续减少血量
-		生命值小于40时增加15%伤害和5%暴击率
+		生命值小于40时增加10%伤害和4%暴击率
 		伤害增幅为乘算
 		'''
+}
+
+IcicleBreath: {
+	DisplayName: 冰晶龙息
+	Tooltip: 充满着冰之魔力，冰龙宝宝用它来将水变成具有杀伤力的吐息
+}
+
+IcicleScale: {
+	DisplayName: 冰晶鳞片
+	Tooltip: 冰龙宝宝的鳞片，尚未完全生长但已经拥有足够的防御力
+}
+
+IcicleAxe: {
+	DisplayName: 破冰镐
+	Tooltip: 挖掘冰块时效率增加
+}
+
+VineLasso: {
+	DisplayName: 藤蔓套索
+	Tooltip: ""
+}
+
+GreenFairyItem: {
+	DisplayName: 绿仙灵
+	Tooltip: 最为常见的仙灵之一，会对敌人使用撞击
+}
+
+StarlightBottle: {
+	DisplayName: 星光瓶
+	Tooltip: ""
+}
+
+BreezeFairyItem: {
+	DisplayName: 微风灵
+	Tooltip: 能够产生微风来吹散敌怪
+}
+
+BlueFairyItem: {
+	DisplayName: 蓝仙灵
+	Tooltip: 最为常见的仙灵之一，会对敌人使用撞击
+}
+
+BrownFairyItem: {
+	DisplayName: 棕仙灵
+	Tooltip: 最为常见的仙灵之一，会对敌人使用撞击
+}
+
+PinkFairyItem: {
+	DisplayName: 粉仙灵
+	Tooltip: ""
+}
+
+CandyFairyItem: {
+	DisplayName: 糖果棒灵
+	Tooltip: 糖果棒灵十分美味，它能为仙灵瓶内的仙灵们补充糖分，回复25血量
+}
+
+FairyEncyclopediaItem: {
+	DisplayName: 风石碑牌
+	Tooltip: 放置后右键打开仙灵百科
+}
+
+RedJadeSpear: {
+	DisplayName: 赤玉矛
+	Tooltip: 偶尔会引发爆炸
+}
+
+PollenGunpowder: {
+	DisplayName: 花粉火药
+	Tooltip:
+		'''
+		枪类伤害增加5%
+		枪在射击时额外射出星点火花，该效果有1秒CD
+		'''
+}
+
+RoseGunpowder: {
+	DisplayName: 玫瑰火药
+	Tooltip:
+		'''
+		枪类伤害增加10%
+		远程击退增加10%
+		枪在射击时额外射出玫瑰火花，该效果有1.5秒CD
+		'''
+}
+
+SlimeEmperorMask: {
+	DisplayName: 至高帝面具
+	Tooltip: ""
+}
+
+RediancieMask: {
+	DisplayName: 赤玉灵面具
+	Tooltip: ""
+}
+
+BabyIceDragonMask: {
+	DisplayName: 冰龙宝宝面具
+	Tooltip: ""
+}
+
+NightmarePlanteraMask: {
+	DisplayName: 梦界主面具
+	Tooltip: ""
+}
+
+ThunderveinDragonMask: {
+	DisplayName: 荒雷龙面具
+	Tooltip: ""
+}
+
+EtheriaLegacy: {
+	DisplayName: 埃特尼亚之遗
+	Tooltip: 飞盾在完美防御时获得惊人一刻效果
+}
+
+CrystalEyeBannerItem: {
+	DisplayName: 晶体眼球旗
+	Tooltip: ""
+}
+
+CrystalGolemBannerItem: {
+	DisplayName: 晶体巨人旗
+	Tooltip: ""
+}
+
+CrystalSpiritBannerItem: {
+	DisplayName: 晶体妖精旗
+	Tooltip: ""
+}
+
+DevilsYoke: {
+	DisplayName: 魔鬼枷锁
+	Tooltip: ""
+}
+
+OpalTower: {
+	DisplayName: 猫眼镜
+	Tooltip: 放置后右键打开，可使附近的玩家获得猫眼Buff来直观地观察魔能的流动
+}
+
+ElfEmblem: {
+	DisplayName: 妖精徽章
+	Tooltip: 捕捉力增加15%
+}
+
+DryIce: {
+	DisplayName: 干冰
+	Tooltip:
+		'''
+		使用后开始降雨
+		“就这一小块就能引发降雨？”
+		'''
+}
+
+TwinRocketLauncher: {
+	DisplayName: 双子火箭炮
+	Tooltip: 将一级和二级火箭转化为扩散弹
+}
+
+SteelBreaker: {
+	DisplayName: 破魔旋刃
+	Tooltip:
+		'''
+		命中后释放灵体旋刃
+		灵体旋刃会斩杀血量低于4倍弹幕伤害的敌怪
+		'''
+}
+
+ElfPortal: {
+	DisplayName: 妖精传送门
+	Tooltip:
+		'''
+		放置后给予玩家妖精祝福BUFF
+		将合适的物品丢到附近就会从传送门中出现仙灵将其带走
+		之后会给予一些物品作为交换
+		'''
+}
+
+BotanicusPowder: {
+	DisplayName: 植生魔尘
+	Tooltip: ""
+}
+
+Pyrope: {
+	DisplayName: 红榴石
+	Tooltip: 使用提炼机从初级宝石原石中提取
+}
+
+PyropeCrown: {
+	DisplayName: 红榴之冠
+	Tooltip: 生成红榴之冠并向敌人射出红榴石
+}
+
+PrimaryRoughGemstone: {
+	DisplayName: 初级宝石原石
+	Tooltip:
+		'''
+		使用提炼机可能会提炼出一颗宝石
+		挖掘宝石矿或是沙漠化石时可能会出现的宝石原石
+		'''
+}
+
+AmethystNeckLace: {
+	DisplayName: 第六轮回项链
+	Tooltip:
+		'''
+		生成轮回紫晶并向敌人发射紫晶光束
+		右键使用可以关闭紫晶光束的持续音效
+		'''
+}
+
+FriedShrimpWhip: {
+	DisplayName: 炸虾鞭
+	Tooltip:
+		'''
+		2 召唤物标记伤害，对巧克力薄荷冰淇淋额外增加10召唤物护甲穿透
+		超长又鲜美的炽热锋利之虾不但吃起来很棒，抽在敌人身上也很棒
+		[c/fd8da6:它是美少女琴叶茜的最爱]
+		'''
+}
+
+ChocomintIce: {
+	DisplayName: 巧克力薄荷冰淇淋
+	Tooltip:
+		'''
+		召唤出甜蜜的极寒霜冻之灵，千万不要说它味道像牙膏，不然你以后吃的东西都会是牙膏味的
+		[c/c9e0ee:它是美少女琴叶葵的最爱]
+		'''
+}
+
+Aquamarine: {
+	DisplayName: 海蓝宝石
+	Tooltip: 使用提炼机从初级宝石原石中提取
+}
+
+AquamarineBracelet: {
+	DisplayName: 海魂手链
+	Tooltip:
+		'''
+		生成海洋的灵魂并向四周射出海蓝宝石水滴
+		海蓝宝石水滴会追踪最近的敌人
+		'''
+}
+
+AmethystNecklace: {
+	DisplayName: 第六轮回项链
+	Tooltip:
+		'''
+		生成轮回紫晶并向敌人发射紫晶光束
+		右键使用可以关闭紫晶光束的持续音效
+		'''
+}
+
+PinkDiamond: {
+	DisplayName: 粉钻
+	Tooltip: 使用提炼机从初级宝石原石中提取
+}
+
+PinkDiamondRose: {
+	DisplayName: 粉钻玫瑰
+	Tooltip:
+		'''
+		生成粉钻玫瑰并向敌人发射粉钻
+		粉钻命中后生成玫瑰花瓣
+		'''
+}
+
+SeniorRoughGemstone: {
+	DisplayName: 上级宝石原石
+	Tooltip:
+		'''
+		使用提炼机可能会提炼出一颗宝石
+		挖掘水晶碎块时可能会出现的宝石原石
+		'''
+}
+
+Zumurud: {
+	DisplayName: 祖母绿
+	Tooltip: 使用提炼机从上级宝石原石中提取
+}
+
+ZumurudRing: {
+	DisplayName: 祖母绿戒指
+	Tooltip:
+		'''
+		生成祖母绿戒指并向敌人发射大祖母绿
+		命中后会分裂成小祖母绿水花
+		'''
+}
+
+PearlBrooch: {
+	DisplayName: 沧海遗珠
+	Tooltip:
+		'''
+		生成珍珠胸针并向上方发射珍珠
+		珍珠命中后会生成水波持续造成伤害
+		'''
+}
+
+RubyScepter: {
+	DisplayName: 红宝石权杖
+	Tooltip:
+		'''
+		生成红宝石权杖向敌人发射暗红射线
+		同时抛出一些红宝石
+		'''
+}
+
+IcicleHelmet: {
+	ArmorBonus:
+		'''
+		抵御寒冷伤害
+		按下套装奖励键使用冰晶吐息或冰刺
+		使用冰晶魔法后会获得冷却Buff，无法使用冰晶魔法但是会增加15%冷系伤害
+		套装奖励键可在模组配置中更改
+		'''
+	DisplayName: 冰晶头盔
+	Tooltip: +4% 攻击速度
+}
+
+IcicleBreastplate: {
+	DisplayName: 冰晶鳞甲
+	Tooltip: +6% 攻击速度
+}
+
+IcicleLegs: {
+	DisplayName: 冰晶护胫
+	Tooltip: +4% 攻击速度
+}
+
+PeridotTalisman: {
+	DisplayName: 幽绿护身符
+	Tooltip:
+		'''
+		生成幽绿护身符向敌人发射橄榄石
+		命中后爆开并生成一些鬼魂
+		'''
+}
+
+Peridot: {
+	DisplayName: 橄榄石
+	Tooltip: 使用提炼机从上级宝石原石中提取
+}
+
+SapphireHairpin: {
+	DisplayName: 伯利恒之星
+	Tooltip:
+		'''
+		射出指引彗星坠落的蓝宝石
+		蓝宝石被彗星命中后爆开
+		'''
+}
+
+SilkAgate: {
+	DisplayName: 缠丝玛瑙
+	Tooltip:
+		'''
+		使用提炼机从上级宝石原石中提取
+		+12% 宝石武器攻击速度
+		'''
+}
+
+PhantomCrystalBall: {
+	DisplayName: 幻光球
+	Tooltip: 来自宇宙之外的神秘球体
+}
+
+TopazMirror: {
+	DisplayName: 黄晶幻象
+	Tooltip:
+		'''
+		托帕石将投射出其他魔法师的武器
+		使用这些幻象武器进行攻击
+		'''
+}
+
+Tourmaline: {
+	Tooltip: 使用提炼机从上级宝石原石中提取
+	DisplayName: 碧玺
+}
+
+LandOfTheLustrous: {
+	Tooltip: 轮回与螺旋
+	DisplayName: 宝石之国
+}
+
+TourmalineMonoclastic: {
+	DisplayName: 绯红的窥视
+	Tooltip: 用光束穿刺它看到的敌人
+}
+
+Zircon: {
+	DisplayName: 锆石
+	Tooltip: 使用提炼机从上级宝石原石中提取
+}
+
+FlyingShieldBattleGuide: {
+	DisplayName: 飞盾战斗指南
+	Tooltip: 盾冲与格挡变得更加自由
+}
+
+Terranascence: {
+	DisplayName: 泰拉勇者的剑盾
+	Tooltip:
+		'''
+		“看似是非常粗制的武器，但其中包含勇者的信念”
+		通过不同的攻击组合可以触发特殊连段
+			物品栏内右键可以开关普通攻击时的特效
+		'''
+}
+
+AlloySpring: {
+	DisplayName: 强化合金弹簧
+	Tooltip:
+		'''
+		增加冲刺速度
+		冲刺时根据防御力增加伤害，最多10%
+		让格挡和盾冲更加自由
+		'''
+}
+
+GravitationalCatapult: {
+	DisplayName: 引力弹射器
+	Tooltip:
+		'''
+		大幅增加冲刺速度，增加冲刺时间
+		冲刺时根据防御力增加伤害，最多20%
+		让格挡和盾冲更加自由
+		'''
+}
+
+ZirconGrail: {
+	DisplayName: 无色的火彩
+	Tooltip: 发射追踪火焰
+}
+
+BigMacHamburger: {
+	DisplayName: 巨无霸汉堡
+	Tooltip: 这是汉堡的王中王
+}
+
+Afterglow: {
+	DisplayName: 晚霞
+	Tooltip: 点燃木箭
+}
+
+SurviveAndPerish: {
+	DisplayName: 生存与毁灭
+	Tooltip:
+		'''
+		发射信号雷管为导弹引导方向.
+		右键使用导弹巢连射11发追踪星火飞弹.
+		优先锁定身上带有信号雷管的敌人.命中时引爆雷管造成连环爆炸.
+		导弹巢每次发射后需要一段时间重新装填.
+		[c/8c8c8c:毁灭后的文明为了生存所创造出的野蛮力量.]
+		[c/ff6741:来自一个没能生存的世界和一个即将毁灭的世界.]
+		'''
+}
+
+CrystallineBrick: {
+	DisplayName: 蕴魔砖
+	Tooltip: ""
+}
+
+CrystallineSkarn: {
+	DisplayName: 蕴魔矽卡岩
+	Tooltip: ""
+}
+
+Skarn: {
+	DisplayName: 矽卡岩
+	Tooltip: ""
+}
+
+AmberEardrop: {
+	DisplayName: 琥珀耳坠
+	Tooltip:
+		'''
+		生成从天而降的琥珀泪滴
+		偶尔生成大琥珀短暂迟缓敌人行动并阻止敌人造成伤害
+		[c/fcc12d:被封存的时光]
+		'''
+}
+
+CharmOfIsis: {
+	DisplayName: 伊西斯护身符
+	Tooltip:
+		'''
+		接近满血时增加伤害，移速和攻击速度
+		减少血药冷却时间
+		增加生命再生
+		'''
+}
+
+OsirisPillar: {
+	DisplayName: 奥西里斯魔柱
+	Tooltip:
+		'''
+		魔力充盈时持续减少生命值
+		生命值小于一定值后获得伤害，暴击率增幅
+		增加魔力上限和魔力再生速度
+		'''
+}
+
+SquirrelSet: {
+	DisplayName: 角和线团
+	Tooltip:
+		'''
+		装备后,使你变成一只可怕的生物.
+		手持并使用可以切换柔软部位显示.
+		[c/8c8c8c:*带着些许绒毛的小角和温热的红色毛线.]
+		“非常适合用来冒充珊瑚石开发者！”
+		'''
+	ShlimmerTranslation: 此为微光转化合成表
+}
+
+IceAxe: {
+	DisplayName: 冰晶战斧
+	Tooltip: ""
+}
+
+IcicleHammer: {
+	DisplayName: 碎冰锤
+	Tooltip: ""
+}
+
+BasaltBathtub: {
+	DisplayName: 玄武岩浴缸
+	Tooltip: ""
+}
+
+BasaltBed: {
+	DisplayName: 玄武岩床
+	Tooltip: ""
+}
+
+BasaltBigDroplight: {
+	DisplayName: 玄武岩大吊灯
+	Tooltip: ""
+}
+
+BasaltBookcase: {
+	DisplayName: 玄武岩书架
+	Tooltip: ""
+}
+
+BasaltCandelabra: {
+	DisplayName: 玄武岩烛台
+	Tooltip: ""
+}
+
+BasaltCandle: {
+	DisplayName: 玄武岩蜡烛
+	Tooltip: ""
+}
+
+BasaltChair: {
+	DisplayName: 玄武岩椅子
+	Tooltip: ""
+}
+
+BasaltClock: {
+	DisplayName: 玄武岩钟
+	Tooltip: ""
+}
+
+BasaltDoor: {
+	DisplayName: 玄武岩门
+	Tooltip: ""
+}
+
+BasaltDresser: {
+	DisplayName: 玄武岩梳妆台
+	Tooltip: ""
+}
+
+BasaltDroplight: {
+	DisplayName: 玄武岩灯
+	Tooltip: ""
+}
+
+BasaltFloorLamp: {
+	DisplayName: 玄武岩灯柱
+	Tooltip: ""
+}
+
+BasaltPiano: {
+	DisplayName: 玄武岩钢琴
+	Tooltip: ""
+}
+
+BasaltPlatform: {
+	DisplayName: 玄武岩平台
+	Tooltip: ""
+}
+
+BasaltSink: {
+	DisplayName: 玄武岩水槽
+	Tooltip: ""
+}
+
+BasaltSofa: {
+	DisplayName: 玄武岩沙发
+	Tooltip: ""
+}
+
+BasaltTable: {
+	DisplayName: 玄武岩桌
+	Tooltip: ""
+}
+
+BasaltToilet: {
+	DisplayName: 玄武岩马桶
+	Tooltip: ""
+}
+
+BasaltWorkBench: {
+	DisplayName: 玄武岩工作台
+	Tooltip: ""
+}
+
+LegendaryCard: {
+	DisplayName: 传奇的卡片
+	Tooltip: ""
+}
+
+BasaltBeam: {
+	DisplayName: 玄武岩柱
+	Tooltip: ""
+}
+
+DiamondFlower: {
+	DisplayName: 钻石花
+	Tooltip:
+		'''
+		生成钻石花并向敌人发射钻石
+		钻石命中后生成花瓣
+		'''
+}
+
+ArcaneFlameDagger: {
+	DisplayName: 玄焰匕首
+	Tooltip:
+		'''
+		暴击时产生玄焰斩击
+		[c/e6ffa9:来自枫的世界]
+		'''
+}
+
+CelestialHeart: {
+	DisplayName: 天体的心脏
+	Tooltip:
+		'''
+		招来末日的心脏
+		召唤月球领主，不消耗
+		'''
+}
+
+SeductiveFalseBait: {
+	DisplayName: 诱人的假饵
+	Tooltip:
+		'''
+		非常适合用来假装松露虫！
+		在海边召唤猪鲨，不消耗
+		'''
+}
+
+Night_luminescentPearl: {
+	DisplayName: 夜明珠
+	Tooltip: 月球领主的核心部位
 }
 
 TaiJiYujian: {

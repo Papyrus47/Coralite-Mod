@@ -3,7 +3,6 @@ using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 
 namespace Coralite.Content.Bosses.ShadowBalls
 {
@@ -15,8 +14,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 25;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 25);
         }
 
         public override void SetDefaults()

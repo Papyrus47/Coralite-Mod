@@ -8,7 +8,10 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
     {
         public bool polished;
 
+        public static bool RecordReforge;
+
         public abstract void Polish(Recipe recipe, Item item, List<Item> list, Item destinationStack);
+        public abstract void ClonePolish(Item item);
 
         public override void SaveData(TagCompound tag)
         {
@@ -20,6 +23,30 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
         {
             if (tag.TryGet("Polished", out bool p))
                 polished = p;
+        }
+
+        public override ModItem Clone(Item newEntity)
+        {
+            if (newEntity.ModItem is PolishableAccessory pa)
+            {
+                pa.polished = polished;
+                if (pa.polished)
+                    ClonePolish(newEntity);
+
+                return newEntity.ModItem;
+            }
+
+            return base.Clone(newEntity);
+        }
+
+        public override void PreReforge()
+        {
+            RecordReforge = polished;
+        }
+
+        public override void PostReforge()
+        {
+            polished = RecordReforge;
         }
     }
 }

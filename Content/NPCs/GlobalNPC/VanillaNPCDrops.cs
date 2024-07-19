@@ -1,6 +1,8 @@
-﻿using Coralite.Content.Items.Accessories.FlyingShields;
-using Coralite.Content.Items.CoreKeeper;
+﻿using Coralite.Content.Items.CoreKeeper;
+using Coralite.Content.Items.Donator;
 using Coralite.Content.Items.FlyingShields;
+using Coralite.Content.Items.FlyingShields.Accessories;
+using Coralite.Content.Items.LandOfTheLustrousSeries;
 using Coralite.Content.Items.Materials;
 using Coralite.Content.Items.Placeable;
 using Coralite.Content.Items.YujianHulu;
@@ -75,21 +77,22 @@ namespace Coralite.Content.NPCs.GlobalNPC
                     {
                         IItemDropRule[] PirateKingTypes = new IItemDropRule[]
                         {
-                            ItemDropRule.Common(ItemType<PirateKingHat>(), 1, 1, 1),
-                            ItemDropRule.Common(ItemType<PirateKingCoat>(), 1, 1, 1),
-                            ItemDropRule.Common(ItemType<PirateKingShoes>(), 1, 1, 1),
+                            ItemDropRule.Common(ItemType<PirateKingHat>(), 1),
+                            ItemDropRule.Common(ItemType<PirateKingCoat>(), 1),
+                            ItemDropRule.Common(ItemType<PirateKingShoes>(), 1),
                         };
                         npcLoot.Add(new FewFromRulesRule(1, 4, PirateKingTypes));
+                        npcLoot.Add(ItemDropRule.Common(ItemType<LegendaryCard>(), 2));
                     }
                     break;
 
                 case NPCID.EyeofCthulhu://克眼，脑子，世吞掉落美味肉排
                 case NPCID.BrainofCthulhu://克眼，脑子，世吞掉落美味肉排
-                    npcLoot.Add(ItemDropRule.Common(ItemType<DeliciousSteak>(), 6, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<DeliciousSteak>(), 6));
                     break;
                 case NPCID.EaterofWorldsBody://克眼，脑子，世吞掉落美味肉排
                 case NPCID.Creeper://克眼，脑子，世吞掉落美味肉排
-                    npcLoot.Add(ItemDropRule.Common(ItemType<DeliciousSteak>(), 50, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<DeliciousSteak>(), 50));
                     break;
                 case NPCID.PlanterasTentacle://世花小触手掉落再生触手
                     npcLoot.Add(ItemDropRule.Common(ItemType<RegrowthTentacle>(), 2, 1, 2));
@@ -98,43 +101,48 @@ namespace Coralite.Content.NPCs.GlobalNPC
                     npcLoot.Add(ItemDropRule.ByCondition(new Conditions.DownedPlantera(), ItemType<FlyingSnakeFeather>(), 1, 1, 2));
                     break;
                 case NPCID.WallofFlesh://肉山和鸟妖掉落破碎剑柄
-                    npcLoot.Add(ItemDropRule.Common(ItemType<BrokenHandle>(), 10, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<BrokenHandle>(), 10));
                     break;
                 case NPCID.Harpy://女妖额外掉落天空戒指
                     npcLoot.Add(ItemDropRule.ByCondition(new Conditions.IsHardmode(), ItemType<BrokenHandle>(), 150, 1, 1));
                     npcLoot.Add(ItemDropRule.ByCondition(new Conditions.DownedPlantera(), ItemType<SkyRing>(), 50, 1, 1));
                     break;
 
-                case NPCID.RockGolem://岩石巨人,花岗岩敌怪，附魔剑 掉落上古宝石
-                case NPCID.GraniteFlyer:
+                case NPCID.RockGolem://岩石巨人掉落上古宝石，上级宝石原石
+                    npcLoot.Add(ItemDropRule.Common(ItemType<AncientGemstone>(), 20, 1, 3));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<SeniorRoughGemstone>(), 2, 1, 3));
+                    break;
+
+                case NPCID.GraniteFlyer://岩石巨人,花岗岩敌怪，附魔剑 掉落上古宝石
                 case NPCID.EnchantedSword:
                     npcLoot.Add(ItemDropRule.Common(ItemType<AncientGemstone>(), 20, 1, 3));
                     break;
                 case NPCID.GraniteGolem://花岗岩巨人额外掉落上古守护者饰品
                     npcLoot.Add(ItemDropRule.Common(ItemType<AncientGemstone>(), 20, 1, 3));
-                    npcLoot.Add(ItemDropRule.Common(ItemType<AncientGuardianNecklace>(), 250, 1, 1));
-                    npcLoot.Add(ItemDropRule.Common(ItemType<AncientGuardianRing>(), 150, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<AncientGuardianNecklace>(), 250));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<AncientGuardianRing>(), 150));
                     break;
 
                 case NPCID.AngryBones://愤怒骷髅掉落骨质戒指
                 case NPCID.AngryBonesBig:
                 case NPCID.AngryBonesBigHelmet:
                 case NPCID.AngryBonesBigMuscle:
-                    npcLoot.Add(ItemDropRule.Common(ItemType<CoreBoneRing>(), 200, 1, 1));
-                    npcLoot.Add(ItemDropRule.Common(ItemType<RemainsOfSamurai>(), 100, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<CoreBoneRing>(), 200));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<RemainsOfSamurai>(), 100));
                     break;
                 case NPCID.Medusa://美杜莎掉落美杜莎套装
                     {
                         IItemDropRule[] PirateKingTypes = new IItemDropRule[]
                         {
-                            ItemDropRule.Common(ItemType<MedusaMask>(), 1, 1, 1),
-                            ItemDropRule.Common(ItemType<MedusaLightArmor>(), 1, 1, 1),
-                            ItemDropRule.Common(ItemType<MedusaSlippers>(), 1, 1, 1),
+                            ItemDropRule.Common(ItemType<MedusaMask>(), 1),
+                            ItemDropRule.Common(ItemType<MedusaLightArmor>(), 1),
+                            ItemDropRule.Common(ItemType<MedusaSlippers>(), 11),
                         };
                         LeadingConditionRule leadingConditionRule = new LeadingConditionRule(new Conditions.IsHardmode());
 
                         leadingConditionRule.OnSuccess(new FewFromRulesRule(1, 25, PirateKingTypes));
                         npcLoot.Add(leadingConditionRule);
+                        npcLoot.Add(ItemDropRule.Common(ItemType<LegendaryCard>(), 15));
                     }
                     break;
                 case NPCID.TheDestroyer://毁灭者在天顶世界掉落美杜莎鞋
@@ -161,6 +169,27 @@ namespace Coralite.Content.NPCs.GlobalNPC
                     break;
                 case NPCID.MoonLordCore:
                     npcLoot.Add(ItemDropRule.Common(ItemType<ConquerorOfTheSeas>(), 9, 1, 1));
+                    npcLoot.Add(ItemDropRule.Common(ItemType<Night_luminescentPearl>(), 1, 1, 3));
+                    break;
+                case NPCID.MoonLordHand:
+                case NPCID.MoonLordHead:
+                    npcLoot.Add(ItemDropRule.Common(ItemType<Night_luminescentPearl>()));
+                    break;
+                case NPCID.DD2OgreT2://二级食人魔
+                    npcLoot.Add(ItemDropRule.Common(ItemType<EtheriaLegacy>(), 10));
+                    break;
+                case NPCID.DD2OgreT3://三级食人魔
+                    npcLoot.Add(ItemDropRule.Common(ItemType<EtheriaLegacy>(), 20));
+                    break;
+                case NPCID.Deerclops://巨鹿
+                    npcLoot.Add(ItemDropRule.Common(ItemType<ChocomintIce>(), 4));
+                    break;
+                case NPCID.Demon:
+                    npcLoot.Add(ItemDropRule.Common(ItemType<FriedShrimpWhip>(), 50));
+                    break;
+                case NPCID.LavaSlime:
+                case NPCID.Lavabat:
+                    npcLoot.Add(ItemDropRule.Common(ItemType<FriedShrimpWhip>(), 100));
                     break;
             }
 

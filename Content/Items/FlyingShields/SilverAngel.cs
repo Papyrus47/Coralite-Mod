@@ -1,6 +1,6 @@
-﻿using Coralite.Content.Particles;
+﻿using Coralite.Content.Items.Icicle;
+using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
@@ -38,6 +38,13 @@ namespace Coralite.Content.Items.FlyingShields
             CreateRecipe()
                 .AddIngredient(ItemID.SilverBar, 16)
                 .AddIngredient(ItemID.ShadowScale, 5)
+                .AddIngredient(ItemID.Feather, 5)
+                .AddTile(TileID.Anvils)
+                .Register();
+
+            CreateRecipe()
+                .AddIngredient(ItemID.SilverBar, 16)
+                .AddIngredient<IcicleScale>(3)
                 .AddIngredient(ItemID.Feather, 5)
                 .AddTile(TileID.Anvils)
                 .Register();
@@ -86,7 +93,7 @@ namespace Coralite.Content.Items.FlyingShields
                 if (!target.friendly && target.CanBeChasedBy())
                 {
                     Projectile.NewProjectileFromThis<SilverAngelStrike>(target.Top + new Vector2(0, -20),
-                        Vector2.Zero, Projectile.damage, 4, target.whoAmI);
+                        Vector2.Zero, (int)(Projectile.damage * 0.9f), 4, target.whoAmI);
                 }
         }
 

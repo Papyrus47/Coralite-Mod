@@ -144,3 +144,52 @@ FlaskOfThunderBuff: {
 	DisplayName: 武器灌注：雷鸣
 	Description: 近战武器命中时附加雷鸣减益
 }
+
+PollenFire: {
+	DisplayName: 花火
+	Description: 着火了！很香！
+}
+
+OpalBuff: {
+	DisplayName: 猫眼
+	Description: 能使你直观地观察到魔能的流动
+}
+
+ElfBless: {
+	DisplayName: 妖精祝福
+	Description: 捕捉力增加5%
+}
+
+FriedShrimpBuff: {
+	DisplayName: 鲜味风暴
+	Description: 好好吃！
+}
+
+ChocomintIceBuff: {
+	DisplayName: 宝贝吃冰啦
+	Description: 牙膏（薄荷）的清爽给予你力量
+}
+
+IcicleArmorBonus: {
+	DisplayName: 冰晶冷却
+	Description:
+		'''
+		你现在无法使用冰晶套装的套装魔法！
+		+15% 寒冷物品伤害
+		'''
+}
+
+AlloySpringBuff: {
+	DisplayName: 强化弹力
+	Description: 根据防御增加伤害，最高10%
+}
+
+GravitationalCatapultBuff: {
+	DisplayName: 引力弹射
+	Description: 根据防御增加伤害，最高20%
+}
+
+AmberDebuff: {
+	// DisplayName: Amber Debuff
+	// Description: Mods.Coralite.Buffs.AmberDebuff.Description
+}

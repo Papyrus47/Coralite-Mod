@@ -98,7 +98,7 @@ namespace Coralite.Content.Items.RedJades
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
-        public BloodJadeSlash() : base(0.785f, trailLength: 48) { }
+        public BloodJadeSlash() : base(0.785f, trailCount: 48) { }
 
         public int delay;
         public int alpha;
@@ -131,6 +131,7 @@ namespace Coralite.Content.Items.RedJades
             Projectile.localNPCHitCooldown = 48;
             Projectile.width = 40;
             Projectile.height = 80;
+            Projectile.hide = true;
             trailTopWidth = -6;
             distanceToOwner = 8;
             minTime = 0;
@@ -327,7 +328,7 @@ namespace Coralite.Content.Items.RedJades
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;

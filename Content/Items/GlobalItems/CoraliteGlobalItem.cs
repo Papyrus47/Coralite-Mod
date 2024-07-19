@@ -1,6 +1,7 @@
 using Coralite.Content.Items.FlyingShields;
 using Coralite.Content.Items.Materials;
 using Coralite.Content.Items.Misc_Melee;
+using Coralite.Content.ModPlayers;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,14 +15,21 @@ using Terraria.Localization;
 
 namespace Coralite.Content.Items.GlobalItems
 {
-    public class CoraliteGlobalItem : GlobalItem,ILocalizedModType, IVariantItem
+    public partial class CoraliteGlobalItem : GlobalItem, ILocalizedModType, IVariantItem
     {
         public static LocalizedText CopperCoralCat;
         public static LocalizedText RubyCoralCat;
         public static LocalizedText TerraCoralCat;
         public static LocalizedText RainBowCoralCat;
 
-        public string LocalizationCategory =>"GlobalItems";
+        /// <summary>
+        /// 是否能通过特殊攻击键来使用武器
+        /// </summary>
+        public bool SpecialUse;
+
+        public override bool InstancePerEntity => true;
+
+        public string LocalizationCategory => "GlobalItems";
 
         public override void Load()
         {
@@ -29,6 +37,8 @@ namespace Coralite.Content.Items.GlobalItems
             RubyCoralCat = this.GetLocalization("RubyCoralCat", () => "红玉猫猫币");
             TerraCoralCat = this.GetLocalization("TerraCoralCat", () => "泰拉猫猫币");
             RainBowCoralCat = this.GetLocalization("RainBowCoralCat", () => "彩虹猫猫币");
+            Cold = this.GetLocalization("Cold", () => "[c/5cd7f9:寒冷]");
+            Edible = this.GetLocalization("Edible", () => "[c/f0d0b7:可食用]");
         }
 
         public override void Unload()
@@ -37,15 +47,20 @@ namespace Coralite.Content.Items.GlobalItems
             RubyCoralCat = null;
             TerraCoralCat = null;
             RainBowCoralCat = null;
+            Cold = null;
+            Edible = null;
         }
 
         public override void SetDefaults(Item item)
         {
+            if (item.ModItem != null && item.ModItem.Mod is Coralite)
+                item.width = item.height = 40;
+
             switch (item.type)
             {
                 default: break;
                 case ItemID.PhoenixBlaster: //削弱凤凰爆破枪，目的是为了给幽兰让路
-                    item.damage = 30;
+                    item.damage = 32;
                     break;
                 case ItemID.IceRod:     //削弱冰雪魔仗，因为它现在在肉前就能获得
                     item.damage = (int)(item.damage * 0.45f);
@@ -56,6 +71,9 @@ namespace Coralite.Content.Items.GlobalItems
                     break;
                 case ItemID.Coal:
                     item.maxStack = Item.CommonMaxStack;
+                    break;
+                case ItemID.Dynamite: //雷管当弹药
+                    item.ammo = ItemID.Dynamite;
                     break;
                 case ItemID.Meowmere:
                     if (item.Variant == ItemVariants.WeakerVariant)
@@ -102,6 +120,9 @@ namespace Coralite.Content.Items.GlobalItems
                     }
                     break;
             }
+
+            RegisterColdDamageWeapon(item.type);
+            RegisterEdibleDamageWeapon(item.type);
         }
 
         public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
@@ -126,25 +147,25 @@ namespace Coralite.Content.Items.GlobalItems
                         break;
                     case ItemID.CopperCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "CopperCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "CopperCoralCat").Value;
                             spriteBatch.Draw(mainTex, position, null, drawColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.SilverCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "RubyCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "RubyCoralCat").Value;
                             spriteBatch.Draw(mainTex, position, null, drawColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.GoldCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "TerraCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "TerraCoralCat").Value;
                             spriteBatch.Draw(mainTex, position, null, drawColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.PlatinumCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "RainBowCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "RainBowCoralCat").Value;
                             spriteBatch.Draw(mainTex, position, null, drawColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
@@ -165,25 +186,25 @@ namespace Coralite.Content.Items.GlobalItems
                         break;
                     case ItemID.CopperCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "CopperCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "CopperCoralCat").Value;
                             spriteBatch.Draw(mainTex, center, null, lightColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.SilverCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "RubyCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "RubyCoralCat").Value;
                             spriteBatch.Draw(mainTex, center, null, lightColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.GoldCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "TerraCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "TerraCoralCat").Value;
                             spriteBatch.Draw(mainTex, center, null, lightColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
                     case ItemID.PlatinumCoin:
                         {
-                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.Misc + "RainBowCoralCat").Value;
+                            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MiscItems + "RainBowCoralCat").Value;
                             spriteBatch.Draw(mainTex, center, null, lightColor, 0, mainTex.Size() / 2, scale, 0, 0);
                         }
                         return false;
@@ -191,6 +212,12 @@ namespace Coralite.Content.Items.GlobalItems
             }
 
             return base.PreDrawInWorld(item, spriteBatch, lightColor, alphaColor, ref rotation, ref scale, whoAmI);
+        }
+
+        public override void PickAmmo(Item weapon, Item ammo, Player player, ref int type, ref float speed, ref StatModifier damage, ref float knockback)
+        {
+
+            base.PickAmmo(weapon, ammo, player, ref type, ref speed, ref damage, ref knockback);
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -217,11 +244,47 @@ namespace Coralite.Content.Items.GlobalItems
                             return;
                     }
             }
+
+            TooltipLine damage = tooltips.Find(line => line.Mod == "Terraria" && line.Name == "Damage");
+            if (damage != null)
+            {
+                string[] text = damage.Text.Split(" ");
+                if (text.Length > 1)
+                {
+                    List<string> newText = new List<string>()
+                        {
+                            text[0],
+                            " "
+                        };
+
+                    if (ColdDamage)
+                    {
+                        newText.Add(Cold.Value);
+                        newText.Add(" ");
+                    }
+
+                    if (EdibleDamage)
+                    {
+                        newText.Add(Edible.Value);
+                        newText.Add(" ");
+                    }
+
+                    newText.Add(text[1]);
+                    damage.Text = string.Concat([.. newText]);
+
+                }
+            }
+        }
+
+        public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
+        {
+            if (ColdDamage && player.TryGetModPlayer(out CoralitePlayer cp))
+                damage = damage.CombineWith(cp.coldDamageBonus);
         }
 
         public override void UpdateInventory(Item item, Player player)
         {
-            CoralCatWorldTransForm( item);
+            CoralCatWorldTransForm(item);
         }
 
         public override void Update(Item item, ref float gravity, ref float maxFallSpeed)

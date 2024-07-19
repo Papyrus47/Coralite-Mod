@@ -29,11 +29,11 @@ namespace Coralite.Content.Items.Thunder
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
-            Item.damage = 65;
-            Item.useTime = 24;
-            Item.useAnimation = 24;
+            Item.damage = 63;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
             Item.knockBack = 2f;
-            Item.crit = 10;
+            Item.crit = 8;
 
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.DamageType = DamageClass.Melee;
@@ -126,7 +126,7 @@ namespace Coralite.Content.Items.Thunder
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
-        public ThunderveinSpearSlash() : base(new Vector2(92, 96).ToRotation() - 0.05f, trailLength: 48) { }
+        public ThunderveinSpearSlash() : base(new Vector2(92, 96).ToRotation() - 0.05f, trailCount: 48) { }
 
         public int delay;
         public int alpha;
@@ -161,6 +161,7 @@ namespace Coralite.Content.Items.Thunder
             Projectile.localNPCHitCooldown = 48;
             Projectile.width = 40;
             Projectile.height = 135;
+            Projectile.hide = true;
             trailTopWidth = 0;
             distanceToOwner = -68;
             minTime = 0;
@@ -354,11 +355,10 @@ namespace Coralite.Content.Items.Thunder
 
         protected override void DrawSlashTrail()
         {
-            RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -376,28 +376,23 @@ namespace Coralite.Content.Items.Thunder
 
             if (bars.Count > 2)
             {
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, default, Main.GameViewMatrix.ZoomMatrix);
-
-                Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
-
-                Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
-                Matrix view = Main.GameViewMatrix.TransformationMatrix;
-                Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
-                effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-                effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
-                effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
-
-                Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
+                Helper.DrawTrail(Main.graphics.GraphicsDevice, () =>
                 {
-                    pass.Apply();
-                    Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bars.ToArray(), 0, bars.Count - 2);
-                    //Main.graphics.GraphicsDevice.DrawUserPrimitives(1, bars.ToArray(), 0, bars.Count - 2);
-                }
+                    Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
-                Main.graphics.GraphicsDevice.RasterizerState = originalState;
+                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                    effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
+                    {
+                        pass.Apply();
+                        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bars.ToArray(), 0, bars.Count - 2);
+                        Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
+                        Main.graphics.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bars.ToArray(), 0, bars.Count - 2);
+                    }
+                }, BlendState.NonPremultiplied, SamplerState.PointWrap, RasterizerState.CullNone);
+
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
                 Main.spriteBatch.End();
@@ -410,12 +405,11 @@ namespace Coralite.Content.Items.Thunder
     {
         public override string Texture => AssetDirectory.ThunderItems + "ThunderveinSpearProj";
 
-        public ThunderveinSpearSpurt() : base(new Vector2(48, 46).ToRotation() - 0.08f, trailLength: 10) { }
+        public ThunderveinSpearSpurt() : base(new Vector2(48, 46).ToRotation() - 0.08f, trailCount: 10) { }
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 10;
-            ProjectileID.Sets.TrailingMode[Type] = 4;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAllAndFollowPlayer, 10);
         }
 
         public override void SetDefs()
@@ -424,6 +418,7 @@ namespace Coralite.Content.Items.Thunder
             Projectile.localNPCHitCooldown = 48;
             Projectile.width = 40;
             Projectile.height = 135;
+            Projectile.hide = true;
             trailTopWidth = -8;
             distanceToOwner = -68;
             minTime = 0;
@@ -542,7 +537,7 @@ namespace Coralite.Content.Items.Thunder
             Projectile.width = Projectile.height = 32;
             Projectile.friendly = true;
             Projectile.usesLocalNPCImmunity = false;
-            Projectile.localNPCHitCooldown = 20;
+            Projectile.localNPCHitCooldown = 30;
             Projectile.DamageType = DamageClass.Melee;
             Projectile.penetrate = -1;
             Projectile.friendly = true;

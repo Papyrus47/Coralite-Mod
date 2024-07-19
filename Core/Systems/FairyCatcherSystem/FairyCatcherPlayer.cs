@@ -3,7 +3,7 @@ using Terraria;
 
 namespace Coralite.Core.Systems.FairyCatcherSystem
 {
-    public class FairyCatcherPlayer:ModPlayer
+    public class FairyCatcherPlayer : ModPlayer
     {
         public struct FairyIVRandomModifyer
         {
@@ -26,6 +26,10 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
         /// 仙灵捕捉器的捕捉力增幅
         /// </summary>
         public StatModifier fairyCatchPowerBonus;
+        /// <summary>
+        /// 仙灵复活时间的增幅（应该减少数值）
+        /// </summary>
+        public StatModifier fairyResurrectionTimeBous;
         public float fairyCatcherRadius;
 
         /// <summary>
@@ -41,40 +45,37 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
         public Color CatcherCircleColor;
         public Color CatcherBackColor;
 
-        /// <summary>
-        /// 仙灵伤害加成，使用仙灵捕获力增强幅度来增幅伤害
-        /// </summary>
-        /// <param name="damage"></param>
-        /// <returns></returns>
-        public float FairyDamageBonus(float damage)
-        {
-            return fairyCatchPowerBonus.ApplyTo(damage);
-        }
-
         public override void ResetEffects()
         {
             cursorSizeBonus = new StatModifier();
             fairyCatchPowerBonus = new StatModifier();
+            fairyResurrectionTimeBous = new StatModifier();
 
             //默认伤害区间为0.8-1.2
             damageRamdom = new FairyIVRandomModifyer()
             {
                 additive_Min = 0.8f,
-                additive_Max = 1.2f
+                additive_Max = 1.2f,
+                multiplicative_Min = 1,
+                multiplicative_Max = 1.01f,
             };
 
             //默认防御区间为0.8-1.15
             defenceRamdom = new FairyIVRandomModifyer()
             {
                 additive_Min = 0.9f,
-                additive_Max = 1.15f
+                additive_Max = 1.15f,
+                multiplicative_Min = 1,
+                multiplicative_Max = 1.01f,
             };
 
             //默认血量区间为0.8-1.3
             lifeMaxRamdom = new FairyIVRandomModifyer()
             {
                 additive_Min = 0.8f,
-                additive_Max = 1.3f
+                additive_Max = 1.3f,
+                multiplicative_Min = 1,
+                multiplicative_Max = 1.01f,
             };
 
             //默认大小区间0.9-1.1
@@ -84,7 +85,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             fairyCatcherRadius = 7 * 16;
 
             CatcherCircleColor = Color.White;
-            CatcherBackColor = Color.DarkBlue * 0.5f;
+            CatcherBackColor = Color.DarkSlateBlue * 0.5f;
         }
 
         /// <summary>
@@ -116,15 +117,15 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             }
         }
 
-        public bool FairyShoot_GetFairyBottle(out IFairyBottle bait)
+        public bool FairyShoot_GetFairyBottle(out IFairyBottle bottle)
         {
-            bait = null;
+            bottle = null;
 
             for (int j = 0; j < 50; j++)
             {
                 if (Player.inventory[j].stack > 0 && Player.inventory[j].ModItem is IFairyBottle fairyBottle)
                 {
-                    bait = fairyBottle;
+                    bottle = fairyBottle;
                     return true;
                 }
             }
@@ -139,17 +140,89 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
         public int FairyCatch_GetCatchPower()
         {
             int basePower = 1;
-            if (Player.HeldItem.ModItem is BaseFairyCatcher catcher)
-                basePower = catcher.catchPower;
+            float exBonus = 0f;
+            if (Player.HeldItem.TryGetGlobalItem(out FairyGlobalItem fgi))
+            {
+                basePower = fgi.CatchPower;
+                exBonus = fgi.CatchPowerMult - 1f;
+            }
+            StatModifier modifyer = fairyCatchPowerBonus;
 
-            return (int)fairyCatchPowerBonus.ApplyTo(basePower);
+            modifyer += exBonus;
+
+            return (int)modifyer.ApplyTo(basePower);
         }
 
-        public override bool OnPickup(Item item)
+        public int GetBonusedCatchPower(int baseCatchPower, float mult = 1)
         {
+            StatModifier modifyer = fairyCatchPowerBonus;
 
+            modifyer += mult - 1;
 
-            return base.OnPickup(item);
+            return (int)modifyer.ApplyTo(baseCatchPower);
+        }
+
+        /// <summary>
+        /// 获取总的捕捉力加成幅度，物品为带有捕捉器前缀的物品
+        /// </summary>
+        /// <param name="base"></param>
+        /// <param name="catcherItem"></param>
+        /// <returns></returns>
+        public void TotalCatchPowerBonus(ref float @base, Item catcherItem)
+        {
+            StatModifier modifyer = fairyCatchPowerBonus;
+            float exBonus = 0f;
+
+            if (catcherItem.TryGetGlobalItem(out FairyGlobalItem fgi))
+                exBonus = fgi.CatchPowerMult - 1f;
+
+            modifyer += exBonus;
+
+            @base = modifyer.ApplyTo(@base);
+        }
+
+        /// <summary>
+        /// 仙灵伤害加成，使用仙灵捕获力增强幅度来增幅伤害
+        /// </summary>
+        /// <param name="damage"></param>
+        /// <returns></returns>
+        public float FairyDamageBonus(Item item, float damage)
+        {
+            StatModifier modifyer = fairyCatchPowerBonus;
+            float exBonus = 0f;
+
+            if (item.TryGetGlobalItem(out FairyGlobalItem fgi))
+                exBonus = fgi.CatchPowerMult - 1f;
+
+            modifyer += exBonus;
+
+            return modifyer.ApplyTo(damage);
+        }
+
+        public bool FairyCatch_GetEmptyFairyBottle(out IFairyBottle fairyBottle, out int emptySlot)
+        {
+            fairyBottle = null;
+            emptySlot = -1;
+
+            for (int j = 0; j < 50; j++)
+            {
+                if (Player.inventory[j].stack > 0 && Player.inventory[j].ModItem is IFairyBottle)
+                {
+                    fairyBottle = Player.inventory[j].ModItem as IFairyBottle;
+
+                    for (int i = 0; i < fairyBottle.Fairies.Length; i++)
+                    {
+                        Item item = fairyBottle.Fairies[i];
+                        if (item.IsAir)
+                        {
+                            emptySlot = i;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -164,25 +237,25 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             data.damageBonus = new StatModifier(
                 Main.rand.NextFloat(damageRamdom.additive_Min, damageRamdom.additive_Max),
                 Main.rand.NextFloat(damageRamdom.multiplicative_Min, damageRamdom.multiplicative_Max),
-                Main.rand.NextFloat(damageRamdom.additive_Min, damageRamdom.additive_Max),
-                Main.rand.NextFloat(damageRamdom.additive_Min, damageRamdom.additive_Max)
+                Main.rand.NextFloat(damageRamdom.Flat_Min, damageRamdom.Flat_Max),
+                Main.rand.NextFloat(damageRamdom.base_Min, damageRamdom.base_Max)
                 );
             data.defenceBonus = new StatModifier(
                 Main.rand.NextFloat(defenceRamdom.additive_Min, defenceRamdom.additive_Max),
                 Main.rand.NextFloat(defenceRamdom.multiplicative_Min, defenceRamdom.multiplicative_Max),
-                Main.rand.NextFloat(defenceRamdom.additive_Min, defenceRamdom.additive_Max),
-                Main.rand.NextFloat(defenceRamdom.additive_Min, defenceRamdom.additive_Max)
+                Main.rand.NextFloat(defenceRamdom.Flat_Min, defenceRamdom.Flat_Max),
+                Main.rand.NextFloat(defenceRamdom.base_Min, defenceRamdom.base_Max)
                 );
             data.lifeMaxBonus = new StatModifier(
                 Main.rand.NextFloat(lifeMaxRamdom.additive_Min, lifeMaxRamdom.additive_Max),
                 Main.rand.NextFloat(lifeMaxRamdom.multiplicative_Min, lifeMaxRamdom.multiplicative_Max),
-                Main.rand.NextFloat(lifeMaxRamdom.additive_Min, lifeMaxRamdom.additive_Max),
-                Main.rand.NextFloat(lifeMaxRamdom.additive_Min, lifeMaxRamdom.additive_Max)
+                Main.rand.NextFloat(lifeMaxRamdom.Flat_Min, lifeMaxRamdom.Flat_Max),
+                Main.rand.NextFloat(lifeMaxRamdom.base_Min, lifeMaxRamdom.base_Max)
                 );
 
-            data.scaleBonus=Main.rand.NextFloat(ScaleRange.Item1,ScaleRange.Item2);
+            data.scaleBonus = Main.rand.NextFloat(ScaleRange.Item1, ScaleRange.Item2);
 
-            return default;
+            return data;
         }
     }
 }

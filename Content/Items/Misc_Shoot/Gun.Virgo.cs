@@ -87,10 +87,9 @@ namespace Coralite.Content.Items.Misc_Shoot
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 8;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 8);
         }
-        
+
         public override void SetDefaults()
         {
             Projectile.DamageType = DamageClass.Ranged;

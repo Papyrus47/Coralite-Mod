@@ -9,3 +9,78 @@ MagikeSystem: {
 	FreosanBonus: 冻：攻击时生成冰块
 	HeatanBonus: 灼：攻击时生成灼火球
 }
+
+FairySystem: {
+	ZoneForest: 在地表森林捕获
+	WeakLevel: 软弱：{0}（基础 {1}）
+	VeryCommonLevel: 普通：{0}（基础 {1}）
+	CommonLevel: 普通：{0}（基础 {1}）
+	UncommonLevel: 少见：{0}（基础 {1}）
+	RareLevel: 稀有：{0}（基础 {1}）
+	SpecialLevel: 独特：{0}（基础 {1}）
+	UniqueLevel: 唯一：{0}（基础 {1}）
+	TimelessLevel: 永恒：{0}（基础 {1}）
+	FairyLifeMax: "[i:58]血量 "
+	FairyDamage: "[i:3507]伤害 "
+	FairyDefence: "[i:3811]防御 "
+	FairyScale: "[i:486]大小 "
+	CurrentLife: 当前生命值：{0} / {1}
+	ResurrectionTime: 复活时间：{0}
+	RarityC: 常见
+	RarityU: 不常见
+	RarityR: 稀有
+	RarityRR: 双倍稀有
+	RaritySR: 史诗
+	RarityUR: 神话
+	RarityRRR: 三倍稀有
+	RarityHR: 传说
+	RarityAR: 异类
+	RarityMR: 秘宝
+	RaritySP: 特殊
+	BottleCapacity: 容量 {0} / {1}
+	NotHaveLevel: 无：{0}（基础 {1}）
+	SeeMore: 按上键以查看雷达图（游戏暂停时无法使用）
+	ZoneRockLayer: 在洞穴中出现
+	ZoneBeach: 在海边出现
+	CatchPowerMult: "{0}捕捉力"
+	EternalLevel: 永恒：{0}（基础 {1}）
+	UncaughtMouseText:
+		'''
+		???
+		点击以查看捕获条件
+		'''
+	SelectButtonMouseText:
+		'''
+		左键单击以筛选指定稀有度的仙灵
+		右键恢复为显示全部
+		'''
+	SortButtonMouseText:
+		'''
+		左键单击以按指定规则排序
+		右键恢复为默认按内部ID排序
+		'''
+	SortByTypeText: 按内部ID排序
+	SortByRarityText: 按稀有度排序
+	SortByCaughtText: 按是否捕获排序
+	FairyTradeCondition: 使用妖精传送门进行交易
+}
+
+BossBarSystem.DontTakeDamage: 不可攻击！
+
+FlyingShieldSystem: {
+	FSDescriptionShort: 飞盾（按shift查看更多）
+	FSDescriptionLong:
+		'''
+		左键以丢出盾牌，右键进行防御
+		成功防御时会根据盾牌属性以及饰品加成获得短暂伤害减免
+		可以格挡敌怪或敌对弹幕
+		'''
+	ShieldPlusDescriptionShort: 盾+（按shift查看更多）
+	ShieldPlusDescriptionLong:
+		'''
+		左键正常使用武器，右键进行防御，特殊攻击键丢出盾牌
+		成功防御时会根据盾牌属性以及饰品加成获得短暂伤害减免
+		可以格挡敌怪或敌对弹幕
+		可以通过举盾来取消部分左键攻击的后摇
+		'''
+}

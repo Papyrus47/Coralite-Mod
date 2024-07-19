@@ -26,7 +26,7 @@ namespace Coralite.Content.Items.Phantom
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
-                cp.equippedPhantomMirror = true;
+                cp.AddEffect(nameof(PhantomMirror));
 
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<PhantomMirrorProj>()] == 0)
                 {
@@ -49,8 +49,7 @@ namespace Coralite.Content.Items.Phantom
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 7;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 7);
         }
 
         public override void SetDefaults()
@@ -81,7 +80,7 @@ namespace Coralite.Content.Items.Phantom
                 Projectile.localAI[0] = 1;
             }
 
-            if (owner.TryGetModPlayer(out CoralitePlayer cp) && cp.equippedPhantomMirror)
+            if (owner.TryGetModPlayer(out CoralitePlayer cp) && cp.HasEffect(nameof(PhantomMirror)))
                 Projectile.timeLeft = 2;
             else
             {

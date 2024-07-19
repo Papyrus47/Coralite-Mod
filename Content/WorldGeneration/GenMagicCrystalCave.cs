@@ -1,6 +1,5 @@
-﻿using Coralite.Content.Items.Magike;
-using Coralite.Content.Tiles.Magike;
-using Coralite.Content.Walls.Magike;
+﻿using Coralite.Content.Items.MagikeSeries1;
+using Coralite.Content.Tiles.MagikeSeries1;
 using Coralite.Content.WorldGeneration.Generators;
 using Coralite.Core;
 using Microsoft.Xna.Framework.Graphics;
@@ -366,7 +365,7 @@ namespace Coralite.Content.WorldGeneration
             };
             Dictionary<Color, int> wallDic = new Dictionary<Color, int>()
             {
-                [new Color(255, 255, 0)] = ModContent.WallType<HardBasaltWall>(),
+                [new Color(255, 255, 0)] = ModContent.WallType<Walls.Magike.HardBasaltWall>(),
                 [Color.Black] = -1
             };
 

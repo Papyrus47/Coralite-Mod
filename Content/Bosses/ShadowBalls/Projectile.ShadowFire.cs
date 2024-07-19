@@ -1,8 +1,8 @@
-﻿using Coralite.Content.WorldGeneration;
+﻿using Coralite.Content.Particles;
+using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 using Terraria;
 
 namespace Coralite.Content.Bosses.ShadowBalls

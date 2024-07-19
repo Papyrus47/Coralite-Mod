@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
+using Coralite.Helpers;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -25,7 +26,7 @@ namespace Coralite.Content.Items.Shadow
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
-                cp.equippedShadowMirror = true;
+                cp.AddEffect(nameof(ShadowMirror));
 
                 if (player.ownedProjectileCounts[ModContent.ProjectileType<ShadowMirrorProj>()] < 1)
                 {
@@ -60,8 +61,7 @@ namespace Coralite.Content.Items.Shadow
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 7;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 7);
         }
 
         public override void SetDefaults()
@@ -91,7 +91,7 @@ namespace Coralite.Content.Items.Shadow
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-            if (owner.TryGetModPlayer(out CoralitePlayer cp) && cp.equippedShadowMirror)
+            if (owner.TryGetModPlayer(out CoralitePlayer cp) && cp.HasEffect(nameof(ShadowMirror)))
                 Projectile.timeLeft = 2;
             else
             {
@@ -136,30 +136,30 @@ namespace Coralite.Content.Items.Shadow
         }
     }
 
-    public class ShadowTriangle : ModParticle
+    public class ShadowTriangle : Particle
     {
         public override string Texture => AssetDirectory.Particles + "Triangle";
 
-        public override void OnSpawn(Particle particle)
+        public override void OnSpawn()
         {
-            particle.rotation = Main.rand.NextFloat(6.282f);
-            particle.frame = new Rectangle(0, Main.rand.Next(0, 5) * 64, 64, 64);
+            Rotation = Main.rand.NextFloat(6.282f);
+            Frame = new Rectangle(0, Main.rand.Next(0, 5) * 64, 64, 64);
         }
 
-        public override void Update(Particle particle)
+        public override void Update()
         {
-            particle.rotation += 0.15f;
-            particle.scale *= 0.97f;
-            particle.color *= 0.92f;
+            Rotation += 0.15f;
+            Scale *= 0.97f;
+            color *= 0.92f;
 
-            particle.fadeIn++;
-            if (particle.fadeIn > 5)
+            fadeIn++;
+            if (fadeIn > 5)
             {
-                particle.velocity *= 0.97f;
+                Velocity *= 0.97f;
             }
-            if (particle.fadeIn > 40 || particle.color.A < 10)
+            if (fadeIn > 40 || color.A < 10)
             {
-                particle.active = false;
+                active = false;
             }
         }
     }

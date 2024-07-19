@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Biomes;
 using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
 using Coralite.Content.Items.CoreKeeper;
+using Coralite.Content.Items.Donator;
 using Coralite.Content.Items.FlyingShields;
 using Coralite.Content.Items.Gels;
 using Coralite.Content.Items.Materials;
@@ -9,6 +10,7 @@ using Coralite.Content.Items.Thunder;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core.Configs;
 using Coralite.Helpers;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -21,6 +23,10 @@ namespace Coralite.Content.NPCs.GlobalNPC
         public bool IvyPosion;
         public bool EuphorbiaPoison;
         public bool ThunderElectrified;
+        public bool PollenFire;
+
+        public bool StopHitPlayer;
+        public float SlowDownPercent;
 
         public override bool InstancePerEntity => true;
 
@@ -79,6 +85,17 @@ namespace Coralite.Content.NPCs.GlobalNPC
                     damage = 100 / 2;
             }
 
+            if (PollenFire)
+            {
+                if (npc.lifeRegen > 0)
+                    npc.lifeRegen = 0;
+
+                int damageCount = 2;
+                npc.lifeRegen -= damageCount * 8;
+                if (damage < damageCount)
+                    damage = damageCount;
+            }
+
             if (ThunderElectrified)
             {
                 if (npc.lifeRegen > 0)
@@ -98,11 +115,27 @@ namespace Coralite.Content.NPCs.GlobalNPC
             IvyPosion = false;
             EuphorbiaPoison = false;
             ThunderElectrified = false;
+            PollenFire = false;
+            StopHitPlayer = false;
+            SlowDownPercent = 0;
         }
 
-        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
+        public override void PostAI(NPC npc)
         {
-            base.EditSpawnRate(player, ref spawnRate, ref maxSpawns);
+            if (!npc.boss && SlowDownPercent > 0)
+            {
+                npc.velocity *= Helper.Lerp(SlowDownPercent, 1, Math.Clamp(1 - npc.knockBackResist, 0, 1));
+            }
+        }
+
+        public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
+        {
+            if (StopHitPlayer)
+            {
+                return false;
+            }
+
+            return base.CanHitPlayer(npc, target, ref cooldownSlot);
         }
 
         public override void ModifyShop(NPCShop shop)
@@ -187,6 +220,13 @@ namespace Coralite.Content.NPCs.GlobalNPC
             if (npc.HasBuff<ThunderWhipDebuff>())
                 modifiers.FlatBonusDamage += ThunderWhipDebuff.TagDamage * projTagMultiplier;
 
+            if (npc.HasBuff<FriedShrimpBuff>())
+            {
+                modifiers.FlatBonusDamage += FriedShrimpBuff.TagDamage * projTagMultiplier;
+                if (projectile.type == ProjectileType<ChocomintIceProj>())
+                    modifiers.ArmorPenetration += 10;
+            }
+
             if (npc.HasBuff<EdenDebuff>())
             {
                 modifiers.FlatBonusDamage += EdenDebuff.TagDamage * projTagMultiplier;
@@ -207,13 +247,13 @@ namespace Coralite.Content.NPCs.GlobalNPC
         {
             if (spawnInfo.Player.InModBiome<MagicCrystalCave>())
             {
-                pool[0] = 0.04f;
+                pool[0] = 0.5f;
             }
 
             if (spawnInfo.Player.InModBiome<ShadowCastleBiome>())
                 pool[0] = 0f;
 
-            if (CoraliteWorld.coralCatWorld && spawnInfo.Player.wet && spawnInfo.Player.position.Y < Main.worldSurface*16)
+            if (CoraliteWorld.coralCatWorld && spawnInfo.Player.wet && spawnInfo.Player.position.Y < Main.worldSurface * 16)
             {
                 pool.Add(NPCID.Shark, 1);
             }

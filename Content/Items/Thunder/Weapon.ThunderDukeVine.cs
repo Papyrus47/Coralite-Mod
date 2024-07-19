@@ -104,15 +104,10 @@ namespace Coralite.Content.Items.Thunder
         {
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override void GetFrame(Texture2D mainTex, out Rectangle? frame, out Vector2 origin)
         {
-            Texture2D mainTex = Projectile.GetTexture();
-
-            var frameBox = mainTex.Frame(1, 15, 0, (int)Frame);
-            var origin = frameBox.Size() / 2;
-            SpriteEffects effects = OwnerDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Main.spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, frameBox, lightColor, Projectile.rotation, origin, Projectile.scale, effects, 0f);
-            return false;
+            frame = mainTex.Frame(1, 15, 0, (int)Frame);
+            origin = frame.Value.Size() / 2;
         }
     }
 
@@ -130,7 +125,6 @@ namespace Coralite.Content.Items.Thunder
         public List<Vector2> laserTrailPoints = new List<Vector2>();
 
         public static Asset<Texture2D> gradientTex;
-
         public static Asset<Texture2D> laserTex;
         public static Asset<Texture2D> extraTex;
 
@@ -373,7 +367,6 @@ namespace Coralite.Content.Items.Thunder
 
         public void UpdateCachesNormally()
         {
-
             Vector2 dir = Projectile.rotation.ToRotationVector2();
             for (int i = 0; i < 100; i++)
             {

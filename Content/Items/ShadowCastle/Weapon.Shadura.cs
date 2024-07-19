@@ -115,7 +115,7 @@ namespace Coralite.Content.Items.ShadowCastle
         public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> GradientTexture;
 
-        public ShaduraSlash() : base(new Vector2(52, 56).ToRotation(), trailLength: 48) { }
+        public ShaduraSlash() : base(new Vector2(52, 56).ToRotation(), trailCount: 48) { }
 
         public int delay;
         public int alpha;
@@ -497,7 +497,7 @@ namespace Coralite.Content.Items.ShadowCastle
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -551,8 +551,7 @@ namespace Coralite.Content.Items.ShadowCastle
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 8;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 8);
         }
 
         public override void SetDefaults()

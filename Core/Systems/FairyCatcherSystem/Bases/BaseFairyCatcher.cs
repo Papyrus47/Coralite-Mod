@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.DamageClasses;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ModLoader.IO;
+using Terraria.ID;
 
 namespace Coralite.Core.Systems.FairyCatcherSystem.Bases
 {
@@ -10,25 +10,45 @@ namespace Coralite.Core.Systems.FairyCatcherSystem.Bases
         public override string Texture => AssetDirectory.FairyCatcherItems + Name;
 
         /// <summary>
-        /// 捕捉力
-        /// </summary>
-        public int catchPower;
-
-        /// <summary>
         /// 上一次射出的仙灵的index
         /// </summary>
         public int currentFairyIndex;
 
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.CanGetPrefixes[Type] = true;
+        }
+
         public sealed override void SetDefaults()
         {
-            Item.DamageType = ModContent.GetInstance<FairyDamage>();
+            Item.DamageType = FairyDamage.Instance;
+            Item.noMelee = true;
+            Item.noUseGraphic = true;
 
             SetOtherDefaults();
         }
 
         public virtual void SetOtherDefaults() { }
 
-        public override bool CanRightClick() => true;
+        public override bool AltFunctionUse(Player player) => true;
+
+        public override bool CanUseItem(Player player)
+        {
+            if (player.altFunctionUse == 2)
+            {
+                Item.noUseGraphic = true;
+                Item.useStyle = ItemUseStyleID.Shoot;
+            }
+            else
+                ModifyShootFairyStyle(player);
+
+            return true;
+        }
+
+        /// <summary>
+        /// 左键使用时触发，可以在此修改物品的<see cref="Item.useStyle"/>等
+        /// </summary>
+        public virtual void ModifyShootFairyStyle(Player player) { }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -38,10 +58,15 @@ namespace Coralite.Core.Systems.FairyCatcherSystem.Bases
                 return false;
             }
 
-            ModifyFairyStats(player,ref position,ref velocity);
+            ModifyFairyStats(player, ref position, ref velocity);
+
             if (player.TryGetModPlayer(out FairyCatcherPlayer fcp))
                 if (fcp.FairyShoot_GetFairyBottle(out IFairyBottle bottle))
-                    ShootFairy(bottle, player, source, position, velocity, (int)fcp.fairyCatchPowerBonus.ApplyTo(damage), knockback);
+                {
+                    float damage2 = damage;
+                    fcp.TotalCatchPowerBonus(ref damage2, Item);
+                    ShootFairy(bottle, player, source, position, velocity, (int)damage2, knockback);
+                }
 
             return false;
         }
@@ -51,7 +76,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem.Bases
         /// </summary>
         /// <param name="position"></param>
         /// <param name="player"></param>
-        public virtual void ModifyFairyStats(Player player, ref Vector2 position,ref Vector2 velocity)
+        public virtual void ModifyFairyStats(Player player, ref Vector2 position, ref Vector2 velocity)
         {
 
         }
@@ -82,17 +107,14 @@ namespace Coralite.Core.Systems.FairyCatcherSystem.Bases
 
             for (int i = 0; i < fairies.Length; i++)
             {
-                Item item = fairies[currentFairyIndex];
-                if (item.ModItem is IFairyItem fairyItem)
-                {
-                    if (fairyItem.ShootFairy(player, source, position, velocity, damage, knockback))
-                        break;
-                }
-
                 currentFairyIndex++;
                 if (currentFairyIndex > fairies.Length - 1)
-                {
                     currentFairyIndex = 0;
+
+                if (bottle.CanShootFairy(currentFairyIndex, out IFairyItem fairyItem))
+                {
+                    if (bottle.ShootFairy(currentFairyIndex, player, source, position, velocity, damage + (int)fairyItem.FairyDamage, knockback))
+                        break;
                 }
             }
         }

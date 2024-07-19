@@ -11,13 +11,13 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
                 new (float, Color, LocalizedText)[]
                 {
                     (0.9f,Color.Gray,FairySystem.WeakLevel),
-                    (1,Color.Brown,FairySystem.VeryCommonLevel),
+                    (1,FairySystem.VeryCommonLevel_Brown,FairySystem.VeryCommonLevel),
                     (1.15f,Color.White,FairySystem.CommonLevel),
-                    (1.3f,Color.CornflowerBlue,FairySystem.UncommonLevel),
-                    (1.45f,Color.LightSeaGreen,FairySystem.RareLevel),
+                    (1.3f,Color.LawnGreen,FairySystem.UncommonLevel),
+                    (1.45f,Color.DodgerBlue,FairySystem.RareLevel),
                     (1.6f,Color.Yellow,FairySystem.SpecialLevel),
-                    (1.75f,Color.Pink,FairySystem.UniqueLevel),
-                    (float.MaxValue,Color.Orange,FairySystem.TimelessLevel),
+                    (1.75f,Color.HotPink,FairySystem.UniqueLevel),
+                    (float.MaxValue,Color.Orange,FairySystem.EternalLevel),
                 }
             );
 
@@ -26,13 +26,13 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
                 new (float, Color, LocalizedText)[]
                 {
                     (0.9f,Color.Gray,FairySystem.WeakLevel),
-                    (1,Color.Brown,FairySystem.VeryCommonLevel),
+                    (1,FairySystem.VeryCommonLevel_Brown,FairySystem.VeryCommonLevel),
                     (1.1f,Color.White,FairySystem.CommonLevel),
-                    (1.2f,Color.CornflowerBlue,FairySystem.UncommonLevel),
-                    (1.3f,Color.LightSeaGreen,FairySystem.RareLevel),
+                    (1.2f,Color.LawnGreen,FairySystem.UncommonLevel),
+                    (1.3f,Color.DodgerBlue,FairySystem.RareLevel),
                     (1.4f,Color.Yellow,FairySystem.SpecialLevel),
-                    (1.5f,Color.Pink,FairySystem.UniqueLevel),
-                    (float.MaxValue,Color.Orange,FairySystem.TimelessLevel),
+                    (1.5f,Color.HotPink,FairySystem.UniqueLevel),
+                    (float.MaxValue,Color.Orange,FairySystem.EternalLevel),
                 }
             );
 
@@ -41,13 +41,13 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
                 new (float, Color, LocalizedText)[]
                 {
                     (0.9f,Color.Gray,FairySystem.WeakLevel),
-                    (1,Color.Brown,FairySystem.VeryCommonLevel),
+                    (1,FairySystem.VeryCommonLevel_Brown,FairySystem.VeryCommonLevel),
                     (1.25f,Color.White,FairySystem.CommonLevel),
-                    (1.5f,Color.CornflowerBlue,FairySystem.UncommonLevel),
-                    (1.75f,Color.LightSeaGreen,FairySystem.RareLevel),
+                    (1.5f,Color.LawnGreen,FairySystem.UncommonLevel),
+                    (1.75f,Color.DodgerBlue,FairySystem.RareLevel),
                     (2f,Color.Yellow,FairySystem.SpecialLevel),
-                    (2.25f,Color.Pink,FairySystem.UniqueLevel),
-                    (float.MaxValue,Color.Orange,FairySystem.TimelessLevel),
+                    (2.25f,Color.HotPink,FairySystem.UniqueLevel),
+                    (float.MaxValue,Color.Orange,FairySystem.EternalLevel),
                 }
             );
 
@@ -63,6 +63,10 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
         }
 
         public readonly (Color, LocalizedText) GetAppraiseResult(float baseValue, float scaledValue)
-            => GetAppraiseResult(scaledValue / baseValue);
+        {
+            if (baseValue == 0)
+                return (Color.White, FairySystem.NotHaveLevel);
+            return GetAppraiseResult(scaledValue / baseValue);
+        }
     }
 }

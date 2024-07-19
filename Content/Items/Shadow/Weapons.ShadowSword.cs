@@ -80,7 +80,7 @@ namespace Coralite.Content.Items.Shadow
         public static Asset<Texture2D> GradientTexture;
         public int alpha;
 
-        public ShadowSwordHeldProj() : base(MathHelper.PiOver4, trailLength: 34) { }
+        public ShadowSwordHeldProj() : base(MathHelper.PiOver4, trailCount: 34) { }
 
         public override void SetDefs()
         {
@@ -182,7 +182,7 @@ namespace Coralite.Content.Items.Shadow
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;

@@ -1,5 +1,6 @@
-﻿using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Content.Projectiles.Globals;
+using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +23,7 @@ namespace Coralite.Content.Items.FlyingShields
             Item.knockBack = 7;
             Item.shootSpeed = 14;
             Item.damage = 27;
+            CoraliteGlobalItem.SetEdibleDamage(Item);
         }
     }
 
@@ -37,11 +39,12 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetOtherValues()
         {
-            flyingTime = 24;
+            flyingTime = 22;
             backTime = 4;
             backSpeed = 14;
             trailCachesLength = 6;
             maxJump++;
+            CoraliteGlobalProjectile.SetEdibleDamage(Projectile);
         }
 
         public override void OnShootDusts()
@@ -85,6 +88,7 @@ namespace Coralite.Content.Items.FlyingShields
             base.SetDefaults();
             Projectile.width = 34;
             Projectile.height = 38;
+            CoraliteGlobalProjectile.SetEdibleDamage(Projectile);
         }
 
         public override void SetOtherValues()

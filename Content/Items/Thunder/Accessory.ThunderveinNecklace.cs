@@ -23,9 +23,7 @@ namespace Coralite.Content.Items.Thunder
             player.buffImmune[ModContent.BuffType<ThunderElectrified>()] = true;
             player.GetArmorPenetration(DamageClass.Generic) += 7;
             if (player.TryGetModPlayer(out CoralitePlayer cp))
-            {
-                cp.equippedThunderveinNecklace = true;
-            }
+                cp.AddEffect(nameof(ThunderveinNecklace));
         }
     }
 }

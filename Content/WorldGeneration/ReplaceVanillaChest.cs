@@ -1,8 +1,7 @@
-﻿using Coralite.Content.Items.Accessories;
-using Coralite.Content.Items.Accessories.FlyingShields;
+﻿using Coralite.Content.Items.FlyingShields.Accessories;
 using Coralite.Content.Items.Magike;
-using Coralite.Content.Items.Magike.Tools;
-using Coralite.Content.Tiles.Magike;
+using Coralite.Content.Items.MagikeSeries1;
+using Coralite.Content.Tiles.MagikeSeries1;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -78,6 +77,13 @@ namespace Coralite.Content.WorldGeneration
                                                 if (item.IsAir)
                                                 {
                                                     item.SetDefaults(ModContent.ItemType<FlyingShieldMaintenanceGuide>());
+                                                    break;
+                                                }
+                                        if (WorldGen.genRand.NextBool(10, 100))
+                                            foreach (var item in chest.item)
+                                                if (item.IsAir)
+                                                {
+                                                    item.SetDefaults(ModContent.ItemType<FlyingShieldBattleGuide>());
                                                     break;
                                                 }
                                     }

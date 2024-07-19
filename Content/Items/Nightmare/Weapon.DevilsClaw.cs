@@ -94,8 +94,7 @@ namespace Coralite.Content.Items.Nightmare
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 7;
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 6;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 6);
         }
 
         public override void SetDefaults()
@@ -142,14 +141,7 @@ namespace Coralite.Content.Items.Nightmare
                 init = false;
             }
 
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3)
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-                if (Projectile.frame > 6)
-                    Projectile.frame = 0;
-            }
+            Projectile.UpdateFrameNormally(3, 6);
 
             if (Main.rand.NextBool(4))
             {

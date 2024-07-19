@@ -36,7 +36,7 @@ namespace Coralite.Content.WorldGeneration
 
         public static void ObjectPlace(int x, int y, int TileType, int style = 0, int direction = -1)
         {
-            WorldGen.PlaceObject(x, y, TileType, true, style, 0, -1, direction);
+            WorldGen.PlaceObject(x, y, TileType, false, style, 0, -1, direction);
             NetMessage.SendObjectPlacement(-1, x, y, TileType, style, 0, -1, direction);
         }
 
@@ -141,7 +141,7 @@ namespace Coralite.Content.WorldGeneration
         /// <param name="tileType">物块种类</param>
         /// <param name="random">决定是否生成的随机数，越大越难生成</param>
         /// <param name="bottomTileType">底部物块种类，如有需要的话</param>
-        public static void PlaceOnGroundDecorations_NoCheck(int origin_x, int origin_y, int startX, int startY, int endX, int endY, ushort tileType,Func<int> direction, int random = 10, int style = 0)
+        public static void PlaceOnGroundDecorations_NoCheck(int origin_x, int origin_y, int startX, int startY, int endX, int endY, ushort tileType, Func<int> direction, int random = 10, int style = 0)
         {
             TileObjectData data = TileObjectData.GetTileData(tileType, style);
             int randomTile = data == null ? 1 : data.RandomStyleRange;
@@ -159,7 +159,7 @@ namespace Coralite.Content.WorldGeneration
                             currentStyle = 0;
                         else
                             currentStyle = WorldGen.genRand.Next(0, randomTile);
-                        ObjectPlace(current_x, current_y, tileType, currentStyle,direction());
+                        ObjectPlace(current_x, current_y, tileType, currentStyle, direction());
                     }
 
                 }
@@ -367,7 +367,7 @@ namespace Coralite.Content.WorldGeneration
                     {
                         int xs = x;
                         int ys = y;
-                        Vector2 newPos = TileHelper.FindTopLeft(xs, ys);    //找到左上角
+                        Vector2 newPos = Helper.FindTopLeft(xs, ys);    //找到左上角
                         for (int x1 = 0; x1 < width; x1++)      //把原有物块清了
                             for (int y1 = 0; y1 < height; y1++)
                             {

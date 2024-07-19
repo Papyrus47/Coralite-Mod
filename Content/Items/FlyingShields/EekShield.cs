@@ -1,5 +1,4 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
@@ -146,7 +145,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetStaticDefaults()
         {
-            Helper.QuickSetTrailSets(Type, 2, 6);
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 6);
         }
 
         public override void SetDefaults()

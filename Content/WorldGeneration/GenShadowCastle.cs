@@ -1,11 +1,9 @@
 ﻿using Coralite.Content.Items.ShadowCastle;
 using Coralite.Content.Tiles.ShadowCastle;
-using Coralite.Content.UI;
 using Coralite.Content.WorldGeneration.Generators;
 using Coralite.Content.WorldGeneration.ShadowCastleRooms;
 using Coralite.Core;
 using Coralite.Helpers;
-using Iced.Intel;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Utilities;
@@ -37,12 +35,13 @@ namespace Coralite.Content.WorldGeneration
         {
             get
             {
-                return CoraliteWorldSettings.DungeonType switch
-                {
-                    CoraliteWorldSettings.WorldDungeonID.Random => Main.rand.NextBool(),
-                    CoraliteWorldSettings.WorldDungeonID.ShadowCastle => true,
-                    _ => false,
-                };
+                return false;
+                //return CoraliteWorldSettings.DungeonType switch
+                //{
+                //    CoraliteWorldSettings.WorldDungeonID.Random => Main.rand.NextBool(),
+                //    CoraliteWorldSettings.WorldDungeonID.ShadowCastle => true,
+                //    _ => false,
+                //};
             }
         }
 
@@ -230,9 +229,62 @@ namespace Coralite.Content.WorldGeneration
                 bossRoom.PostGenerateSelf();
 
                 #endregion
+
+                PlacePot();
                 break;
             }
         }
+
+        public static void PlacePot()
+        {
+            int tileType = ModContent.TileType<PorcelainPot>();
+
+            TileObjectData data = TileObjectData.GetTileData(tileType, 0);
+            int width = data == null ? 1 : data.Width;
+            int height = data == null ? 1 : data.Height;
+
+            int origin_x = shadowCastleRestraint.X;
+            int origin_y = shadowCastleRestraint.Y;
+
+            for (int i = 0; i < shadowCastleRestraint.Width; i++)
+                for (int j = 0; j < shadowCastleRestraint.Height; j++)
+                {
+                    Tile tile;
+                    int current_x = origin_x + i;
+                    int current_y = origin_y + j;
+                    //for (int m = 0; m < width; m++)
+                    //{
+                    //    tile = Framing.GetTileSafely(current_x + m, current_y + 1);
+                    //    if (!tile.HasTile || tile.Slope is SlopeType.SlopeUpLeft or SlopeType.SlopeUpRight)
+                    //        goto over1;
+
+                    //    if (!CoraliteSets.TileShadowCastle[tile.TileType])
+                    //        goto over1;
+                    //}
+
+                    tile = Framing.GetTileSafely(current_x, current_y);
+                    if (tile.HasTile || !CoraliteSets.WallShadowCastle[tile.WallType])
+                        goto over1;
+
+                    //for (int m = 0; m < width; m++)
+                    //    for (int n = 0; n < height; n++)
+                    //    {
+                    //        tile = Framing.GetTileSafely(current_x + m, current_y + n);
+                    //        if (tile.HasTile || !CoraliteSets.WallShadowCastle[tile.WallType])
+                    //            goto over1;
+                    //    }
+
+                    //添加一些随机性
+                    if (WorldGen.genRand.NextBool(30))
+                    {
+                        int currentStyle = WorldGen.genRand.Next(9);
+                        WorldGenHelper.ObjectPlace(current_x, current_y, tileType, currentStyle);
+                    }
+
+                over1: continue;             //<--因为不知道有没有什么办法直接跳出2层for，索性写了个goto
+                }
+        }
+
 
         #region 原版地牢
         public static void MakeDungeon(int x, int y)
@@ -4592,7 +4644,7 @@ namespace Coralite.Content.WorldGeneration
                             //当前的y位置
                             int currentY = startPoint.Y + y * dir;
                             int baseX = (int)Math.Round(Helper.Lerp(startPoint.X, endPoint.X, y / (float)(count - 1)));
-                            for (int x = 0; x < CorridorHeight + WallWidth * 2+1; x++)
+                            for (int x = 0; x < CorridorHeight + WallWidth * 2 + 1; x++)
                             {
                                 int currentX = baseX + x;
 
@@ -4638,7 +4690,7 @@ namespace Coralite.Content.WorldGeneration
                             int currentX = startPoint.X + x * dir;
                             int baseY = (int)Math.Round(Helper.Lerp(startPoint.Y, endPoint.Y, x / (float)(count - 1)));
 
-                            for (int y = 0; y < CorridorHeight + WallWidth * 2+1; y++)
+                            for (int y = 0; y < CorridorHeight + WallWidth * 2 + 1; y++)
                             {
                                 int currentY = baseY + y;
 
@@ -4782,7 +4834,7 @@ namespace Coralite.Content.WorldGeneration
                     //添加一些随机性
                     if (WorldGen.genRand.NextBool(random))
                     {
-                        int currentStyle = WorldGen.genRand.Next( 4);
+                        int currentStyle = WorldGen.genRand.Next(4);
                         WorldGenHelper.ObjectPlace(current_x, current_y, tileType, currentStyle);
                     }
 

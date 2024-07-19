@@ -1,4 +1,5 @@
-﻿using Coralite.Core;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Prefabs.Projectiles;
@@ -31,13 +32,14 @@ namespace Coralite.Content.Items.Icicle
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.DamageType = DamageClass.Ranged;
             Item.value = Item.sellPrice(0, 5, 0, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarityID.Green;
             Item.shoot = ProjectileType<IcicleKnief>();
             Item.shootSpeed = 14;
 
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -74,7 +76,8 @@ namespace Coralite.Content.Items.Icicle
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient<IcicleCrystal>(2)
+                .AddIngredient<IcicleCrystal>()
+                .AddIngredient<IcicleScale>(2)
                 .AddIngredient(ItemID.WhiteString)
                 .AddTile(TileID.IceMachine)
                 .Register();
@@ -91,6 +94,7 @@ namespace Coralite.Content.Items.Icicle
             Projectile.timeLeft = 600;
             Projectile.aiStyle = -1;
 
+            Projectile.coldDamage = true;
             Projectile.friendly = true;
             Projectile.ignoreWater = false;
             Projectile.tileCollide = true;
@@ -165,6 +169,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.usesLocalNPCImmunity = false;
             Projectile.localNPCHitCooldown = 20;
             Projectile.width = Projectile.height = 32;

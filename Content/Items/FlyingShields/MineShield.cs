@@ -1,6 +1,5 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
 using Terraria;
@@ -121,7 +120,7 @@ namespace Coralite.Content.Items.FlyingShields
                     Projectile.localNPCImmunity[i] = Projectile.localNPCHitCooldown;
                     if (!npc.dontTakeDamage)
                         npc.SimpleStrikeNPC(Projectile.damage, Projectile.direction, knockBack: Projectile.knockBack, damageType: DamageClass.Melee);
-                    
+
                     index = i;
                     return (int)GuardType.NPC;
                 }

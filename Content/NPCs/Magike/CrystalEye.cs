@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Biomes;
-using Coralite.Content.Items.Magike;
-using Coralite.Content.Items.Magike.OtherPlaceables;
+using Coralite.Content.Items.Banner;
+using Coralite.Content.Items.LandOfTheLustrousSeries;
+using Coralite.Content.Items.MagikeSeries1;
 using Coralite.Core;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -19,6 +20,9 @@ namespace Coralite.Content.NPCs.Magike
 
         public override void SetDefaults()
         {
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<CrystalEyeBannerItem>();
+
             NPC.CloneDefaults(NPCID.DemonEye);
             NPC.damage = 12;
             NPC.lifeMax = 50;
@@ -79,6 +83,9 @@ namespace Coralite.Content.NPCs.Magike
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Basalt>(), 4, 1, 4));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicCrystal>(), 4, 1, 2));
+
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PrimaryRoughGemstone>(), 12));
+            npcLoot.Add(ItemDropRule.ByCondition(new Conditions.IsHardmode(), ModContent.ItemType<SeniorRoughGemstone>(), 12));
         }
     }
 }

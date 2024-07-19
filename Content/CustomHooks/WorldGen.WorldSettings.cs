@@ -1,7 +1,5 @@
 ﻿using Coralite.Content.UI;
 using Coralite.Content.WorldGeneration;
-using System;
-using System.Reflection;
 using Terraria;
 using Terraria.GameContent.UI.States;
 using Terraria.UI;
@@ -14,7 +12,7 @@ namespace Coralite.Content.CustomHooks
         {
             On_UIWorldCreation.ProcessSpecialWorldSeeds += On_UIWorldCreation_ProcessSpecialWorldSeeds;
             On_UIWorldCreation.ProcessSeed += On_UIWorldCreation_ProcessSeed;
-            On_UIWorldSelect.NewWorldClick += On_UIWorldSelect_NewWorldClick;
+            //On_UIWorldSelect.NewWorldClick += On_UIWorldSelect_NewWorldClick;
             //On_UIWorldCreation.Click_GoBack += On_UIWorldCreation_Click_GoBack;
             //On_UIWorldCreation.Click_NamingAndCreating += On_UIWorldCreation_Click_NamingAndCreating;
         }
@@ -23,7 +21,7 @@ namespace Coralite.Content.CustomHooks
         {
             On_UIWorldCreation.ProcessSpecialWorldSeeds -= On_UIWorldCreation_ProcessSpecialWorldSeeds;
             On_UIWorldCreation.ProcessSeed -= On_UIWorldCreation_ProcessSeed;
-            On_UIWorldSelect.NewWorldClick -= On_UIWorldSelect_NewWorldClick;
+            //On_UIWorldSelect.NewWorldClick -= On_UIWorldSelect_NewWorldClick;
             //On_UIWorldCreation.Click_GoBack -= On_UIWorldCreation_Click_GoBack;
             //On_UIWorldCreation.Click_NamingAndCreating -= On_UIWorldCreation_Click_NamingAndCreating;
         }
@@ -100,7 +98,7 @@ namespace Coralite.Content.CustomHooks
         {
             orig.Invoke(self, out processedSeed);
 
-            if (CoraliteWorld.coralCatWorld&& Main.MenuUI.CurrentState is UIWorldCreation worldCreation)
+            if (CoraliteWorld.coralCatWorld && Main.MenuUI.CurrentState is UIWorldCreation worldCreation)
             {
                 processedSeed = Main.rand.Next().ToString();
             }

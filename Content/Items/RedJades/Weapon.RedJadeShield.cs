@@ -1,5 +1,4 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
 using Terraria;
@@ -45,7 +44,7 @@ namespace Coralite.Content.Items.RedJades
         {
             flyingTime = 23;
             backTime = 5;
-            backSpeed = 14f;
+            backSpeed = 14.5f;
             trailCachesLength = 9;
             trailWidth = 22 / 2;
         }

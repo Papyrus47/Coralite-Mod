@@ -47,11 +47,16 @@ namespace Coralite.Content.Items.CoreKeeper
             }
         }
 
+        public override void ClonePolish(Item item)
+        {
+            item.rare = RarityType<EpicRarity>();
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (polished)
             {
-                player.GetDamage(DamageClass.Ranged) += 0.89f;
+                player.GetDamage(DamageClass.Ranged) += 0.089f;
                 player.GetAttackSpeed(DamageClass.Ranged) += 0.04f;
             }
             else

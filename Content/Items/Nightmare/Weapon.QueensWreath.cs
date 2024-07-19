@@ -895,8 +895,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 14;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 14);
             Main.projFrames[Projectile.type] = 6;
         }
 
@@ -940,13 +939,7 @@ namespace Coralite.Content.Items.Nightmare
                 Projectile.localAI[0] = 1;
             }
 
-            if (++Projectile.frameCounter > 16)//帧图
-            {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-                if (++Projectile.frame > Main.projFrames[Projectile.type] - 1)
-                    Projectile.frame = 0;
-            }
+            Projectile.UpdateFrameNormally(16, Main.projFrames[Projectile.type] - 1);
 
             Projectile.rotation = Projectile.velocity.ToRotation();
 

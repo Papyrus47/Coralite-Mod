@@ -1,6 +1,5 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
@@ -36,7 +35,7 @@ namespace Coralite.Content.Items.FlyingShields
                 .Register();
         }
 
-        public bool Dash(Player Player, int DashDir)
+        public override bool Dash(Player Player, int DashDir)
         {
             Vector2 newVelocity = Player.velocity;
             switch (DashDir)
@@ -172,8 +171,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 8;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 8);
         }
 
         public override void SetDefaults()

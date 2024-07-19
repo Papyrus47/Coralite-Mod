@@ -1,3 +1,4 @@
+using Coralite.Content.Items.GlobalItems;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Terraria;
@@ -16,15 +17,14 @@ namespace Coralite.Content.Items.Icicle
         {
             Item.width = Item.height = 40;
             Item.damage = 23;
-            Item.useTime = 22;
-            Item.useAnimation = 22;
+            Item.useTime = Item.useAnimation = 26;
             Item.knockBack = 3f;
 
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.DamageType = DamageClass.Ranged;
             Item.useAmmo = AmmoID.Arrow;
-            Item.value = Item.sellPrice(0, 1, 0, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.value = Item.sellPrice(0, 1);
+            Item.rare = ItemRarityID.Green;
             Item.shoot = ProjectileType<IcicleBowHeldProj>();
             Item.UseSound = CoraliteSoundID.Bow_Item5;
 
@@ -33,6 +33,7 @@ namespace Coralite.Content.Items.Icicle
             Item.noMelee = true;
             Item.autoReuse = true;
             Item.channel = true;
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -52,6 +53,7 @@ namespace Coralite.Content.Items.Icicle
         {
             CreateRecipe()
             .AddIngredient<IcicleCrystal>(2)
+            .AddIngredient<IcicleScale>(2)
             .AddTile(TileID.IceMachine)
             .Register();
         }
@@ -99,7 +101,7 @@ namespace Coralite.Content.Items.Icicle
                 }
 
                 //生成手持弹幕
-                Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, Vector2.Zero, ModContent.ProjectileType<IcicleBowHeldProj>(),
+                Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, Vector2.Zero, ProjectileType<IcicleBowHeldProj>(),
                     Player.HeldItem.damage, Player.HeldItem.knockBack, Player.whoAmI, (Main.MouseWorld - Player.Center).ToRotation(), 1);
             }
 

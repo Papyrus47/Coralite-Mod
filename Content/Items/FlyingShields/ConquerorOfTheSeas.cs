@@ -1,5 +1,4 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
@@ -192,7 +191,7 @@ namespace Coralite.Content.Items.FlyingShields
         public ref float Combo => ref Projectile.ai[0];
         public ref float StartAngle => ref Projectile.ai[1];
 
-        public ConquerorSlash() : base(-MathHelper.PiOver2, trailLength: 35) { }
+        public ConquerorSlash() : base(-MathHelper.PiOver2, trailCount: 35) { }
 
         public int delay;
         public int alpha;
@@ -220,8 +219,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailCacheLength[Type] = 10;
-            ProjectileID.Sets.TrailingMode[Type] = 4;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAllAndFollowPlayer, 10);
         }
 
         public override void SetDefs()
@@ -341,7 +339,7 @@ namespace Coralite.Content.Items.FlyingShields
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -391,8 +389,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 6;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 6);
         }
 
         public override void SetDefaults()

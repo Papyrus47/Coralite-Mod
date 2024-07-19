@@ -13,9 +13,9 @@ namespace Coralite.Content.Items.Thunder
 
         public override void SetDefaults()
         {
-            Item.damage = 65;
-            Item.useTime = 24;
-            Item.useAnimation = 24;
+            Item.damage = 68;
+            Item.useTime = 22;
+            Item.useAnimation = 22;
             Item.knockBack = 7;
             Item.shootSpeed = 15f;
             Item.crit = 10;
@@ -68,8 +68,7 @@ namespace Coralite.Content.Items.Thunder
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.TrailingMode[Type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Type] = 10;
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 10);
         }
 
         public override void SetDefaults()

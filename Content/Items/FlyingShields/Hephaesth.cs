@@ -1,9 +1,8 @@
-﻿using Coralite.Content.Bosses.ShadowBalls;
-using Coralite.Content.Items.RedJades;
+﻿using Coralite.Content.Items.RedJades;
 using Coralite.Content.ModPlayers;
+using Coralite.Content.Particles;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
@@ -11,7 +10,6 @@ using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -21,7 +19,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.FlyingShields
 {
-    public class Hephaesth : BaseFlyingShieldItem<HephaesthGuard>
+    public class Hephaesth : BaseFlyingShieldItem<HephaesthGuard>, IInventoryCraftStation
     {
         public Hephaesth() : base(Item.sellPrice(0, 40), ItemRarityID.Red, AssetDirectory.FlyingShieldItems)
         { }
@@ -78,6 +76,22 @@ namespace Coralite.Content.Items.FlyingShields
             return base.CanUseItem(player);
         }
 
+        public override void UpdateInventory(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+                cp.inventoryCraftStations.Add(this);
+        }
+
+        public void AdjTiles(Player player)
+        {
+            //player.adjTile[TileID.Furnaces] = true;
+            //player.adjTile[TileID.Hellforge] = true;
+            //player.adjTile[TileID.AdamantiteForge] = true;
+            //player.adjTile[TileID.LunarCraftingStation] = true;
+            TileLoader.AdjTiles(player, ModContent.TileType<AncientFurnaceTile>());
+            player.adjTile[ModContent.TileType<AncientFurnaceTile>()] = true;
+        }
+
         public override void LeftShoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 velocity, int type, int damage, float knockback)
         {
             if (BurstTime < 1)
@@ -89,7 +103,7 @@ namespace Coralite.Content.Items.FlyingShields
                 , damage, knockback, player.whoAmI, ai2: BurstTime > 0 ? 1 : 0);
         }
 
-        public override void RightShoot(Player player, EntitySource_ItemUse_WithAmmo source, int damage)
+        public override void RightShoot(Player player, IEntitySource source, int damage)
         {
             Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<HephaesthGuard>()
                 , (int)(damage * 0.9f), 6, player.whoAmI, ai2: BurstTime > 0 ? 1 : 0);
@@ -840,10 +854,10 @@ namespace Coralite.Content.Items.FlyingShields
                 float a = 1;
                 Color c = GetColor(ref a);
                 Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, pos, Color.White * 0.5f, c * 0.7f,
-                    Timer / flyingTime, 0.7f, 0.8f, 0.9f, 1, MathHelper.PiOver4
+                    Timer / flyingTime, 0f, 0.3f, 0.8f, 1, MathHelper.PiOver4
                     , new Vector2(3.5f, 1.5f), Vector2.One);
                 Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, pos, Color.White, c,
-                    Timer / flyingTime, 0.6f, 0.7f, 0.8f, 0.9f, MathHelper.PiOver4
+                    Timer / flyingTime, 0.4f, 0.6f, 0.9f, 1f, MathHelper.PiOver4
                     , new Vector2(1.5f, 3.5f), Vector2.One);
             }
         }

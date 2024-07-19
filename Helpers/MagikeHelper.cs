@@ -1,5 +1,8 @@
-﻿using Coralite.Core.Systems.MagikeSystem;
+﻿using Coralite.Core.Systems.CoraliteActorComponent;
+using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.Base;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -12,6 +15,134 @@ namespace Coralite.Helpers
         public static MagikeItem GetMagikeItem(this Item item)
         {
             return item.GetGlobalItem<MagikeItem>();
+        }
+
+        /// <summary>
+        /// 从实体上获取魔能容器，请使用<see cref="IsMagikeContainer(IEntity)"/>来检测是否为魔能容器
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static Core.Systems.MagikeSystem.Components.MagikeContainer GetMagikeContainer(this IEntity entity)
+            => entity.GetSingleComponent(MagikeComponentID.MagikeContainer) as Core.Systems.MagikeSystem.Components.MagikeContainer;
+
+        /// <summary>
+        /// 检测实体是否是一个魔能容器
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static bool IsMagikeContainer(this IEntity entity)
+            => entity.HasComponent(MagikeComponentID.MagikeContainer);
+
+        /// <summary>
+        /// 尝试从<see cref="TileEntity"/>种获取<see cref="IEntity"/><br></br>
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static bool TryGetEntity(int i, int j, out BaseMagikeTileEntity entity)
+        {
+            entity = null;
+
+            Point16? topLeft = ToTopLeft(i, j);
+            if (!topLeft.HasValue)
+                return false;
+
+            if (!TryGetEntity(topLeft.Value, out BaseMagikeTileEntity tempEntity))
+                return false;
+
+            entity = tempEntity;
+            return true;
+        }
+
+        /// <summary>
+        /// 尝试从<see cref="TileEntity"/>种获取<see cref="IEntity"/><br></br>
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static bool TryGetEntity(Point16 position, out BaseMagikeTileEntity entity)
+        {
+            entity = null;
+            if (!TileEntity.ByPosition.TryGetValue(position, out TileEntity tileEntity))
+                return false;
+
+            if (tileEntity is not BaseMagikeTileEntity entity1)
+                return false;
+
+            entity = entity1;
+            return true;
+        }
+
+        /// <summary>
+        /// 尝试获取带指定组件的实体
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="componentType"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static bool TryGetEntityWithComponent(int i, int j, int componentType, out BaseMagikeTileEntity entity)
+        {
+            entity = null;
+
+            if (!TryGetEntity(i, j, out BaseMagikeTileEntity tempEntity))
+                return false;
+
+            if (!((IEntity)tempEntity).HasComponent(componentType))
+                return false;
+
+            entity = tempEntity;
+            return true;
+        }
+
+        /// <summary>
+        /// 尝试获取带指定组件的实体，同时限定基类
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <param name="componentType"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public static bool TryGetEntityWithComponent<T>(int i, int j, int componentType, out BaseMagikeTileEntity entity)
+            where T : Component
+        {
+            entity = null;
+
+            if (!TryGetEntityWithComponent(i, j, componentType, out BaseMagikeTileEntity tempEntity))
+                return false;
+
+            if (!tempEntity.Components[componentType].Any(c => c is T))
+                return false;
+
+            entity = tempEntity;
+            return true;
+        }
+
+        /// <summary>
+        /// 使用两个位置数位置获取物块左上角的位置
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
+        public static Point16? ToTopLeft(int i,int j)
+        {
+            Tile tile = Framing.GetTileSafely(i, j);
+            if (!tile.HasTile)
+                return null;
+
+            TileObjectData data = TileObjectData.GetTileData(tile);
+            int frameX = tile.TileFrameX;
+            int frameY = tile.TileFrameY;
+            if (data != null)
+            {
+                frameX %= data.Width * 18;
+                frameY %= data.Height * 18;
+            }
+
+            int x = frameX / 18;
+            int y = frameY / 18;
+            return  new Point16(i - x, j - y);
         }
 
         public static void SpawnDustOnSend(int selfWidth, int selfHeight, Point16 Position, IMagikeContainer container, Color dustColor, int dustType = DustID.Teleporter)
@@ -95,7 +226,7 @@ namespace Coralite.Helpers
             int y = frameY / 18;
             Point16 position = new Point16(i - x, j - y);
 
-            if (TileEntity.ByPosition.ContainsKey(position) && TileEntity.ByPosition[position] is T tEntity)
+            if (TileEntity.ByPosition.TryGetValue(position, out TileEntity value) && value is T tEntity)
             {
                 entity = tEntity;
                 return true;
@@ -109,7 +240,7 @@ namespace Coralite.Helpers
         {
             Point16 position = new Point16(top, left);
 
-            if (TileEntity.ByPosition.ContainsKey(position) && TileEntity.ByPosition[position] is T tEntity)
+            if (TileEntity.ByPosition.TryGetValue(position, out TileEntity value) && value is T tEntity)
             {
                 entity = tEntity;
                 return true;

@@ -77,7 +77,7 @@ namespace Coralite.Content.Items.Nightmare
         public ref float Combo => ref Projectile.ai[0];
         public int alpha;
 
-        public LullabySlash() : base(MathF.Atan(46f / 52f), trailLength: 34) { }
+        public LullabySlash() : base(MathF.Atan(46f / 52f), trailCount: 34) { }
 
         public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
@@ -159,9 +159,9 @@ namespace Coralite.Content.Items.Nightmare
 
             if (useShadowTrail || useSlashTrail)
             {
-                oldRotate = new float[trailLength];
-                oldDistanceToOwner = new float[trailLength];
-                oldLength = new float[trailLength];
+                oldRotate = new float[trailCount];
+                oldDistanceToOwner = new float[trailCount];
+                oldLength = new float[trailCount];
                 InitializeCaches();
             }
 
@@ -238,7 +238,7 @@ namespace Coralite.Content.Items.Nightmare
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;
@@ -288,7 +288,7 @@ namespace Coralite.Content.Items.Nightmare
     {
         public override string Texture => AssetDirectory.NightmareItems + "Lullaby";
 
-        public LullabySlash2() : base(MathF.Atan(46f / 52f), trailLength: 34) { }
+        public LullabySlash2() : base(MathF.Atan(46f / 52f), trailCount: 34) { }
 
         public int alpha;
         public int delay = 48;
@@ -386,7 +386,7 @@ namespace Coralite.Content.Items.Nightmare
             List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
             GetCurrentTrailCount(out float count);
 
-            for (int i = 0; i < oldRotate.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (oldRotate[i] == 100f)
                     continue;

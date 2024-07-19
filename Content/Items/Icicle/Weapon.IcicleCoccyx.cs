@@ -1,4 +1,5 @@
-﻿using Coralite.Content.ModPlayers;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Prefabs.Projectiles;
@@ -31,7 +32,7 @@ namespace Coralite.Content.Items.Icicle
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
-            Item.damage = 26;
+            Item.damage = 24;
             Item.useTime = 15;
             Item.useAnimation = 15;
             Item.knockBack = 1f;
@@ -46,6 +47,7 @@ namespace Coralite.Content.Items.Icicle
             Item.noMelee = true;
             Item.autoReuse = true;
             Item.expert = true;
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool AltFunctionUse(Player player) => true;
@@ -153,6 +155,7 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 14;
             Projectile.width = 34;
@@ -263,6 +266,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 14;
             Projectile.width = 34;
@@ -386,6 +391,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 15;
             Projectile.width = Projectile.height = 32;
@@ -433,6 +440,8 @@ namespace Coralite.Content.Items.Icicle
 
         public override void SetDefaults()
         {
+            Projectile.coldDamage = true;
+
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = 20;
             Projectile.width = Projectile.height = 48;

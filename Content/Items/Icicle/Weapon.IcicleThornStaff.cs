@@ -1,3 +1,4 @@
+using Coralite.Content.Items.GlobalItems;
 using Coralite.Core;
 using System.Linq;
 using Terraria;
@@ -30,9 +31,11 @@ namespace Coralite.Content.Items.Icicle
             Item.shoot = ModContent.ProjectileType<IcicleThorn>();
             Item.UseSound = CoraliteSoundID.SummonStaff_Item44;
             Item.value = Item.sellPrice(0, 0, 40, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarityID.Green;
             Item.DamageType = DamageClass.Summon;
             Item.useStyle = ItemUseStyleID.Swing;
+
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool AltFunctionUse(Player Player) => true;
@@ -73,7 +76,8 @@ namespace Coralite.Content.Items.Icicle
         public override void AddRecipes()
         {
             CreateRecipe()
-            .AddIngredient<IcicleCrystal>(2)
+            .AddIngredient<IcicleCrystal>()
+            .AddIngredient<IcicleBreath>(2)
             .AddTile(TileID.IceMachine)
             .Register();
         }

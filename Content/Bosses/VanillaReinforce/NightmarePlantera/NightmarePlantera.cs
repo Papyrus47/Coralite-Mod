@@ -182,11 +182,12 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             //npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ItemType<RedianciePet>(), 4));
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<GriefSeed>()));
             //npcLoot.Add(ItemDropRule.Common(ItemType<RediancieTrophy>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<NightmarePlanteraMask>(), 7));
             //npcLoot.Add(ItemDropRule.NotScalingWithLuck(ModContent.ItemType<NightmareHeart>()));
 
             LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
 
-            IItemDropRule[] weaponTypes = new IItemDropRule[] {
+            IItemDropRule[] weaponTypes = [
                 ItemDropRule.Common(ModContent.ItemType<LostSevensideHook>(), 1, 1, 1),
                 ItemDropRule.Common(ModContent.ItemType<DreamShears>(), 1, 1, 1),
                 ItemDropRule.Common(ModContent.ItemType<EuphorbiaMilii>(), 1, 1, 1),
@@ -202,7 +203,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 ItemDropRule.Common(ModContent.ItemType<PurpleToeStaff>(), 1, 1, 1),
                 ItemDropRule.Common(ModContent.ItemType<Dreamcatcher>(), 1, 1, 1),
                 ItemDropRule.Common(ModContent.ItemType<Eden>(), 1, 1, 1),
-            };
+            ];
 
             notExpertRule.OnSuccess(new FewFromRulesRule(2, 1, weaponTypes));
 
@@ -218,11 +219,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         {
             //if ((projectile.penetrate < 0 || projectile.penetrate > 1) && modifiers.DamageType != DamageClass.Melee)
             //    modifiers.SourceDamage *= 0.75f;
-            if (projectile.type == ProjectileID.FinalFractal)
-            {
-                modifiers.SourceDamage *= 0.6f;
-                return;
-            }
+            //if (projectile.type == ProjectileID.FinalFractal)
+            //{
+            //    modifiers.SourceDamage *= 0.6f;
+            //    return;
+            //}
 
             if (projectile.hostile)
                 modifiers.SetMaxDamage(1);
@@ -648,7 +649,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 if (cp.nightmareCount < 28)
                 {
                     byte howMany = (byte)Helper.ScaleValueForDiffMode(1, 2, 4, 5);
-                    if (cp.resistDreamErosion)
+                    if (cp.HasEffect(nameof(NightmareHeart)))
                     {
                         howMany -= 1;
                         if (howMany < 1)

@@ -1,4 +1,5 @@
-﻿using Coralite.Content.WorldGeneration;
+﻿using Coralite.Content.Items.GlobalItems;
+using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Terraria;
 using Terraria.Audio;
@@ -36,6 +37,7 @@ namespace Coralite.Content.Items.Misc_Melee
             Item.useAnimation = 25;
             Item.useTime = 25;
             Item.shoot = ModContent.ProjectileType<IceShortSwordProj>(); // The projectile is what makes a shortsword work
+            CoraliteGlobalItem.SetColdDamage(Item);
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -134,7 +136,7 @@ namespace Coralite.Content.Items.Misc_Melee
             // Point towards where it is moving, applied offset for top right of the sprite respecting spriteDirection
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
 
-            if ( Main.rand.NextBool(5))
+            if (Main.rand.NextBool(5))
             {
                 int num13 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.IceRod, Projectile.velocity.X * 0.2f + (float)(Main.player[Projectile.owner].direction * 3), Projectile.velocity.Y * 0.2f, 90, default(Color), 1.5f);
                 Main.dust[num13].noGravity = true;

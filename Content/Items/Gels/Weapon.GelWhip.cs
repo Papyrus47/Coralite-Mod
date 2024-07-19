@@ -16,29 +16,14 @@ namespace Coralite.Content.Items.Gels
 
         public override void SetDefaults()
         {
-            // Call this method to quickly set some of the properties below.
-            //Item.DefaultToWhip(ModContent.ProjectileType<ExampleWhipProjectileAdvanced>(), 20, 2, 4);
+            Item.DefaultToWhip(ModContent.ProjectileType<GelWhipProj>(), 24, 2, 4, 26);
 
-            Item.DamageType = DamageClass.SummonMeleeSpeed;
-            Item.damage = 24;
-            Item.knockBack = 2;
             Item.rare = ItemRarityID.Orange;
-
-            Item.shoot = ModContent.ProjectileType<GelWhipProj>();
-            Item.shootSpeed = 4;
-
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 26;
-            Item.useAnimation = 26;
-            Item.UseSound = CoraliteSoundID.WhipSwing_Item152;
             Item.value = Item.sellPrice(0, 1);
-            Item.noMelee = true;
-            Item.noUseGraphic = true;
         }
 
         public override bool AllowPrefix(int pre) => true;
         public override bool MeleePrefix() => true;
-
     }
 
     public class GelWhipProj : ModProjectile

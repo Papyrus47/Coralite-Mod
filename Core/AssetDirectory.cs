@@ -65,6 +65,7 @@ namespace Coralite.Core
         public const string PhantomItems = Items + "Phantom/";
         public const string RedJadeItems = Items + "RedJades/";
         public const string IcicleItems = Items + "Icicle/";
+        public const string SteelItems = Items + "Steel/";
         public const string ThunderItems = Items + "Thunder/";
         public const string StarsItems = Items + "Stars/";
         public const string DisturbanceItems = Items + "Disturbance/";
@@ -72,14 +73,19 @@ namespace Coralite.Core
         public const string NightmareItems = Items + "Nightmare/";
         public const string CoreKeeperItems = Items + "CoreKeeper/";
         public const string FlyingShieldItems = Items + "FlyingShields/";
-        public const string TheHyacinthSeriesItems = Items + "TheHyacinthSeries/";
+        public const string ShieldPlusItems = Items + "ShieldPlus/";
+        public const string FlyingShieldAccessories = FlyingShieldItems + "Accessories/";
+
+        public const string HyacinthSeriesItems = Items + "HyacinthSeries/";
+        public const string LandOfTheLustrousSeriesItems = Items + "LandOfTheLustrousSeries/";
+        public const string ZephyrkiloSeriesItems = Items + "ZephyrkiloSeries/";
 
         public const string Accessories = Items + "Accessories/";
-        public const string FlyingShieldAccessories = Accessories + "FlyingShield/";
+        public const string Vanity = Items + "Vanity/";
 
         public const string Materials = Items + "Materials/";
         public const string Placeable = Items + "Placeable/";
-        public const string Misc = Items + "Misc/";
+        public const string MiscItems = Items + "Misc/";
         public const string Misc_Melee = Items + "Misc_Melee/";
         public const string Misc_Magic = Items + "Misc_Magic/";
         public const string Misc_Summon = Items + "Misc_Summon/";
@@ -88,11 +94,17 @@ namespace Coralite.Core
         public const string YujianHulu = Items + "YujianHulu/";
         public const string FairyItems = Items + "Fairy/";
         public const string FairyCatcherItems = Items + "FairyCatcher/";
+        public const string FairyCatcherAccessories = FairyCatcherItems + "Accessories/";
+        public const string FairyBottleItems = Items + "FairyBottle/";
 
         public const string MachineItems = Items + "Machines/";
         public const string BotanicalItems = Items + "Botanical/";
 
         public const string MagikeItems = Items + "Magike/";
+
+        public const string MagikeSeries1Item = Items + "MagikeSeries1/";
+        public const string MagikeSeries2Item = Items + "MagikeSeries2/";
+
         public const string MagikeTools = MagikeItems + "Tools/";
         public const string MagikeLens = MagikeItems + "Lens/";
         public const string MagikeColumns = MagikeItems + "Columns/";
@@ -107,6 +119,9 @@ namespace Coralite.Core
         public const string Plants = BotanicalItems + "Plants/";
 
         public const string BossSummons = Items + "BossSummons/";
+        public const string Banner = Items + "Banner/";
+
+        public const string Donator = Items + "Donator/";
 
         #endregion
 
@@ -151,6 +166,10 @@ namespace Coralite.Core
 
 
         public const string MagikeTiles = Tiles + "Magike/";
+
+        public const string MagikeSeries1Tile = Tiles + "MagikeSeries1/";
+        public const string MagikeSeries2Tile = Tiles + "MagikeSeries2/";
+
         public const string MagikeLensTiles = MagikeTiles + "Lens/";
         public const string MagikeEnchantPoolTiles = MagikeTiles + "EnchantPool/";
         public const string MagikeRemodelPoolTiles = MagikeTiles + "RemodelPool/";
@@ -197,6 +216,8 @@ namespace Coralite.Core
 
         public const string Backgrounds = Assets + "Backgrounds/";
 
+        public const string Misc = Assets + "Misc/";
+
 
         public const string WorldGen = Assets + "WorldGeneration/";
 
@@ -209,6 +230,8 @@ namespace Coralite.Core
         public const string Events = Assets + "Events/";
 
         public const string ShadowCastleEvents = Events + "ShadowCastle/";
+
+        public const string Biomes = Assets + "Biomes/";
 
     }
 }
