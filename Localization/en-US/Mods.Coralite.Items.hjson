@@ -3690,3 +3690,8 @@ LifePulseDevice: {
 	DisplayName: Life Pulse Device
 	Tooltip: ""
 }
+
+TaiJiYujian: {
+	DisplayName: Tai Ji Yujian
+	Tooltip: ""
+}

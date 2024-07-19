@@ -3788,3 +3788,8 @@ LifePulseDevice: {
 		伤害增幅为乘算
 		'''
 }
+
+TaiJiYujian: {
+	DisplayName: 太极御剑
+	Tooltip: ""
+}
