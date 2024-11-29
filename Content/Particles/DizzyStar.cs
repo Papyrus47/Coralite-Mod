@@ -2,6 +2,7 @@ using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -22,6 +23,11 @@ namespace Coralite.Content.Particles
 
         public DizzyStar()
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Main.QueueMainThreadAction(() =>
             {
                 effect = new BasicEffect(Main.instance.GraphicsDevice);
@@ -29,34 +35,34 @@ namespace Coralite.Content.Particles
             });
         }
 
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             //使用oldRot充当改变帧图的 frameCounter
             Frame = new Rectangle(0, 0, 22, 26);
             Scale = 1f;
-            InitOldCaches(12);
+            InitializeCaches(12);
             trail = new Trail(Main.instance.GraphicsDevice, 12, new NoTip(), factor => 2, factor => Color.Lerp(new Color(0, 0, 0, 0), Color.Yellow, factor.X));
         }
 
-        public override void Update()
+        public override void AI()
         {
             if (centerFunc != null)
             {
                 Vector2 center = centerFunc.Invoke();
-                Center = center + Rotation.ToRotationVector2() * length * Helper.EllipticalEase(Rotation, 1, 2.4f);
+                Position = center + (Rotation.ToRotationVector2() * length * Helper.EllipticalEase(Rotation, 1, 2.4f));
                 Rotation += 0.12f;
-                Scale = 0.6f + MathF.Sin(Rotation) * 0.2f;
+                Scale = 0.6f + (MathF.Sin(Rotation) * 0.2f);
 
                 //更新拖尾数组
                 for (int i = 0; i < 11; i++)
-                    oldRot[i] = oldRot[i + 1];
+                    oldRotations[i] = oldRotations[i + 1];
 
-                oldRot[11] = Rotation;
+                oldRotations[11] = Rotation;
                 for (int i = 0; i < 12; i++)
-                    oldCenter[i] = center + oldRot[i].ToRotationVector2() * length * Helper.EllipticalEase(oldRot[i], 1, 2.4f);
-                trail.Positions = oldCenter;
+                    oldPositions[i] = center + (oldRotations[i].ToRotationVector2() * length * Helper.EllipticalEase(oldRotations[i], 1, 2.4f));
+                trail.Positions = oldPositions;
 
                 //使用oldRot充当改变帧图的 frameCounter
                 Velocity.X += 1f;
@@ -68,8 +74,8 @@ namespace Coralite.Content.Particles
                         Frame.Y = 0;
                 }
 
-                fadeIn -= 1f;
-                if (fadeIn < 0f)
+                Opacity -= 1f;
+                if (Opacity < 0f)
                     active = false;
 
                 return;
@@ -78,15 +84,17 @@ namespace Coralite.Content.Particles
             active = false;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch)
         {
             Main.instance.LoadItem(ItemID.FallenStar);
             Texture2D mainTex = TextureAssets.Item[ItemID.FallenStar].Value;
 
-            spriteBatch.Draw(mainTex, Center - Main.screenPosition, Frame, Color.White, 0f, new Vector2(11, 13), Scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, Position - Main.screenPosition, Frame, Color.White, 0f, new Vector2(11, 13), Scale, SpriteEffects.None, 0f);
+
+            return false;
         }
 
-        public override void DrawPrimitives()
+        public override void DrawPrimitive()
         {
             if (effect == null)
                 return;
@@ -102,15 +110,20 @@ namespace Coralite.Content.Particles
             trail?.Render(effect);
         }
 
-        public static DizzyStar Spawn(Vector2 center, float rotation, float dizzyTime, float length, GetCenter function)
+        public static void Spawn(Vector2 center, float rotation, float dizzyTime, float length, GetCenter function)
         {
-            DizzyStar particle = NewParticle<DizzyStar>(center, Vector2.Zero);
-            particle.Rotation = rotation;
-            particle.fadeIn = dizzyTime;
-            particle.length = length;
-            particle.centerFunc = function;
-
-            return particle;
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
+            DizzyStar particle = PRTLoader.NewParticle<DizzyStar>(center, Vector2.Zero);
+            if (particle != null)
+            {
+                particle.Rotation = rotation;
+                particle.Opacity = dizzyTime;
+                particle.length = length;
+                particle.centerFunc = function;
+            }
         }
     }
 }

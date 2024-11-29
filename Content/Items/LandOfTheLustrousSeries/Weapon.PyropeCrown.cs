@@ -67,7 +67,18 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 effect.Parameters["highlightC"].SetValue((PyropeProj.brightC * 1.4f).ToVector4());
                 effect.Parameters["brightC"].SetValue(PyropeProj.brightC.ToVector4());
                 effect.Parameters["darkC"].SetValue(new Color(100, 20, 82).ToVector4());
-            });
+            }, 0.1f,
+            effect =>
+            {
+                effect.Parameters["scale"].SetValue(new Vector2(0.75f / Main.GameZoomTarget));
+                effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.015f);
+                effect.Parameters["lightRange"].SetValue(0.1f);
+                effect.Parameters["lightLimit"].SetValue(0.65f);
+                effect.Parameters["addC"].SetValue(0.85f);
+                effect.Parameters["highlightC"].SetValue((PyropeProj.brightC * 1.4f).ToVector4());
+                effect.Parameters["brightC"].SetValue(PyropeProj.brightC.ToVector4());
+                effect.Parameters["darkC"].SetValue(new Color(100, 20, 82).ToVector4());
+            }, extraSize: new Point(35, 2));
         }
 
         public override void SpawnParticle(DrawableTooltipLine line)
@@ -122,7 +133,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             if (AttackTime != 0)
             {
-                Vector2 dir = (Main.MouseWorld - Projectile.Center);
+                Vector2 dir = Main.MouseWorld - Projectile.Center;
 
                 if (dir.Length() < 48)
                     idlePos += dir;
@@ -140,7 +151,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             if (AttackTime > 0)
             {
-                float factor = 1 - AttackTime / Owner.itemTimeMax;
+                float factor = 1 - (AttackTime / Owner.itemTimeMax);
                 if (factor < 0.8f)
                     scale = Vector2.SmoothStep(Vector2.One, new Vector2(0.4f, 0.85f), factor / 0.8f);
                 else
@@ -162,7 +173,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 dir = Helper.NextVec2Dir();
-                        PyropeProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                        PyropeProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                     }
                 }
 
@@ -190,9 +201,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
         private Trail trail;
 
-        public static Color highlightC = new Color(255, 230, 230);
-        public static Color brightC = new Color(251, 100, 152);
-        public static Color darkC = new Color(48, 7, 42);
+        public static Color highlightC = new(255, 230, 230);
+        public static Color brightC = new(251, 100, 152);
+        public static Color darkC = new(48, 7, 42);
 
         public bool init = true;
 
@@ -255,7 +266,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                 }
 
             var style = CoraliteSoundID.Ding_Item4;
@@ -302,7 +313,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             rand.X += 0.15f;
 
             Helper.DrawCrystal(spriteBatch, Projectile.frame, Projectile.Center + rand, Vector2.One
-                , (float)(Main.timeForVisualEffects + Projectile.timeLeft) * (Main.gamePaused ? 0.02f : 0.01f) + Projectile.whoAmI / 3f
+                , ((float)(Main.timeForVisualEffects + Projectile.timeLeft) * (Main.gamePaused ? 0.02f : 0.01f)) + (Projectile.whoAmI / 3f)
                 , highlightC, brightC, darkC, () =>
                 {
                     Texture2D mainTex = Projectile.GetTexture();

@@ -2,6 +2,7 @@ using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
@@ -17,6 +18,11 @@ namespace Coralite.Content.Particles
 
         public FlowLine()
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Main.QueueMainThreadAction(() =>
             {
                 effect = new BasicEffect(Main.instance.GraphicsDevice);
@@ -24,37 +30,37 @@ namespace Coralite.Content.Particles
             });
         }
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
         }
 
-        public override void Update()
+        public override void AI()
         {
-            if (fadeIn < 0)
-                color *= 0.88f;
+            if (Opacity < 0)
+                Color *= 0.88f;
             else
             {
-                if (fadeIn >= spawnTime * 3f / 4f || fadeIn < spawnTime / 4f)
+                if (Opacity >= spawnTime * 3f / 4f || Opacity < spawnTime / 4f)
                     Velocity = Velocity.RotatedBy(rotate);
                 else
                     Velocity = Velocity.RotatedBy(-rotate);
 
-                UpdatePosCachesNormally(spawnTime);
-                trail.Positions = oldCenter;
+                UpdatePositionCache(spawnTime);
+                trail.Positions = oldPositions;
             }
 
-            if (fadeIn < -120 || color.A < 10)
+            if (Opacity < -120 || Color.A < 10)
                 active = false;
 
-            fadeIn -= 1f;
-            if (fadeIn == 0)
+            Opacity -= 1f;
+            if (Opacity == 0)
                 Velocity = Vector2.Zero;
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch) { }
+        public override bool PreDraw(SpriteBatch spriteBatch) => false;
 
-        public override void DrawPrimitives()
+        public override void DrawPrimitive()
         {
             if (effect == null)
                 return;
@@ -71,23 +77,28 @@ namespace Coralite.Content.Particles
         }
 
 
-        public static FlowLine Spawn(Vector2 center, Vector2 velocity, float trailWidth, int spawnTime, float rotate, Color color = (default))
+        public static void Spawn(Vector2 center, Vector2 velocity, float trailWidth, int spawnTime, float rotate, Color color = default)
         {
-            FlowLine particle = NewParticle<FlowLine>(center, velocity, color, 1f);
-            particle.fadeIn = spawnTime;
-            particle.InitOldCenters(spawnTime);
-            particle.trail = new Trail(Main.instance.GraphicsDevice, spawnTime, new NoTip(), factor => trailWidth, factor =>
+            if (VaultUtils.isServer)
             {
-                if (factor.X > 0.5f)
-                    return Color.Lerp(particle.color, new Color(0, 0, 0, 0), (factor.X - 0.5f) * 2);
+                return;
+            }
+            FlowLine particle = PRTLoader.NewParticle<FlowLine>(center, velocity, color, 1f);
+            if (particle != null)
+            {
+                particle.Opacity = spawnTime;
+                particle.InitializePositionCache(spawnTime);
+                particle.trail = new Trail(Main.instance.GraphicsDevice, spawnTime, new NoTip(), factor => trailWidth, factor =>
+                {
+                    if (factor.X > 0.5f)
+                        return Color.Lerp(particle.Color, new Color(0, 0, 0, 0), (factor.X - 0.5f) * 2);
 
-                return Color.Lerp(new Color(0, 0, 0, 0), particle.color, factor.X * 2);
-            });
+                    return Color.Lerp(new Color(0, 0, 0, 0), particle.Color, factor.X * 2);
+                });
 
-            particle.spawnTime = spawnTime;
-            particle.rotate = rotate;
-
-            return particle;
+                particle.spawnTime = spawnTime;
+                particle.rotate = rotate;
+            }
         }
     }
 }

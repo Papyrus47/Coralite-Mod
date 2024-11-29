@@ -42,7 +42,7 @@ namespace Coralite.Content.Items.Phantom
     {
         public override string Texture => AssetDirectory.Blank;
 
-        public ParticleGroup triangles;
+        public PrimitivePRTGroup triangles;
         public Vector2[] aimPositions;
 
         public int TrailLength => (int)Projectile.ai[0];
@@ -88,7 +88,7 @@ namespace Coralite.Content.Items.Phantom
                 return;
             }
 
-            triangles ??= new ParticleGroup();
+            triangles ??= new PrimitivePRTGroup();
 
             Color c = Main.rand.Next(3) switch
             {
@@ -113,7 +113,7 @@ namespace Coralite.Content.Items.Phantom
             Projectile.position = Vector2.Lerp(aimPositions[0], aimPositions[1], Projectile.ai[1] / 3);
             Projectile.ai[1]++;
 
-            triangles.UpdateParticles();
+            triangles.Update();
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -124,12 +124,12 @@ namespace Coralite.Content.Items.Phantom
 
             for (int i = 1; i < 7; i++)
             {
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, owner, Projectile.oldPos[i], 0f, owner.fullRotationOrigin, 0.5f + i * 0.5f / 7);
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, owner, Projectile.oldPos[i], 0f, owner.fullRotationOrigin, 0.5f + (i * 0.5f / 7));
             }
 
             Helper.DrawPrettyStarSparkle(1, 0, Projectile.position + new Vector2(8, 8) - Main.screenPosition, Color.White, Color.Red, 0.5f, 0, 0.5f
                 , 0.5f, 1, 0, new Vector2(2, 1), Vector2.One);
-            triangles?.DrawParticles(Main.spriteBatch);
+            triangles?.Draw(Main.spriteBatch);
             return false;
         }
 

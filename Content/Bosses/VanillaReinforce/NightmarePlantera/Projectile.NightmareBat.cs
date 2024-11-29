@@ -106,16 +106,16 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             Vector2 origin = frameBox.Size() / 2;
             SpriteEffects effect = Projectile.direction > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             //绘制残影
-            Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
             for (int i = 0; i < 10; i += 1)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, frameBox,
-                    drawColor * (0.5f - i * 0.05f), Projectile.oldRot[i], frameBox.Size() / 2, 1, effect, 0);
+                    drawColor * (0.5f - (i * 0.05f)), Projectile.oldRot[i], frameBox.Size() / 2, 1, effect, 0);
 
             //向上下左右四个方向绘制一遍
             for (int i = 0; i < 4; i++)
             {
-                Main.spriteBatch.Draw(mainTex, pos + (i * MathHelper.PiOver2).ToRotationVector2() * 4, frameBox, drawColor, Projectile.rotation, origin, 1,
+                Main.spriteBatch.Draw(mainTex, pos + ((i * MathHelper.PiOver2).ToRotationVector2() * 4), frameBox, drawColor, Projectile.rotation, origin, 1,
                    effect, 0);
             }
 

@@ -98,8 +98,8 @@ namespace Coralite.Core.Prefabs.Projectiles
                 if (Projectile.rotation % 4 < 0.2f)
                     SoundEngine.PlaySound(CoraliteSoundID.Swing2_Item7, Projectile.Center);
 
-                Owner.itemRotation = Projectile.rotation + (OwnerDirection > 0 ? 0 : MathHelper.Pi);
-                Projectile.Center = Owner.Center + Projectile.rotation.ToRotationVector2() * rollingLength;
+                Owner.itemRotation = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
+                Projectile.Center = Owner.Center + (Projectile.rotation.ToRotationVector2() * rollingLength);
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Coralite.Core.Prefabs.Projectiles
                 SoundEngine.PlaySound(CoraliteSoundID.WhipSwing_Item152, Projectile.Center);
                 Vector2 dir = (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.Zero);
                 Projectile.hide = false;
-                Projectile.Center = Owner.Center + dir * 64;
+                Projectile.Center = Owner.Center + (dir * 64);
                 Projectile.velocity = dir * shootSpeed;
                 Projectile.rotation = dir.ToRotation();
                 HookState = (int)AIStates.shoot;

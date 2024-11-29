@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
     public partial class CoraliteWorld
     {
+        public static LocalizedText WindStoneTablet { get; set; }
+
         public void GenWindStoneTablet(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在生成风石碑牌";
+            progress.Message = WindStoneTablet.Value;// "正在生成风石碑牌";
 
             int tileType = ModContent.TileType<VineStoneTabletTile>();
 
@@ -22,7 +25,7 @@ namespace Coralite.Content.WorldGeneration
                 for (int i = 0; i < 20000; i++)
                 {
                     //随机选取点
-                    int tabletCenter_x = Main.maxTilesX / 2 + WorldGen.genRand.NextFromList(-1, 1) * Main.maxTilesX / 3;
+                    int tabletCenter_x = (Main.maxTilesX / 2) + (WorldGen.genRand.NextFromList(-1, 1) * Main.maxTilesX / 3);
                     tabletCenter_x += WorldGen.genRand.Next(-Main.maxTilesX / 7, Main.maxTilesX / 7);
                     int tabletCenter_y = (int)(Main.worldSurface * 0.4f);
 
@@ -39,9 +42,9 @@ namespace Coralite.Content.WorldGeneration
                     if (!TileID.Sets.Grass[tile2.TileType] && !TileID.Sets.Dirt[tile2.TileType])
                         continue;
 
-                    Point position = new Point(tabletCenter_x, tabletCenter_y);
+                    Point position = new(tabletCenter_x, tabletCenter_y);
 
-                    Dictionary<ushort, int> tileDictionary = new Dictionary<ushort, int>();
+                    Dictionary<ushort, int> tileDictionary = new();
                     if (!WorldGen.InWorld(position.X - 30, position.Y - 15) || !WorldGen.InWorld(position.X + 30, position.Y + 15))
                         continue;
                     WorldUtils.Gen(
@@ -62,7 +65,7 @@ namespace Coralite.Content.WorldGeneration
                 bool spawned = true;
                 while (spawned)
                 {
-                    int tabletCenter_x = Main.maxTilesX / 2 + WorldGen.genRand.NextFromList(-1, 1) * Main.maxTilesX / 3;
+                    int tabletCenter_x = (Main.maxTilesX / 2) + (WorldGen.genRand.NextFromList(-1, 1) * Main.maxTilesX / 3);
                     tabletCenter_x += WorldGen.genRand.Next(-Main.maxTilesX / 7, Main.maxTilesX / 7);
                     int tabletCenter_y = (int)(Main.worldSurface * 0.4f);
 

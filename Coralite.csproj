@@ -22,11 +22,15 @@
     <None Remove="effects\Fire.fx" />
     <None Remove="Effects\Flow.fx" />
     <None Remove="Effects\Flow2.fx" />
+    <None Remove="effects\KEx2.fx" />
+    <None Remove="Effects\LaserAlpha.fx" />
+    <None Remove="Effects\LaserReplaceAlpha.fx" />
     <None Remove="Effects\NoHLGradientTrail.fx" />
     <None Remove="effects\ShadowLaser.fx" />
     <None Remove="effects\ShadowStars.fx" />
     <None Remove="Effects\SimpleTrailNoHL.fx" />
     <None Remove="effects\StarsTrail.fx" />
+    <None Remove="localization\en-us\Mods.Coralite.Knowledges.hjson" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Bosses\SlimeEmperor\" />
@@ -37,12 +41,19 @@
     <Folder Include="Content\Items\Magike\Armors\" />
     <Folder Include="Content\Items\Magike\Accessorys\" />
     <Folder Include="Content\Items\Misc_Summon\" />
+    <Folder Include="Content\Items\KeyItems\" />
     <Folder Include="Content\Projectiles\Projectiles_Summon\" />
     <Folder Include="Content\UI\MagikeGuideBook\Chapter5\" />
     <Folder Include="Core\Systems\AstronomySystem\" />
+    <Folder Include="Core\Systems\SilkKniefSystem\" />
     <Folder Include="Sounds\Shadows\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="InnoVault">
+      <HintPath>..\InnoVault\bin\Debug\net8.0\InnoVault.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

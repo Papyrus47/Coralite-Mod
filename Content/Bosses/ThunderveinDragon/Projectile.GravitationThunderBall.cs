@@ -1,6 +1,6 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -39,19 +39,19 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             return MathF.Sin(factor * MathHelper.Pi) * ThunderWidth * 1.2f;
         }
 
-        public Color ThunderColorFunc_Fade(float factor)
+        public float GetAlphaFade(float factor)
         {
-            return ThunderveinDragon.ThunderveinYellowAlpha * ThunderAlpha * (1 - factor);
+            return ThunderAlpha * (1 - factor);
         }
 
         public override Color ThunderColorFunc_Yellow(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinYellowAlpha, ThunderveinDragon.ThunderveinPurpleAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinYellow, ThunderveinDragon.ThunderveinPurple, MathF.Sin(factor * MathHelper.Pi));
         }
 
         public override Color ThunderColorFunc2_Orange(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinOrangeAlpha, ThunderveinDragon.ThunderveinPurpleAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinOrange, ThunderveinDragon.ThunderveinPurple, MathF.Sin(factor * MathHelper.Pi));
         }
 
         public override void AI()
@@ -84,7 +84,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                 thunderRange = Helper.Lerp(110, 30, Timer / chasingTime);
                 Projectile.SpawnTrailDust(30f, DustID.PortalBoltTrail, Main.rand.NextFloat(0.1f, 0.4f),
-                    newColor: Coralite.Instance.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.3f));
+                    newColor: Coralite.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.3f));
             }
             else if (Timer == chasingTime)
             {
@@ -100,7 +100,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                 for (int i = 0; i < 5; i++)
                 {
-                    Particle.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(length, length),
+                    PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(length, length),
                         Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
                 }
             }
@@ -111,7 +111,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                 for (int i = 0; i < 5; i++)
                 {
-                    Particle.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(length, length),
+                    PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(length, length),
                         Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
                 }
             }
@@ -131,7 +131,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 //吸玩家
                 player.velocity += (Projectile.Center - player.Center).SafeNormalize(Vector2.Zero) * 0.19f;
 
-                if (Timer > chasingTime + 50 + 60 * 3)
+                if (Timer > chasingTime + 50 + (60 * 3))
                     Projectile.Kill();
             }
         }
@@ -142,14 +142,14 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 circles = new ThunderTrail[5];
                 trails = new ThunderTrail[3];
-                Asset<Texture2D> thunderTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightingBody");
+                Asset<Texture2D> thunderTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ThunderTrailB");
 
                 for (int i = 0; i < circles.Length; i++)
                 {
                     if (i < 2)
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow, GetAlpha);
                     else
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange, GetAlpha);
 
                     circles[i].SetRange((0, 10));
                     circles[i].SetExpandWidth(6);
@@ -157,7 +157,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                 for (int i = 0; i < trails.Length; i++)
                 {
-                    trails[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Fade);
+                    trails[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Yellow, GetAlphaFade);
                     trails[i].SetRange((0, 6));
                     trails[i].SetExpandWidth(4);
                 }
@@ -170,13 +170,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     else
                     {
                         Vector2[] vec = new Vector2[(int)cacheLength];
-                        Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * 5;
+                        Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * 5);
                         Vector2 dir = -Projectile.velocity;
                         vec[0] = basePos;
 
                         for (int i = 1; i < (int)cacheLength; i++)
                         {
-                            vec[i] = basePos + dir * i;
+                            vec[i] = basePos + (dir * i);
                         }
 
                         trail.BasePositions = vec;
@@ -193,8 +193,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     float baseRot = Main.rand.NextFloat(6.282f);
                     for (int i = 0; i < trailPointCount; i++)
                     {
-                        vec[i] = Projectile.Center + (baseRot + i * MathHelper.TwoPi / 40).ToRotationVector2()
-                            * (Projectile.width / 2 + Main.rand.NextFloat(-8, 8));
+                        vec[i] = Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 40)).ToRotationVector2()
+                            * ((Projectile.width / 2) + Main.rand.NextFloat(-8, 8)));
                     }
 
                     circle.BasePositions = vec;
@@ -224,13 +224,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         if (trail.CanDraw)
                         {
                             Vector2[] vec = new Vector2[(int)cacheLength];
-                            Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * 10;
+                            Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * 10);
                             Vector2 dir = -Projectile.velocity * 0.55f;
                             vec[0] = basePos;
 
                             for (int i = 1; i < (int)cacheLength; i++)
                             {
-                                vec[i] = basePos + dir * i;
+                                vec[i] = basePos + (dir * i);
                             }
 
                             trail.BasePositions = vec;
@@ -251,15 +251,15 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     if (circle.CanDraw)
                     {
                         int width = (int)thunderRange;
-                        float angle = MathHelper.TwoPi / (5 + 30 * Helper.Lerp(0, 1, width / (float)(Projectile.width)));
+                        float angle = MathHelper.TwoPi / (5 + (30 * Helper.Lerp(0, 1, width / (float)Projectile.width)));
                         int trailPointCount = (int)thunderRange / 5;
                         Vector2[] vec = new Vector2[trailPointCount];
 
                         float baseRot = Main.rand.NextFloat(6.282f);
                         for (int i = 0; i < trailPointCount; i++)
                         {
-                            vec[i] = Projectile.Center + (baseRot + i * angle).ToRotationVector2()
-                                * width;
+                            vec[i] = Projectile.Center + ((baseRot + (i * angle)).ToRotationVector2()
+                                * width);
                         }
 
                         circle.BasePositions = vec;
@@ -271,12 +271,12 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public override void OnKill(int timeLeft)
         {
-            Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<LightningParticle>(), Scale: 2.5f);
+            PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<LightningParticle>(), Scale: 2.5f);
 
             float baseRot = Main.rand.NextFloat(6.282f);
             for (int i = 0; i < 5; i++)
             {
-                Particle.NewParticle(Projectile.Center + (baseRot + i * MathHelper.TwoPi / 5).ToRotationVector2() * Main.rand.NextFloat(20, 30)
+                PRTLoader.NewParticle(Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 5)).ToRotationVector2() * Main.rand.NextFloat(20, 30))
                     , Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>());
             }
         }
@@ -321,7 +321,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             var scale = Projectile.scale * 0.5f;
 
             spriteBatch.Draw(exTex, pos, null, c, Projectile.rotation + Main.GlobalTimeWrappedHourly, origin, scale, 0, 0);
-            spriteBatch.Draw(exTex, pos, null, c * 0.5f, Projectile.rotation - Main.GlobalTimeWrappedHourly / 2, origin, scale, 0, 0);
+            spriteBatch.Draw(exTex, pos, null, c * 0.5f, Projectile.rotation - (Main.GlobalTimeWrappedHourly / 2), origin, scale, 0, 0);
         }
     }
 }

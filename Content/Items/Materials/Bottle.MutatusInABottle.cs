@@ -1,5 +1,7 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +10,10 @@ using Terraria.ObjectData;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class MutatusInABottle : BaseMaterial, IMagikePolymerizable
+    /// <summary>
+    /// 瓶中异变
+    /// </summary>
+    public class MutatusInABottle : BaseMaterial, IMagikeCraftable
     {
         public MutatusInABottle() : base(9999, Item.sellPrice(0, 0, 1, 50), ItemRarityID.Purple, AssetDirectory.Materials) { }
 
@@ -18,10 +23,17 @@ namespace Coralite.Content.Items.Materials
             Item.DefaultToPlaceableTile(ModContent.TileType<MutatusInABottleTile>());
         }
 
-        public void AddMagikePolymerizeRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            //PolymerizeRecipe.CreateRecipe<FreosanInABottle>(300)
-            //    .SetMainItem<>
+            MagikeCraftRecipe.CreateRecipe(ItemID.Bottle, ModContent.ItemType<MutatusInABottle>(), MagikeHelper.CalculateMagikeCost(MALevel.Crimson, 6))
+                .AddIngredient(ItemID.EbonstoneBlock, 24)
+                .AddIngredient(ItemID.ShadowScale, 4)
+                .Register();
+
+            MagikeCraftRecipe.CreateRecipe(ItemID.Bottle, ModContent.ItemType<MutatusInABottle>(), MagikeHelper.CalculateMagikeCost(MALevel.Crimson, 6))
+                .AddIngredient(ItemID.CrimstoneBlock, 24)
+                .AddIngredient(ItemID.TissueSample, 4)
+                .Register();
         }
     }
 

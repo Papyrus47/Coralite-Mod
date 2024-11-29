@@ -96,15 +96,15 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             Color c = drawColor * 0.5f;
 
-            Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
             for (int i = 0; i < 6; i++)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null,
-                Color.Black * (0.5f - i * 0.08f), Projectile.oldRot[i], origin, 0.9f - i * 0.08f, filp, 0);
+                Color.Black * (0.5f - (i * 0.08f)), Projectile.oldRot[i], origin, 0.9f - (i * 0.08f), filp, 0);
 
             for (int i = 0; i < 3; i++)
             {
-                Main.spriteBatch.Draw(mainTex, pos + (Main.GlobalTimeWrappedHourly / 5 + i * MathHelper.TwoPi / 3).ToRotationVector2() * 6
+                Main.spriteBatch.Draw(mainTex, pos + (((Main.GlobalTimeWrappedHourly / 5) + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 6)
                     , null, c, Projectile.rotation, origin, 0.75f, filp, 0);
             }
 

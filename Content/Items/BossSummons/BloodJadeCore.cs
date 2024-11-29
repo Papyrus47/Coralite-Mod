@@ -2,6 +2,8 @@
 using Coralite.Content.Items.Materials;
 using Coralite.Core;
 using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
+using Coralite.Helpers;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Creative;
@@ -9,7 +11,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.BossSummons
 {
-    public class BloodJadeCore : ModItem, IMagikePolymerizable
+    public class BloodJadeCore : ModItem, IMagikeCraftable
     {
         public override string Texture => AssetDirectory.BossSummons + Name;
 
@@ -55,10 +57,9 @@ namespace Coralite.Content.Items.BossSummons
             return true;
         }
 
-        public void AddMagikePolymerizeRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            PolymerizeRecipe.CreateRecipe<BloodJadeCore>(1000)
-                .SetMainItem<RedJadeCore>()
+            MagikeCraftRecipe.CreateRecipe<RedJadeCore, BloodJadeCore>(MagikeHelper.CalculateMagikeCost(MALevel.Pelagic, 24, 60 * 15))
                 .AddIngredient<BloodyOrb>(3)
                 .AddIngredient(ItemID.SoulofNight, 5)
                 .AddIngredient(ItemID.CrystalShard, 5)

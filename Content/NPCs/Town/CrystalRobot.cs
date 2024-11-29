@@ -31,10 +31,24 @@ namespace Coralite.Content.NPCs.Town
         private static int ShimmerHeadIndex;
         private static Profiles.StackedNPCProfile NPCProfile;
 
+        private static LocalizedText[] Names;
+
         public override void Load()
         {
             // Adds our Shimmer Head to the NPCHeadLoader.
             ShimmerHeadIndex = Mod.AddNPCHeadTexture(Type, Texture + "_Shimmer_Head");
+            Names =
+                [
+                this.GetLocalization("Name0", () => "晶华"),
+                this.GetLocalization("Name1", () => "晶: c000"),
+                this.GetLocalization("Name2", () => "克丽丝塔"),
+                this.GetLocalization("Name3", () => "魔盖克"),
+                ];
+        }
+
+        public override void Unload()
+        {
+            Names = null;
         }
 
         public override void SetStaticDefaults()
@@ -163,24 +177,6 @@ namespace Coralite.Content.NPCs.Town
             return MagikeSystem.learnedMagikeBase;
         }
 
-        //public override bool CheckConditions(int left, int right, int top, int bottom)
-        //{
-        //    int score = 0;
-        //    for (int x = left; x <= right; x++)
-        //    {
-        //        for (int y = top; y <= bottom; y++)
-        //        {
-        //            int type = Main.tile[x, y].TileType;
-        //            if (type == ModContent.TileType<BasaltTile>() || type == ModContent.TileType<HardBasaltTile>() || type == ModContent.TileType<MagicCrystalBrickTile>())
-        //            {
-        //                score++;
-        //            }
-        //        }
-        //    }
-
-        //    return score >= ((right - left) * (bottom - top)) / 2;
-        //}
-
         public override ITownNPCProfile TownNPCProfile()
         {
             return NPCProfile;
@@ -188,17 +184,17 @@ namespace Coralite.Content.NPCs.Town
 
         public override List<string> SetNPCNameList()
         {
-            return new List<string>() {
-                "晶体器械",
-                "水晶体",
-                "克丽丝塔",
-                "魔盖克"
-            };
+            List<string> list = new();
+
+            foreach (var name in Names)
+                list.Add(name.Value);
+
+            return list;
         }
 
         public override string GetChat()
         {
-            WeightedRandom<string> chat = new WeightedRandom<string>();
+            WeightedRandom<string> chat = new();
 
             //int partyGirl = NPC.FindFirstNPC(NPCID.PartyGirl);
             //if (partyGirl >= 0 && Main.rand.NextBool(4))
@@ -240,21 +236,21 @@ namespace Coralite.Content.NPCs.Town
         {
             var npcShop = new NPCShop(Type, ShopName);
             int magicCrystalCurrencyID = CurrencyLoader.GetCurrencyID<MagicCrystalCurrency>();
-            npcShop.Add(new Item(ModContent.ItemType<MagikeGuideBook>())//魔能辞典
-            {
-                shopCustomPrice = 15,
-                shopSpecialCurrency = magicCrystalCurrencyID
-            });
+            //npcShop.Add(new Item(ModContent.ItemType<MagikeGuideBook>())//魔能辞典
+            //{
+            //    shopCustomPrice = 15,
+            //    shopSpecialCurrency = magicCrystalCurrencyID
+            //});
             npcShop.Add(new Item(ModContent.ItemType<MagikeMonoclastic>())//单片镜
             {
                 shopCustomPrice = 10,
                 shopSpecialCurrency = magicCrystalCurrencyID
             });
-            npcShop.Add(new Item(ModContent.ItemType<OpalTower>())//单片镜
-            {
-                shopCustomPrice = 25,
-                shopSpecialCurrency = magicCrystalCurrencyID
-            });
+            //npcShop.Add(new Item(ModContent.ItemType<OpalTower>())//单片镜
+            //{
+            //    shopCustomPrice = 25,
+            //    shopSpecialCurrency = magicCrystalCurrencyID
+            //});
             npcShop.Add(new Item(ModContent.ItemType<MagConnectStaff>())//连接杖
             {
                 shopCustomPrice = 10,
@@ -265,25 +261,40 @@ namespace Coralite.Content.NPCs.Town
                 shopCustomPrice = 8,
                 shopSpecialCurrency = magicCrystalCurrencyID
             });
+            npcShop.Add(new Item(ModContent.ItemType<OpticalPathCalibrator>())//激活杖
+            {
+                shopCustomPrice = 8,
+                shopSpecialCurrency = magicCrystalCurrencyID
+            });
             npcShop.Add(new Item(ModContent.ItemType<CondensedCrystalBall>())//充能球
             {
                 shopCustomPrice = 8,
                 shopSpecialCurrency = magicCrystalCurrencyID
             });
-            npcShop.Add(new Item(ModContent.ItemType<WarpMirror>())//充能球
-            {
-                shopCustomPrice = 10,
-                shopSpecialCurrency = magicCrystalCurrencyID
-            });
+            //npcShop.Add(new Item(ModContent.ItemType<WarpMirror>())//扭曲镜
+            //{
+            //    shopCustomPrice = 10,
+            //    shopSpecialCurrency = magicCrystalCurrencyID
+            //});
 
-            npcShop.Add(new Item(ModContent.ItemType<CrystalSword>())//水晶剑
+            //npcShop.Add(new Item(ModContent.ItemType<CrystalSword>())//水晶剑
+            //{
+            //    shopCustomPrice = 10,
+            //    shopSpecialCurrency = magicCrystalCurrencyID
+            //});
+            //npcShop.Add(new Item(ModContent.ItemType<CrystalStaff>())//方块杖
+            //{
+            //    shopCustomPrice = 10,
+            //    shopSpecialCurrency = magicCrystalCurrencyID
+            //});
+            npcShop.Add(new Item(ModContent.ItemType<MagikeWorldBall>())//世界球
             {
-                shopCustomPrice = 10,
+                shopCustomPrice = 1,
                 shopSpecialCurrency = magicCrystalCurrencyID
             });
-            npcShop.Add(new Item(ModContent.ItemType<CrystalStaff>())//方块杖
+            npcShop.Add(new Item(ModContent.ItemType<MagikeAnalyser>())//世界球
             {
-                shopCustomPrice = 10,
+                shopCustomPrice = 15,
                 shopSpecialCurrency = magicCrystalCurrencyID
             });
 
@@ -367,7 +378,7 @@ namespace Coralite.Content.NPCs.Town
         public MagicCrystalCurrency() : base(ModContent.ItemType<MagicCrystal>(), 9999)
         {
             CurrencyTextKey = "Mods.Coralite.Items.MagicCrystal.DisplayName";
-            CurrencyTextColor = Coralite.Instance.MagicCrystalPink;
+            CurrencyTextColor = Coralite.MagicCrystalPink;
         }
     }
 }

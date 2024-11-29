@@ -80,13 +80,13 @@ namespace Coralite.Core.Prefabs.Tiles
         {
             // This is lighting-mode specific, always include this if you draw tiles manually
             //这是特定于照明模式的，如果您手动绘制瓷砖，请始终包含此内容
-            Vector2 offScreen = new Vector2(Main.offScreenRange);
+            Vector2 offScreen = new(Main.offScreenRange);
             if (Main.drawToScreen)
                 offScreen = Vector2.Zero;
 
             // Take the tile, check if it actually exists
             //拿走瓷砖，检查它是否真的存在
-            Point p = new Point(i, j);
+            Point p = new(i, j);
             Tile tile = Main.tile[p.X, p.Y];
             if (tile == null || !tile.HasTile)
                 return;
@@ -117,12 +117,12 @@ namespace Coralite.Core.Prefabs.Tiles
             spriteBatch.Draw(texture, drawPos, frame, color, 0f, origin, 1f, effects, 0f);
 
             // 绘制周期性发光效果
-            float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f + 0.7f;
+            float scale = ((float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 2f) * 0.3f) + 0.7f;
             Color effectColor = color;
             effectColor.A = 0;
             effectColor = effectColor * 0.1f * scale;
             for (float m = 0f; m < 1f; m += 355f / (678f * (float)Math.PI))
-                spriteBatch.Draw(texture, drawPos + (TwoPi * m).ToRotationVector2() * (6f + offset * 2f), frame, effectColor, 0f, origin, 1f, effects, 0f);
+                spriteBatch.Draw(texture, drawPos + ((TwoPi * m).ToRotationVector2() * (6f + (offset * 2f))), frame, effectColor, 0f, origin, 1f, effects, 0f);
         }
     }
 }

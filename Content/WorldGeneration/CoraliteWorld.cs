@@ -1,12 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria.GameContent.Generation;
+using Terraria.Localization;
 using Terraria.ModLoader.IO;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
-    public partial class CoraliteWorld : ModSystem
+    public partial class CoraliteWorld : ModSystem, ILocalizedModType
     {
+        public string LocalizationCategory => "WorldGeneration";
+
+        public const string DigDigDigSaveKey = "digdigdig";
+
+        public override void Load()
+        {
+            Type t = typeof(CoraliteWorld);
+
+            var infos = t.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+            foreach (var info in from info in infos
+                                 where info.PropertyType.Name == nameof(LocalizedText)
+                                 select info)
+            {
+                info.SetValue(null, this.GetLocalization(info.Name));
+            }
+        }
+
+        public override void Unload()
+        {
+            Type t = typeof(CoraliteWorld);
+
+            var infos = t.GetProperties(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+            foreach (var info in from info in infos
+                                 where info.PropertyType.Name == nameof(LocalizedText)
+                                 select info)
+            {
+                info.SetValue(null, null);
+            }
+        }
+
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
         {
             if (chaosWorld)
@@ -33,6 +66,13 @@ namespace Coralite.Content.WorldGeneration
             if (EvilBiome != -1)
             {
                 tasks.Insert(EvilBiome + 1, new PassLegacy("Coralite Evil Chest", GenEvilChest));
+            }
+
+            int Jungle = tasks.FindIndex(genpass => genpass.Name.Equals("Jungle"));
+
+            if (Jungle != -1)
+            {
+                tasks.Insert(Jungle + 1, new PassLegacy("Coralite Crystalline Sky Island", GenCrystallineSkyIsland));
             }
 
             int Dungeon = tasks.FindIndex(genpass => genpass.Name.Equals("Dungeon"));
@@ -67,7 +107,7 @@ namespace Coralite.Content.WorldGeneration
                     tasks.Insert(FinalCleanup - 1, new PassLegacy("Coralite Shadow Castle", GenShadowCastle));
             }
 
-            if (coralCatWorld)
+            if (CoralCatWorld)
             {
                 int SettleLiquids = tasks.FindIndex(genpass => genpass.Name.Equals("Settle Liquids Again"));
                 int FinalCleanup2 = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
@@ -76,6 +116,23 @@ namespace Coralite.Content.WorldGeneration
                     tasks.Insert(SettleLiquids - 1, new PassLegacy("Coralite CoralCat World", CoralCatWorldGen));
                 if (SettleLiquids != -1)
                     tasks.Insert(FinalCleanup2 - 1, new PassLegacy("Coralite CoralCat World Spawn", CoralCatWorldSpawn));
+            }
+
+            if (DigDigDigWorld)
+                ModifyDigdigdigWorldGen(tasks, ref totalWeight);
+        }
+
+        public override void ModifyHardmodeTasks(List<GenPass> list)
+        {
+            if (DigDigDigWorld)
+                DigDigDigHardMode(list);
+        }
+
+        public override void SaveWorldHeader(TagCompound tag)
+        {
+            if (DigDigDigWorld)
+            {
+                tag.Add(DigDigDigSaveKey, true);
             }
         }
 
@@ -87,7 +144,16 @@ namespace Coralite.Content.WorldGeneration
             tag.Add("shadowBallsFightAreaX", shadowBallsFightArea.X);
             tag.Add("shadowBallsFightAreaY", shadowBallsFightArea.Y);
             tag.Add("chaosWorld", chaosWorld);
-            tag.Add("coralCat", coralCatWorld);
+            tag.Add("coralCat", CoralCatWorld);
+            tag.Add(DigDigDigSaveKey, DigDigDigWorld);
+
+            if (DigDigDigWorld)
+            {
+                tag.Add("digdigdigDungeonSide", DigDigDigWorldDungeonSide);
+            }
+
+            SaveSkyIsland(tag);
+            SaveCrystalCave(tag);
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -95,13 +161,21 @@ namespace Coralite.Content.WorldGeneration
             NestCenter.X = tag.Get<int>("IceNestCenterX");
             NestCenter.Y = tag.Get<int>("IceNestCenterY");
 
-
             shadowBallsFightArea = new Rectangle(
                 tag.Get<int>("shadowBallsFightAreaX"),
                 tag.Get<int>("shadowBallsFightAreaY"), 74 * 16, 59 * 16);
 
             chaosWorld = tag.Get<bool>("chaosWorld");
-            coralCatWorld = tag.Get<bool>("coralCat");
+            CoralCatWorld = tag.Get<bool>("coralCat");
+            DigDigDigWorld = tag.Get<bool>(DigDigDigSaveKey);
+
+            if (DigDigDigWorld)
+            {
+                DigDigDigWorldDungeonSide = tag.Get<int>("DigDigDigWorldDungeonSide");
+            }
+
+            LoadSkyIsland(tag);
+            LoadCrystalCave(tag);
         }
     }
 }

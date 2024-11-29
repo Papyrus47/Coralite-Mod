@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Raritys;
 using Coralite.Content.Tiles.Magike;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem.BaseItems;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
 using Terraria;
@@ -9,7 +9,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.MagikeSeries1
 {
-    public class CrystalStaff : BaseMagikeChargeableItem, IMagikeContainerItemPlaceable
+    public class CrystalStaff : MagikeChargeableItem, ISpecialPlaceable
     {
         public CrystalStaff() : base(150, Item.sellPrice(0, 0, 10, 0)
             , ModContent.RarityType<MagicCrystalRarity>(), 50, AssetDirectory.MagikeSeries1Item)

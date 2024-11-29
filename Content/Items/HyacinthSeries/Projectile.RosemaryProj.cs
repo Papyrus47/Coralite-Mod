@@ -2,8 +2,8 @@
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -23,7 +23,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             if (Main.myPlayer == Projectile.owner)
             {
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
-                TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (OwnerDirection > 0 ? 0f : MathHelper.Pi);
+                TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (DirSign > 0 ? 0f : MathHelper.Pi);
                 if (TargetRot == 0f)
                     TargetRot = 0.0001f;
             }
@@ -43,7 +43,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             if (Main.myPlayer == Projectile.owner)
             {
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
-                TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (OwnerDirection > 0 ? 0f : MathHelper.Pi);
+                TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (DirSign > 0 ? 0f : MathHelper.Pi);
                 if (TargetRot == 0f)
                     TargetRot = 0.0001f;
             }
@@ -138,7 +138,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             float rotate = Main.rand.NextFloat(6.282f);
 
             Vector2 dir = rotate.ToRotationVector2();
-            Vector2 targetCenter = Projectile.Center + dir * length;
+            Vector2 targetCenter = Projectile.Center + (dir * length);
             for (int i = 0; i < 8; i++)
             {
                 if (Collision.CanHitLine(Projectile.Center, 1, 1, targetCenter, 1, 1))
@@ -146,15 +146,15 @@ namespace Coralite.Content.Items.HyacinthSeries
 
                 rotate += 0.785f;
                 dir = rotate.ToRotationVector2();
-                targetCenter = Projectile.Center + dir * length;
+                targetCenter = Projectile.Center + (dir * length);
             }
 
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
                 float roughlySpeed = length / 12f;
-                FlowLine.Spawn(Projectile.Center + dir * 8, dir * roughlySpeed, 2, 12, 0.04f, new Color(95, 120, 233, 100));
+                FlowLine.Spawn(Projectile.Center + (dir * 8), dir * roughlySpeed, 2, 12, 0.04f, new Color(95, 120, 233, 100));
                 for (int i = -1; i < 4; i += 2)
-                    FlowLine.Spawn(Projectile.Center + dir.RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)) * (32 + i * 8), dir * roughlySpeed * 0.5f, 1, 12, Math.Sign(i) * 0.1f, new Color(255, 179, 251, 60));
+                    FlowLine.Spawn(Projectile.Center + (dir.RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)) * (32 + (i * 8))), dir * roughlySpeed * 0.5f, 1, 12, Math.Sign(i) * 0.1f, new Color(255, 179, 251, 60));
             }
 
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), targetCenter, Vector2.Zero,
@@ -242,7 +242,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             }
 
             if (justATimer % 3 == 0)
-                Particle.NewParticle(Projectile.Center, new Vector2(0, 3f).RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)), CoraliteContent.ParticleType<Fog>(), new Color(95, 120, 233, 255), Main.rand.NextFloat(0.5f, 0.7f));
+                PRTLoader.NewParticle(Projectile.Center, new Vector2(0, 3f).RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)), CoraliteContent.ParticleType<Fog>(), new Color(95, 120, 233, 255), Main.rand.NextFloat(0.5f, 0.7f));
 
             if (Main.rand.NextBool(15))
             {
@@ -266,7 +266,7 @@ namespace Coralite.Content.Items.HyacinthSeries
         {
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 center = Projectile.Center - Main.screenPosition;
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 4);
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 4);
 
             Main.spriteBatch.Draw(mainTex, center, mainTex.Frame(1, 2, 0, 0), Color.White * Alpha, 0f, origin, 0.8f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(mainTex, center, mainTex.Frame(1, 2, 0, 1), new Color(255, 219, 253) * visualAlpha, 0f, origin, visualScale, SpriteEffects.None, 0f);

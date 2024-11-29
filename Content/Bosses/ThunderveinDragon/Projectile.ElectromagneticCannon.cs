@@ -1,6 +1,6 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -22,20 +22,18 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         const int DelayTime = 30;
         private float laserWidth;
 
-        public List<Vector2> laserTrailPoints = new List<Vector2>();
+        public List<Vector2> laserTrailPoints = new();
 
         public static Asset<Texture2D> gradientTex;
 
         public static Asset<Texture2D> laserTex;
-        public static Asset<Texture2D> extraTex;
 
         public override void Load()
         {
             if (!Main.dedServ)
             {
                 gradientTex = ModContent.Request<Texture2D>(AssetDirectory.ThunderveinDragon + "LaserGradient");
-                laserTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LaserCore");
-                extraTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ExtraLaser");
+                laserTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ThunderTrailB");
             }
         }
 
@@ -45,7 +43,6 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 gradientTex = null;
                 laserTex = null;
-                extraTex = null;
             }
         }
 
@@ -56,7 +53,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public override bool? CanDamage()
         {
-            if (Timer > DashTime + DelayTime / 2)
+            if (Timer > DashTime + (DelayTime / 2))
                 return false;
 
             return null;
@@ -74,13 +71,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             if (Timer < DashTime)
             {
                 Projectile.velocity = dragon.GetMousePos();
-                Projectile.Center = Projectile.velocity + dragon.Recorder.ToRotationVector2() * 2000;
+                Projectile.Center = Projectile.velocity + (dragon.Recorder.ToRotationVector2() * 2000);
                 Projectile.rotation = (Projectile.Center - Projectile.velocity).ToRotation();
 
                 SpawnDusts();
 
                 Vector2 pos2 = Projectile.velocity;
-                List<Vector2> pos = new List<Vector2>
+                List<Vector2> pos = new()
                 {
                     Projectile.velocity
                 };
@@ -117,7 +114,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 float factor = Timer / DashTime;
                 float sinFactor = MathF.Sin(factor * MathHelper.Pi);
 
-                ThunderWidth = 30 + sinFactor * 30;
+                ThunderWidth = 30 + (sinFactor * 30);
                 if (ThunderAlpha < 1)
                 {
                     ThunderAlpha += 1 / 10f;
@@ -141,7 +138,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 laserWidth -= 50f / DelayTime;
 
-                float factor = (Timer - DashTime) / (DelayTime);
+                float factor = (Timer - DashTime) / DelayTime;
                 ThunderWidth = 30 * (1 - factor);
                 ThunderAlpha = 1 - Coralite.Instance.X2Smoother.Smoother(factor);
 
@@ -173,7 +170,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     + Main.rand.NextVector2Circular(Projectile.width / 2, Projectile.width / 2);
                 if (Main.rand.NextBool())
                 {
-                    Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.7f, 1.1f));
+                    PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.7f, 1.1f));
                 }
                 else
                 {
@@ -193,14 +190,14 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 thunderTrails = new ThunderTrail[3];
                 for (int i = 0; i < 3; i++)
                 {
-                    thunderTrails[i] = new ThunderTrail(ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LaserBody2")
-                        , ThunderWidthFunc_Sin, ThunderColorFunc_Yellow);
+                    thunderTrails[i] = new ThunderTrail(ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ThunderTrailB2")
+                        , ThunderWidthFunc_Sin, ThunderColorFunc_Yellow, GetAlpha);
                     thunderTrails[i].CanDraw = false;
                     thunderTrails[i].SetRange((5, 20));
-                    thunderTrails[i].BasePositions = new Vector2[3]
-                    {
+                    thunderTrails[i].BasePositions =
+                    [
                         Projectile.Center,Projectile.Center,Projectile.Center
-                    };
+                    ];
                 }
             }
         }
@@ -214,7 +211,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             Vector2 dir = Projectile.rotation.ToRotationVector2();
             for (int i = 0; i < 100; i++)
             {
-                Vector2 currentPos = Projectile.velocity + dir * i * 20;
+                Vector2 currentPos = Projectile.velocity + (dir * i * 20);
 
                 laserTrailPoints.Add(currentPos);
             }
@@ -229,19 +226,19 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public override Color ThunderColorFunc_Yellow(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinYellowAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinYellowAlpha, MathF.Sin(factor * MathHelper.Pi));
         }
 
         public override Color ThunderColorFunc2_Orange(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinOrangeAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinOrangeAlpha, MathF.Sin(factor * MathHelper.Pi));
         }
 
         public virtual (float, float) GetRange(float factor)
         {
             float sinFactor = MathF.Sin(factor * MathHelper.Pi);
 
-            return (5, 20 + sinFactor * PointDistance / 2);
+            return (5, 20 + (sinFactor * PointDistance / 2));
         }
 
         public virtual float GetExpandWidth(float factor)
@@ -258,10 +255,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.NightmarePlantera + "Light").Value;
             var pos = laserTrailPoints[^1] - Main.screenPosition;
             var origin = mainTex.Size() / 2;
-            Color c = new Color(189, 109, 255, 0);
+            Color c = new(189, 109, 255, 0);
             c.A = 0;
 
-            Vector2 scale = new Vector2(laserWidth / 90, laserWidth / 130);
+            Vector2 scale = new(laserWidth / 90, laserWidth / 130);
 
             Main.spriteBatch.Draw(mainTex, pos, null, c, Projectile.rotation, origin, scale, 0, 0);
             Main.spriteBatch.Draw(mainTex, pos, null, c, Projectile.rotation, origin, scale * 0.75f, 0, 0);
@@ -277,12 +274,12 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, default, Main.GameViewMatrix.ZoomMatrix);
 
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             float count = laserTrailPoints.Count;
             Vector2 dir = (Projectile.rotation + 1.57f).ToRotationVector2();
             for (int i = 0; i < count; i++)
             {
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = laserTrailPoints[i];
                 Vector2 width = GetWidh(1f - factor) * dir;
                 Vector2 Top = Center + width;
@@ -294,17 +291,18 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
             if (bars.Count > 2)
             {
-                Effect effect = Filters.Scene["ShadowLaser"].GetShader().Shader;
+                Effect effect = Filters.Scene["LaserAlpha"].GetShader().Shader;
 
                 Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
                 Matrix view = Main.GameViewMatrix.TransformationMatrix;
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-                effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 6);
+                effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 2);
+                effect.Parameters["exAdd"].SetValue(0.2f);
                 effect.Parameters["transformMatrix"].SetValue(world * view * projection);
                 effect.Parameters["sampleTexture"].SetValue(laserTex.Value);
                 effect.Parameters["gradientTexture"].SetValue(gradientTex.Value);
-                effect.Parameters["extTexture"].SetValue(extraTex.Value);
+                effect.Parameters["extTexture"].SetValue(CoraliteAssets.Laser.VanillaFlowA.Value);
 
                 Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点

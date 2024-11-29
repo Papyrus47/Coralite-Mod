@@ -14,7 +14,7 @@ namespace Coralite.Content.Items.CoreKeeper
             Item.accessory = true;
             Item.width = Item.height = 40;
 
-            Item.value = Item.sellPrice(0, 1, 0, 0);
+            Item.value = Item.sellPrice(0, 1);
             Item.rare = RarityType<RareRarity>();
         }
 

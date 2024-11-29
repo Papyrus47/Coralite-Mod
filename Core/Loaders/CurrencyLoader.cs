@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.ModLoader.Core;
 
@@ -13,9 +12,6 @@ namespace Coralite.Core.Loaders
 
         public override void PostSetupContent()
         {
-            if (Main.dedServ)
-                return;
-
             Mod Mod = Coralite.Instance;
 
             CurrencySystemIDs = new Dictionary<CustomCurrencySystem, int>();

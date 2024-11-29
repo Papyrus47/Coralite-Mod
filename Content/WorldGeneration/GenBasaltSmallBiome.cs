@@ -4,15 +4,18 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
     public partial class CoraliteWorld
     {
+        public static LocalizedText SmallBasalt { get; set; }
+
         public void GenBasaltSmallBiome(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在生成玄武岩";
+            progress.Message = SmallBasalt.Value;//"正在生成玄武岩";
 
             ushort basalt = (ushort)ModContent.TileType<BasaltTile>();
             ushort hardBasalt = (ushort)ModContent.TileType<HardBasaltTile>();
@@ -55,7 +58,7 @@ namespace Coralite.Content.WorldGeneration
                 for (int k = 0; k < spawns; k++)
                 {
                     double value4 = k / spawns;
-                    progress.Set(value4 * 0.6f + 0.4f);
+                    progress.Set((value4 * 0.6f) + 0.4f);
                     int tryCount = 0;
                     int x9 = WorldGen.genRand.Next(200, Main.maxTilesX - 200);
                     int y7 = WorldGen.genRand.Next(Main.maxTilesY / 2, Main.maxTilesY - 300);
@@ -89,9 +92,9 @@ namespace Coralite.Content.WorldGeneration
             if (!WorldGen.InWorld(x, y))
                 return;
 
-            List<Point> list = new List<Point>();
-            List<Point> list2 = new List<Point>();
-            HashSet<Point> hashSet = new HashSet<Point>();
+            List<Point> list = new();
+            List<Point> list2 = new();
+            HashSet<Point> hashSet = new();
             list2.Add(new Point(x, y));
             while (list2.Count > 0)
             {
@@ -127,7 +130,7 @@ namespace Coralite.Content.WorldGeneration
                         WorldGen.PlaceWall(item.X, item.Y, ModContent.WallType<HardBasaltWall>());
 
                         {
-                            Point item2 = new Point(item.X - 1, item.Y);
+                            Point item2 = new(item.X - 1, item.Y);
                             if (!hashSet.Contains(item2))
                                 list2.Add(item2);
 
@@ -146,7 +149,7 @@ namespace Coralite.Content.WorldGeneration
 
                         for (int i = 2; i < 4; i++)
                         {
-                            Point item2 = new Point(item.X - i, item.Y);
+                            Point item2 = new(item.X - i, item.Y);
                             if (Main.tile[item2.X, item2.Y].HasTile && !hashSet.Contains(item2))
                                 list2.Add(item2);
 

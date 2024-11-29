@@ -31,23 +31,23 @@ namespace Coralite.Helpers
             Vector4 P = (rgb.Y < rgb.Z) ? new Vector4(rgb.Z, rgb.Y, -1.0f, 2 / 3f) : new Vector4(rgb.Y, rgb.Z, 0f, -1 / 3f);
             Vector4 Q = (rgb.X < P.X) ? new Vector4(P.X, P.Y, P.W, rgb.X) : new Vector4(rgb.X, P.Y, P.Z, P.X);
             float C = Q.X - Math.Min(Q.W, Q.Y);
-            float H = Math.Abs((Q.W - Q.Y) / (6 * C + Epsilon + Q.Z));
+            float H = Math.Abs((Q.W - Q.Y) / ((6 * C) + Epsilon + Q.Z));
 
             return new Vector3(H, C, Q.X);
         }
 
-        public static Vector3 Vec3(this Vector2 vector) => new Vector3(vector.X, vector.Y, 0);
+        public static Vector3 Vec3(this Vector2 vector) => new(vector.X, vector.Y, 0);
 
         public static float SignedAngle(Vector2 from, Vector2 to)
         {
             float num = Angle(from, to);
-            float num2 = Math.Sign(from.X * to.Y - from.Y * to.X);
+            float num2 = Math.Sign((from.X * to.Y) - (from.Y * to.X));
             return num * num2;
         }
 
         public static float SqrMagnitude(this Vector2 vector2)
         {
-            return vector2.X * vector2.X + vector2.Y + vector2.Y;
+            return (vector2.X * vector2.X) + vector2.Y + vector2.Y;
         }
 
         public static float Angle(Vector2 from, Vector2 to)
@@ -103,7 +103,7 @@ namespace Coralite.Helpers
 
         public static float Dot(Vector2 lhs, Vector2 rhs)
         {
-            return lhs.X * rhs.X + lhs.Y * rhs.Y;
+            return (lhs.X * rhs.X) + (lhs.Y * rhs.Y);
         }
 
         /// <summary>
@@ -186,10 +186,10 @@ namespace Coralite.Helpers
         {
             intersectPoint = Vector2.Zero;
 
-            var denominator = (point4.Y - point3.Y) * (point2.X - point1.X) - (point4.X - point3.X) * (point2.Y - point1.Y);
+            var denominator = ((point4.Y - point3.Y) * (point2.X - point1.X)) - ((point4.X - point3.X) * (point2.Y - point1.Y));
 
-            var a = (point4.X - point3.X) * (point1.Y - point3.Y) - (point4.Y - point3.Y) * (point1.X - point3.X);
-            var b = (point2.X - point1.X) * (point1.Y - point3.Y) - (point2.Y - point1.Y) * (point1.X - point3.X);
+            var a = ((point4.X - point3.X) * (point1.Y - point3.Y)) - ((point4.Y - point3.Y) * (point1.X - point3.X));
+            var b = ((point2.X - point1.X) * (point1.Y - point3.Y)) - ((point2.Y - point1.Y) * (point1.X - point3.X));
 
             if (denominator == 0)
             {
@@ -207,7 +207,7 @@ namespace Coralite.Helpers
 
             if (ua > 0 && ua < 1 && ub > 0 && ub < 1)
             {
-                intersectPoint = new Vector2(point1.X + ua * (point2.X - point1.X), point1.Y + ua * (point2.Y - point1.Y));
+                intersectPoint = new Vector2(point1.X + (ua * (point2.X - point1.X)), point1.Y + (ua * (point2.Y - point1.Y)));
                 return true;
             }
 
@@ -223,12 +223,12 @@ namespace Coralite.Helpers
         /// <returns></returns>
         public static float BezierEase(float time)
         {
-            return time * time / (2f * (time * time - time) + 1f);
+            return time * time / ((2f * ((time * time) - time)) + 1f);
         }
 
         public static float SwoopEase(float time)
         {
-            return 3.75f * (float)Math.Pow(time, 3) - 8.5f * (float)Math.Pow(time, 2) + 5.75f * time;
+            return (3.75f * (float)Math.Pow(time, 3)) - (8.5f * (float)Math.Pow(time, 2)) + (5.75f * time);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace Coralite.Helpers
         {
             float halfFocalLength2 = (halfLongAxis * halfLongAxis) - (halfShortAxis * halfShortAxis);
             float cosX = MathF.Cos(rotation);
-            return (halfLongAxis * halfShortAxis) / MathF.Sqrt(halfLongAxis * halfLongAxis - halfFocalLength2 * cosX * cosX);
+            return halfLongAxis * halfShortAxis / MathF.Sqrt((halfLongAxis * halfLongAxis) - (halfFocalLength2 * cosX * cosX));
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Coralite.Helpers
             Vector3 v3D = Vector3.Transform(v3, Matrix.CreateRotationX(zRot - MathHelper.PiOver2));
 
             //float k1 = -1000 / (v3D.Z - 1000);
-            Vector2 targetDir = /*k1 **/ new Vector2(v3D.X, v3D.Y);
+            Vector2 targetDir = /*k1 **/ new(v3D.X, v3D.Y);
             overrideAngle = targetDir.ToRotation();
             return targetDir.Length();
         }
@@ -316,20 +316,31 @@ namespace Coralite.Helpers
             return SoundEngine.PlaySound(style, position);
         }
 
-        public static bool OnScreen(Vector2 pos) => pos.X > -16 && pos.X < Main.screenWidth + 16 && pos.Y > -16 && pos.Y < Main.screenHeight + 16;
-
-        public static bool OnScreen(Rectangle rect) => rect.Intersects(new Rectangle(0, 0, Main.screenWidth, Main.screenHeight));
-
-        public static bool OnScreen(Vector2 pos, Vector2 size) => OnScreen(new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y));
-
-        public static void NotOnServer(Action method)
+        public static SlotId PlayPitched(SoundStyle style, Vector2? position = null, float? volume = null, float? pitch = null, float volumeAdjust = 0, float pitchAdjust = 0)
         {
-            if (Main.netMode != NetmodeID.Server)
-                method();
+            if (Main.netMode == NetmodeID.Server)
+                return SlotId.Invalid;
+
+            if (volume.HasValue)
+                style.Volume = volume.Value;
+
+            if (pitch.HasValue)
+                style.Pitch = pitch.Value;
+
+            style.Volume += volumeAdjust;
+            style.Pitch += pitchAdjust;
+
+            return SoundEngine.PlaySound(style, position);
         }
 
+        public static bool IsPointOnScreen(Vector2 pos) => pos.X > -16 && pos.X < Main.screenWidth + 16 && pos.Y > -16 && pos.Y < Main.screenHeight + 16;
+
+        public static bool IsRectangleOnScreen(Rectangle rect) => rect.Intersects(new Rectangle(0, 0, Main.screenWidth, Main.screenHeight));
+
+        public static bool IsAreaOnScreen(Vector2 pos, Vector2 size) => IsRectangleOnScreen(new Rectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y));
+
         public static Rectangle QuickMouseRectangle()
-           => new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 2, 2);
+           => new((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 2, 2);
 
         /// <summary>
         /// 将你的值根据不同模式来改变

@@ -1,0 +1,125 @@
+DescriptionPage.Description: 欢迎来到珊瑚的世界！
+
+GetMagikeKnowledge1Page: {
+	Title: 魔能残卷 其一
+	Welcome:
+		'''
+		    欢迎你，新人！
+		    [c/ffbeec:魔能] 是古代人类发展的重要工具，之后人们的技术水平突飞猛进，最后因为某些变故才有了如今荒凉的世界。
+
+		    本章节的目的是帮助你了解 [c/ffbeec:魔能] 相关最基础的知识，并且通过实践建造出属于你的 [c/ffbeec:魔能] 产线。
+		'''
+	ClickButton: "    如果你准备好了，就按下此页下方的按钮并开始阅读本章节吧！"
+	ContiuneRead: "    你已经获得了 [c/ffbeec:魔能基础知识] ！跟随章节内容开始搭建你的 [c/ffbeec:魔能] 产线吧！"
+}
+
+WhatIsMagikePage: {
+	Title: 什么是魔能？
+	Description:
+		'''
+		    魔能是一种能量，它无法单独以物品的形式存在，但可以存储在特定的仪器中。
+		    或许你已经注意到了，在某些合成表中会需要一个名为“魔能徽记”的物品，它仅仅是用来标记魔能需求量，并非真正需要这个物品。魔能徽记也[c/ff1616:无法通过任何方式获取]!
+		    关于如何合成这些合成表将在后续进行介绍。
+		'''
+}
+
+PlaceFirstLens: {
+	BuildYourFirstMagike: 搭建你的第一条魔能产线！
+	ExtractLens:
+		'''
+		    首先你需要一个用来生产魔能的仪器。 
+		    初学者可以使用 [c/ffbeec:基础提取透镜] ，它能从那些“含有魔能的物品”中提取魔能，前期的产量也比较可观。
+		    如果你发现材料齐全却无法合成，需要翻到前一页点击获取基础知识的按钮。
+		'''
+	FourWayPlace: "    制作好之后就可以将其摆放出来了，它支持4种方向的放置。"
+	TryMouseHover:
+		'''
+		把鼠标移上去试试
+		          ↓
+		'''
+}
+
+PlacePolarizedFilter: {
+	NeedPolarizedFilter:
+		'''
+		    要让你的仪器正常工作还需要一个关键道具，魔能学家们将其称作 [c/ffbeec:偏振滤镜] 。
+		    先制作一个最基础的 偏振滤镜-晶体 吧！请注意不要做错成其他类型的滤镜了。
+		'''
+	HowToUsePolarizedFilter: "    将偏振滤镜插入仪器的方法也很简单，只需要使用偏振滤镜物品进行框选，松开左键后就可以消耗手中的物品并放入偏振滤镜。"
+	SeeItemToolTip: "    在之后的流程中你会制作更多等级的偏振滤镜，需要注意的是并非所有的偏振滤镜都能顺利插入仪器之中。 请仔细阅读魔能仪器的物品描述，能插入的偏振滤镜均会标出。"
+}
+
+PutItemIn: {
+	WhatIsItemWithMagike:
+		'''
+		    “含有魔能的物品”会在物品描述中标出它的魔能含量，魔力晶体含有的魔能量在前期还是较为充足的，如果缺的话就再去地下挖一些吧。
+		    除此之外水晶洞中大量出现的魔力水晶块在前期也能提供魔能。
+		'''
+	TurnToMagikeProducer: "    接着按照下图的方式，把魔力晶体放入物品格内就可以让你的透镜正常工作了！仪器上的圆球形水晶会在能够工作的时候悬浮在空中。"
+}
+
+UIDescriptionPage: {
+	OpenUI:
+		'''
+		    在进行下一步前，先来了解一些必要的知识。
+		    使用鼠标右键点击刚刚放下来的透镜，如果你手中的物品没有右键使用的功能，那么就会呼出一个UI面板。
+		    UI内的各个区域功能如下所示。
+		'''
+	UIDescription:
+		'''
+		[c/ffbeec:①]  控制组件显示切换的按钮，具体功能将在之后介绍。
+		[c/ffbeec:②]  仪器内的组件会显示在这里，可以使用鼠标滚轮滑动，点击之后就会在右侧面板显示组件相关信息。
+		[c/ffbeec:③]  组件面板，会显示当前选中的组件的相关信息。
+		[c/ffbeec:④]  点击此处可以将UI拖拽放大。
+
+		    使用鼠标左键点击面板空白区域可以自由地拖拽UI面板到任何位置。
+		'''
+}
+
+StoneMaker: {
+	UseMagikeToDoSomething: 魔能应该用来干点什么？
+	MakeAStoneMaker:
+		'''
+		    [c/ffbeec:地质再生祭坛]
+		    它能消耗魔能并复制下方的石头，在后续的矿物生产中可以作为原料供应，对于初学者而言则是最简单的魔能工作站。它的物品描述中详细写明了能够复制哪些石头。
+		'''
+	InsertPolarizedFilter:
+		'''
+		    就像之前的基础提取透镜一样，这台“造石机”也需要一个偏振滤镜才能正常工作。
+		    如果能生产，它会在顶部显示对应的石块图标。如果你按照正确的方式放置，就会有类似下图中的效果。
+		'''
+}
+
+PartJumpPage: {
+	P1Title: "{$WhatIsMagikePage.Title}"
+	P2Title: "{$PlaceFirstLens.BuildYourFirstMagike}"
+	P3Title: "{$StoneMaker.UseMagikeToDoSomething}"
+	P4Title: 扩大你的生产线！
+	P5Title: 我需要更多魔能！
+	P6Title: 把你的魔能挥霍掉！
+	P7Title: 升级！升级！升级仪器！
+	P8Title: 百变滤镜
+}
+
+ConnectStaff: {
+	HowToMoveMagike: "    绝大部分仪器都能发送魔能，只是它们不知道要发送给谁。 使用魔能链接仪按下述方式把你的仪器们连接在一起吧！"
+	ConnectStep1: ◇  左键点击发送器
+	ConnectStep2: ◇◇  左键点击接收器器
+	UseConnectStaff:
+		'''
+		    需要注意的是，发送器的连接距离和容量都是有限的。
+		    使用魔能连接仪器右键点击发送器可以打开一个UI，点击旋转出的按钮就能断开这段连接，也可以在仪器的UI面板里的发送器组件中取消连接。
+		'''
+	BuyConnectStaff: "    [c/ffbeec:魔能连接仪] 由水晶生命体售卖，它能把接收者的坐标提供给发送者，以此在二者之间建立连接。"
+}
+
+ActivatedTheMachine: {
+	BuyActivateStaff: "    现在所有的准备都完成了，只需要一个信号让工作器开始工作。你可以选择在水晶生命体处购买一个 [c/ffbeec:魔能激活杖] ，或是使用电路来激活。"
+	HowToUseActivateStaff:
+		'''
+		    [c/ffbeec:魔能激活杖]
+		    只需要用它点击一下生产仪器就能激活它。
+		'''
+	WorkingBeLike: "    如果你让你的地质再生祭坛开始工作，它看上去应该是这样的。"
+	HarvestTheProduct: Mods.Coralite.Knowledges.ActivatedTheMachine.HarvestTheProduct
+}

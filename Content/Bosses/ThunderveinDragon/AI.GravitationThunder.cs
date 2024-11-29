@@ -22,12 +22,12 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         const int ReadyTime = 45;
 
                         Vector2 pos = GetMousePos();
-                        float edge = 240 - 140 * Math.Clamp(Timer / ReadyTime, 0, 1);
+                        float edge = 240 - (140 * Math.Clamp(Timer / ReadyTime, 0, 1));
                         edge /= 2;
                         Vector2 center = pos + Helper.NextVec2Dir(edge - 1, edge);
                         Dust d = Dust.NewDustPerfect(pos, DustID.PortalBoltTrail,
                             (pos - center).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(2, 4),
-                            newColor: Coralite.Instance.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.5f));
+                            newColor: Coralite.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.5f));
                         d.noGravity = true;
 
                         NPC.QuickSetDirection();
@@ -82,8 +82,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                                 NPC.TargetClosest();
                                 int damage = Helper.GetProjDamage(150, 200, 250);
-                                NPC.NewProjectileDirectInAI<GravitationThunderBall>(GetMousePos(), (Target.Center - GetMousePos()).SafeNormalize(Vector2.Zero) * 2
-                                    , damage, 0, NPC.target);
+
+                                if (!VaultUtils.isClient)
+                                    NPC.NewProjectileDirectInAI<GravitationThunderBall>(GetMousePos(), (Target.Center - GetMousePos()).SafeNormalize(Vector2.Zero) * 2
+                                        , damage, 0, NPC.target);
 
                                 SoundEngine.PlaySound(CoraliteSoundID.NoUse_Electric_Item93, NPC.Center);
                                 canDrawShadows = true;

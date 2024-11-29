@@ -47,7 +47,7 @@ namespace Coralite.Content.Items.Shadow
         {
             for (int i = 0; i < 2; i++)
             {
-                Projectile.NewProjectile(source, player.Center + new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * 50f, new Vector2(0, -0.03f), ProjectileType<ShadowSwordProj>(), damage, 6, player.whoAmI);
+                Projectile.NewProjectile(source, player.Center + (new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * 50f), new Vector2(0, -0.03f), ProjectileType<ShadowSwordProj>(), damage, 6, player.whoAmI);
                 rotation += 3;
             }
 
@@ -76,7 +76,6 @@ namespace Coralite.Content.Items.Shadow
 
         public ref float Combo => ref Projectile.ai[0];
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> GradientTexture;
         public int alpha;
 
@@ -98,7 +97,6 @@ namespace Coralite.Content.Items.Shadow
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "NormalSlashTrail3");
             GradientTexture = Request<Texture2D>(AssetDirectory.ShadowItems + "ShadowSwordGradient");
         }
 
@@ -107,7 +105,6 @@ namespace Coralite.Content.Items.Shadow
             if (Main.dedServ)
                 return;
 
-            trailTexture = null;
             GradientTexture = null;
         }
 
@@ -147,7 +144,7 @@ namespace Coralite.Content.Items.Shadow
                 startAngle -= Math.Sign(totalAngle) * 0.05f;
             }
 
-            _Rotation = startAngle = GetStartAngle() - Owner.direction * 2.8f;
+            _Rotation = startAngle = GetStartAngle() - (Owner.direction * 2.8f);
             Slasher();
             if (Timer == minTime)
             {
@@ -164,7 +161,7 @@ namespace Coralite.Content.Items.Shadow
                 default:
                 case 0:
                     alpha = (int)(Coralite.Instance.X2Smoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(2.8f - 4.8f * Smoother.Smoother(timer, maxTime - minTime), 0.8f, 1.2f);
+                    Projectile.scale = Helper.EllipticalEase(2.8f - (4.8f * Smoother.Smoother(timer, maxTime - minTime)), 0.8f, 1.2f);
                     break;
             }
 
@@ -179,7 +176,7 @@ namespace Coralite.Content.Items.Shadow
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -187,10 +184,10 @@ namespace Coralite.Content.Items.Shadow
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -210,7 +207,7 @@ namespace Coralite.Content.Items.Shadow
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
                 effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-                effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                 effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
                 Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;

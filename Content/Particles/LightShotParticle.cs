@@ -1,28 +1,29 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    public class LightShotParticle : Particle
+    public class LightShotParticle : BasePRT
     {
         public override string Texture => AssetDirectory.OtherProjectiles + "LightGlowShot";
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override void Update()
+        public override void AI()
         {
-            fadeIn++;
-            if (fadeIn > 15)
+            Opacity++;
+            if (Opacity > 15)
             {
-                color = Color.Lerp(color, new Color(0, 60, 200, 0), 0.15f);
+                Color = Color.Lerp(Color, new Color(0, 60, 200, 0), 0.15f);
                 Velocity.X *= 0.86f;
             }
-            else if (fadeIn < 4)
+            else if (Opacity < 4)
             {
                 Velocity *= 1.2f;
             }
@@ -31,7 +32,7 @@ namespace Coralite.Content.Particles
                 Velocity.X *= 0.98f;
             }
 
-            if (color.A < 2)
+            if (Color.A < 2)
                 active = false;
         }
 
@@ -43,23 +44,28 @@ namespace Coralite.Content.Particles
         /// <param name="rotation"></param>
         /// <param name="circleScale"></param>
         /// <returns></returns>
-        public static Particle Spawn(Vector2 center, Color newcolor, float rotation, Vector2 circleScale)
+        public static void Spawn(Vector2 center, Color newcolor, float rotation, Vector2 circleScale)
         {
-            Particle p = NewParticle<LightShotParticle>(center, Vector2.Zero, newcolor, 1);
-
-            p.Rotation = rotation;
-            p.Velocity = circleScale;
-            return p;
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
+            BasePRT p = PRTLoader.NewParticle<LightShotParticle>(center, Vector2.Zero, newcolor, 1);
+            if (p != null)
+            {
+                p.Rotation = rotation;
+                p.Velocity = circleScale;
+            }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch)
         {
-            Texture2D mainTex = GetTexture().Value;
-            Vector2 pos = Center - Main.screenPosition;
-            Vector2 origin = new Vector2(0, mainTex.Height / 2);
+            Texture2D mainTex = TexValue;
+            Vector2 pos = Position - Main.screenPosition;
+            Vector2 origin = new(0, mainTex.Height / 2);
             Vector2 scale = Velocity * 0.3f;
             scale.Y *= 2;
-            Color c = color;
+            Color c = Color;
 
             spriteBatch.Draw(mainTex, pos
                 , null, c, Rotation, origin, scale, SpriteEffects.None, 0f);
@@ -111,6 +117,8 @@ namespace Coralite.Content.Particles
             //spriteBatch.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bar3.ToArray(), 0, bar3.Count - 2);
             //spriteBatch.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bar4.ToArray(), 0, bar3.Count - 2);
             //spriteBatch.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+
+            return false;
         }
     }
 }

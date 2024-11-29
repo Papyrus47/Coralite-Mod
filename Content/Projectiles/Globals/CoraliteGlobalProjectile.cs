@@ -41,7 +41,7 @@ namespace Coralite.Content.Projectiles.Globals
             }
 
             if (source is EntitySource_ItemUse_WithAmmo itemUse
-                && itemUse.Item.DamageType == DamageClass.Ranged
+                && itemUse.Item.DamageType.CountsAsClass(DamageClass.Ranged)
                 && projectile.type is not (ProjectileID.VortexBeater or ProjectileID.Phantasm))
             {
                 if (projectile.ModProjectile is not null && projectile.ModProjectile.Mod.Name != "Coralite" && projectile.ModProjectile.Mod is not ICoralite)
@@ -75,7 +75,7 @@ namespace Coralite.Content.Projectiles.Globals
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
-            if (CoraliteWorld.coralCatWorld)
+            if (CoraliteWorld.CoralCatWorld)
             {
                 switch (projectile.type)
                 {

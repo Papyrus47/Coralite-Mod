@@ -1,17 +1,17 @@
-﻿using Coralite.Content.Items.Nightmare;
+﻿using Coralite.Content.Items.LandOfTheLustrousSeries;
+using Coralite.Content.Items.Nightmare;
 using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Systems.BossSystems;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -64,10 +64,10 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public float alpha = 1f;
 
         public static Color[] phantomColors;
-        public static Color nightPurple = new Color(204, 170, 242, 230);
-        public static Color lightPurple = new Color(195, 116, 219, 230);
-        public static Color nightmareSparkleColor = new Color(111, 80, 180, 230);
-        public static Color nightmareRed = new Color(250, 0, 100);
+        public static Color nightPurple = new(204, 170, 242, 230);
+        public static Color lightPurple = new(195, 116, 219, 230);
+        public static Color nightmareSparkleColor = new(111, 80, 180, 230);
+        public static Color nightmareRed = new(250, 0, 100);
 
         #region tml hooks
 
@@ -136,14 +136,14 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((23_5000 + numPlayers * 5_4000) / journeyScale);
+                    NPC.lifeMax = (int)((23_5000 + (numPlayers * 5_4000)) / journeyScale);
                     NPC.damage = 100;
                     NPC.defense = 35;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((32_8000 + numPlayers * 7_8000) / journeyScale);
+                    NPC.lifeMax = (int)((32_8000 + (numPlayers * 7_8000)) / journeyScale);
                     NPC.defense = 65;
                     NPC.damage = 120;
                 }
@@ -157,20 +157,20 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 return;
             }
 
-            NPC.lifeMax = 23_5000 + numPlayers * 5_4000;
+            NPC.lifeMax = 23_5000 + (numPlayers * 5_4000);
             NPC.damage = 100;
             NPC.defense = 55;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 32_8000 + numPlayers * 7_8000;
+                NPC.lifeMax = 32_8000 + (numPlayers * 7_8000);
                 NPC.defense = 65;
                 NPC.damage = 120;
             }
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 43_2000 + numPlayers * 10_0000;
+                NPC.lifeMax = 43_2000 + (numPlayers * 10_0000);
                 NPC.damage = 140;
                 NPC.defense = 70;
             }
@@ -183,9 +183,13 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<GriefSeed>()));
             //npcLoot.Add(ItemDropRule.Common(ItemType<RediancieTrophy>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<NightmarePlanteraMask>(), 7));
+
+            //掉落磷叶石，之后记得删掉
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Phosphophyllite>(), 2));
+
             //npcLoot.Add(ItemDropRule.NotScalingWithLuck(ModContent.ItemType<NightmareHeart>()));
 
-            LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
+            LeadingConditionRule notExpertRule = new(new Conditions.NotExpert());
 
             IItemDropRule[] weaponTypes = [
                 ItemDropRule.Common(ModContent.ItemType<LostSevensideHook>(), 1, 1, 1),
@@ -240,7 +244,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         private void Modifiers_ModifyHitInfo(ref NPC.HitInfo info)
         {
-            if ((Phase == (int)AIPhases.Dream_P2 && NPC.life < NPC.lifeMax / 5))
+            if (Phase == (int)AIPhases.Dream_P2 && NPC.life < NPC.lifeMax / 5)
             {
                 info.Damage = 1;
             }
@@ -286,9 +290,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override bool PreKill()
         {
-            SoundStyle st = CoraliteSoundID.BigBOOM_Item62;
-            st.Pitch = -0.5f;
-            SoundEngine.PlaySound(st, NPC.Center);
+            Helper.PlayPitched(CoraliteSoundID.BigBOOM_Item62, NPC.Center, pitch: -0.5f);
 
             for (int i = 0; i < 24; i++)
             {
@@ -298,7 +300,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                     _ => nightmareRed
                 };
 
-                Particle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(64, 64), Helper.NextVec2Dir(6, 24f),
+                PRTLoader.NewParticle(NPC.Center + Main.rand.NextVector2Circular(64, 64), Helper.NextVec2Dir(6, 24f),
                     CoraliteContent.ParticleType<BigFog>(), color, Scale: Main.rand.NextFloat(0.5f, 1.5f));
             }
 
@@ -377,7 +379,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 return;
             }
 
-            if (Phase == (int)AIPhases.Nightemare_P3 || phase2HeadSlot == (int)AIPhases.WakeUp_P4 && phase3HeadSlot != -1)
+            if (Phase == (int)AIPhases.Nightemare_P3 || (phase2HeadSlot == (int)AIPhases.WakeUp_P4 && phase3HeadSlot != -1))
             {
                 index = phase3HeadSlot;
                 return;
@@ -672,7 +674,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public Vector2 GetPhase1MousePos()
         {
-            return NPC.Center + NPC.rotation.ToRotationVector2() * 100;
+            return NPC.Center + (NPC.rotation.ToRotationVector2() * 100);
         }
 
         public void DoRotation(float maxChange)
@@ -695,14 +697,14 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public void NormallySetTentacle()
         {
-            Vector2 center = NPC.Center - NPC.velocity * 2;
+            Vector2 center = NPC.Center - (NPC.velocity * 2);
             for (int i = 0; i < 3; i++)
             {
                 RotateTentacle tentacle = rotateTentacles[i];
-                float factor = MathF.Sin((float)Main.timeForVisualEffects / 12 + i * 1.5f);
-                float targetRot = tentacle.rotation.AngleLerp(NPC.rotation + factor * 1.3f, 0.4f);
+                float factor = MathF.Sin(((float)Main.timeForVisualEffects / 12) + (i * 1.5f));
+                float targetRot = tentacle.rotation.AngleLerp(NPC.rotation + (factor * 1.3f), 0.4f);
                 Vector2 selfPos = Vector2.Lerp(tentacle.pos,
-                    center + (i * 30 + 140) * (NPC.rotation + factor * 0.65f + MathHelper.Pi).ToRotationVector2(), 0.2f);
+                    center + (((i * 30) + 140) * (NPC.rotation + (factor * 0.65f) + MathHelper.Pi).ToRotationVector2()), 0.2f);
                 tentacle.SetValue(selfPos, NPC.Center, targetRot);
             }
         }
@@ -764,7 +766,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 for (int i = 0; i < 7; i++)
                 {
                     Color c = phantomColors[i] * alpha;
-                    spriteBatch.Draw(mainTex, pos + (i * 1 / 7f * MathHelper.TwoPi + angle).ToRotationVector2() * distance, frameBox, c * alpha, selfRot, origin, NPC.scale, 0, 0);
+                    spriteBatch.Draw(mainTex, pos + (((i * 1 / 7f * MathHelper.TwoPi) + angle).ToRotationVector2() * distance), frameBox, c * alpha, selfRot, origin, NPC.scale, 0, 0);
                 }
             }
 

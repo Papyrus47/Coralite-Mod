@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -59,14 +59,14 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 Vector2 center = Projectile.Center;
                 float num198 = np.Center.X - center.X;
                 float num199 = np.Center.Y - center.Y;
-                float dis2Target = MathF.Sqrt(num198 * num198 + num199 * num199);
+                float dis2Target = MathF.Sqrt((num198 * num198) + (num199 * num199));
                 dis2Target = num197 / dis2Target;
                 num198 *= dis2Target;
                 num199 *= dis2Target;
                 int chase = 8;
 
-                Projectile.velocity.X = (Projectile.velocity.X * (chase - 1) + num198) / chase;
-                Projectile.velocity.Y = (Projectile.velocity.Y * (chase - 1) + num199) / chase;
+                Projectile.velocity.X = ((Projectile.velocity.X * (chase - 1)) + num198) / chase;
+                Projectile.velocity.Y = ((Projectile.velocity.Y * (chase - 1)) + num199) / chase;
 
                 #endregion
             }
@@ -82,7 +82,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 for (int i = -1; i < 2; i += 2)
                 {
                     int type = Main.rand.NextFromList(DustID.PlatinumCoin, DustID.GoldCoin);
-                    Vector2 dir = new Vector2(i, 0);
+                    Vector2 dir = new(i, 0);
                     Dust.NewDustPerfect(Projectile.Center, type, dir.RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)) * Main.rand.NextFloat(1, 4), Scale: Main.rand.NextFloat(1, 1.5f));
                 }
 
@@ -113,20 +113,20 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Particle particle = Particle.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), FantasyGod.shineColor, 1f);
+            BasePRT particle = PRTLoader.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), FantasyGod.shineColor, 1f);
             particle.Rotation = Projectile.velocity.ToRotation() + MathHelper.Pi + 2.2f + Main.rand.NextFloat(-0.5f, 0.5f);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 pos = Projectile.Center - Main.screenPosition;
-            Vector2 scale = new Vector2(0.75f);
+            Vector2 scale = new(0.75f);
             Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, pos, Color.White, FantasyGod.shineColor * 0.6f,
                 0.5f, 0f, 0.5f, 0.5f, 1f, Projectile.rotation, scale, Vector2.One * 2);
 
             for (int i = 0; i < 4; i++)
             {
-                Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, pos + (Projectile.rotation + i * MathHelper.PiOver2).ToRotationVector2() * 16, Color.White, FantasyGod.shineColor * 0.6f,
+                Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, pos + ((Projectile.rotation + (i * MathHelper.PiOver2)).ToRotationVector2() * 16), Color.White, FantasyGod.shineColor * 0.6f,
                     0.5f, 0f, 0.5f, 0.5f, 1f, Projectile.rotation, scale, Vector2.One * 2);
             }
             return false;

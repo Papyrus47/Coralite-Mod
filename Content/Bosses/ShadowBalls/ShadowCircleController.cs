@@ -42,7 +42,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                 for (int i = 0; i < 180; i++)
                 {
                     //先画个圆
-                    vector2D[i] = (new Vector2(1, 0).RotatedBy(i * (MathHelper.TwoPi / 180)));
+                    vector2D[i] = new Vector2(1, 0).RotatedBy(i * (MathHelper.TwoPi / 180));
                 }
             }
 
@@ -123,7 +123,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
         {
             Texture2D Texture = CircleTex.Value;
 
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> bars = new();
             //对法向量进行一个投影
             float k1 = -1000 / (normal.Z - 1000);
             var normalDir = k1 * new Vector2(normal.X, normal.Y);
@@ -131,19 +131,19 @@ namespace Coralite.Content.Bosses.ShadowBalls
             for (int i = start; i <= end; ++i)
             {
                 //一些数据
-                float factor = (float)i / vector2s.Length + selfRotation;
+                float factor = ((float)i / vector2s.Length) + selfRotation;
                 var w = 1;//暂时无用
 
-                bars.Add(new CustomVertexInfo(center + vector2s[i] * radius + normalDir * circleHeight, lightColor, new Vector3(factor, 1, w)));
-                bars.Add(new CustomVertexInfo(center + vector2s[i] * radius + normalDir * -circleHeight, lightColor, new Vector3(factor, 0, w)));
+                bars.Add(new CustomVertexInfo(center + (vector2s[i] * radius) + (normalDir * circleHeight), lightColor, new Vector3(factor, 1, w)));
+                bars.Add(new CustomVertexInfo(center + (vector2s[i] * radius) + (normalDir * -circleHeight), lightColor, new Vector3(factor, 0, w)));
                 if (i == vector2s.Length - 1)
                 {
-                    bars.Add(new CustomVertexInfo(center + vector2s[0] * radius + normalDir * circleHeight, lightColor, new Vector3(factor, 1, w)));
-                    bars.Add(new CustomVertexInfo(center + vector2s[0] * radius + normalDir * -circleHeight, lightColor, new Vector3(factor, 0, w)));
+                    bars.Add(new CustomVertexInfo(center + (vector2s[0] * radius) + (normalDir * circleHeight), lightColor, new Vector3(factor, 1, w)));
+                    bars.Add(new CustomVertexInfo(center + (vector2s[0] * radius) + (normalDir * -circleHeight), lightColor, new Vector3(factor, 0, w)));
                 }
             }
 
-            List<CustomVertexInfo> Vx = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> Vx = new();
             if (bars.Count > 2)
             {
                 for (int i = 0; i < bars.Count - 2; i += 2)

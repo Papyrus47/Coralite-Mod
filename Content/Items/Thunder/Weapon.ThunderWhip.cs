@@ -41,7 +41,9 @@ namespace Coralite.Content.Items.Thunder
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient<ZapCrystal>(2)
+                .AddIngredient<ZapCrystal>(3)
+                .AddIngredient<InsulationCortex>(3)
+                .AddIngredient<ElectrificationWing>(2)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }
@@ -83,7 +85,7 @@ namespace Coralite.Content.Items.Thunder
             Player owner = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
 
-            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * Timer;
+            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + (Projectile.velocity * Timer);
             // Vanilla uses Vector2.Dot(Projectile.velocity, Vector2.UnitX) here. Dot Product returns the difference between two vectors, 0 meaning they are perpendicular.
             // However, the use of UnitX basically turns it into a more complicated way of checking if the projectile's velocity is above or equal to zero on the X axis.
             Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
@@ -120,7 +122,7 @@ namespace Coralite.Content.Items.Thunder
                 int dustType = DustID.PortalBoltTrail;
 
                 // After choosing a randomized dust and a whip segment to spawn from, dust is spawned.
-                Dust dust = Dust.NewDustDirect(spawnArea.TopLeft(), spawnArea.Width, spawnArea.Height, dustType, 0f, 0f, 50, Coralite.Instance.ThunderveinYellow);
+                Dust dust = Dust.NewDustDirect(spawnArea.TopLeft(), spawnArea.Width, spawnArea.Height, dustType, 0f, 0f, 50, Coralite.ThunderveinYellow);
                 dust.position = points[pointIndex];
                 Vector2 spinningpoint = points[pointIndex] - points[pointIndex - 1];
                 dust.velocity *= 0.5f;
@@ -142,7 +144,7 @@ namespace Coralite.Content.Items.Thunder
         {
             Texture2D texture = TextureAssets.FishingLine.Value;
             Rectangle frame = texture.Frame();
-            Vector2 origin = new Vector2(frame.Width / 2, 2);
+            Vector2 origin = new(frame.Width / 2, 2);
 
             Vector2 pos = list[0];
             for (int i = 0; i < list.Count - 2; i++)
@@ -151,8 +153,8 @@ namespace Coralite.Content.Items.Thunder
                 Vector2 diff = list[i + 1] - element;
 
                 float rotation = diff.ToRotation() - MathHelper.PiOver2;
-                Color color = Lighting.GetColor(element.ToTileCoordinates(), Coralite.Instance.ThunderveinYellow);
-                Vector2 scale = new Vector2(1, (diff.Length() + 2) / frame.Height);
+                Color color = Lighting.GetColor(element.ToTileCoordinates(), Coralite.ThunderveinYellow);
+                Vector2 scale = new(1, (diff.Length() + 2) / frame.Height);
 
                 Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
 
@@ -162,7 +164,7 @@ namespace Coralite.Content.Items.Thunder
 
         public override bool PreDraw(ref Color lightColor)
         {
-            List<Vector2> list = new List<Vector2>();
+            List<Vector2> list = new();
             Projectile.FillWhipControlPoints(Projectile, list);
 
             DrawLine(list);
@@ -176,7 +178,7 @@ namespace Coralite.Content.Items.Thunder
 
             for (int i = 0; i < list.Count - 1; i++)
             {
-                Rectangle frame = new Rectangle(0, 0, 16, 36); // 鞭子把手的大小
+                Rectangle frame = new(0, 0, 16, 36); // 鞭子把手的大小
                 float scale = 1;
 
                 if (i == list.Count - 2)
@@ -231,7 +233,7 @@ namespace Coralite.Content.Items.Thunder
                 Rectangle spawnArea = npc.getRect();
                 int dustType = DustID.PortalBoltTrail;
 
-                Dust dust = Dust.NewDustDirect(spawnArea.TopLeft(), spawnArea.Width, spawnArea.Height, dustType, 0f, 0f, 50, Coralite.Instance.ThunderveinYellow);
+                Dust dust = Dust.NewDustDirect(spawnArea.TopLeft(), spawnArea.Width, spawnArea.Height, dustType, 0f, 0f, 50, Coralite.ThunderveinYellow);
                 dust.velocity *= 1.5f;
                 dust.noGravity = true;
             }

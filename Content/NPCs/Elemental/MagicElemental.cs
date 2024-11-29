@@ -1,4 +1,5 @@
-﻿using Coralite.Content.Items.Materials;
+﻿using Coralite.Content.Items.Banner;
+using Coralite.Content.Items.Materials;
 using Coralite.Core;
 using System;
 using Terraria;
@@ -18,6 +19,9 @@ namespace Coralite.Content.NPCs.Elemental
 
         public override void SetDefaults()
         {
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<MagicElementalBannerItem>();
+
             NPC.damage = 10;
             NPC.lifeMax = 40;
             NPC.width = NPC.height = 30;
@@ -25,7 +29,7 @@ namespace Coralite.Content.NPCs.Elemental
             NPC.knockBackResist = 0.75f;
             NPC.noGravity = true;
             NPC.aiStyle = -1;
-            NPC.value = Item.buyPrice(0, 0, 5, 0);
+            NPC.value = Item.buyPrice(silver: 5);
             NPC.scale = Main.rand.NextFloat(1, 1.3f);
 
             NPC.HitSound = CoraliteSoundID.Fairy_NPCHit5;
@@ -50,7 +54,7 @@ namespace Coralite.Content.NPCs.Elemental
                     flag18 = true;
 
                 num298 += 24;
-                if (NPC.position.Y > NPC.ai[1] - (float)num298 && NPC.position.Y < NPC.ai[1] + num298)
+                if (NPC.position.Y > NPC.ai[1] - num298 && NPC.position.Y < NPC.ai[1] + num298)
                     flag19 = true;
 
                 if (flag18 && flag19)
@@ -86,7 +90,7 @@ namespace Coralite.Content.NPCs.Elemental
                     NPC.direction = 1;
             }
 
-            int num299 = (int)((NPC.position.X + (NPC.width / 2)) / 16f) + NPC.direction * 2;
+            int num299 = (int)((NPC.position.X + (NPC.width / 2)) / 16f) + (NPC.direction * 2);
             int num300 = (int)((NPC.position.Y + NPC.height) / 16f);
             bool flag20 = true;
             bool flag21 = false;
@@ -115,7 +119,7 @@ namespace Coralite.Content.NPCs.Elemental
                 Vector2 center = NPC.Center;
                 float num314 = Main.player[NPC.target].Center.X - center.X;
                 float num315 = Main.player[NPC.target].Center.Y - center.Y;
-                float num316 = (float)Math.Sqrt(num314 * num314 + num315 * num315);
+                float num316 = (float)Math.Sqrt((num314 * num314) + (num315 * num315));
                 num316 = num313 / num316;
                 num314 *= num316;
                 num315 *= num316;
@@ -133,17 +137,15 @@ namespace Coralite.Content.NPCs.Elemental
 
             if (NPC.position.Y + NPC.height > Main.player[NPC.target].position.Y)
             {
+                for (int i = num300; i < num300 + num301; i++)
                 {
-                    for (int i = num300; i < num300 + num301; i++)
+                    if ((Main.tile[num299, i].HasTile && Main.tileSolid[Main.tile[num299, i].TileType]) || Main.tile[num299, i].LiquidAmount > 0)
                     {
-                        if ((Main.tile[num299, i].HasTile && Main.tileSolid[Main.tile[num299, i].TileType]) || Main.tile[num299, i].LiquidAmount > 0)
-                        {
-                            if (i <= num300 + 1)
-                                flag21 = true;
+                        if (i <= num300 + 1)
+                            flag21 = true;
 
-                            flag20 = false;
-                            break;
-                        }
+                        flag20 = false;
+                        break;
                     }
                 }
             }
@@ -171,11 +173,9 @@ namespace Coralite.Content.NPCs.Elemental
 
             if (flag20)
             {
-                {
-                    NPC.velocity.Y += 0.2f;
-                    if (NPC.velocity.Y > 2f)
-                        NPC.velocity.Y = 2f;
-                }
+                NPC.velocity.Y += 0.2f;
+                if (NPC.velocity.Y > 2f)
+                    NPC.velocity.Y = 2f;
             }
             else
             {
@@ -276,7 +276,7 @@ namespace Coralite.Content.NPCs.Elemental
             for (int i = 0; i < 8; i++)
             {
                 Vector2 dir = Helpers.Helper.NextVec2Dir();
-                Dust d = Dust.NewDustPerfect(NPC.Center + dir * Main.rand.NextFloat(20), DustID.ShadowbeamStaff, dir * Main.rand.NextFloat(1, 4),
+                Dust d = Dust.NewDustPerfect(NPC.Center + (dir * Main.rand.NextFloat(20)), DustID.ShadowbeamStaff, dir * Main.rand.NextFloat(1, 4),
                     Scale: Main.rand.NextFloat(1, 1.4f));
                 d.noGravity = true;
             }

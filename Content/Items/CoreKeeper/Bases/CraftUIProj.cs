@@ -1,9 +1,9 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Loaders;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
@@ -28,7 +28,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
         public ref float CraftMaxTime => ref Projectile.ai[0];
         public ref float CraftTimer => ref Projectile.ai[2];
 
-        private ParticleGroup particles;
+        private PrimitivePRTGroup particles;
         private SlotId slotID;
 
         public override void SetDefaults()
@@ -46,7 +46,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
 
         public override void AI()
         {
-            particles ??= new ParticleGroup();
+            particles ??= new PrimitivePRTGroup();
 
             Projectile.Center = Owner.Center;
             if (CraftTimer > CraftMaxTime)
@@ -96,7 +96,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
             }
 
             Lighting.AddLight(Projectile.Center, 0.3f, 0.3f, 1f);
-            particles?.UpdateParticles();
+            particles?.Update();
             CraftTimer++;
             Projectile.timeLeft = 2;
             Owner.itemAnimation = Owner.itemTime = 2;
@@ -133,7 +133,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
 
         public void DrawPrimitives()
         {
-            particles?.DrawParticlesPrimitive();
+            particles?.DrawPrimitive();
         }
     }
 
@@ -145,6 +145,10 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
 
         public SpecialCraftParticle()
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
             Main.QueueMainThreadAction(() =>
             {
                 effect = new BasicEffect(Main.instance.GraphicsDevice);
@@ -152,9 +156,9 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
             });
         }
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
-            color = Main.rand.Next(2) switch
+            Color = Main.rand.Next(2) switch
             {
                 0 => new Color(148, 247, 221),
                 _ => new Color(24, 133, 216)
@@ -162,64 +166,62 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
             trail = new Trail(Main.instance.GraphicsDevice, 16, new NoTip(), factor => 1 * Scale, factor =>
             {
                 if (factor.X < 0.7f)
-                    return Color.Lerp(new Color(0, 0, 0, 0), color, factor.X / 0.7f);
+                    return Color.Lerp(new Color(0, 0, 0, 0), Color, factor.X / 0.7f);
 
-                return Color.Lerp(color, Color.White, (factor.X - 0.7f) / 0.3f);
+                return Color.Lerp(Color, Color.White, (factor.X - 0.7f) / 0.3f);
             });
             float length = Helper.EllipticalEase(Rotation, 0.3f, out float overrideAngle) * Velocity.X;
-            Vector2 center = this.Center + overrideAngle.ToRotationVector2() * length;
-            oldCenter = new Vector2[16];
+            Vector2 center = this.Position + (overrideAngle.ToRotationVector2() * length);
+            oldPositions = new Vector2[16];
             for (int i = 0; i < 16; i++)
-                oldCenter[i] = center;
+                oldPositions[i] = center;
         }
 
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void Update()
+        public override void AI()
         {
             Rotation += 0.06f;
 
-            if (fadeIn < Velocity.Y)
+            if (Opacity < Velocity.Y)
             {
                 float length = Helper.EllipticalEase(Rotation, 0.3f, out float overrideAngle) * Velocity.X;
 
                 for (int i = 0; i < 16 - 1; i++)
-                    oldCenter[i] = oldCenter[i + 1];
+                    oldPositions[i] = oldPositions[i + 1];
 
-                oldCenter[16 - 1] = Center + overrideAngle.ToRotationVector2() * length;
+                oldPositions[16 - 1] = Position + (overrideAngle.ToRotationVector2() * length);
             }
-            else if (fadeIn < Velocity.Y + 16)
+            else if (Opacity < Velocity.Y + 16)
             {
                 for (int i = 0; i < 16 - 1; i++)
-                    oldCenter[i] = oldCenter[i + 1];
+                    oldPositions[i] = oldPositions[i + 1];
             }
             else
             {
                 active = false;
             }
 
-            fadeIn++;
-            trail.Positions = oldCenter;
+            Opacity++;
+            trail.Positions = oldPositions;
         }
-
-        public override void Draw(SpriteBatch spriteBatch) { }
 
         public static SpecialCraftParticle Spawn(Vector2 center, float r, float time, float startRot)
         {
-            SpecialCraftParticle p = ParticleLoader.GetParticle(CoraliteContent.ParticleType<SpecialCraftParticle>()).NewInstance() as SpecialCraftParticle;
-            p.Center = center;
+            SpecialCraftParticle p = PRTLoader.PRT_IDToInstances[CoraliteContent.ParticleType<SpecialCraftParticle>()].Clone() as SpecialCraftParticle;
+            p.Position = center;
             p.Velocity = new Vector2(r, time);
             p.Rotation = startRot;
             p.active = true;
-            p.shouldKilledOutScreen = false;
+            p.ShouldKillWhenOffScreen = false;
             p.Scale = 1;
 
-            p.OnSpawn();
+            p.SetProperty();
 
             return p;
         }
 
-        public override void DrawPrimitives()
+        public override void DrawPrimitive()
         {
             if (effect == null)
                 return;
@@ -237,22 +239,23 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
         }
     }
 
-    public class OnCraftLightShot : Particle
+    public class OnCraftLightShot : BasePRT
     {
         public override string Texture => AssetDirectory.CoreKeeperItems + "LightPillar";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
-            color = new Color(148, 247, 221, 100);
+            Color = new Color(148, 247, 221, 100);
             Velocity = new Vector2(2, 8);
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void Update()
+        public override void AI()
         {
             Velocity.X *= 0.99f;
-            color *= 0.99f;
+            Color *= 0.99f;
             Velocity.Y *= 0.93f;
 
             if (Velocity.Y < 0.5f)
@@ -261,34 +264,36 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch)
         {
-            Texture2D mainTex = GetTexture().Value;
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height);
-            Vector2 pos = Center - Main.screenPosition;
-            spriteBatch.Draw(mainTex, pos, null, color, 0, origin, Velocity, SpriteEffects.None, 0f);
-            spriteBatch.Draw(mainTex, pos, null, color, 0, origin, Velocity * 0.9f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(mainTex, pos, null, color, 0, origin, Velocity * 0.9f, SpriteEffects.None, 0f);
+            Texture2D mainTex = TexValue;
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height);
+            Vector2 pos = Position - Main.screenPosition;
+            spriteBatch.Draw(mainTex, pos, null, Color, 0, origin, Velocity, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, pos, null, Color, 0, origin, Velocity * 0.9f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, pos, null, Color, 0, origin, Velocity * 0.9f, SpriteEffects.None, 0f);
+            return false;
         }
     }
 
-    public class OnCraftLightExpand : Particle
+    public class OnCraftLightExpand : BasePRT
     {
         public override string Texture => AssetDirectory.CoreKeeperItems + "CircleLight";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             Scale = 0.1f;
-            color = new Color(148, 247, 221);
+            Color = new Color(148, 247, 221);
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void Update()
+        public override void AI()
         {
-            if (fadeIn > 7)
+            if (Opacity > 7)
             {
-                color *= 0.8f;
+                Color *= 0.8f;
                 Scale += 0.08f;
                 Velocity += new Vector2(1, 0.5f) * 0.03f;
             }
@@ -298,23 +303,24 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
                 Velocity = new Vector2(1, 0.5f) * Scale;
             }
 
-            if (fadeIn > 30 || color.A < 10)
+            if (Opacity > 30 || Color.A < 10)
                 active = false;
 
-            fadeIn++;
+            Opacity++;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch)
         {
             Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.CoreKeeperItems + "CircleLight2").Value;
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 2);
-            Vector2 pos = Center - Main.screenPosition;
-            spriteBatch.Draw(mainTex, pos, null, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(mainTex, pos, null, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
-            mainTex = GetTexture().Value;
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 2);
+            Vector2 pos = Position - Main.screenPosition;
+            spriteBatch.Draw(mainTex, pos, null, Color, Rotation, origin, Scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, pos, null, Color, Rotation, origin, Scale, SpriteEffects.None, 0f);
+            mainTex = TexValue;
 
-            spriteBatch.Draw(mainTex, pos, null, color, Rotation, origin, Velocity * 1.2f, SpriteEffects.FlipVertically, 0f);
-            spriteBatch.Draw(mainTex, pos, null, color, Rotation, origin, Velocity * 1.2f, SpriteEffects.FlipVertically, 0f);
+            spriteBatch.Draw(mainTex, pos, null, Color, Rotation, origin, Velocity * 1.2f, SpriteEffects.FlipVertically, 0f);
+            spriteBatch.Draw(mainTex, pos, null, Color, Rotation, origin, Velocity * 1.2f, SpriteEffects.FlipVertically, 0f);
+            return false;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Coralite.Content.Items.Pets
     {
         public override string Texture => AssetDirectory.PetItems + Name;
 
-        private static ParticleGroup group;
+        private static PrimitivePRTGroup group;
 
         public override void SetStaticDefaults()
         {
@@ -43,7 +44,7 @@ namespace Coralite.Content.Items.Pets
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            group?.UpdateParticles();
+            group?.Update();
         }
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
@@ -52,15 +53,15 @@ namespace Coralite.Content.Items.Pets
             {
                 Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "HorizontalLight").Value;
 
-                Vector2 origin = new Vector2(0, mainTex.Height / 2);
+                Vector2 origin = new(0, mainTex.Height / 2);
                 Color c = Color.Pink;
                 c.A = 0;
-                c *= 0.25f + MathF.Sin(Main.GlobalTimeWrappedHourly) * 0.2f;
+                c *= 0.25f + (MathF.Sin(Main.GlobalTimeWrappedHourly) * 0.2f);
 
                 for (int i = 0; i < 5; i++)
                 {
                     Main.spriteBatch.Draw(mainTex, new Vector2(line.X - 10, line.Y), null, c,
-                        i * 0.22f, origin, 0.7f - i * 0.17f, 0, 0);
+                        i * 0.22f, origin, 0.7f - (i * 0.17f), 0, 0);
                 }
             }
 
@@ -71,7 +72,7 @@ namespace Coralite.Content.Items.Pets
         {
             if (line.Mod == "Terraria" && line.Name == "ItemName")
             {
-                group ??= new ParticleGroup();
+                group ??= new PrimitivePRTGroup();
                 if (group != null)
                 {
                     if (!Main.gamePaused && Main.GameUpdateCount % 20 == 0)
@@ -82,7 +83,7 @@ namespace Coralite.Content.Items.Pets
                             , Color.Pink, Main.rand.NextFloat(0.8f, 1f));
                     }
                 }
-                group?.DrawParticlesInUI(Main.spriteBatch);
+                group?.DrawInUI(Main.spriteBatch);
             }
         }
     }
@@ -92,45 +93,46 @@ namespace Coralite.Content.Items.Pets
         public override Color RarityColor => Color.Lerp(new Color(255, 152, 210), Color.Pink, Math.Abs(MathF.Sin(Main.GlobalTimeWrappedHourly * 3)));
     }
 
-    public class Petal : Particle
+    public class Petal : BasePRT
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "NightmarePetal";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             Frame = new Rectangle(0, Main.rand.Next(8) * 14, 10, 14);
-            shouldKilledOutScreen = false;
+            ShouldKillWhenOffScreen = false;
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override void Update()
+        public override void AI()
         {
-            Center += Velocity;
+            Position += Velocity;
             Rotation += Main.rand.NextFloat(0.13f, 0.18f);
             Velocity *= 0.99f;
-            if (fadeIn > 45)
-                color *= 0.88f;
-            if (fadeIn % 8 == 0)
+            if (Opacity > 45)
+                Color *= 0.88f;
+            if (Opacity % 8 == 0)
             {
                 Frame.Y += 14;
                 if (Frame.Y > 98)
                     Frame.Y = 0;
             }
 
-            fadeIn++;
-            if (fadeIn > 60)
+            Opacity++;
+            if (Opacity > 60)
                 active = false;
         }
 
         public override void DrawInUI(SpriteBatch spriteBatch)
         {
             Rectangle frame = Frame;
-            Vector2 origin = new Vector2(frame.Width / 2, frame.Height / 2);
-            Color c = color;
-            if (fadeIn < 6)
+            Vector2 origin = new(frame.Width / 2, frame.Height / 2);
+            Color c = Color;
+            if (Opacity < 6)
             {
-                c *= fadeIn / 6;
+                c *= Opacity / 6;
             }
-            spriteBatch.Draw(GetTexture().Value, Center, frame, c, Rotation, origin, Scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(TexValue, Position, frame, c, Rotation, origin, Scale, SpriteEffects.None, 0f);
         }
     }
 
@@ -233,7 +235,7 @@ namespace Coralite.Content.Items.Pets
                 Vector2 vector6 = player.Center - Projectile.Center;
                 float num20 = vector6.Length();
                 if (num20 > 2000f)
-                    Projectile.position = player.Center - new Vector2(Projectile.width, Projectile.height) / 2f;
+                    Projectile.position = player.Center - (new Vector2(Projectile.width, Projectile.height) / 2f);
 
                 if (num20 < num19 && player.velocity.Y == 0f && Projectile.position.Y + Projectile.height <= player.position.Y + player.height && !Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
                 {
@@ -316,7 +318,7 @@ namespace Coralite.Content.Items.Pets
                 Projectile.spriteDirection = Projectile.direction;
                 Projectile.rotation = 0f;
                 Projectile.friendly = true;
-                Projectile.frame = 4 + (int)(num9 - Projectile.ai[1]) / (num9 / 3);
+                Projectile.frame = 4 + ((int)(num9 - Projectile.ai[1]) / (num9 / 3));
                 //Main.NewText(Math.Abs(Projectile.velocity.X));
                 if (Math.Abs(Projectile.velocity.X) > 4.9f)
                     Projectile.frame += 4;
@@ -391,7 +393,7 @@ namespace Coralite.Content.Items.Pets
                 Vector2 vector7 = player.Center - Projectile.Center;
                 if (vector7.Length() > 2000f)
                 {
-                    Projectile.position = player.Center - new Vector2(Projectile.width, Projectile.height) / 2f;
+                    Projectile.position = player.Center - (new Vector2(Projectile.width, Projectile.height) / 2f);
                 }
                 else if (vector7.Length() > num2 || Math.Abs(vector7.Y) > num3)
                 {
@@ -422,8 +424,8 @@ namespace Coralite.Content.Items.Pets
                         vector.Y += 16f;
                     }
 
-                    Vector2 vector8 = Collision.TileCollision(player.Center - Projectile.Size / 2f, vector - player.Center, Projectile.width, Projectile.height);
-                    vector = player.Center - Projectile.Size / 2f + vector8;
+                    Vector2 vector8 = Collision.TileCollision(player.Center - (Projectile.Size / 2f), vector - player.Center, Projectile.width, Projectile.height);
+                    vector = player.Center - (Projectile.Size / 2f) + vector8;
                     if (Projectile.Distance(vector) < 32f)
                     {
                         float num32 = player.Center.Distance(vector);
@@ -439,14 +441,14 @@ namespace Coralite.Content.Items.Pets
                         Vector2 vector11 = r2.TopLeft();
                         for (float num33 = 0f; num33 < 1f; num33 += 0.05f)
                         {
-                            Vector2 vector12 = r2.TopLeft() + vector10 * num33;
-                            if (Collision.SolidCollision(r2.TopLeft() + vector10 * num33, r.Width, r.Height))
+                            Vector2 vector12 = r2.TopLeft() + (vector10 * num33);
+                            if (Collision.SolidCollision(r2.TopLeft() + (vector10 * num33), r.Width, r.Height))
                                 break;
 
                             vector11 = vector12;
                         }
 
-                        vector = vector11 + Projectile.Size / 2f;
+                        vector = vector11 + (Projectile.Size / 2f);
                     }
                 }
 
@@ -499,14 +501,14 @@ namespace Coralite.Content.Items.Pets
                         Projectile.velocity.X = 0f;
                 }
 
-                bool flag15 = Math.Abs(vector13.X) >= 64f || vector13.Y <= -48f && Math.Abs(vector13.X) >= 8f;
+                bool flag15 = Math.Abs(vector13.X) >= 64f || (vector13.Y <= -48f && Math.Abs(vector13.X) >= 8f);
                 if (num39 != 0 && flag15)
                 {
-                    int num41 = (int)(Projectile.position.X + Projectile.width / 2) / 16;
+                    int num41 = (int)(Projectile.position.X + (Projectile.width / 2)) / 16;
                     int num42 = (int)Projectile.position.Y / 16;
                     num41 += num39;
                     num41 += (int)Projectile.velocity.X;
-                    for (int j = num42; j < num42 + Projectile.height / 16 + 1; j++)
+                    for (int j = num42; j < num42 + (Projectile.height / 16) + 1; j++)
                     {
                         if (WorldGen.SolidTile(num41, j))
                             flag13 = true;
@@ -521,7 +523,7 @@ namespace Coralite.Content.Items.Pets
                     {
                         for (int k = 0; k < 3; k++)
                         {
-                            int num44 = (int)(Projectile.position.X + Projectile.width / 2) / 16;
+                            int num44 = (int)(Projectile.position.X + (Projectile.width / 2)) / 16;
                             if (k == 0)
                                 num44 = (int)Projectile.position.X / 16;
 
@@ -534,8 +536,8 @@ namespace Coralite.Content.Items.Pets
 
                             try
                             {
-                                num44 = (int)(Projectile.position.X + Projectile.width / 2) / 16;
-                                num45 = (int)(Projectile.position.Y + Projectile.height / 2) / 16;
+                                num44 = (int)(Projectile.position.X + (Projectile.width / 2)) / 16;
+                                num45 = (int)(Projectile.position.Y + (Projectile.height / 2)) / 16;
                                 num44 += num39;
                                 num44 += (int)Projectile.velocity.X;
                                 if (!WorldGen.SolidTile(num44, num45 - 1) && !WorldGen.SolidTile(num44, num45 - 2))
@@ -636,7 +638,7 @@ namespace Coralite.Content.Items.Pets
                     Projectile.frame = 14;
                 }
 
-                Projectile.velocity.Y += 0.4f + num43 * 1f;
+                Projectile.velocity.Y += 0.4f + (num43 * 1f);
                 if (Projectile.velocity.Y > 10f)
                     Projectile.velocity.Y = 10f;
             }

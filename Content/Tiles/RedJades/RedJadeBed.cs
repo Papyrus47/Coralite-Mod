@@ -15,7 +15,7 @@ namespace Coralite.Content.Tiles.RedJades
 
         public override void SetStaticDefaults()
         {
-            this.BedPrefab(DustID.GemRuby, Coralite.Instance.RedJadeRed);
+            this.BedPrefab(DustID.GemRuby, Coralite.RedJadeRed);
         }
 
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -44,7 +44,7 @@ namespace Coralite.Content.Tiles.RedJades
         {
             Player player = Main.LocalPlayer;
             Tile tile = Main.tile[i, j];
-            int spawnX = (i - (tile.TileFrameX / 18)) + (tile.TileFrameX >= 72 ? 5 : 2);
+            int spawnX = i - (tile.TileFrameX / 18) + (tile.TileFrameX >= 72 ? 5 : 2);
             int spawnY = j + 2;
 
             if (tile.TileFrameY % 38 != 0)

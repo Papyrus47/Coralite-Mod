@@ -1,56 +1,98 @@
 ﻿using Coralite.Core.Systems.CoraliteActorComponent;
-using System;
+using Coralite.Core.Systems.MagikeSystem.Particles;
+using Coralite.Helpers;
+using System.IO;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
+using Terraria.ObjectData;
 
 namespace Coralite.Core.Systems.MagikeSystem.Components
 {
-    public abstract class MagikeSender : Component
+    public abstract class MagikeSender : MagikeComponent, ITimerTriggerComponent
     {
         public sealed override int ID => MagikeComponentID.MagikeSender;
 
         /// <summary> 基础单次发送量 </summary>
-        public int UnitDeliveryBase { get; private set; }
+        public int UnitDeliveryBase { get; protected set; }
         /// <summary> 额外单次发送量 </summary>
-        public int UnitDeliveryExtra { get; set; }
+        public float UnitDeliveryBonus { get; set; } = 1f;
 
         /// <summary> 单次发送量 </summary>
-        public int UnitDelivery { get => UnitDeliveryBase + UnitDeliveryExtra; }
+        public int UnitDelivery { get => (int)(UnitDeliveryBase * UnitDeliveryBonus); }
 
         /// <summary> 基础发送时间 </summary>
-        public int SendDelayBase { get; private set; }
+        public int SendDelayBase { get => DelayBase; protected set => DelayBase = value; }
         /// <summary> 发送时间减少量（效率增幅量） </summary>
-        public float SendDelayBonus { get; set; } = 1f;
+        public float SendDelayBonus { get => DelayBonus; set => DelayBonus = value; }
 
         /// <summary> 发送时间 </summary>
-        public int SendDelay { get => Math.Clamp((int)(SendDelayBase * SendDelayBonus), 1, int.MaxValue); }
+        public int SendDelay => (this as ITimerTriggerComponent).Delay;
 
-        /// <summary> 发送魔能的计时器 </summary>
-        private int _sendTimer;
+        public int DelayBase { get; set; }
+        public float DelayBonus { get; set; } = 1f;
+        public int Timer { get; set; }
 
-        public bool CanSend()
+        public bool TimeResetable => true;
+
+        public virtual bool CanSend()
         {
-            _sendTimer--;
-            if (_sendTimer == 0)
-            {
-                _sendTimer = SendDelay;
-                return true;
-            }
-
-            return false;
+            return (this as ITimerTriggerComponent).UpdateTime();
         }
 
-        public void OnSend(Point16 selfPoint, Point ReceiverPoint)
+        public virtual void OnSend(Point16 selfPoint, Point16 ReceiverPoint)
         {
+            bool selfOnScreen = VaultUtils.IsPointOnScreen(selfPoint.ToWorldCoordinates() - Main.screenPosition);
+            bool rectiverOnScreen = VaultUtils.IsPointOnScreen(ReceiverPoint.ToWorldCoordinates() - Main.screenPosition);
 
+            if (selfOnScreen)
+            {
+                SpawnOnSendParticle(selfPoint);
+                if (rectiverOnScreen)
+                    MagikeHelper.SpawnDustOnSend(selfPoint, ReceiverPoint);
+            }
+
+            if (rectiverOnScreen)
+                SpawnOnSendParticle(ReceiverPoint);
+        }
+
+        protected virtual void SpawnOnSendParticle(Point16 TopLeft)
+        {
+            MagikeHelper.GetMagikeAlternateData(TopLeft.X, TopLeft.Y, out TileObjectData data, out _);
+            Point16 size = data == null ? new Point16(1) : new Point16(data.Width, data.Height);
+
+            if (MagikeHelper.TryGetMagikeApparatusLevel(TopLeft, out MALevel level))
+                MagikeLozengeParticle2.Spawn(Helper.GetMagikeTileCenter(TopLeft), size, MagikeSystem.GetColor(level));
+        }
+
+        public override void SendData(ModPacket data)
+        {
+            data.Write(Timer);
+
+            data.Write(UnitDeliveryBase);
+            data.Write(UnitDeliveryBonus);
+
+            data.Write(SendDelayBase);
+            data.Write(SendDelayBonus);
+        }
+
+        public override void ReceiveData(BinaryReader reader, int whoAmI)
+        {
+            Timer = reader.ReadInt32();
+
+            UnitDeliveryBase = reader.ReadInt32();
+            UnitDeliveryBonus = reader.ReadSingle();
+
+            SendDelayBase = reader.ReadInt32();
+            SendDelayBonus = reader.ReadSingle();
         }
 
         public override void SaveData(string preName, TagCompound tag)
         {
-            tag.Add(preName + nameof(_sendTimer), _sendTimer);
+            tag.Add(preName + nameof(Timer), Timer);
 
             tag.Add(preName + nameof(UnitDeliveryBase), UnitDeliveryBase);
-            tag.Add(preName + nameof(UnitDeliveryExtra), UnitDeliveryExtra);
+            tag.Add(preName + nameof(UnitDeliveryBonus), UnitDeliveryBonus);
 
             tag.Add(preName + nameof(SendDelayBase), SendDelayBase);
             tag.Add(preName + nameof(SendDelayBonus), SendDelayBonus);
@@ -58,10 +100,13 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         public override void LoadData(string preName, TagCompound tag)
         {
-            _sendTimer = tag.GetInt(preName + nameof(_sendTimer));
+            Timer = tag.GetInt(preName + nameof(Timer));
 
             UnitDeliveryBase = tag.GetInt(preName + nameof(UnitDeliveryBase));
-            UnitDeliveryExtra = tag.GetInt(preName + nameof(UnitDeliveryExtra));
+            UnitDeliveryBonus = tag.GetFloat(preName + nameof(UnitDeliveryBonus));
+
+            if (UnitDeliveryBonus == 0)
+                UnitDeliveryBonus = 1;
 
             SendDelayBase = tag.GetInt(preName + nameof(SendDelayBase));
             SendDelayBonus = tag.GetFloat(preName + nameof(SendDelayBonus));

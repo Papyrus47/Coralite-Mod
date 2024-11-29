@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -28,7 +28,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public ref float Angle => ref NPC.ai[2];
         public ref float LightScale => ref NPC.ai[3];
 
-        public static Color shineColor = new Color(252, 233, 194);
+        public static Color shineColor = new(252, 233, 194);
 
         private bool canDrawWarp = false;
         private float warpScale = 0;
@@ -52,9 +52,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override void OnSpawn(IEntitySource source)
         {
-            SoundStyle st = CoraliteSoundID.EmpressOfLight_Summoned_Item161;
-            st.Pitch = 0.5f;
-            SoundEngine.PlaySound(st, NPC.Center);
+            Helper.PlayPitched(CoraliteSoundID.EmpressOfLight_Summoned_Item161, NPC.Center, pitch: 0.5f);
         }
 
         public override void AI()
@@ -67,16 +65,16 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             leftTentacles ??= new FantasyTentacle[3]
             {
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex)
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex)
             };
 
             rightTentacles ??= new FantasyTentacle[3]
             {
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
-                new FantasyTentacle(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex)
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex),
+                new(25,TentacleColor,TentacleWidth,NightmarePlantera.tentacleTex,NightmarePlantera.waterFlowTex)
             };
 
             float sin = MathF.Sin(Main.GlobalTimeWrappedHourly);
@@ -86,15 +84,15 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             for (int i = 0; i < 3; i++)
             {
-                float angle = -MathHelper.PiOver2 - 0.25f - i * 0.35f;
-                Vector2 targetPos = (angle + sin * (i + 1) * 0.25f).ToRotationVector2() * length;
+                float angle = -MathHelper.PiOver2 - 0.25f - (i * 0.35f);
+                Vector2 targetPos = (angle + (sin * (i + 1) * 0.25f)).ToRotationVector2() * length;
                 leftTentacles[i].SetValue(NPC.Center, NPC.Center + targetPos, angle);
-                leftTentacles[i].UpdateTentacle(perLength * (1 - i * 0.15f), lightScale);
+                leftTentacles[i].UpdateTentacle(perLength * (1 - (i * 0.15f)), lightScale);
 
-                angle = -MathHelper.PiOver2 + 0.25f + i * 0.35f;
-                targetPos = (angle - sin * (i + 1) * 0.25f).ToRotationVector2() * length;
+                angle = -MathHelper.PiOver2 + 0.25f + (i * 0.35f);
+                targetPos = (angle - (sin * (i + 1) * 0.25f)).ToRotationVector2() * length;
                 rightTentacles[i].SetValue(NPC.Center, NPC.Center + targetPos, angle);
-                rightTentacles[i].UpdateTentacle(perLength * (1 - i * 0.15f), lightScale);
+                rightTentacles[i].UpdateTentacle(perLength * (1 - (i * 0.15f)), lightScale);
             }
 
             Lighting.AddLight(NPC.Center, new Vector3(4, 4, 4));
@@ -147,7 +145,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                     {
                         np.rotation = np.rotation.AngleTowards((NPC.Center - np.Center).ToRotation(), 0.3f);
 
-                        Vector2 center = np.Center + (Angle + Timer / 460 * MathHelper.TwoPi).ToRotationVector2() * 450;
+                        Vector2 center = np.Center + ((Angle + (Timer / 460 * MathHelper.TwoPi)).ToRotationVector2() * 450);
                         Vector2 dir2 = center - NPC.Center;
 
                         float velRot = NPC.velocity.ToRotation();
@@ -161,7 +159,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                         for (int i = 0; i < 4; i++)
                         {
                             Vector2 v = Helper.NextVec2Dir();
-                            Particle.NewParticle(NPC.Center + v * Main.rand.Next(80, 100), v * Main.rand.NextFloat(6, 24f),
+                            PRTLoader.NewParticle(NPC.Center + (v * Main.rand.Next(80, 100)), v * Main.rand.NextFloat(6, 24f),
                                 CoraliteContent.ParticleType<BigFog>(), shineColor, Scale: Main.rand.NextFloat(0.5f, 1.25f));
                         }
 
@@ -199,10 +197,10 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                             NPC.velocity *= 0.5f;
                             State++;
                             Timer = 0;
-                            float angle = (NPC.Center - np.Center).ToRotation() - 2 * 0.3f;
+                            float angle = (NPC.Center - np.Center).ToRotation() - (2 * 0.3f);
                             for (int i = 0; i < 4; i++)
                             {
-                                NPC.NewProjectileInAI<FantasySpike>(NPC.Center, Vector2.Zero, 3000, 0, ai1: angle + i * 0.3f, ai2: 60 + i * 15);
+                                NPC.NewProjectileInAI<FantasySpike>(NPC.Center, Vector2.Zero, 3000, 0, ai1: angle + (i * 0.3f), ai2: 60 + (i * 15));
                             }
                         }
                     }
@@ -211,9 +209,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                     {
                         if (Timer == 50)
                         {
-                            SoundStyle st = CoraliteSoundID.EmpressOfLight_Summoned_Item161;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.EmpressOfLight_Summoned_Item161, NPC.Center, pitch: 0.5f);
                         }
                         else if (Timer > 65)
                         {
@@ -248,7 +244,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                             //for (int i = 0; i < 2; i++)
                             //{
                             Vector2 v = Helper.NextVec2Dir();
-                            Particle.NewParticle(np.Center, v * Main.rand.NextFloat(6, 12f),
+                            PRTLoader.NewParticle(np.Center, v * Main.rand.NextFloat(6, 12f),
                                 CoraliteContent.ParticleType<BigFog>(), shineColor, Scale: Main.rand.NextFloat(0.5f, 0.75f));
                             //}
                         }
@@ -309,7 +305,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 }
             }
 
-            Vector2 mainSparkleScale = new Vector2(8, 10);
+            Vector2 mainSparkleScale = new(8, 10);
             Helper.DrawPrettyStarSparkle(NPC.Opacity, 0, pos, Color.White, shineColor * 0.6f,
                 LightScale, 0f, 1, 1, 1.5f, 0, mainSparkleScale, Vector2.One * 3); ;
 
@@ -333,8 +329,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             for (int i = 0; i < 7; i++)
             {
-                Vector2 dir = (Main.GlobalTimeWrappedHourly * 2 + i * MathHelper.TwoPi / 7).ToRotationVector2();
-                Helper.DrawPrettyStarSparkle(NPC.Opacity, 0, pos + dir * 48, Color.White, NightmarePlantera.phantomColors[i],
+                Vector2 dir = ((Main.GlobalTimeWrappedHourly * 2) + (i * MathHelper.TwoPi / 7)).ToRotationVector2();
+                Helper.DrawPrettyStarSparkle(NPC.Opacity, 0, pos + (dir * 48), Color.White, NightmarePlantera.phantomColors[i],
                     0.5f, 0f, 0.5f, 0.5f, 1f, 0, new Vector2(1, 3), Vector2.One);
             }
 

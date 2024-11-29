@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Coralite.Core.Systems.MagikeSystem;
-using Coralite.Core.Systems.MagikeSystem.CraftConditions;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -10,7 +10,7 @@ using static Terraria.ModLoader.ModContent;
 
 namespace Coralite.Content.Items.Misc_Magic
 {
-    public class CosmosFracture : ModItem, IMagikeRemodelable
+    public class CosmosFracture : ModItem, IMagikeCraftable
     {
         public override string Texture => AssetDirectory.Misc_Magic + Name;
         public override bool AltFunctionUse(Player Player) => true;
@@ -71,7 +71,7 @@ namespace Coralite.Content.Items.Misc_Magic
                     coralitePlayer.rightClickReuseDelay = 200;
 
                     for (int i = 0; i < 6; i++)
-                        Projectile.NewProjectile(source, player.Center + (-1.57f + i * 1.047f).ToRotationVector2() * 120, Vector2.Zero, ProjectileType<CosmosFractureProj2>(), (int)(damage * 0.2f), knockback, player.whoAmI, 2, (5.712f + i * 1.047f));
+                        Projectile.NewProjectile(source, player.Center + ((-1.57f + (i * 1.047f)).ToRotationVector2() * 120), Vector2.Zero, ProjectileType<CosmosFractureProj2>(), (int)(damage * 0.2f), knockback, player.whoAmI, 2, 5.712f + (i * 1.047f));
 
                     SoundEngine.PlaySound(SoundID.Item71, player.Center);
                     player.statMana -= 25;
@@ -85,9 +85,11 @@ namespace Coralite.Content.Items.Misc_Magic
             return false;
         }
 
-        public void AddMagikeRemodelRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            MagikeSystem.AddRemodelRecipe<CosmosFracture>(0f, ItemID.SkyFracture, 1_0000, condition: EnchantCondition.Instance);
+            MagikeCraftRecipe.CreateRecipe(ItemID.SkyFracture, ModContent.ItemType<CosmosFracture>(), 1_0000)
+                .SetAntiMagikeCost(1_0000)
+                .Register();
         }
 
         //public override void AddRecipes()

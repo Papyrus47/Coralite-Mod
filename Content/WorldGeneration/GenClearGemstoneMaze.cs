@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
     public partial class CoraliteWorld
     {
+        public static LocalizedText ClearGemstoneMaze { get; set; }
+
         public void GenClearGemstoneMaze(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在生成透明宝石迷宫";
+            progress.Message = ClearGemstoneMaze.Value;//"正在生成透明宝石迷宫";
 
             int itemCount = 1;
             int gened = 0;
@@ -34,13 +37,13 @@ namespace Coralite.Content.WorldGeneration
             //if (itemCount > heartCount)
             //    itemCount = heartCount;
 
-            Dictionary<Color, int> clearDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> clearDic = new()
             {
                 [Color.White] = -2,
                 [Color.Black] = -1
             };
 
-            Dictionary<Color, int> mainDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> mainDic = new()
             {
                 [new Color(102, 57, 49)] = TileID.Dirt,
                 [new Color(7, 60, 49)] = ModContent.TileType<HartcoreObsidianTile>(),
@@ -52,19 +55,19 @@ namespace Coralite.Content.WorldGeneration
                 try
                 {
                     int offset = GenVars.dungeonSide;
-                    int origin = GenVars.jungleOriginX - offset * 50;
+                    int origin = GenVars.jungleOriginX - (offset * 50);
                     int junglePos = Main.rand.Next(origin - 20, origin + 20);//(GenVars.jungleMaxX + GenVars.jungleMinX) / 2;
 
-                    float r = Math.Abs(junglePos - Main.maxTilesX / 2);
+                    float r = Math.Abs(junglePos - (Main.maxTilesX / 2));
 
-                    Vector2 pos = new Vector2(Main.maxTilesX / 2, (float)Main.worldSurface);
+                    Vector2 pos = new(Main.maxTilesX / 2, (float)Main.worldSurface);
                     float angle = Main.rand.NextFloat(0, MathHelper.Pi);
 
                     pos += angle.ToRotationVector2() * r;
 
                     Point position = pos.ToPoint();
 
-                    Dictionary<ushort, int> tileDictionary = new Dictionary<ushort, int>();
+                    Dictionary<ushort, int> tileDictionary = new();
                     if (!WorldGen.InWorld(position.X - 25, position.Y - 25) || !WorldGen.InWorld(position.X - 25 + 58, position.Y - 25 + 67))
                         continue;
                     WorldUtils.Gen(

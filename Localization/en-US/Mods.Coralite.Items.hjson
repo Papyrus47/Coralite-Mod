@@ -277,7 +277,7 @@ BabyIceDragonTrophy: {
 }
 
 IcicleBow: {
-	DisplayName: Icicle Bow
+	DisplayName: Hail
 	Tooltip:
 		'''
 		Convert arrows into icicle arrows
@@ -327,11 +327,6 @@ CrossBreedMachine_G1Item: {
 IceyPowder: {
 	DisplayName: Icy Powder
 	Tooltip: Contains a faint ice magic
-}
-
-MaglitePowder: {
-	DisplayName: Maglite Powder
-	Tooltip: Contains a faint magic power
 }
 
 SandlitePowder: {
@@ -582,11 +577,6 @@ Arethusa: {
 	Tooltip: Late Love
 }
 
-ArethusaNormalMode: {
-	DisplayName: Arethusa
-	Tooltip: Late Love
-}
-
 Astrosniper: {
 	DisplayName: Astrosniper
 	Tooltip: Go snipe that dying star!
@@ -736,110 +726,28 @@ IcicleCoccyx: {
 		'''
 }
 
-CrystalLens: {
-	DisplayName: Crystal Lens
-	Tooltip: Right-click to open the UI, put in the item containing magike, and convert the item into magike
-}
-
-DebugStick: {
-	DisplayName: Infinity Cluster Wand
-	Tooltip:
-		'''
-		Right-click to switch modes
-		Charge Mode: Clck the magike container to fill it
-		Clear Mode: Tap the magike container to empty it
-		'''
-}
-
 MagConnectStaff: {
 	DisplayName: Mag Connect Staff
 	Tooltip:
 		'''
-		Right-click to switch modes
-		Connect mode: The first left click selects the receiver and the second left click selects the sender
-			Then establish a connection between them. Sender has limited range.
-		View mode: Left click a magike sender to show connection.
-		Interrupt mode: Left click a magike sender to interrupt connections.
-
-		The sender has a distance limit,
-		Right-click to clear the selection
+		Left-click to select and left-click again to establish the connection
+		Right-click to open the connection UI and click the button to cancel the connection
 		'''
 }
 
 MagicCrystal: {
 	DisplayName: Magic Crystal
-	Tooltip: Contains a faint amount of magike
-	MoreDescription: “Go underground and look for crystal caves that contains the knowledge of magike”
-}
-
-CrimtaneLens: {
-	DisplayName: Crimtane Lens
-	Tooltip: Right-click to open the UI, put in the item containing magike, and convert the item into magike
-}
-
-DemoniteLens: {
-	DisplayName: Demonite Lens
-	Tooltip: Right-click to open the UI, put in the item containing magike, and convert the item into magike
-}
-
-BrilliantLens: {
-	DisplayName: Brilliant Lens
-	Tooltip: Right-click to open the UI, put in the item containing magike, and convert the item into magike
+	Tooltip: The faint magike glowed pink
+	MoreDescription:
+		'''
+		Go underground and look for crystal caves that contains the knowledge of magike
+		Maybe you can create a Leprechaun bait to show you the way
+		'''
 }
 
 CrystallineMagike: {
 	DisplayName: Crystalline Magike
-	Tooltip: Contains an abundant amount of magike
-}
-
-CrystalRefractor: {
-	DisplayName: Crystal Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
-}
-
-BrilliantRefractor: {
-	DisplayName: Brilliant Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
-}
-
-CrimtaneRefractor: {
-	DisplayName: Crimtane Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
-}
-
-DemoniteRefractor: {
-	DisplayName: Demonite Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
-}
-
-BrilliantColumn: {
-	DisplayName: Brilliant Column
-	Tooltip: It can hold a lot of magike
-}
-
-CrimtaneColumn: {
-	DisplayName: Crimtane Column
-	Tooltip: It can hold a lot of magike
-}
-
-CrystalColumn: {
-	DisplayName: Crystal Column
-	Tooltip: It can hold a lot of magike
-}
-
-DemoniteColumn: {
-	DisplayName: Demonite Column
-	Tooltip: It can hold a lot of magike
-}
-
-Diprism: {
-	DisplayName: Diprism
-	Tooltip: ""
-}
-
-BrilliantRemodelPool: {
-	DisplayName: Brilliant Remodel Pool
-	Tooltip: Right-click to open the UI, put in item and select a remodel recipe and activate it to remodel item
+	Tooltip: The abundant magike reflects the brilliant purple
 }
 
 CondensedCrystalBall: {
@@ -850,41 +758,6 @@ CondensedCrystalBall: {
 MagikeActivator: {
 	DisplayName: Magike Activator
 	Tooltip: Activate the magike machine in the mouse position
-}
-
-SunlightLens: {
-	DisplayName: Sunlight Lens
-	Tooltip: Generates magike during the day
-}
-
-CrystalRemodelPool: {
-	DisplayName: Crystal Remodel Pool
-	Tooltip: Right-click to open the UI, put in item and select a remodel recipe and activate it to remodel item
-}
-
-EvilRemodelPool: {
-	DisplayName: Evil Remodel Pool
-	Tooltip: Right-click to open the UI, put in item and select a remodel recipe and activate it to remodel item
-}
-
-MoonlightLens: {
-	DisplayName: Moonlight Lens
-	Tooltip: Generates magike during the night
-}
-
-FeatheredLens: {
-	DisplayName: Feathered Lens
-	Tooltip: Right-click to open the UI, put in the item containing magike, and convert the item into magike
-}
-
-HolylightLens: {
-	DisplayName: Holylight Lens
-	Tooltip: Generates magike during the day
-}
-
-BloodMoonLens: {
-	DisplayName: Blood Moon Lens
-	Tooltip: Generates magike during the night
 }
 
 IcicleHeart: {
@@ -903,11 +776,6 @@ RedJadeCore: {
 		The core part that can generate "firecracker energy"
 		Summon the Rediancie, doesn't get consumed on use
 		'''
-}
-
-WaterflowLens: {
-	DisplayName: Waterflow Lens
-	Tooltip: Generates magike while submerged in water
 }
 
 RedJadeLens: {
@@ -934,16 +802,6 @@ RedJadeCluster: {
 		'''
 }
 
-LavaLens: {
-	DisplayName: Lava Lens
-	Tooltip: Generates magike while submerged in lava
-}
-
-SweetLens: {
-	DisplayName: Sweet Lens
-	Tooltip: Generates magike while submerged in honey
-}
-
 CrystalSpotlighter: {
 	DisplayName: Crystal Spotlighter
 	Tooltip:
@@ -956,21 +814,6 @@ CrystalSpotlighter: {
 OceanLens: {
 	DisplayName: Ocean Lens
 	Tooltip: Generates magike while in the ocean biome
-}
-
-BrilliantQuadprism: {
-	DisplayName: Brilliant Quadprism
-	Tooltip: ""
-}
-
-CrimtaneTriprism: {
-	DisplayName: Crimtane Triprism
-	Tooltip: ""
-}
-
-DemoniteTriprism: {
-	DisplayName: Demonite Triprism
-	Tooltip: ""
 }
 
 RedJadeDiprism: {
@@ -998,11 +841,6 @@ WorldGenTester: {
 	Tooltip: !!!! Debug Item !!!
 }
 
-BoneLens: {
-	DisplayName: Bone Lens
-	Tooltip: Generates magike while in the dungeon
-}
-
 ForestLens: {
 	DisplayName: Forest Lens
 	Tooltip: Generates magike while in the forest biome
@@ -1011,16 +849,6 @@ ForestLens: {
 GlowingMushroomLens: {
 	DisplayName: Glowing Mushroom Lens
 	Tooltip: Generates magike while in the glowing mushroom biome
-}
-
-BrightnessLens: {
-	DisplayName: Brightness Lens
-	Tooltip: Generates magike from light
-}
-
-DarknessLens: {
-	DisplayName: Darkness Lens
-	Tooltip: Generates magike in the dark
 }
 
 BasaltChest: {
@@ -1057,39 +885,9 @@ HardBasalt: {
 	Tooltip: ""
 }
 
-HellLens: {
-	DisplayName: Hell Lens
-	Tooltip: Generates magike in the underworld
-}
-
-BreezeLens: {
-	DisplayName: Breeze Lens
-	Tooltip: Generates magike based on wind speed
-}
-
-DrizzleLens: {
-	DisplayName: Drizzle Lens
-	Tooltip: Generates magike in the rain
-}
-
 HardBasaltWall: {
 	DisplayName: Hard Basalt Wall
 	Tooltip: ""
-}
-
-GraniteLens: {
-	DisplayName: Granite Lens
-	Tooltip: Generates magike while in the granite biome
-}
-
-MarbleLens: {
-	DisplayName: Marble Lens
-	Tooltip: Generates magike while in the marble biome
-}
-
-HoneypotLens: {
-	DisplayName: Honeypot Lens
-	Tooltip: Generates magike while submerged in honey
 }
 
 BloodyHook: {
@@ -1101,24 +899,9 @@ BloodyHook: {
 		'''
 }
 
-ChlorophyteLens: {
-	DisplayName: Chlorophyte Lens
-	Tooltip: Generates magike while in the jungle biome
-}
-
-ParadiseLens: {
-	DisplayName: Paradise Lens
-	Tooltip: Generates magike while in the space biome
-}
-
 DemoniteEnchantPool: {
 	DisplayName: Demonite Enchant Pool
 	Tooltip: Allows extra enhancement for your equipments
-}
-
-ScorchingLens: {
-	DisplayName: Scorching Lens
-	Tooltip: Generates magike while submerged in lava
 }
 
 CopperRing: {
@@ -1129,11 +912,6 @@ CopperRing: {
 TinRing: {
 	DisplayName: Tin Ring
 	Tooltip: 6% decreased damage
-}
-
-CogLens: {
-	DisplayName: Cog Lens
-	Tooltip: Generates magike on it's own
 }
 
 IronRing: {
@@ -1155,16 +933,6 @@ LeadRing: {
 		'''
 }
 
-SoulRemodelPool: {
-	DisplayName: Soul Remodel Pool
-	Tooltip: Right-click to open the UI, put in item and select a remodel recipe and activate it to remodel item
-}
-
-RainstormLens: {
-	DisplayName: Rainstorm Lens
-	Tooltip: Generates magike while raining
-}
-
 SplendorMagicore: {
 	DisplayName: Splendor Magicore
 	Tooltip: Contains strong magike
@@ -1179,34 +947,9 @@ CorruptJavelin: {
 		'''
 }
 
-BrilliantEnchantPool: {
-	DisplayName: Brilliant Enchant Pool
-	Tooltip: Gives extra reinforcements to your equipment
-}
-
-CrimtaneEnchantPool: {
-	DisplayName: Crimtane Enchant Pool
-	Tooltip: Gives extra reinforcements to your equipment
-}
-
-CrystalEnchantPool: {
-	DisplayName: Crystal Enchant Pool
-	Tooltip: Gives extra reinforcements to your equipment
-}
-
-SoulEnchantPool: {
-	DisplayName: Soul Enchant Pool
-	Tooltip: Gives extra reinforcements to your equipment
-}
-
 SoulOfDeveloper: {
 	DisplayName: Soul Of Developer
 	Tooltip: Great for impersonating developers!
-}
-
-SplendorRemodelPool: {
-	DisplayName: Splendor Remodel Pool
-	Tooltip: Right-click to open the UI, put in item and select a remodel recipe and activate it to remodel item
 }
 
 GelInvitation: {
@@ -1226,11 +969,6 @@ EmperorSabre: {
 MagicCrystalHook: {
 	DisplayName: Magic Crystal Hook
 	Tooltip: ""
-}
-
-MagikeSymbol: {
-	DisplayName: Magike
-	Tooltip: This recipe needs to be remodeled by magike!
 }
 
 GelThrone: {
@@ -1291,29 +1029,6 @@ NightmareHarp: {
 		'''
 }
 
-CrystalStoneMaker: {
-	DisplayName: Crystal Stone Maker
-	Tooltip: Consumes magike to produce stone blocks
-}
-
-CrystalAltar: {
-	DisplayName: Crystal Altar
-	Tooltip:
-		'''
-			Number of connections: 4
-
-		Right click to open the UI, place the item, and select the polymerization recipe
-		Use the magike connect staff to connect to the pedestal
-		Place the secondary items in polymerization recipe into the pedestal
-		Polymerize begins after activation
-		'''
-}
-
-CrystalPedestal: {
-	DisplayName: Crystal Pedestal
-	Tooltip: Right click to open the UI and place items
-}
-
 EmpyrosPowder: {
 	DisplayName: Empyros Powder
 	Tooltip: Contains a faint fire power
@@ -1332,16 +1047,6 @@ LeafStone: {
 MagicalPowder: {
 	DisplayName: Magical Powder
 	Tooltip: Contains a faint magic power
-}
-
-MagikePolySymbol: {
-	DisplayName: Magike Polysymbol
-	Tooltip:
-		'''
-		This crafting table needs to be done through magike polymerize!
-		The first item other than magike is the primary item, which needs to be placed in the polymerization Altar
-		The rest of the items are secondary items and need to be placed in the pedestal
-		'''
 }
 
 CrystalCrate: {
@@ -1711,64 +1416,9 @@ PhantomMirror: {
 	Tooltip: Shine a light on your phantoms and they will follow your trajectory
 }
 
-SplendorLens: {
-	DisplayName: Splendor Lens
-	Tooltip: Right click to open the UI, put in the item containing magike, and convert the item into magike
-}
-
-SoulColumn: {
-	DisplayName: Soul Column
-	Tooltip: It can hold a lot of magike
-}
-
-FeatheredRefractor: {
-	DisplayName: Feathered Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
-}
-
 FlyingSnakeFeather: {
 	DisplayName: Flying Snake Feather
 	Tooltip: ""
-}
-
-CrystalRefinery: {
-	DisplayName: Crystal Refinery
-	Tooltip: Consumes magike to generate magic crystals
-}
-
-BrilliantRefiner: {
-	DisplayName: Brilliant Refiner
-	Tooltip: Consumes magike to generate magic crystals
-}
-
-SplendorRefiner: {
-	DisplayName: Splendor Refiner
-	Tooltip: Consumes magike to generate magic crystals
-}
-
-SplendorColumn: {
-	DisplayName: Splendor Column
-	Tooltip: It can hold a lot of magike
-}
-
-SplendorPentaprism: {
-	DisplayName: Splendor Pentaprism
-	Tooltip: ""
-}
-
-BrilliantRefinery: {
-	DisplayName: Brilliant Refinery
-	Tooltip: Consumes magike to generate magic crystals
-}
-
-SplendorRefinery: {
-	DisplayName: Splendor Refinery
-	Tooltip: Consumes magike to generate magic crystals
-}
-
-SplendorRefractor: {
-	DisplayName: Splendor Refractor
-	Tooltip: It has a strong sending ability and is able to send magike over long distances
 }
 
 MiniBrilliantColumn: {
@@ -1808,21 +1458,6 @@ CrystalSword: {
 
 BrilliantCharger: {
 	DisplayName: Brilliant Charger
-	Tooltip: Right click to open the UI, insert an item that can hold magike, and activate to charge that item
-}
-
-CrystalCharger: {
-	DisplayName: Crystal Charger
-	Tooltip: Right click to open the UI, insert an item that can hold magike, and activate to charge that item
-}
-
-GlistentCharger: {
-	DisplayName: Glistent Charger
-	Tooltip: Right click to open the UI, insert an item that can hold magike, and activate to charge that item
-}
-
-SplendorCharger: {
-	DisplayName: Splendor Charger
 	Tooltip: Right click to open the UI, insert an item that can hold magike, and activate to charge that item
 }
 
@@ -1901,7 +1536,7 @@ MagikeGuideBook: {
 }
 
 MagikeNote1: {
-	DisplayName: Magike Note1
+	DisplayName: Magike Note
 	Tooltip: ""
 }
 
@@ -2022,7 +1657,8 @@ GlowTulipRing: {
 	PolishedToolTip:
 		'''
 		+4 glow
-		+1 health every sec
+		+7.8% Magic Damage
+		Slightly increases mana regeneration
 		'''
 }
 
@@ -2052,15 +1688,15 @@ GoldCrystalNecklace: {
 	DisplayName: Gold Crystal Necklace
 	Tooltip:
 		'''
-		9% increased melee damage
-		9.4% increased ranged damage
+		9% increased magic damage
+		9.4% increased summon damage
 		[c/8e8e8e:A shiny trinket combining the most valuable of materials.]
 		'''
 	Polished: "Polished "
 	PolishedToolTip:
 		'''
-		+12.3% increased melee damage
-		+12.5% increased ranged damage
+		+12.3% increased magic damage
+		+12.5% increased summon damage
 		'''
 }
 
@@ -2077,16 +1713,6 @@ GoldCrystalRing: {
 		+8.9% increased ranged damage
 		+4% increased ranged attack speed
 		'''
-}
-
-OctarineBar: {
-	DisplayName: Octarine Bar
-	Tooltip: ""
-}
-
-OctarineOre: {
-	DisplayName: Octarine Ore
-	Tooltip: ""
 }
 
 SkyRing: {
@@ -2132,8 +1758,8 @@ BubblePearlNecklace: {
 	DisplayName: Bubble Pearl Necklace
 	Tooltip:
 		'''
-		+12 max health
-		+7 defence
+		+6 increased magic damage
+		Slightly increases mana regeneration
 		+6% dodge chance
 		[c/8e8e8e:Natural grown jewelry made from rare bubble pearls.]
 		'''
@@ -2195,11 +1821,6 @@ MercuryDroplight: {
 
 BlackHoleChest: {
 	DisplayName: Black Hole Chest
-	Tooltip: ""
-}
-
-Cosmophore: {
-	DisplayName: Cosmophore
 	Tooltip: ""
 }
 
@@ -2703,7 +2324,7 @@ PirateKingHat: {
 
 LightningRods: {
 	DisplayName: Lightning Rods
-	Tooltip: Right-click to summon the Desolate Thunder Dragon
+	Tooltip: Right-click to summon the Desolate Thundervein wyvern
 }
 
 CrystalBlossomShards: {
@@ -2716,17 +2337,17 @@ CrystalBlossomShards: {
 }
 
 ThunderveinDragonBossBag: {
-	DisplayName: Thundervein Dragon Boss Bag
+	DisplayName: Thundervein Wyvern Boss Bag
 	Tooltip: Right click to open
 }
 
 ThunderveinDragonRelic: {
-	DisplayName: Thundervein Dragon Relic
+	DisplayName: Thundervein Wyvern Relic
 	Tooltip: ""
 }
 
 ThunderveinDragonTrophy: {
-	DisplayName: Thundervein Dragon Trophy
+	DisplayName: Thundervein Wyvern Trophy
 	Tooltip: ""
 }
 
@@ -2842,12 +2463,12 @@ ThunderWorkBench: {
 
 TheGazeOfTheThundervein: {
 	DisplayName: The Gaze Of The Thundervein
-	Tooltip: The Thundervein Dragon, which is watching its prey in the dark, is said to be more vulnerable to damage to its head
+	Tooltip: The Thundervein Wyvern, which is watching its prey in the dark, is said to be more vulnerable to damage to its head
 }
 
 ThunderveinSoulStone: {
 	DisplayName: Thundervein Soul Stone
-	Tooltip: The spirit of the Thundervein Dragon is with you
+	Tooltip: The spirit of the Thundervein Wyvern is with you
 }
 
 ThunderDukeVine: {
@@ -3068,36 +2689,12 @@ MedusaLightArmor: {
 MedusaMask: {
 	DisplayName: Medusa Mask
 	Tooltip: +6% Ranged Damage
-	NotHasMedusaSoul: Soul of Medusa: Triggers when at least 2 sets are equipped
-	MedusaSoul2Part:
-		'''
-		Soul of Medusa: Deals more damage to enemies at a distance,
-		However, damage to nearby enemies is reduced
-		[c/807b7d:Up to the increase] [c/9e82b5:50%] [c/807b7d:damage]
-		[c/807b7d:Reduced at most] [c/9e82b5:50%] [c/807b7d:damage]
-		'''
-	MedusaSoul3Part:
-		'''
-		Soul of Medusa: Deals more damage to enemies at a distance,
-		However, damage to nearby enemies is reduced
-		[c/807b7d:Up to the increase] [c/9e82b5:75%] [c/807b7d:damage]
-		[c/807b7d:Reduced at most] [c/9e82b5:30%] [c/807b7d:damage]
-		'''
-	NotHasSplit: Split：Triggers when at least 2 sets are equipped
-	Split2Part:
-		'''
-		Split: Ranged weapons shoot more projectiles
-		[c/807b7d:(2)Piece set]
-		[c/807b7d:Split Rank] [c/9e82b5:+1]
-		[c/807b7d:Damage Correction] [c/9e82b5:65%]
-		'''
-	Split3Part:
-		'''
-		Split: Ranged weapons shoot more projectiles
-		[c/807b7d:(3) Piece set]
-		[c/807b7d:Split Rank] [c/9e82b5:+2]
-		[c/807b7d:Damage Correction] [c/9e82b5:50%]
-		'''
+	NotHasMedusaSoul: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasMedusaSoul}"
+	MedusaSoul2Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul2Part}"
+	MedusaSoul3Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul3Part}"
+	NotHasSplit: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasSplit}"
+	Split2Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split2Part}"
+	Split3Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split3Part}"
 	MedusaBonus: Stealth Action: 5% increased ranged damage, ranged critical strike chance, and move speed
 }
 
@@ -3108,36 +2705,12 @@ MedusaSlippers: {
 		+6% Ranged Damage
 		+10% move speed
 		'''
-	NotHasMedusaSoul: Soul of Medusa: Triggers when at least 2 sets are equipped
-	MedusaSoul2Part:
-		'''
-		Soul of Medusa: Deals more damage to enemies at a distance,
-		However, damage to nearby enemies is reduced
-		[c/807b7d:Up to the increase] [c/9e82b5:50%] [c/807b7d:damage]
-		[c/807b7d:Reduced at most] [c/9e82b5:50%] [c/807b7d:damage]
-		'''
-	MedusaSoul3Part:
-		'''
-		Soul of Medusa: Deals more damage to enemies at a distance,
-		However, damage to nearby enemies is reduced
-		[c/807b7d:Up to the increase] [c/9e82b5:75%] [c/807b7d:damage]
-		[c/807b7d:Reduced at most] [c/9e82b5:30%] [c/807b7d:damage]
-		'''
-	NotHasSplit: Split: Triggers when at least 2 sets are equipped
-	Split2Part:
-		'''
-		Split: Ranged weapons shoot more projectiles
-		[c/807b7d:(2)Piece set]
-		[c/807b7d:Split Rank] [c/9e82b5:+1]
-		[c/807b7d:Damage Correction] [c/9e82b5:65%]
-		'''
-	Split3Part:
-		'''
-		Split: Ranged weapons shoot more projectiles
-		[c/807b7d:(3) Piece set]
-		[c/807b7d:Split Rank] [c/9e82b5:+2]
-		[c/807b7d:Damage Correction] [c/9e82b5:50%]
-		'''
+	NotHasMedusaSoul: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasMedusaSoul}"
+	MedusaSoul2Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul2Part}"
+	MedusaSoul3Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul3Part}"
+	NotHasSplit: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasSplit}"
+	Split2Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split2Part}"
+	Split3Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split3Part}"
 }
 
 Arachnopyre: {
@@ -3351,7 +2924,12 @@ RedJadeBullet: {
 
 ReverseFlash: {
 	DisplayName: Reverse Flash
-	Tooltip: Every shot creates a thunderbolt aimed towards the player.
+	Tooltip:
+		'''
+		Every shot creates a thunderbolt aimed towards the player.
+		Double-tap the movement keys to dash, then generate a reverse lightning bolt
+		[c/fbf236: Lightning and Thunder]
+		'''
 }
 
 TenkoFigurine: {
@@ -3543,7 +3121,6 @@ MagicCrystalMusicBox: {
 }
 
 Meowmeo: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Meowmeo
 	Tooltip: Meow~ Meow~ Meow~
 }
@@ -3562,31 +3139,26 @@ HylianShield: {
 }
 
 Nuranasa: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Nuranasa
 	Tooltip: Tiny and cute
 }
 
 SmallVolcano: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Small Volcano
 	Tooltip: A tiny volcano
 }
 
 TerraShortSword: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Terra Short Sword
 	Tooltip: Also great at peeling fruit
 }
 
 TomatoButcherer: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Tomato Butcherer
 	Tooltip: It's just ketchup
 }
 
 TrueNightsCage: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: True Nights Cage
 	Tooltip: Let you travel freely in the dark night
 }
@@ -3597,79 +3169,68 @@ BrokenHeroShortSword: {
 }
 
 BladeOfCatnip: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Blade Of Catnip
 	Tooltip: Impossible to put down (if you're a cat)
+	CraftCondition: 在CoralCat的世界中合成
 }
 
 Excatbar: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Excatbar
 	Tooltip: The holy sword of legends?
 }
 
 NightsCage: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Nights Cage
 	Tooltip: So you can't sleep?
 }
 
 ShadowsBane: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Shadows Bane
 	Tooltip: Not much shine to it
 }
 
 TrueExcatbar: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: True Excatbar
 	Tooltip: Tastes like a mix of strawberry and blueberry
 }
 
 BeamShortSword: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Beam Short Sword
 	Tooltip: It's not the size that matters
+	CraftCondition: 在CoralCat的世界中合成
 }
 
 Cattongue: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Catstongue
 	Tooltip: Seem to be scared of hot things
 }
 
 CatTreeSword: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Cat Tree Sword
 	Tooltip: the purrfect cat toy
 }
 
 FlyingDragonBaby: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Flying Dragon Baby
 	Tooltip: shoots out a little boom boom
 }
 
 IceShortSword: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Ice Short Sword
 	Tooltip: Carved from a sabretooth tiger
 }
 
 SmallBee: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Small Bee
 	Tooltip: Bzzt
 }
 
 TheCatMansBlade: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: The Cat Mans Blade
 	Tooltip: Black Cat Captain's Sword
 }
 
 Treeler: {
-	CraftCondition: Crafting in the CoralCat secret seed world
 	DisplayName: Treeler
 	Tooltip: Grows into a tree
 }
@@ -3684,7 +3245,7 @@ VampireEarl: {
 	Tooltip:
 		'''
 		Gain strength during the blood moon
-		              Release bloodthirsty bats while flying
+		Release bloodthirsty bats while flying
 		'''
 }
 
@@ -3840,7 +3401,7 @@ NightmarePlanteraMask: {
 }
 
 ThunderveinDragonMask: {
-	DisplayName: Thundervein Dragon Mask
+	DisplayName: Thundervein Wyvern Mask
 	Tooltip: ""
 }
 
@@ -3936,15 +3497,6 @@ PrimaryRoughGemstone: {
 		'''
 }
 
-AmethystNeckLace: {
-	DisplayName: Amethyst Neck Lace
-	Tooltip:
-		'''
-		Generate a cycle of crystals and shoots a beam of light towards enemies.
-		              Right-click to turn off the sound effect of the beams.
-		'''
-}
-
 FriedShrimpWhip: {
 	DisplayName: Fried Shrimp Whip
 	Tooltip:
@@ -3967,7 +3519,7 @@ ChocomintIce: {
 
 Aquamarine: {
 	DisplayName: Aquamarine
-	Tooltip: Extract raw gemstones from primary gemstones using a refiner
+	Tooltip: "{$Mods.Coralite.Items.Pyrope.Tooltip}"
 }
 
 AquamarineBracelet: {
@@ -3990,7 +3542,7 @@ AmethystNecklace: {
 
 PinkDiamond: {
 	DisplayName: Pink Diamond
-	Tooltip: Extract raw gemstones from primary gemstones using a refiner
+	Tooltip: "{$Mods.Coralite.Items.Pyrope.Tooltip}"
 }
 
 PinkDiamondRose: {
@@ -4074,7 +3626,7 @@ PeridotTalisman: {
 
 Peridot: {
 	DisplayName: Peridot
-	Tooltip: Use a refining machine to extract high-grade raw gemstones
+	Tooltip: "{$Mods.Coralite.Items.Zumurud.Tooltip}"
 }
 
 SapphireHairpin: {
@@ -4090,7 +3642,7 @@ SilkAgate: {
 	DisplayName: Silk Agate
 	Tooltip:
 		'''
-		Use a refining machine to extract high-grade raw gemstones
+		{$Mods.Coralite.Items.Zumurud.Tooltip}
 		+12% gem weapon attack speed
 		'''
 }
@@ -4146,7 +3698,7 @@ AlloySpring: {
 		'''
 		Increase flying shield dash speed
 		Increases damage based on defense while dashing, up to a maximum of 10%
-		Shield dashing and blocking have become more free
+		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
 
@@ -4156,7 +3708,7 @@ GravitationalCatapult: {
 		'''
 		Dramatically increase flying shield dash speed and dash time
 		Increases damage based on defense while sprinting, up to a maximum of 20%
-		Shield dashing and blocking have become more free
+		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
 
@@ -4172,7 +3724,12 @@ BigMacHamburger: {
 
 Afterglow: {
 	DisplayName: Afterglow
-	Tooltip: Ignite the Wooden Arrow
+	Tooltip:
+		'''
+		Double-tap the movement keys to dash, rubbing the ground to ignite the arrow
+		Ice cubes can rub out frost and fire
+		[c/c2370d:"Light Of The Setting Sun"]
+		'''
 }
 
 SurviveAndPerish: {
@@ -4243,7 +3800,7 @@ SquirrelSet: {
 		[c/8c8c8c:*With a little fluffy horn and warm red yarn.]
 		"Perfect for impersonating a Coralite developer!"
 		'''
-	ShlimmerTranslation: 此为微光转化合成表
+	ShlimmerTranslation: This is the shlimmer conversion synthesis table
 }
 
 IceAxe: {
@@ -4402,7 +3959,919 @@ Night_luminescentPearl: {
 	Tooltip: The heart of the Moon Lord
 }
 
-TaiJiYujian: {
-	DisplayName: Tai Ji Yujian
+MagikeWorldBall: {
+	DisplayName: Magike World Ball
+	Tooltip:
+		'''
+		Throw it to change the way the magike flows!
+		"It's time to re-observe"
+		'''
+}
+
+BasicRefractor: {
+	DisplayName: Basic Refractor
+	Tooltip:
+		'''
+		The connection is very far away
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+Thyphion: {
+	DisplayName: Thyphion
+	Tooltip: ""
+}
+
+MagicCrystalFishingRod: {
+	DisplayName: Magic Crystal Fishing Rod
+	Tooltip: ""
+}
+
+MagicCrystalPolarizedFilter: {
+	DisplayName: Magic Crystal Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+BasicFilter: {
+	DisplayName: Basic Filter
+	Tooltip: A basic filter with different circles etched into it can give it a different function
+}
+
+CorruptionPolarizedFilter: {
+	DisplayName: Corruption Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+CrimsonPolarizedFilter: {
+	DisplayName: Crimson Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+CrystallineMagikePolarizedFilter: {
+	DisplayName: Crystalline Magike Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FeatherPolarizedFilter: {
+	DisplayName: Feather Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+GlistentPolarizedFilter: {
+	DisplayName: Glistent Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HallowPolarizedFilter: {
+	DisplayName: Hallow Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HolyLightPolarizedFilter: {
+	DisplayName: Holy Light Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+IciclePolarizedFilter: {
+	DisplayName: Icicle Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ShadowPolarizedFilter: {
+	DisplayName: Shadow Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SoulPolarizedFilter: {
+	DisplayName: Soul Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SplendorMagicorePolarizedFilter: {
+	DisplayName: Splendor Magicore Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+InfinityClusterWand: {
+	ChargeMode: Charge Mode
+	ClearMode: Clear Mode
+	DisplayName: Infinity Cluster Wand
+	Tooltip:
+		'''
+		Right-click to switch modes
+		Charge Mode: Clck the magike container to fill it
+		Clear Mode: Tap the magike container to empty it
+		'''
+}
+
+BasicColumn: {
+	DisplayName: Basic Column
+	Tooltip:
+		'''
+		Can hold a lot of magike
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BasicPrism: {
+	DisplayName: Basic Prism
+	Tooltip:
+		'''
+		The number of basic connections is 2
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+Cosmophore: {
+	DisplayName: Cosmophore
+	Tooltip: ""
+}
+
+GelFiberBow: {
+	DisplayName: Gel Fiber Bow
+	Tooltip: Shoots gel fiber balls, which shoot the used ammo after colliding with blocks
+}
+
+GelFiberHammer: {
+	DisplayName: Gel Fiber Hammer
+	Tooltip: ""
+}
+
+MagicElementalBannerItem: {
+	DisplayName: Magic Elemental Banner Item
+	Tooltip: ""
+}
+
+MaragonBannerItem: {
+	DisplayName: Maragon Banner Item
+	Tooltip: ""
+}
+
+LeafeoBoots: {
+	DisplayName: Leafeo Boots
+	Tooltip: -25% fall damage
+}
+
+LeafeoHelmet: {
+	DisplayName: Leafeo Helmet
+	Tooltip: +1 Summon Slot
+}
+
+LeafeoLightArmor: {
+	DisplayName: Leafeo Light Armor
+	Tooltip: ""
+	ArmorBonus:
+		'''
+		Leaf Guard
+		   Spawns a leaf shield that negates a debuff
+		   The Leaf Shield has a cooldown of 30 seconds
+		'''
+}
+
+FreezePotion: {
+	DisplayName: Freeze Potion
+	Tooltip: Increases cold damage and makes your body brittle
+}
+
+HungryPotion: {
+	DisplayName: Hungry Potion
+	Tooltip: Increases delicious damage, but hunger makes it impossible for you to lift your feet
+}
+
+MagikeAnalyser: {
+	DisplayName: Magike Analyser
+	Tooltip: When placed in a backpack, you can check the status of the Magike Apparatus
+}
+
+TremblingBow: {
+	DisplayName: Trembling Bow
+	Tooltip: Injection staggered current
+}
+
+PooToilet: {
+	DisplayName: Poo Toilet
+	Tooltip: ""
+}
+
+BasicExtractLens: {
+	DisplayName: Basic Extract Lens
+	Tooltip:
+		'''
+		Extract magike from items that contain magike
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EmperorGel: {
+	DisplayName: Emperor Gel
+	Tooltip: Moist and sweet to taste
+}
+
+PelagicPolarizedFilter: {
+	DisplayName: Pelagic Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SeashorePolarizedFilter: {
+	DisplayName: Seashore Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SkyLens: {
+	DisplayName: Sky Lens
+	Tooltip:
+		'''
+		Generates magike in the sky, can only be placed on any cloud block
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EiderdownPolarizedFilter: {
+	DisplayName: Eiderdown Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+EmperorPolarizedFilter: {
+	DisplayName: Emperor Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FlightPolarizedFilter: {
+	DisplayName: Flight Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+DesertLens: {
+	DisplayName: Desert Lens
+	Tooltip:
+		'''
+		Produce magike in the desert can only be placed on sand blocks
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EternalFlamePolarizedFilter: {
+	DisplayName: Eternal Flame Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ForbiddenPolarizedFilter: {
+	DisplayName: Forbidden Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FrostPolarizedFilter: {
+	DisplayName: Frost Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HellstonePolarizedFilter: {
+	DisplayName: Hellstone Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+QuicksandPolarizedFilter: {
+	DisplayName: Quicksand Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ElectrificationWing: {
+	DisplayName: Electrification Wing
+	Tooltip:
+		'''
+		A small part of the electric wings of the Thundervein Dragon
+		is kept charged at all times
+		'''
+}
+
+InsulationCortex: {
+	DisplayName: Insulation Cortex
+	Tooltip:
+		'''
+		The insulated carapace covering the body of the Thundervein Dragon 
+		can protect its vital parts from being damaged by electricity
+		'''
+}
+
+ShroomitePolarizedFilter: {
+	DisplayName: Shroomite Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+PlasmaBow: {
+	DisplayName: Plasma Bow
+	Tooltip: Shoots lightning ball
+}
+
+Heptachromic: {
+	DisplayName: Heptachromic
+	Tooltip:
+		'''
+		The following effects are increased by the number of dyes equipped
+		   Defense, movement speed, glow, jumping ability
+		   Max health, damage, critical strike chance
+		'''
+	Bonus: Current number of triggered effects: {0}
+}
+
+BasicPedestal: {
+	DisplayName: Basic Pedestal
+	Tooltip: It is possible to put an item arch display or magike craft
+}
+
+GelFiberBreastplate: {
+	ArmorBonus: Increases damage reduction and melee damage when stationary
+	DisplayName: Gel Fiber Breastplate
+	Tooltip: ""
+}
+
+GelFiberBoots: {
+	DisplayName: Gel Fiber Boots
+	Tooltip: ""
+}
+
+GelFiberHelmet: {
+	DisplayName: Gel Fiber Helmet
+	Tooltip: ""
+}
+
+SymbolOfMagike: {
+	DisplayName: Symbol Of Magike
+	Tooltip:
+		'''
+		This recipe is for viewing purposes only and cannot be obtained from this item
+		Please use the Magike craft altar to craft
+		'''
+	MagikeNeed: "Magike demand "
+}
+
+SnowfieldLens: {
+	DisplayName: Snowfield Lens
+	Tooltip:
+		'''
+		Produce magike in Snowfield. Can only be placed on snow or ice blocks
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+SunlightLens: {
+	DisplayName: Sunlight Lens
+	Tooltip:
+		'''
+		Produces magike when it is exposed to sunlight
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+FarAwaySky: {
+	DisplayName: Far Away Sky
+	Tooltip:
+		'''
+		Double-tap the movement keys to dash
+		then shoot a cloud arrow to increase your attack and movement speed
+		[c/61c3e7:“After rain the sky looks blue.”]
+		'''
+}
+
+MagikeBasePage: {
+	DisplayName: Magike Base Page
+	Tooltip: Use to learn the basics of magike
+}
+
+LeprechaunBait: {
+	DisplayName: Leprechaun Bait
+	Tooltip:
+		'''
+		Throw the bait after use to attract some fairy from the Magic Crystal Cave
+		The fairy will show you the way to the Magic Crystal Cave
+		'''
+}
+
+EternalVengeance: {
+	Tooltip: ""
+	DisplayName: Eternal Vengeance
+}
+
+BasicAltar: {
+	Tooltip:
+		'''
+		The necessary instrument for magic energy synthesis is to perform magike craft according to the following steps
+		 1: Right click the tile, put the main item inside using UI
+		 2: Choose the appropriate magike craft recipe
+		 3: Meet all the conditions required for crafting, such as magike, secondary items, etc
+		    Secondary items need to be placed inside a magike tile with the item container 
+			and then connect it to altar.
+		 4: Use the Magike Activator to activate the craft altar
+
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+	DisplayName: Basic Altar
+}
+
+RadiantSun: {
+	DisplayName: Radiant Sun
+	Tooltip:
+		'''
+		Double-tap the movement keys to slide
+		then shoot the Rising Sun Arrow to perform a meteor blitz at the mouse position
+		[c/ffe021:“Silver-white giant lions run in the sky, bringing sunshine to the world”]
+		'''
+}
+
+MagicCrystalClusters: {
+	DisplayName: Magic Crystal Clusters
+	Tooltip: Magic crystals can be mined using a beam collector of the same level
+}
+
+MoonlightLens: {
+	DisplayName: Moonlight Lens
+	Tooltip:
+		'''
+		Produces magike when illuminated by moonlight
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BloodJadePolarizedFilter: {
+	DisplayName: Blood Jade Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+RedJadePolarizedFilter: {
+	DisplayName: Red Jade Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HellLens: {
+	DisplayName: Hell Lens
+	Tooltip:
+		'''
+		Produces magike in Underworld. Can only be placed on Underworld blocks
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+LavaLens: {
+	DisplayName: Lava Lens
+	Tooltip:
+		'''
+		The base consumes lava to produce magike when bathed in lava
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+CoralAmulet: {
+	DisplayName: Coral Amulet
+	Tooltip:
+		'''
+		+6% move speed
+		[c/8e8e8e:A necklace made with a pretty coral badge and white pebbles.]
+		'''
+	Polished: "Polished "
+	PolishedToolTip:
+		'''
+		+10% move speed
+		+5 fishing skills
+		'''
+}
+
+CoralRing: {
+	DisplayName: Coral Ring
+	Tooltip:
+		'''
+		+45 max health
+		Allows you to swim in the water without hindrance
+		[c/8e8e8e:An intricate ring naturally grown from pink, branchy corals.]
+		'''
+}
+
+ChannelingGemstone: {
+	DisplayName: Channeling Gemstone
+	Tooltip:
+		'''
+		A piece of an ancient weapon. 
+		[c/8e8e8e:A specially carved ancient gemstone that focuses energy at its tip. ]
+		[c/8e8e8e:It seems to be the center piece of an ancient powerful weapon. ]
+		'''
+}
+
+EnergyString: {
+	DisplayName: Energy String
+	Tooltip:
+		'''
+		A piece of an ancient weapon. 
+		[c/8e8e8e:A fine filament that has microscopic pieces of ancient gemstones woven into it. ]
+		[c/8e8e8e:Its existence is proof of the absolute mastery over materials by whoever created it. ]
+		'''
+}
+
+FracturedLimbs: {
+	DisplayName: Fractured Limbs
+	Tooltip:
+		'''
+		A piece of an ancient weapon. 
+		[c/8e8e8e:Golden pieces that once seemed to be fused together to endure great pressure. ]
+		[c/8e8e8e:Something inherently powerful must have broken them apart. ]
+		'''
+}
+
+HoneyLens: {
+	DisplayName: Honey Lens
+	Tooltip:
+		'''
+		The base consumes honey to produce magike when bathed in honey
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+WaterflowLens: {
+	DisplayName: Waterflow Lens
+	Tooltip:
+		'''
+		The base consumes water to produce magike when bathed in water
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BeeswaxPolarizedFilter: {
+	DisplayName: Beeswax Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+GreenOnionBurritos: {
+	DisplayName: Green Onion Burritos
+	Tooltip: ""
+}
+
+DungeonLens: {
+	DisplayName: Dungeon Lens
+	Tooltip:
+		'''
+		Produce magike in Dungeon. Can only be placed on Dungeon bricks
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BonePolarizedFilter: {
+	DisplayName: Bone Polarized Filter
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HallowLens: {
+	DisplayName: Hallow Lens
+	Tooltip:
+		'''
+		Produce magike in Hallow. Can only be placed on Hallowed blocks
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+LaserCollector: {
+	NoTile: Tile not found！
+	NoCrystalCluster: Crystal Cluster not found！
+	LevelIncorrect: The level does not match the cluster level!
+	MagikeNotEnough: Magike Not Enough!
+	DisplayName: Laser Collector
+	Tooltip: Aim the top at a crystal cluster and activate it to mine items from the crystal cluster
+}
+
+StoneMaker: {
+	CantMake: Can't produce this block!
+	MagikeNotEnough: Magike Not Enough!
+	DisplayName: Geological Regenerate Altar
+	Tooltip:
+		'''
+		Activated when placed on some stones to consume mana energy to produce stones
+		Production: Dirt, Stone, Marble, Granite, Crimstone Blocks, Ebonstone Blocks, Pealstone blocks
+		  Ash, basalt, skarn
+		'''
+}
+
+BrilliantConnectStaff: {
+	DisplayName: Brilliant Connect Staff
+	Tooltip:
+		'''
+		Left-click on the selected area
+		left-click and select the area again to connect the magike apparatus in the two areas
+		Right-click in the inventory to toggle how to disconnect
+		  UI mode: Right-click on the magike sender to open the connection UI, 
+		    and click the button to cancel the connection
+		  Marquee mode: Press and hold the right button to select an area, 
+		    release the right button to cancel all connections in the area
+		'''
+	CurrentState: Current disconnection mode:
+	UIDisconnect: UI mode
+	DisconnectAll: Marquee mode
+	DisconnectSuccess: Disconnect successful
+}
+
+OpticalPathCalibrator: {
+	TimerNotFound: Timer not found！
+	TimerChosen: Timer chosen
+	TimerSynced: Sync timer successful
+	DisplayName: Optical Path Calibrator
+	Tooltip:
+		'''
+		Left-click to select the magike apparatus with the timer component
+		Left-click another apparatus to synchronize the timers of the two
+		'''
+}
+
+BrilliantCalibrator: {
+	DisplayName: Brilliant Calibrator
+	Tooltip:
+		'''
+		Left-click to select a region
+		Release it to reset all magike apparatus timers in the area
+		'''
+}
+
+BrilliantMagikeActivator: {
+	DisplayName: Brilliant Magike Activator
+	Tooltip:
+		'''
+		Left-click to select a region
+		Release it to activate the magike factory in the area
+		'''
+}
+
+MagicCrystalTRFilter: {
+	DisplayName: Magic Crystal Total Reflection Filter
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.TotalReflectionFilterTooltip}
+		[c/80d3ff:+10%]
+		'''
+}
+
+MagicCrystalDiffractionFilter: {
+	DisplayName: Magic Crystal Diffraction Filter
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.DiffractionFilterFilterTooltip}
+		[c/80d3ff:+1]
+		'''
+}
+
+MagicCrystalInterferenceFilter: {
+	DisplayName: Magic Crystal Interference Filter
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.InterferenceFilterTooltip}
+		[c/80d3ff:+10%]
+		'''
+}
+
+MagicCrystalExcitedFilter: {
+	DisplayName: Magic Crystal Excited Filter
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.ExcitedFilterTooltip}
+		[c/80d3ff:+10%]
+		'''
+}
+
+MagicCrystalPulseFilter: {
+	DisplayName: Magic Crystal Pulse Filter
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.PulseFilterTooltip}
+		[c/80d3ff:+10%]
+		'''
+}
+
+TreasureLens: {
+	DisplayName: Treasure Lens
+	Tooltip:
+		'''
+		Consume valuable items to produce magike
+		The output is the number of silver coins equal to the value of the item, up to a maximum of 100
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BrilliantScanner: {
+	DisplayName: Brilliant Scanner
+	Tooltip: Keeping it in inventory allows you to observe the flow of magike and check the status of the Magike Apparatus
+}
+
+SkarnBrick: {
+	DisplayName: Skarn Brick
+	Tooltip: ""
+}
+
+Chalcedony: {
+	DisplayName: Chalcedony
+	Tooltip: The wood formed by absorbing nutrients from skarn has been completely crystallized
+}
+
+ChalcedonyBathtub: {
+	DisplayName: Chalcedony Bathtub
+	Tooltip: ""
+}
+
+ChalcedonyBed: {
+	DisplayName: Chalcedony Bed
+	Tooltip: ""
+}
+
+ChalcedonyBigDroplight: {
+	DisplayName: Chalcedony Big Droplight
+	Tooltip: ""
+}
+
+ChalcedonyBookcase: {
+	DisplayName: Chalcedony Bookcase
+	Tooltip: ""
+}
+
+ChalcedonyCandelabra: {
+	DisplayName: Chalcedony Candelabra
+	Tooltip: ""
+}
+
+ChalcedonyCandle: {
+	DisplayName: Chalcedony Candle
+	Tooltip: ""
+}
+
+ChalcedonyChair: {
+	DisplayName: Chalcedony Chair
+	Tooltip: ""
+}
+
+ChalcedonyClock: {
+	DisplayName: Chalcedony Clock
+	Tooltip: ""
+}
+
+ChalcedonyDoor: {
+	DisplayName: Chalcedony Door
+	Tooltip: ""
+}
+
+ChalcedonyDresser: {
+	DisplayName: Chalcedony Dresser
+	Tooltip: ""
+}
+
+ChalcedonyDroplight: {
+	DisplayName: Chalcedony Droplight
+	Tooltip: ""
+}
+
+ChalcedonyFloorLamp: {
+	DisplayName: Chalcedony Floor Lamp
+	Tooltip: ""
+}
+
+ChalcedonyPiano: {
+	DisplayName: Chalcedony Piano
+	Tooltip: ""
+}
+
+ChalcedonyPlatform: {
+	DisplayName: Chalcedony Platform
+	Tooltip: ""
+}
+
+ChalcedonySink: {
+	DisplayName: Chalcedony Sink
+	Tooltip: ""
+}
+
+ChalcedonySofa: {
+	DisplayName: Chalcedony Sofa
+	Tooltip: ""
+}
+
+ChalcedonyTable: {
+	DisplayName: Chalcedony Table
+	Tooltip: ""
+}
+
+ChalcedonyToilet: {
+	DisplayName: Chalcedony Toilet
+	Tooltip: ""
+}
+
+ChalcedonyWallItem: {
+	DisplayName: Chalcedony Wall
+	Tooltip: ""
+}
+
+ChalcedonyWorkBench: {
+	DisplayName: Chalcedony Work Bench
+	Tooltip: ""
+}
+
+LeafChalcedony: {
+	DisplayName: Leaf Chalcedony
+	Tooltip: Chalcedony, wrapped and compressed with leaf stone, is more suitable for various processing
+}
+
+ChalcedonyChest: {
+	DisplayName: Chalcedony Chest
+	Tooltip: ""
+}
+
+Princesstrawberry: {
+	DisplayName: Princesstrawberry
+	Tooltip: ""
+}
+
+Woodbine: {
+	DisplayName: Woodbine
+	Tooltip: ""
+}
+
+Buttermilk: {
+	DisplayName: Buttermilk
+	Tooltip: ""
+}
+
+RoyalKonjac: {
+	DisplayName: Royal Konjac
+	Tooltip: ""
+}
+
+SkarnBrickPlatform: {
+	DisplayName: Skarn Brick Platform
+	Tooltip: ""
+}
+
+StoneRelic: {
+	DisplayName: Stone Relic
+	Tooltip: ""
+}
+
+SmoothSkarn: {
+	DisplayName: Smooth Skarn
+	Tooltip: ""
+}
+
+SmoothSkarnWallItem: {
+	DisplayName: Smooth Skarn Wall Item
+	Tooltip: ""
+}
+
+ConchHat: {
+	DisplayName: Conch Hat
+	Tooltip: ""
+	ArmorBonus: Mods.Coralite.Items.ConchHat.ArmorBonus
+}
+
+ConchRobe: {
+	DisplayName: Conch Robe
+	Tooltip: ""
+}
+
+StoneMakerCore: {
+	DisplayName: Stone Maker Core
+	Tooltip: ""
+}
+
+PremissionAltar: {
+	DisplayName: Premission Altar
+	Tooltip: ""
+}
+
+SkarnBrickWallItem: {
+	DisplayName: Skarn Brick Wall Item
+	Tooltip: ""
+}
+
+SoulOfLightAltar: {
+	DisplayName: Soul Of Light Altar
+	Tooltip: ""
+}
+
+SoulOfNightAltar: {
+	DisplayName: Soul Of Night Altar
+	Tooltip: ""
+}
+
+LASER: {
+	DisplayName: L A S E R
+	Tooltip: ""
+}
+
+LASERCore: {
+	DisplayName: L A S E R Core
+	Tooltip: ""
+}
+
+CogLens: {
+	DisplayName: Cog Lens
+	Tooltip: ""
+}
+
+CoraliteNote: {
+	DisplayName: Coralite Note
+	Tooltip: ""
+}
+
+Phosphophyllite: {
+	DisplayName: Phosphophyllite
 	Tooltip: ""
 }

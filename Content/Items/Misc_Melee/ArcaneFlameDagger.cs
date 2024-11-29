@@ -4,6 +4,7 @@ using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -20,11 +21,11 @@ namespace Coralite.Content.Items.Misc_Melee
     {
         public override string Texture => AssetDirectory.Misc_Melee + Name;
 
-        protected static ParticleGroup group;
+        protected static PrimitivePRTGroup group;
 
-        public static Color Green = new Color(162, 248, 2);
-        public static Color Gray = new Color(172, 167, 198);
-        public static Color Purple = new Color(212, 195, 255);
+        public static Color Green = new(162, 248, 2);
+        public static Color Gray = new(172, 167, 198);
+        public static Color Purple = new(212, 195, 255);
 
         public override void SetDefaults()
         {
@@ -34,7 +35,7 @@ namespace Coralite.Content.Items.Misc_Melee
             Item.DamageType = DamageClass.Melee;
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.Blue1, Item.sellPrice(0, 8));
             Item.rare = ModContent.RarityType<ArcaneFlameDaggerRarity>();
-            Item.SetWeaponValues(50, 4,6);
+            Item.SetWeaponValues(50, 4, 6);
             Item.autoReuse = true;
             Item.noUseGraphic = true;
             Item.noMelee = true;
@@ -44,21 +45,21 @@ namespace Coralite.Content.Items.Misc_Melee
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            group?.UpdateParticles();
+            group?.Update();
         }
 
         public override void PostDrawTooltipLine(DrawableTooltipLine line)
         {
             if (line.Mod == "Terraria" && line.Name == "ItemName")
             {
-                group ??= new ParticleGroup();
+                group ??= new PrimitivePRTGroup();
                 if (group != null)
                     SpawnParticle(line);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, null, Main.UIScaleMatrix);
 
-                group?.DrawParticlesInUI(Main.spriteBatch);
+                group?.DrawInUI(Main.spriteBatch);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, null, Main.UIScaleMatrix);
@@ -72,9 +73,9 @@ namespace Coralite.Content.Items.Misc_Melee
                 Vector2 size = ChatManager.GetStringSize(line.Font, line.Text, line.BaseScale);
                 Color c = Main.rand.NextFromList(Purple, Green, Gray);
 
-                Vector2 pos = new Vector2(line.X, line.Y) + new Vector2(Main.rand.NextFloat(0, size.X), Main.rand.NextFloat(size.Y*0.6f, size.Y*1f));
+                Vector2 pos = new Vector2(line.X, line.Y) + new Vector2(Main.rand.NextFloat(0, size.X), Main.rand.NextFloat(size.Y * 0.6f, size.Y * 1f));
 
-               var p= group.NewParticle<FireParticle>(pos,-Vector2.UnitY*Main.rand.NextFloat(0.4f,3f),c,Main.rand.NextFloat(0.1f,0.3f));
+                var p = group.NewParticle<FireParticle>(pos, -Vector2.UnitY * Main.rand.NextFloat(0.4f, 3f), c, Main.rand.NextFloat(0.1f, 0.3f));
                 p.MaxFrameCount = 3;
             }
         }
@@ -99,7 +100,7 @@ namespace Coralite.Content.Items.Misc_Melee
                 float factor = Math.Abs(MathF.Sin(Main.GlobalTimeWrappedHourly)) * 2;
                 if (factor < 1)
                     return Color.Lerp(ArcaneFlameDagger.Green, ArcaneFlameDagger.Gray, factor);
-                return Color.Lerp(ArcaneFlameDagger.Gray, ArcaneFlameDagger.Purple, (factor - 1));
+                return Color.Lerp(ArcaneFlameDagger.Gray, ArcaneFlameDagger.Purple, factor - 1);
             }
         }
     }
@@ -131,7 +132,7 @@ namespace Coralite.Content.Items.Misc_Melee
             {
                 Projectile.velocity.X *= 0.99f;
                 Projectile.velocity.Y += 0.5f;
-                if (Projectile.velocity.Y>14)
+                if (Projectile.velocity.Y > 14)
                     Projectile.velocity.Y = 14;
 
                 Projectile.rotation += Projectile.velocity.Length() / 40;
@@ -168,7 +169,7 @@ namespace Coralite.Content.Items.Misc_Melee
             if (hit.Crit)//生成额外斩击弹幕
             {
                 Vector2 dir = Helper.NextVec2Dir();
-                Projectile.NewProjectileFromThis<ArcaneFlameDaggerSlash>(target.Center + dir * 8 * 24
+                Projectile.NewProjectileFromThis<ArcaneFlameDaggerSlash>(target.Center + (dir * 8 * 24)
                     , -dir * 24, Projectile.damage, 0, ai1: 24);
             }
         }
@@ -197,7 +198,7 @@ namespace Coralite.Content.Items.Misc_Melee
 
     public class ArcaneFlameDaggerSlash : ModProjectile, IDrawPrimitive, IDrawWarp
     {
-        public override string Texture => AssetDirectory.OtherProjectiles + "SpurtTrail2";
+        public override string Texture => AssetDirectory.Trails + "SlashFlatBlurVMirror";
 
         public ref float Alpha => ref Projectile.localAI[0];
         public ref float Timer => ref Projectile.ai[0];
@@ -257,8 +258,8 @@ namespace Coralite.Content.Items.Misc_Melee
                 Color c = Color.Lerp(ArcaneFlameDagger.Purple, ArcaneFlameDagger.Green, factor);
                 for (int i = 0; i < 2; i++)
                 {
-                  var p=  Particle.NewParticle<FireParticle>(Projectile.Center + Main.rand.NextVector2Circular(14, 14),
-                        Projectile.velocity * Main.rand.NextFloat(0.1f, 0.4f), c, Main.rand.NextFloat(0.1f, 0.4f));
+                    var p = PRTLoader.NewParticle<FireParticle>(Projectile.Center + Main.rand.NextVector2Circular(14, 14),
+                          Projectile.velocity * Main.rand.NextFloat(0.1f, 0.4f), c, Main.rand.NextFloat(0.1f, 0.4f));
                     p.MaxFrameCount = 3;
                 }
             }
@@ -335,20 +336,20 @@ namespace Coralite.Content.Items.Misc_Melee
             if (Timer < 0)
                 return;
 
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> bars = new();
 
             float w = 1f;
             Vector2 up = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2();
             Vector2 down = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2();
             for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
-                float factor = 1f - i / 23f;
+                float factor = 1f - (i / 23f);
                 Vector2 Center = Projectile.oldPos[i];
                 float r = Projectile.rotation % 6.18f;
                 float dir = (r >= 3.14f ? r - 3.14f : r + 3.14f) / MathHelper.TwoPi;
                 float width = WidthFunction(factor) * 0.75f;
-                Vector2 Top = Center + up * width;
-                Vector2 Bottom = Center + down * width;
+                Vector2 Top = Center + (up * width);
+                Vector2 Bottom = Center + (down * width);
 
                 bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
                 bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));

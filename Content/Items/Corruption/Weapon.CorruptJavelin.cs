@@ -199,7 +199,7 @@ namespace Coralite.Content.Items.Corruption
                 case (int)AIStates.shoot:
                     //仅仅是生成粒子而已
                     int type = DustID.Shadowflame;
-                    Color color = default(Color);
+                    Color color = default;
                     switch (Main.rand.Next(4))
                     {
                         case 0:
@@ -304,7 +304,7 @@ namespace Coralite.Content.Items.Corruption
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 pos = Projectile.Center - Main.screenPosition;
             var origin = new Vector2(3 * mainTex.Width / 4, mainTex.Height / 4);
-            float Rot = Projectile.rotation + Projectile.spriteDirection * 0.9f;
+            float Rot = Projectile.rotation + (Projectile.spriteDirection * 0.9f);
             SpriteEffects effect = SpriteEffects.None;
 
             if (Projectile.spriteDirection < 0)
@@ -316,12 +316,12 @@ namespace Coralite.Content.Items.Corruption
 
             if ((int)State == 1)//残影绘制
             {
-                Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+                Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
                 Color color = Color.MediumPurple;
                 color.A = 0;
                 for (int i = 1; i < 8; i += 2)
                 {
-                    Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null, color * (0.8f - i * 0.07f), Rot, mainTex.Size() / 2, 1 - i * 0.03f, effect, 0);
+                    Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null, color * (0.8f - (i * 0.07f)), Rot, mainTex.Size() / 2, 1 - (i * 0.03f), effect, 0);
                 }
             }
             else if ((int)State == 0)
@@ -374,12 +374,12 @@ namespace Coralite.Content.Items.Corruption
         public override void AI()
         {
             Vector2 targetDir = (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.Zero);
-            Projectile.Center = Owner.Center + targetDir * distanceToOwner;
+            Projectile.Center = Owner.Center + (targetDir * distanceToOwner);
             Projectile.rotation = Projectile.rotation.AngleTowards(targetDir.ToRotation(), 0.3f);
             Owner.heldProj = Projectile.whoAmI;
             Owner.itemTime = Owner.itemAnimation = 2;
             Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
-            Owner.itemRotation = Projectile.rotation + (OwnerDirection > 0 ? 0 : MathHelper.Pi);
+            Owner.itemRotation = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
             Projectile.spriteDirection = Main.MouseWorld.X > Projectile.Center.X ? 1 : -1;
 
             do
@@ -423,7 +423,7 @@ namespace Coralite.Content.Items.Corruption
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 pos = Projectile.Center - Main.screenPosition;
             var origin = mainTex.Size() / 2;
-            float rot = Projectile.rotation + Projectile.spriteDirection * 0.9f;
+            float rot = Projectile.rotation + (Projectile.spriteDirection * 0.9f);
             SpriteEffects effect = SpriteEffects.None;
 
             if (Projectile.spriteDirection < 0)
@@ -538,7 +538,7 @@ namespace Coralite.Content.Items.Corruption
         {
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 pos = Projectile.Center - Main.screenPosition;
-            float Rot = Projectile.rotation + MathHelper.Pi / 4;
+            float Rot = Projectile.rotation + (MathHelper.Pi / 4);
             SpriteEffects effect = SpriteEffects.None;
 
             Main.spriteBatch.Draw(mainTex, pos, null, lightColor * alpha, Rot, mainTex.Size() / 2, Projectile.scale, effect, 0);

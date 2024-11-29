@@ -1,12 +1,11 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System.Linq;
 using Terraria;
-using Terraria.Audio;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 
@@ -56,13 +55,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                             NCamera.shakeLevel = 3f;
                             NCamera.shakeDelay = 2;
 
-                            SoundStyle st = CoraliteSoundID.BigBOOM_Item62;
-                            st.Pitch = -0.5f;
-                            SoundEngine.PlaySound(st, NPC.Center);
-                            st = CoraliteSoundID.EmpressOfLight_Dash_Item160;
-                            st.Pitch = -0.75f;
-                            st.Volume -= 0.2f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.BigBOOM_Item62, NPC.Center, pitch: -0.5f);
+                            Helper.PlayPitched(CoraliteSoundID.EmpressOfLight_Dash_Item160, NPC.Center, volumeAdjust: -0.2f, pitchAdjust: -0.75f);
                         }
                     }
                     break;
@@ -77,26 +71,24 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
                         NPC.rotation += Main.rand.NextFloat(-0.2f, 0.3f);
                         Vector2 dir = Helper.NextVec2Dir();
-                        Dust dust = Dust.NewDustPerfect(NPC.Center + dir * Main.rand.NextFloat(64f), ModContent.DustType<NightmareDust>(), dir * Main.rand.NextFloat(2f, 4f), Scale: Main.rand.NextFloat(1f, 2f));
+                        Dust dust = Dust.NewDustPerfect(NPC.Center + (dir * Main.rand.NextFloat(64f)), ModContent.DustType<NightmareDust>(), dir * Main.rand.NextFloat(2f, 4f), Scale: Main.rand.NextFloat(1f, 2f));
                         dust.noGravity = true;
 
                         if (Timer % 3 == 0)
                         {
                             dir = Helper.NextVec2Dir();
-                            dust = Dust.NewDustPerfect(NPC.Center + dir * Main.rand.NextFloat(64f), ModContent.DustType<NightmareStar>(), dir * Main.rand.NextFloat(8f, 16f), newColor: new Color(153, 88, 156, 230), Scale: Main.rand.NextFloat(1f, 4f));
+                            dust = Dust.NewDustPerfect(NPC.Center + (dir * Main.rand.NextFloat(64f)), ModContent.DustType<NightmareStar>(), dir * Main.rand.NextFloat(8f, 16f), newColor: new Color(153, 88, 156, 230), Scale: Main.rand.NextFloat(1f, 4f));
                             dust.rotation = dir.ToRotation() + MathHelper.PiOver2;
 
                             dir = Helper.NextVec2Dir();
-                            dust = Dust.NewDustPerfect(NPC.Center + dir * Main.rand.NextFloat(64f), DustID.VilePowder, dir * Main.rand.NextFloat(8f, 16f), newColor: new Color(153, 88, 156, 230), Scale: Main.rand.NextFloat(1f, 1.3f));
+                            dust = Dust.NewDustPerfect(NPC.Center + (dir * Main.rand.NextFloat(64f)), DustID.VilePowder, dir * Main.rand.NextFloat(8f, 16f), newColor: new Color(153, 88, 156, 230), Scale: Main.rand.NextFloat(1f, 1.3f));
                         }
 
                         if (Timer > 140)
                         {
                             State++;
                             Timer = 0;
-                            SoundStyle st = CoraliteSoundID.BigBOOM_Item62;
-                            st.Pitch = -0.5f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.BigBOOM_Item62, NPC.Center, pitch: -0.5f);
 
                             canDrawWarp = true;
                             warpScale = 0;
@@ -112,12 +104,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 case 2: //第二次炸开后产生一大堆的雾
                     {
                         if (Timer % 8 == 0)
-                        {
-                            SoundStyle st = CoraliteSoundID.FireBallExplosion_Item74;
-                            st.Volume -= 0.4f;
-                            st.Pitch -= 0.4f;
-                            SoundEngine.PlaySound(st, NPC.Center);
-                        }
+                            Helper.PlayPitched(CoraliteSoundID.FireBallExplosion_Item74, NPC.Center, volumeAdjust: -0.4f, pitchAdjust: -0.4f);
 
                         warpScale += 0.3f;
                         if (warpScale > 10)
@@ -134,7 +121,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                                 _ => new Color(122, 110, 134)
                             };
 
-                            Particle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(64, 64), Helper.NextVec2Dir(6, 36f),
+                            PRTLoader.NewParticle(NPC.Center + Main.rand.NextVector2Circular(64, 64), Helper.NextVec2Dir(6, 36f),
                                 CoraliteContent.ParticleType<BigFog>(), color, Scale: Main.rand.NextFloat(0.5f, 3f));
                         }
 
@@ -149,9 +136,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                             nameScale = 0;
                             nameAlpha = 1;
                             nameDrawTimer = 0;
-                            SoundStyle st = CoraliteSoundID.BigBOOM_Item62;
-                            st.Pitch = -0.5f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.BigBOOM_Item62, NPC.Center, pitch: -0.5f);
 
                             if (Main.LocalPlayer.TryGetModPlayer(out NightmarePlayerCamera NCamera))
                             {
@@ -269,7 +254,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 nameAlpha = 0;
             }
 
-            Vector2 basePos = new Vector2(Main.screenWidth / 2, Main.screenHeight / 2);
+            Vector2 basePos = new(Main.screenWidth / 2, Main.screenHeight / 2);
 
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             Main.spriteBatch.Draw(BlackBack.Value, basePos, null, Color.White * nameAlpha, 0, BlackBack.Size() / 2, nameScale, 0, 0);

@@ -28,12 +28,12 @@ namespace Coralite.Content.Items.BossSummons
             Item.useAnimation = 30;
             Item.useTime = 30;
             Item.useStyle = ItemUseStyleID.HoldUp;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarityID.Red;
         }
 
         public override bool CanUseItem(Player player)
         {
-            return !NPC.TowerActiveNebula && !NPC.TowerActiveSolar&&!NPC.TowerActiveStardust&& !NPC.TowerActiveVortex&& !NPC.LunarApocalypseIsUp&&
+            return !NPC.TowerActiveNebula && !NPC.TowerActiveSolar && !NPC.TowerActiveStardust && !NPC.TowerActiveVortex && !NPC.LunarApocalypseIsUp &&
                 !NPC.AnyNPCs(NPCID.MoonLordCore);
         }
 

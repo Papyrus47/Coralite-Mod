@@ -1,20 +1,24 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
+using Coralite.Helpers;
 using Terraria;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class MagicalPowder : BaseMaterial, IMagikeRemodelable
+    public class MagicalPowder : BaseMaterial, IMagikeCraftable
     {
         public MagicalPowder() : base(9999, Item.sellPrice(0, 0, 1, 50), ItemRarityID.Green, AssetDirectory.Materials) { }
 
-        public void AddMagikeRemodelRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            MagikeSystem.AddRemodelRecipe<MagicalPowder>(150, ItemID.EnchantedSword, selfStack: 40);
-            MagikeSystem.AddRemodelRecipe<MagicalPowder>(0f, ItemID.FallenStar, 25, 5);
-            MagikeSystem.AddRemodelRecipe<MagicalPowder>(0f, ItemID.ManaCrystal, 50, 25);
+            MagikeCraftRecipe.CreateRecipe(ModContent.ItemType<MagicalPowder>(), ItemID.EnchantedSword, MagikeHelper.CalculateMagikeCost(MALevel.MagicCrystal, 6, 120)
+                , MainItenStack: 40)
+                .RegisterNew(ItemID.FallenStar, MagikeHelper.CalculateMagikeCost(MALevel.MagicCrystal, 6, 20)).SetMainStack(5)
+                .RegisterNew(ItemID.ManaCrystal, MagikeHelper.CalculateMagikeCost(MALevel.MagicCrystal, 6, 40)).SetMainStack(25)
+                .Register();
         }
     }
 }

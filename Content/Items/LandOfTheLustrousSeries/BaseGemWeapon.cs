@@ -18,8 +18,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
     {
         public override string Texture => AssetDirectory.LandOfTheLustrousSeriesItems + Name;
 
-        protected static ParticleGroup group;
-        protected static Vector2 rand = new Vector2(30, 30);
+        protected static PrimitivePRTGroup group;
+        protected static Vector2 rand = new(30, 30);
 
         public sealed override void SetDefaults()
         {
@@ -41,7 +41,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            group?.UpdateParticles();
+            group?.Update();
         }
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
@@ -59,10 +59,10 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             if (Item.rare == ModContent.RarityType<VibrantRarity>() && line.Mod == "Terraria" && line.Name == "ItemName")
             {
-                group ??= new ParticleGroup();
+                group ??= new PrimitivePRTGroup();
                 if (group != null)
                     SpawnParticle(line);
-                group?.DrawParticlesInUI(Main.spriteBatch);
+                group?.DrawInUI(Main.spriteBatch);
             }
         }
 
@@ -75,11 +75,13 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             int prefix = 0;
             var wr = new WeightedRandom<int>(rand);
 
-            if (Item.GetPrefixCategory() is not PrefixCategory category)
+            var prefixes = Item.GetPrefixCategories();
+            if (prefixes.Count == 0)
                 return -1;
 
-            foreach (int pre in Item.GetVanillaPrefixes(category))
-                wr.Add(pre, 1);
+            foreach (var category in prefixes)
+                foreach (int pre in Item.GetVanillaPrefixes(category))
+                    wr.Add(pre, 1);
 
             if (PrefixLegacy.ItemSets.ItemsThatCanHaveLegendary2[Item.type]) // Fix #3688, Rather than mess with the PrefixCategory enum and Item.GetPrefixCategory at this time and risk compatibility issues, manually support this until a redesign.
                 wr.Add(PrefixID.Legendary2, 1);
@@ -110,19 +112,39 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             }
         }
 
-        public static void DrawGemNameNormally(DrawableTooltipLine line, Action<Effect> setEffect, float flowXadder = 0.2f)
+        public static void DrawGemNameNormally(DrawableTooltipLine line, Action<Effect> setEffect, float flowXadder = 0.2f, Action<Effect> setBackEffect=null,Texture2D backTex=null,Point? extraSize=null)
         {
             SpriteBatch sb = Main.spriteBatch;
             Effect effect = Filters.Scene["Crystal"].GetShader().Shader;
 
-            rand.X += flowXadder;
-            rand.Y += 0.01f;
+            rand.X += flowXadder* Main.GameZoomTarget;
+            rand.Y += 0.01f* Main.GameZoomTarget;
             if (rand.X > 100000)
                 rand.X = 10;
 
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
             Texture2D noiseTex = GemTextures.CrystalNoises[(int)(Main.timeForVisualEffects / 7) % 20].Value;
+
+            if (setBackEffect != null)
+            {
+                effect.Parameters["transformMatrix"].SetValue(projection);
+                effect.Parameters["basePos"].SetValue(rand + new Vector2(line.X, line.Y));
+                setBackEffect(effect);
+
+                sb.End();
+                sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, effect, Main.UIScaleMatrix);
+
+                Main.graphics.GraphicsDevice.Textures[1] = GemTextures.CrystalNoiseP3.Value;
+
+                Vector2 textSize = ChatManager.GetStringSize(line.Font, line.Text, line.BaseScale);
+                Texture2D mainTex = backTex ?? CoraliteAssets.LightBall.BallA.Value;
+
+                int xExpand = extraSize==null?30:extraSize.Value.X;
+                int yExpand = extraSize==null?6:extraSize.Value.Y;
+
+                sb.Draw(mainTex, new Rectangle(line.X - xExpand, line.Y - 4 - yExpand, (int)textSize.X + xExpand * 2, (int)textSize.Y + yExpand * 2), null, Color.White * 0.8f);
+            }
 
             effect.Parameters["transformMatrix"].SetValue(projection);
             effect.Parameters["basePos"].SetValue(rand + new Vector2(line.X, line.Y));
@@ -132,11 +154,10 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, effect, Main.UIScaleMatrix);
 
             Main.graphics.GraphicsDevice.Textures[1] = noiseTex;
+            
             ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, new Vector2(line.X, line.Y)
                 , Color.White, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
 
-            //sb.End();
-            //sb.Begin();
             sb.End();
             sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, null, Main.UIScaleMatrix);
         }

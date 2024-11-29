@@ -98,7 +98,6 @@ namespace Coralite.Content.Items.Shadow
 
         public static Asset<Texture2D> handleTex;
         public static Asset<Texture2D> ChainTex;
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
@@ -123,7 +122,6 @@ namespace Coralite.Content.Items.Shadow
 
             handleTex = Request<Texture2D>(AssetDirectory.ShadowItems + "ShadowChainHandle");
             ChainTex = Request<Texture2D>(AssetDirectory.ShadowItems + "ShadowChainChain");
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "HLightSlashTrail");
             WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
             GradientTexture = Request<Texture2D>(AssetDirectory.ShadowItems + "ShadowChainGradient");
         }
@@ -196,8 +194,8 @@ namespace Coralite.Content.Items.Shadow
                     maxTime = Owner.itemTimeMax + 35;
                     startAngle = 2f;
                     totalAngle = 4.9f;
-                    distanceToOwner = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(0, maxTime - minTime), 40, 80);
-                    Projectile.scale = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(0, maxTime - minTime), 1f, 1.25f);
+                    distanceToOwner = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(0, maxTime - minTime)), 40, 80);
+                    Projectile.scale = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(0, maxTime - minTime)), 1f, 1.25f);
                     Smoother = Coralite.Instance.BezierEaseSmoother;
                     break;
                 case 2://上挥
@@ -206,15 +204,15 @@ namespace Coralite.Content.Items.Shadow
                     totalAngle = -4.9f;
                     distanceToOwner = 80;
                     Smoother = Coralite.Instance.BezierEaseSmoother;
-                    distanceToOwner = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(0, maxTime - minTime), 60, 70);
-                    Projectile.scale = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(0, maxTime - minTime), 1f, 1.25f);
+                    distanceToOwner = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(0, maxTime - minTime)), 60, 70);
+                    Projectile.scale = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(0, maxTime - minTime)), 1f, 1.25f);
                     break;
                 case 3://下挥
                     useSlashTrail = true;
                     maxTime = Owner.itemTimeMax + 14;
                     startAngle = 3f;
                     totalAngle = 5.8f;
-                    distanceToOwner = Helper.EllipticalEase(3f - 5.8f * Smoother.Smoother(0, maxTime - minTime), 80, 100);
+                    distanceToOwner = Helper.EllipticalEase(3f - (5.8f * Smoother.Smoother(0, maxTime - minTime)), 80, 100);
                     Smoother = Coralite.Instance.NoSmootherInstance;
                     Projectile.scale = 1.2f;
                     delay = 16;
@@ -225,7 +223,7 @@ namespace Coralite.Content.Items.Shadow
                     int reverse = Main.rand.NextFromList(-1, 1);
                     startAngle = 2.6f * reverse;
                     totalAngle = 5.2f * reverse;
-                    distanceToOwner = Helper.EllipticalEase(2.6f - 5.2f * Smoother.Smoother(0, maxTime - minTime), 30, 60);
+                    distanceToOwner = Helper.EllipticalEase(2.6f - (5.2f * Smoother.Smoother(0, maxTime - minTime)), 30, 60);
                     Smoother = Coralite.Instance.NoSmootherInstance;
                     delay = 16;
                     break;
@@ -253,7 +251,7 @@ namespace Coralite.Content.Items.Shadow
                     var source = Projectile.GetSource_FromAI();
                     float maxLength = Main.rand.NextFloat(300, 400);
                     float xxxxxxxFactor = Main.rand.NextFloat(0.9f, 1f);
-                    Vector2 pos = nPC.Center + Helper.NextVec2Dir() * maxLength / 2;
+                    Vector2 pos = nPC.Center + (Helper.NextVec2Dir() * maxLength / 2);
                     Vector2 vel = (nPC.Center - pos).SafeNormalize(Vector2.Zero) * maxLength / ((Owner.itemTimeMax + 16) * xxxxxxxFactor);
                     int index = Projectile.NewProjectile(source, pos, vel, ProjectileType<ShadowChainShadows>(), 1, 0, Projectile.owner);
                     Projectile.NewProjectile(source, pos, Vector2.Zero, ProjectileType<ShadowChainSwing>()
@@ -290,25 +288,25 @@ namespace Coralite.Content.Items.Shadow
 
                     break;
                 case 1:
-                    Projectile.scale = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(timer, maxTime - minTime), 1f, 1.25f);
-                    distanceToOwner = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(timer, maxTime - minTime), 40, 80);
+                    Projectile.scale = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(timer, maxTime - minTime)), 1f, 1.25f);
+                    distanceToOwner = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(timer, maxTime - minTime)), 40, 80);
 
                     break;
                 case 2:
-                    Projectile.scale = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(timer, maxTime - minTime), 1f, 1.25f);
-                    distanceToOwner = Helper.EllipticalEase(2f - 4.9f * Smoother.Smoother(timer, maxTime - minTime), 60, 70);
+                    Projectile.scale = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(timer, maxTime - minTime)), 1f, 1.25f);
+                    distanceToOwner = Helper.EllipticalEase(2f - (4.9f * Smoother.Smoother(timer, maxTime - minTime)), 60, 70);
 
                     break;
                 case 3:
                     if (timer < halfTime)
                     {
-                        distanceToOwner = Helper.EllipticalEase(3f - 5.8f * Smoother.Smoother(timer, maxTime - minTime), 80, 100);
+                        distanceToOwner = Helper.EllipticalEase(3f - (5.8f * Smoother.Smoother(timer, maxTime - minTime)), 80, 100);
                     }
                     else
                         distanceToOwner -= 1.6f;
                     break;
                 case 4:
-                    distanceToOwner = Helper.EllipticalEase(2.6f - 5.2f * Smoother.Smoother(timer, maxTime - minTime), 30, 60);
+                    distanceToOwner = Helper.EllipticalEase(2.6f - (5.2f * Smoother.Smoother(timer, maxTime - minTime)), 30, 60);
                     break;
             }
 
@@ -332,8 +330,8 @@ namespace Coralite.Content.Items.Shadow
             if (onHitTimer == 0)
             {
                 onHitTimer = 1;
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
 
                 if ((int)Combo == 0)
                 {
@@ -343,7 +341,7 @@ namespace Coralite.Content.Items.Shadow
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
                 {
-                    PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, RotateVec2, 1, 6, 6, 1000);
+                    PunchCameraModifier modifier = new(Projectile.Center, RotateVec2, 1, 6, 6, 1000);
                     Main.instance.CameraModifiers.Add(modifier);
                 }
 
@@ -382,7 +380,7 @@ namespace Coralite.Content.Items.Shadow
 
             var handleOrigin = handleTex.Size() / 2;
             Vector2 ownerCenter = OwnerCenter();
-            Vector2 handPos = ownerCenter + RotateVec2 * 8;
+            Vector2 handPos = ownerCenter + (RotateVec2 * 8);
 
             Main.spriteBatch.Draw(handleTex, handPos, null, lightColor, Projectile.rotation, handleOrigin, Projectile.scale, 0, 0);
             Texture2D chainTex = ChainTex.Value;
@@ -414,12 +412,12 @@ namespace Coralite.Content.Items.Shadow
 
         protected override void DrawShadowTrail(Texture2D mainTex, Vector2 origin, Color lightColor, float extraRot)
         {
-            Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
             SpriteEffects effect = CheckEffect();
             for (int i = 1; i < 8; i += 1)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null,
-                lightColor * (0.5f - i * 0.5f / 8), Projectile.oldRot[i] + extraRot, origin, Projectile.scale, effect, 0);
+                lightColor * (0.5f - (i * 0.5f / 8)), Projectile.oldRot[i] + extraRot, origin, Projectile.scale, effect, 0);
         }
 
         public void DrawWarp()
@@ -431,7 +429,7 @@ namespace Coralite.Content.Items.Shadow
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             Vector2 Center = GetCenter(1);
@@ -441,9 +439,9 @@ namespace Coralite.Content.Items.Shadow
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                float factor = 1f - (i / count);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -458,11 +456,11 @@ namespace Coralite.Content.Items.Shadow
                     Effect effect = Filters.Scene["StarsTrail"].GetShader().Shader;
 
                     effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
-                    effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                    effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatBright.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
                     effect.Parameters["worldSize"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight));
                     effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly / 5);
-                    effect.Parameters["uExchange"].SetValue(0.87f + 0.05f * MathF.Sin(Main.GlobalTimeWrappedHourly));
+                    effect.Parameters["uExchange"].SetValue(0.87f + (0.05f * MathF.Sin(Main.GlobalTimeWrappedHourly)));
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
                     {
@@ -542,7 +540,7 @@ namespace Coralite.Content.Items.Shadow
                         0 => DustID.VilePowder,
                         _ => DustID.Shadowflame,
                     };
-                    Dust d = Dust.NewDustPerfect(Projectile.Center + direction * i + Main.rand.NextVector2Circular(4, 4)
+                    Dust d = Dust.NewDustPerfect(Projectile.Center + (direction * i) + Main.rand.NextVector2Circular(4, 4)
                           , type, Vector2.UnitX.RotatedByRandom(3.14) * Main.rand.NextFloat(0, 2f), Scale: Main.rand.NextFloat(1f, 1.3f));
                     d.noGravity = true;
                 }
@@ -575,11 +573,11 @@ namespace Coralite.Content.Items.Shadow
             if (HookState == (int)AIStates.rolling)
             {
                 exRot = MathHelper.PiOver2;
-                Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+                Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
                 for (int i = 1; i < 7; i += 1)
                     Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null,
-                    lightColor * (0.4f - i * 0.4f / 7), Projectile.oldRot[i] + 1.57f, origin, Projectile.scale, 0, 0);
+                    lightColor * (0.4f - (i * 0.4f / 7)), Projectile.oldRot[i] + 1.57f, origin, Projectile.scale, 0, 0);
 
             }
             Main.spriteBatch.Draw(mainTex, endPos, null, lightColor, Projectile.rotation + exRot, origin, Projectile.scale + 0.2f, 0, 0);
@@ -642,7 +640,7 @@ namespace Coralite.Content.Items.Shadow
                     Alpha += 0.99f / 12;
                 }
 
-                if (Timer > maxTime + 16 / 3)
+                if (Timer > maxTime + (16 / 3))
                 {
                     Projectile.velocity *= 0.95f;
                     Projectile.Kill();

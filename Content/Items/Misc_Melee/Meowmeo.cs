@@ -9,25 +9,12 @@ using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent;
 using Terraria.ID;
-using Terraria.Localization;
 
 namespace Coralite.Content.Items.Misc_Melee
 {
     public class Meowmeo : ModItem
     {
         public override string Texture => AssetDirectory.Misc_Melee + Name;
-
-        public static LocalizedText craftCondition;
-
-        public override void Load()
-        {
-            craftCondition = this.GetLocalization("CraftCondition", () => "在CoralCat的世界中合成");
-        }
-
-        public override void Unload()
-        {
-            craftCondition = null;
-        }
 
         public override void SetDefaults()
         {
@@ -57,7 +44,7 @@ namespace Coralite.Content.Items.Misc_Melee
                 if (CoraliteWorld.chaosWorld)
                     texType = Main.rand.Next(1, ItemLoader.ItemCount);
 
-                Projectile.NewProjectile(source, position, velocity.RotatedBy(i * 0.25f + Main.rand.NextFloat(-0.1f, 0.1f)).SafeNormalize(Vector2.Zero) * 14, ModContent.ProjectileType<MeowmeoSpecialProj>(),
+                Projectile.NewProjectile(source, position, velocity.RotatedBy((i * 0.25f) + Main.rand.NextFloat(-0.1f, 0.1f)).SafeNormalize(Vector2.Zero) * 14, ModContent.ProjectileType<MeowmeoSpecialProj>(),
                     damage, knockback, player.whoAmI, ai2: texType);
             }
 
@@ -83,14 +70,14 @@ namespace Coralite.Content.Items.Misc_Melee
                 .AddIngredient(ItemID.ShadowFlameKnife)//紫：暗影焰刀
                 .AddIngredient<SmallBee>()
                 .AddTile(TileID.RainbowBrick)
-                .AddCondition(craftCondition, () => CoraliteWorld.coralCatWorld)
+                .AddCondition(CoraliteConditions.CoralCat)
                 .Register();
 
             Recipe.Create(ItemID.RainbowBrick)
                 .AddIngredient(ItemID.LunarBar, 4)
                 .AddTile(TileID.LunarCraftingStation)
-                .AddCondition(craftCondition, () => CoraliteWorld.coralCatWorld)
-                .AddDecraftCondition(craftCondition, () => CoraliteWorld.coralCatWorld)
+                .AddCondition(CoraliteConditions.CoralCat)
+                .AddDecraftCondition(CoraliteConditions.CoralCat)
                 .Register();
         }
 
@@ -162,13 +149,13 @@ namespace Coralite.Content.Items.Misc_Melee
 
             // Keep locked onto the player, but extend further based on the given velocity (Requires ShouldUpdatePosition returning false to work)
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-            Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
+            Projectile.Center = playerCenter + (Projectile.velocity * (Timer - 1f));
 
             // Set spriteDirection based on moving left or right. Left -1, right 1
             Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
 
             // Point towards where it is moving, applied offset for top right of the sprite respecting spriteDirection
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - (MathHelper.PiOver4 * Projectile.spriteDirection);
 
             // The code in this method is important to align the sprite with the hitbox how we want it to
             SetVisualOffsets();
@@ -212,7 +199,7 @@ namespace Coralite.Content.Items.Misc_Melee
             // "cutting tiles" refers to breaking pots, grass, queen bee larva, etc.
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Vector2 end = start + (Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
@@ -221,7 +208,7 @@ namespace Coralite.Content.Items.Misc_Melee
             // "Hit anything between the player and the tip of the sword"
             // shootSpeed is 2.1f for reference, so this is basically plotting 12 pixels ahead from the center
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 6f;
+            Vector2 end = start + (Projectile.velocity * 6f);
             float collisionPoint = 0f; // Don't need that variable, but required as parameter
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }
@@ -259,7 +246,7 @@ namespace Coralite.Content.Items.Misc_Melee
 
         public override void SetStaticDefaults()
         {
-            Projectile.QuickTrailSets(Helper.TrailingMode.OnlyPosition, 16);
+            Projectile.QuickTrailSets(Helper.TrailingMode.OnlyPosition, 10);
         }
 
         public override void SetDefaults()
@@ -294,17 +281,17 @@ namespace Coralite.Content.Items.Misc_Melee
                     Projectile.velocity.X = 0f - oldVelocity.X;
             }
 
-            Vector2 spinningpoint = new Vector2(0f, -3f - Projectile.ai[0] * 0.7f).RotatedByRandom(3.1415927410125732);
-            float num21 = 10f + Projectile.ai[0] * 3f;
-            Vector2 vector19 = new Vector2(1.05f, 1f);
+            Vector2 spinningpoint = new Vector2(0f, -3f - (Projectile.ai[0] * 0.7f)).RotatedByRandom(3.1415927410125732);
+            float num21 = 10f + (Projectile.ai[0] * 3f);
+            Vector2 vector19 = new(1.05f, 1f);
             for (float i = 0f; i < num21; i += 1f)
             {
                 int num23 = Dust.NewDust(Projectile.Center, 0, 0, DustID.RainbowTorch, 0f, 0f, 0, Color.Transparent);
                 Main.dust[num23].position = Projectile.Center;
-                Main.dust[num23].velocity = spinningpoint.RotatedBy((float)Math.PI * 2f * i / num21) * vector19 * (0.6f + Main.rand.NextFloat() * 0.3f);
+                Main.dust[num23].velocity = spinningpoint.RotatedBy((float)Math.PI * 2f * i / num21) * vector19 * (0.6f + (Main.rand.NextFloat() * 0.3f));
                 Main.dust[num23].color = Main.hslToRgb(i / num21, 1f, 0.5f);
                 Main.dust[num23].noGravity = true;
-                Main.dust[num23].scale = 1f + Projectile.ai[0] / 4f;
+                Main.dust[num23].scale = 1f + (Projectile.ai[0] / 4f);
             }
 
             if (Main.myPlayer == Projectile.owner)
@@ -313,7 +300,7 @@ namespace Coralite.Content.Items.Misc_Melee
                 int num25 = Projectile.height;
                 int num26 = Projectile.penetrate;
                 Projectile.position = Projectile.Center;
-                Projectile.width = (Projectile.height = 40 + 8 * (int)Projectile.ai[0]);
+                Projectile.width = Projectile.height = 40 + (8 * (int)Projectile.ai[0]);
                 Projectile.Center = Projectile.position;
                 Projectile.penetrate = -1;
                 Projectile.Damage();
@@ -403,7 +390,7 @@ namespace Coralite.Content.Items.Misc_Melee
             if (Projectile.spriteDirection == -1)
                 dir = SpriteEffects.FlipHorizontally;
 
-            Vector2 center = Projectile.Center + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition;
+            Vector2 center = Projectile.Center + (Vector2.UnitY * Projectile.gfxOffY) - Main.screenPosition;
 
             Texture2D selfTex;
 
@@ -420,12 +407,12 @@ namespace Coralite.Content.Items.Misc_Melee
             }
 
             Vector2 origin = selfTex.Size() / 2f;
-            float rotation = Projectile.rotation - Projectile.spriteDirection * exRot;
+            float rotation = Projectile.rotation - (Projectile.spriteDirection * exRot);
             Vector2 scale = Vector2.One * Projectile.scale;
 
             Main.instance.LoadProjectile(250);
             Texture2D value84 = TextureAssets.Projectile[250].Value;
-            Vector2 origin22 = new Vector2(value84.Width / 2, 0f);
+            Vector2 origin22 = new(value84.Width / 2, 0f);
             Vector2 vector75 = new Vector2(Projectile.width, Projectile.height) / 2f;
             Color white3 = Color.White;
             white3.A = 127;
@@ -435,9 +422,9 @@ namespace Coralite.Content.Items.Misc_Melee
                 if (!(vector76 == vector75))
                 {
                     Vector2 vector77 = Projectile.oldPos[num316 - 1] + vector75;
-                    float rotation27 = (vector77 - vector76).ToRotation() - (float)Math.PI / 2f;
-                    Vector2 scale7 = new Vector2(1f, Vector2.Distance(vector76, vector77) / value84.Height);
-                    Color color82 = white3 * (1f - num316 / (float)Projectile.oldPos.Length);
+                    float rotation27 = (vector77 - vector76).ToRotation() - ((float)Math.PI / 2f);
+                    Vector2 scale7 = new(1f, Vector2.Distance(vector76, vector77) / value84.Height);
+                    Color color82 = white3 * (1f - (num316 / (float)Projectile.oldPos.Length));
                     Main.EntitySpriteDraw(value84, vector76 - Main.screenPosition, null, color82, rotation27, origin22, scale7, dir);
                 }
             }

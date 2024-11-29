@@ -122,7 +122,7 @@ namespace Coralite.Content.Items.Nightmare
                         Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
                         NPCIndex = -1;
-                        Vector2 center = Main.MouseWorld + (Main.GlobalTimeWrappedHourly / 6 * MathHelper.TwoPi).ToRotationVector2() * 32;
+                        Vector2 center = Main.MouseWorld + ((Main.GlobalTimeWrappedHourly / 6 * MathHelper.TwoPi).ToRotationVector2() * 32);
                         Vector2 dir = center - Projectile.Center;
 
                         float velRot = Projectile.velocity.ToRotation();
@@ -166,7 +166,7 @@ namespace Coralite.Content.Items.Nightmare
 
                             IEntitySource source = Projectile.GetSource_FromAI();
                             Vector2 dir = (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.Zero);
-                            Vector2 position = Owner.Center + dir * 80 + dir.RotatedBy(MathHelper.PiOver2) * 10 * 15;
+                            Vector2 position = Owner.Center + (dir * 80) + (dir.RotatedBy(MathHelper.PiOver2) * 10 * 15);
                             Vector2 velocity = dir.RotatedBy(-MathHelper.PiOver2) * 10;
 
                             Projectile.NewProjectile(source, position, velocity, ProjectileType<BoneSilt>(), Owner.GetWeaponDamage(Owner.HeldItem), 0, Projectile.owner);
@@ -179,14 +179,14 @@ namespace Coralite.Content.Items.Nightmare
                             Timer = 0;
                             //生成弹幕
                             int dir = Main.rand.NextFromList(-1, 1);
-                            Vector2 position = Projectile.Center + (Projectile.rotation + dir * 2.2f).ToRotationVector2() * Main.rand.Next(60, 80);
-                            Vector2 velocity = (Projectile.rotation - dir * Main.rand.NextFloat(0.2f, 0.45f)).ToRotationVector2() * Main.rand.Next(16, 20);
+                            Vector2 position = Projectile.Center + ((Projectile.rotation + (dir * 2.2f)).ToRotationVector2() * Main.rand.Next(60, 80));
+                            Vector2 velocity = (Projectile.rotation - (dir * Main.rand.NextFloat(0.2f, 0.45f))).ToRotationVector2() * Main.rand.Next(16, 20);
 
                             int state = Main.rand.Next(2);
 
                             if (state == 1)
                             {
-                                position = Projectile.Center + (Projectile.rotation + dir * 1.8f).ToRotationVector2() * Main.rand.Next(70, 90);
+                                position = Projectile.Center + ((Projectile.rotation + (dir * 1.8f)).ToRotationVector2() * Main.rand.Next(70, 90));
                             }
 
                             Projectile.NewProjectile(Projectile.GetSource_FromAI(), position, velocity, ProjectileType<BoneClaw>(), Projectile.damage, 0, Projectile.owner,
@@ -238,11 +238,11 @@ namespace Coralite.Content.Items.Nightmare
 
             Color c = NightmarePlantera.nightmareRed * 0.5f;
 
-            Vector2 scale = new Vector2(0.55f, Projectile.scale);
+            Vector2 scale = new(0.55f, Projectile.scale);
 
             for (int i = 0; i < 3; i++)
             {
-                Main.spriteBatch.Draw(mainTex, pos + (Main.GlobalTimeWrappedHourly / 5 + i * MathHelper.TwoPi / 3).ToRotationVector2() * 6
+                Main.spriteBatch.Draw(mainTex, pos + (((Main.GlobalTimeWrappedHourly / 5) + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 6)
                     , null, c, Projectile.rotation, origin, scale, 0, 0);
             }
 
@@ -259,7 +259,7 @@ namespace Coralite.Content.Items.Nightmare
     /// </summary>
     public class BoneClaw : ModProjectile, IDrawPrimitive
     {
-        public override string Texture => AssetDirectory.OtherProjectiles + "ClawsTrail2";
+        public override string Texture => AssetDirectory.Trails + "ClawSlash4";
 
         public ref float State => ref Projectile.ai[0];
         public ref float ColorState => ref Projectile.ai[1];
@@ -639,16 +639,16 @@ namespace Coralite.Content.Items.Nightmare
 
             if ((int)State == 0)//残影绘制
             {
-                Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+                Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
                 for (int i = 1; i < 0; i++)
                     Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null,
-                    c * (0.5f - i * 0.5f / 8), Projectile.oldRot[i], origin, scale, 0, 0);
+                    c * (0.5f - (i * 0.5f / 8)), Projectile.oldRot[i], origin, scale, 0, 0);
             }
 
             for (int i = 0; i < 3; i++)
             {
-                Main.spriteBatch.Draw(mainTex, pos + (Main.GlobalTimeWrappedHourly / 5 + i * MathHelper.TwoPi / 3).ToRotationVector2() * 4
+                Main.spriteBatch.Draw(mainTex, pos + (((Main.GlobalTimeWrappedHourly / 5) + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 4)
                     , null, c, Projectile.rotation, origin, scale, 0, 0);
             }
 
@@ -716,7 +716,7 @@ namespace Coralite.Content.Items.Nightmare
                 default:
                 case 0://撕裂开一个小口子
                     {
-                        Projectile.Center = originCenter + Projectile.velocity * 30;
+                        Projectile.Center = originCenter + (Projectile.velocity * 30);
                         Projectile.rotation = Projectile.velocity.ToRotation();
                         if (Timer < 5)
                         {
@@ -730,9 +730,7 @@ namespace Coralite.Content.Items.Nightmare
 
                         if (Timer == 35)
                         {
-                            SoundStyle st = CoraliteSoundID.BigBOOM_Item62;
-                            st.Pitch = -0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
+                            Helper.PlayPitched(CoraliteSoundID.BigBOOM_Item62, Projectile.Center, pitch: -0.5f);
 
                             tentacleWidth = 20;
                             State++;
@@ -794,23 +792,23 @@ namespace Coralite.Content.Items.Nightmare
                 float rot = Projectile.rotation - MathHelper.PiOver2;
                 Vector2 dir = Projectile.rotation.ToRotationVector2();
                 float length = (originCenter - Projectile.Center).Length();
-                Vector2 scale = new Vector2(0.35f, 0.55f);
-                Vector2 handPosLeft = originCenter + dir * length * 7 / 20f - rot.ToRotationVector2() * tentacleWidth - Main.screenPosition;
+                Vector2 scale = new(0.35f, 0.55f);
+                Vector2 handPosLeft = originCenter + (dir * length * 7 / 20f) - (rot.ToRotationVector2() * tentacleWidth) - Main.screenPosition;
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Main.spriteBatch.Draw(mainTex, handPosLeft + (Main.GlobalTimeWrappedHourly / 5 + i * MathHelper.TwoPi / 3).ToRotationVector2() * 6
+                    Main.spriteBatch.Draw(mainTex, handPosLeft + (((Main.GlobalTimeWrappedHourly / 5) + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 6)
                         , null, c, rot, origin, scale, 0, 0);
                 }
 
                 Main.spriteBatch.Draw(mainTex, handPosLeft, null, Color.Black * ExHandAlpha, rot, origin, scale, 0, 0);
 
                 rot += MathHelper.Pi;
-                Vector2 handPosRight = originCenter + dir * length * 13 / 20f - rot.ToRotationVector2() * tentacleWidth - Main.screenPosition;
+                Vector2 handPosRight = originCenter + (dir * length * 13 / 20f) - (rot.ToRotationVector2() * tentacleWidth) - Main.screenPosition;
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Main.spriteBatch.Draw(mainTex, handPosRight + (Main.GlobalTimeWrappedHourly / 5 + i * MathHelper.TwoPi / 3).ToRotationVector2() * 6
+                    Main.spriteBatch.Draw(mainTex, handPosRight + (((Main.GlobalTimeWrappedHourly / 5) + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 6)
                         , null, c, rot, origin, scale, 0, 0);
                 }
 
@@ -839,8 +837,8 @@ namespace Coralite.Content.Items.Nightmare
         {
             Vector2 pos = new Vector2((int)(drawInfo.Position.X - Main.screenPosition.X - (drawInfo.drawPlayer.bodyFrame.Width / 2) + (drawInfo.drawPlayer.width / 2)), (int)(drawInfo.Position.Y - Main.screenPosition.Y + drawInfo.drawPlayer.height - drawInfo.drawPlayer.bodyFrame.Height + 4f))
                 + drawInfo.drawPlayer.bodyPosition
-                + drawInfo.drawPlayer.bodyFrame.Size() / 2;
-            DrawData item = new DrawData(Request<Texture2D>(AssetDirectory.NightmareItems + "BoneRing_HandsOn").Value,
+                + (drawInfo.drawPlayer.bodyFrame.Size() / 2);
+            DrawData item = new(Request<Texture2D>(AssetDirectory.NightmareItems + "BoneRing_HandsOn").Value,
                 pos,
                 drawInfo.drawPlayer.bodyFrame,
                 Color.White/*drawInfo.colorArmorBody*/,

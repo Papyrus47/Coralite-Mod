@@ -45,8 +45,8 @@ namespace Coralite.Content.UI.FairyEncyclopedia
 
         public void SetSize(UIElement parent)
         {
-            Width.Set(parent.Width.Pixels / XCount - 6, 0);
-            Height.Set(parent.Height.Pixels / YCount - 6, 0);
+            Width.Set((parent.Width.Pixels / XCount) - 6, 0);
+            Height.Set((parent.Height.Pixels / YCount) - 6, 0);
         }
 
         public override void Update(GameTime gameTime)
@@ -56,7 +56,7 @@ namespace Coralite.Content.UI.FairyEncyclopedia
                 if (FairyEncyclopedia.Timer >= index)
                 {
                     alpha = FairyEncyclopedia.Timer - index;
-                    offset = 60 - alpha * 60;
+                    offset = 60 - (alpha * 60);
                 }
 
                 if (alpha > 1)
@@ -107,8 +107,8 @@ namespace Coralite.Content.UI.FairyEncyclopedia
         private void DrawBorder(SpriteBatch spriteBatch, float offset, Texture2D texture, Color color)
         {
             CalculatedStyle dimensions = GetDimensions();
-            Point point = new Point((int)dimensions.X, (int)dimensions.Y + (int)offset);
-            Point point2 = new Point(point.X + (int)dimensions.Width - _cornerSize, point.Y + (int)dimensions.Height - _cornerSize);
+            Point point = new((int)dimensions.X, (int)dimensions.Y + (int)offset);
+            Point point2 = new(point.X + (int)dimensions.Width - _cornerSize, point.Y + (int)dimensions.Height - _cornerSize);
             int width = point2.X - point.X - _cornerSize;
             int height = point2.Y - point.Y - _cornerSize;
             spriteBatch.Draw(texture, new Rectangle(point.X, point.Y, _cornerSize, _cornerSize), new Rectangle(0, 0, _cornerSize, _cornerSize), color);
@@ -153,7 +153,6 @@ namespace Coralite.Content.UI.FairyEncyclopedia
             {
                 _fairy.scale = 1f;
             }
-
         }
     }
 }

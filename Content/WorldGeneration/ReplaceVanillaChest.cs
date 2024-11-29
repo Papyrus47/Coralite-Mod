@@ -1,19 +1,23 @@
 ﻿using Coralite.Content.Items.FlyingShields.Accessories;
 using Coralite.Content.Items.Magike;
 using Coralite.Content.Items.MagikeSeries1;
+using Coralite.Content.Items.Misc_Shoot;
 using Coralite.Content.Tiles.MagikeSeries1;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
     public partial class CoraliteWorld
     {
+        public static LocalizedText ReplaceVanillaChestText { get; set; }
+
         public void ReplaceVanillaChest(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在将额外的战利品塞入箱子";
+            progress.Message = ReplaceVanillaChestText.Value;// "正在将额外的战利品塞入箱子";
 
             bool spawnedBrithOfIce = false;//是否生成过冰雪的新生，用于放置运气太差导致的一个都没生成的情况
 
@@ -125,6 +129,23 @@ namespace Coralite.Content.WorldGeneration
                                                 }
                                     }
                                 }
+                                break;
+                        }
+                        break;
+                    case TileID.Containers2:
+                        switch (tile.TileFrameX)
+                        {
+                            default:
+                                break;
+                            case 10 * 18 * 2://沙漠
+                                if (WorldGen.genRand.NextBool(20, 100))
+                                    foreach (var item in chest.item)
+                                        if (item.IsAir)
+                                        {
+                                            item.SetDefaults(ModContent.ItemType<TremblingBow>());
+                                            break;
+                                        }
+
                                 break;
                         }
                         break;

@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.UI.BookUI;
 using Coralite.Core;
+using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -127,6 +128,11 @@ namespace Coralite.Content.UI.UILib
         {
             Elements.Clear();
 
+            if (pageGroups is null)
+            {
+                return;
+            }
+
             for (int i = 0; i < pageGroups.Length; i++)//刷新一下
             {
                 if (!pageGroups[i].CanShowInBook)
@@ -212,10 +218,15 @@ namespace Coralite.Content.UI.UILib
         /// 初始化位置，请保证你调用了这个方法
         /// </summary>
         /// <param name="center"></param>
-        public void SetPosition(Vector2 center)
+        public void SetPosition()
         {
-            Top.Set(center.Y - (PanelTex.Height() * scale / 2), 0f);
-            Left.Set(center.X - (PanelTex.Width() * scale / 2), 0f);
+            //Top.Set(- (PanelTex.Height() * scale / 2), 0.5f);
+            //Left.Set( - (PanelTex.Width() * scale / 2), 0.5f);
+
+            this.SetTopLeft(-PanelTex.Height() / 2 + 40, -PanelTex.Width() / 2, 0.5f, 0.5f);
+            //this.SetTopLeft(0, 0, 0f, 0f);
+            HAlign = 0f;
+            VAlign = 0f;
         }
 
         /// <summary>
@@ -331,7 +342,7 @@ namespace Coralite.Content.UI.UILib
         /// <returns></returns>
         public Vector2 GetPageSize()
         {
-            return new Vector2((PanelTex.Width() * scale / 2) - leftPageMargins, PanelTex.Height() * scale - (2 * topPageMargins));
+            return new Vector2((PanelTex.Width() * scale / 2) - leftPageMargins, (PanelTex.Height() * scale) - (2 * topPageMargins));
         }
     }
 }

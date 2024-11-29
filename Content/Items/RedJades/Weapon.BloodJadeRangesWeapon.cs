@@ -3,11 +3,10 @@ using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -189,7 +188,7 @@ namespace Coralite.Content.Items.RedJades
                 {
                     float baseScale = 0.1f;
                     float _Rotation = (target.Center - Projectile.Center).ToRotation();
-                    Vector2 pos = Projectile.Center + _Rotation.ToRotationVector2() * (Projectile.width / 2f);
+                    Vector2 pos = Projectile.Center + (_Rotation.ToRotationVector2() * (Projectile.width / 2f));
                     Dust dust = Dust.NewDustPerfect(pos, DustType<BloodJadeStrikeDust>(),
                         Scale: Main.rand.NextFloat(baseScale, baseScale * 1.3f));
                     dust.rotation = _Rotation + MathHelper.PiOver2 + Main.rand.NextFloat(-0.2f, 0.2f);
@@ -255,19 +254,19 @@ namespace Coralite.Content.Items.RedJades
             Texture2D mainTex = Projectile.GetTexture();
 
             Color c = lightColor;
-            Color c2 = Coralite.Instance.RedJadeRed;
+            Color c2 = Coralite.RedJadeRed;
             c2.A = 100;
             c2 *= 0.6f;
             for (int i = 0; i < 3; i++)
             {
-                Vector2 offset = (Main.GlobalTimeWrappedHourly + i * MathHelper.TwoPi / 3).ToRotationVector2();
-                Main.spriteBatch.Draw(mainTex, Projectile.Center + offset * 4 - Main.screenPosition, null, c2, Projectile.rotation,
+                Vector2 offset = (Main.GlobalTimeWrappedHourly + (i * MathHelper.TwoPi / 3)).ToRotationVector2();
+                Main.spriteBatch.Draw(mainTex, Projectile.Center + (offset * 4) - Main.screenPosition, null, c2, Projectile.rotation,
                     mainTex.Size() / 2, Projectile.scale * 1.1f, 0, 0);
             }
 
             for (int i = 12; i > 8; i--)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, null,
-                c2 * (1f - (12 - i) * 1 / 5f), Projectile.rotation, mainTex.Size() / 2, Projectile.scale, 0, 0);
+                c2 * (1f - ((12 - i) * 1 / 5f)), Projectile.rotation, mainTex.Size() / 2, Projectile.scale, 0, 0);
             Main.spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, null, c, Projectile.rotation,
                 mainTex.Size() / 2, Projectile.scale, 0, 0);
 
@@ -283,7 +282,7 @@ namespace Coralite.Content.Items.RedJades
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-            effect.Parameters["sampleTexture"].SetValue(Request<Texture2D>(AssetDirectory.OtherProjectiles + "EdgeTrail", AssetRequestMode.ImmediateLoad).Value);
+            effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.EdgeA.Value);
 
             trail?.Render(effect);
             //trail2?.Render(effect);
@@ -327,7 +326,7 @@ namespace Coralite.Content.Items.RedJades
             {
                 if (Timer == 0)
                 {
-                    Angle = MouseTargetAngle - Owner.direction * 1f;
+                    Angle = ToMouseA - (Owner.direction * 1f);
                 }
                 if (Timer < 12)
                 {
@@ -391,7 +390,7 @@ namespace Coralite.Content.Items.RedJades
 
             } while (false);
 
-            Projectile.Center = Owner.Center + Angle.ToRotationVector2() * distanceToOwner;
+            Projectile.Center = Owner.Center + (Angle.ToRotationVector2() * distanceToOwner);
             Timer++;
         }
 
@@ -403,7 +402,7 @@ namespace Coralite.Content.Items.RedJades
                 {
                     for (int i = -1; i < 2; i += 2)
                     {
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, MouseTargetVector2.RotatedBy(i * 0.3f) * 11, ProjectileType<BloodJadeFrisbee>(),
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, UnitToMouseV.RotatedBy(i * 0.3f) * 11, ProjectileType<BloodJadeFrisbee>(),
                             (int)(Projectile.damage * 0.6f), Projectile.knockBack, Projectile.owner, 1);
                     }
                     Owner.AddImmuneTime(ImmunityCooldownID.General, immuneTime);
@@ -417,8 +416,8 @@ namespace Coralite.Content.Items.RedJades
                 if (cp.parryTime < 280)
                     cp.parryTime += 100;
             }
-            Particle.NewParticle(Projectile.Center, Vector2.Zero,
-                CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.Instance.RedJadeRed, 1.5f);
+            PRTLoader.NewParticle(Projectile.Center, Vector2.Zero,
+                CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.RedJadeRed, 1.5f);
             SoundEngine.PlaySound(CoraliteSoundID.Ding_Item4, Projectile.Center);
             Projectile.Kill();
         }
@@ -428,13 +427,13 @@ namespace Coralite.Content.Items.RedJades
             Texture2D mainTex = Projectile.GetTexture();
 
             Color c = lightColor * alpha;
-            Color c2 = Coralite.Instance.RedJadeRed;
+            Color c2 = Coralite.RedJadeRed;
             c2.A = 150;
             c2 *= 0.6f * alpha;
             for (int i = 0; i < 3; i++)
             {
-                Vector2 offset = (Main.GlobalTimeWrappedHourly + i * MathHelper.TwoPi / 3).ToRotationVector2();
-                Main.spriteBatch.Draw(mainTex, Projectile.Center + offset * 4 - Main.screenPosition, null, c2, Projectile.rotation,
+                Vector2 offset = (Main.GlobalTimeWrappedHourly + (i * MathHelper.TwoPi / 3)).ToRotationVector2();
+                Main.spriteBatch.Draw(mainTex, Projectile.Center + (offset * 4) - Main.screenPosition, null, c2, Projectile.rotation,
                     mainTex.Size() / 2, Projectile.scale, 0, 0);
             }
 

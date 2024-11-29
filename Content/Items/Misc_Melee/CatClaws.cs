@@ -2,7 +2,7 @@
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.ParticleSystem;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Terraria;
@@ -209,7 +209,7 @@ namespace Coralite.Content.Items.Misc_Melee
             Projectile.height = 62;
             distanceToOwner = 10;
             minTime = 0;
-            TrailTexture = AssetDirectory.OtherProjectiles + "CatClawsTrail3";
+            TrailTexture = AssetDirectory.VFX + "ClawSlash3aYellow";
             onHitFreeze = 20;
         }
 
@@ -309,7 +309,7 @@ namespace Coralite.Content.Items.Misc_Melee
         {
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
-                Particle particle = Particle.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), Color.Orange, 1f);
+                BasePRT particle = PRTLoader.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), Color.Orange, 1f);
                 particle.Rotation = _Rotation + 2.2f + Main.rand.NextFloat(-0.5f, 0.5f);
             }
         }
@@ -362,7 +362,7 @@ namespace Coralite.Content.Items.Misc_Melee
                     Projectile.velocity = Vector2.Normalize(Main.MouseWorld - Main.player[Projectile.owner].Center) * 15f;
                 }
                 float factor = timer / 30;
-                Projectile.velocity *= (1 - factor * factor);
+                Projectile.velocity *= 1 - (factor * factor);
                 if (timer == 30)
                     proj.SetState<BackState>();
             }

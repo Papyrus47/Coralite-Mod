@@ -2,11 +2,12 @@
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Systems.BossSystems;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -23,6 +24,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         public override string Texture => AssetDirectory.ThunderveinDragon + Name;
 
         private Player Target => Main.player[NPC.target];
+        private bool spwan;
 
         internal ref float Phase => ref NPC.ai[0];
         internal ref float State => ref NPC.ai[1];
@@ -34,6 +36,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         internal ref float StateRecorder => ref NPC.localAI[2];
         internal ref float UseMoveCount => ref NPC.localAI[3];
 
+        public int hitCount;
+
         public readonly int trailCacheLength = 12;
         public Point[] oldFrame;
         public int[] oldDirection;
@@ -41,9 +45,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         public float selfAlpha = 1f;
         public float anmiAlpha;
 
-        public static Color ThunderveinYellowAlpha = new Color(255, 202, 101, 0);
-        public static Color ThunderveinPurpleAlpha = new Color(135, 94, 255, 0);
-        public static Color ThunderveinOrangeAlpha = new Color(219, 114, 22, 0);
+        public static Color ThunderveinYellowAlpha = new(255, 202, 101, 0);
+        public static Color ThunderveinPurpleAlpha = new(135, 94, 255, 0);
+        public static Color ThunderveinOrangeAlpha = new(219, 114, 22, 0);
+
+        public static Color ThunderveinYellow = new(255, 202, 101);
+        public static Color ThunderveinPurple = new(135, 94, 255);
+        public static Color ThunderveinOrange = new(219, 114, 22);
 
         /// <summary>
         /// 是否绘制残影
@@ -74,6 +82,22 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         #region tmlHooks
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(NPC.localAI[0]);
+            writer.Write(NPC.localAI[1]);
+            writer.Write(NPC.localAI[2]);
+            writer.Write(NPC.localAI[3]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.localAI[0] = reader.ReadSingle();
+            NPC.localAI[1] = reader.ReadSingle();
+            NPC.localAI[2] = reader.ReadSingle();
+            NPC.localAI[3] = reader.ReadSingle();
+        }
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[Type] = 8;
@@ -100,6 +124,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
             NPC.BossBar = ModContent.GetInstance<ThunderveinDragonBossBar>();
             ModContent.GetInstance<ThunderveinDragonBossBar>().Reset(NPC);
+            InitOldFrame();
 
             //BGM：暂无
             //if (!Main.dedServ)
@@ -113,14 +138,14 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((39000 + numPlayers * 15500) / journeyScale);
+                    NPC.lifeMax = (int)((39000 + (numPlayers * 15500)) / journeyScale);
                     NPC.damage = 66;
                     NPC.defense = 50;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((45500 + numPlayers * 19550) / journeyScale);
+                    NPC.lifeMax = (int)((45500 + (numPlayers * 19550)) / journeyScale);
                     NPC.damage = 72;
                     NPC.defense = 50;
                 }
@@ -139,20 +164,20 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 return;
             }
 
-            NPC.lifeMax = 39000 + numPlayers * 15500;
+            NPC.lifeMax = 39000 + (numPlayers * 15500);
             NPC.damage = 66;
             NPC.defense = 50;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 45500 + numPlayers * 19550;
+                NPC.lifeMax = 45500 + (numPlayers * 19550);
                 NPC.damage = 72;
                 NPC.defense = 50;
             }
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 52000 + numPlayers * 25850;
+                NPC.lifeMax = 52000 + (numPlayers * 25850);
                 NPC.damage = 80;
                 NPC.defense = 50;
             }
@@ -171,8 +196,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThunderveinDragonTrophy>(), 10));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThunderveinDragonMask>(), 7));
 
-            LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
+            LeadingConditionRule notExpertRule = new(new Conditions.NotExpert());
             notExpertRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ZapCrystal>(), 1, 6, 8));
+            notExpertRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ElectrificationWing>(), 1, 3, 4));
+            notExpertRule.OnSuccess(ItemDropRule.Common(ModContent.ItemType<InsulationCortex>(), 1, 8, 12));
             npcLoot.Add(notExpertRule);
         }
 
@@ -214,8 +241,17 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         {
             if (Main.rand.NextBool())
             {
-                Particle.NewParticle(NPC.Center.MoveTowards(projectile.Center, 50), Vector2.Zero,
+                PRTLoader.NewParticle(NPC.Center.MoveTowards(projectile.Center, 50), Vector2.Zero,
                     CoraliteContent.ParticleType<LightningParticle>(), Scale: Main.rand.NextFloat(1f, 1.5f));
+            }
+
+            //残血，没有在带电状态，受到暴击时掉落绝缘壳
+            if (NPC.life < NPC.lifeMax / 6 && hitCount < 6 && !currentSurrounding
+                && hit.Crit && Main.rand.NextBool(3))
+            {
+                Item.NewItem(NPC.GetSource_OnHit(projectile), NPC.Center + Main.rand.NextVector2Circular(NPC.width, NPC.height)
+                    , ModContent.ItemType<InsulationCortex>());
+                hitCount++;
             }
         }
 
@@ -253,7 +289,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         {
             int width = (int)(95 * NPC.scale);
             int height = (int)(70 * NPC.scale);
-            npcHitbox = new Rectangle((int)(NPC.Center.X - width / 2), (int)(NPC.Center.Y - height / 2), width, height);
+            npcHitbox = new Rectangle((int)(NPC.Center.X - (width / 2)), (int)(NPC.Center.Y - (height / 2)), width, height);
             return true;
         }
 
@@ -296,17 +332,23 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             StygianThunder
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            ResetAllOldCaches();
-            Phase = 1;
-            State = (int)AIStates.onSpawnAnmi;
-            if (!SkyManager.Instance["ThunderveinSky"].IsActive())//如果这个天空没激活
-                SkyManager.Instance.Activate("ThunderveinSky");
-        }
-
         public override void AI()
         {
+            if (!spwan)
+            {
+                ResetAllOldCaches();
+                Phase = 1;
+                State = (int)AIStates.onSpawnAnmi;
+                NPC.netUpdate = true;
+
+                if (!VaultUtils.isServer && !SkyManager.Instance["ThunderveinSky"].IsActive())//如果这个天空没激活
+                {
+                    SkyManager.Instance.Activate("ThunderveinSky");
+                }
+
+                spwan = true;
+            }
+
             ThunderveinPurpleAlpha = new Color(135, 94, 255, 0);
             if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000 || !Target.ZoneSnow)
             {
@@ -419,7 +461,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         {
             oldSpriteDirection = NPC.spriteDirection;
 
-            if (currentSurrounding && Main.rand.NextBool(3))
+            if (!VaultUtils.isServer && currentSurrounding && Main.rand.NextBool(3))
             {
                 Vector2 offset = Main.rand.NextVector2Circular(100 * NPC.scale, 70 * NPC.scale);
                 ElectricParticle_Follow.Spawn(NPC.Center, offset, () => NPC.Center, Main.rand.NextFloat(0.75f, 1f));
@@ -472,7 +514,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                             SonState++;
                             Timer = 0;
                             //生成名称
-                            NPC.NewProjectileDirectInAI<ThunderveinDragon_OnSpawnAnim>(NPC.Center, Vector2.Zero, 1, 0, NPC.target);
+                            if (!VaultUtils.isClient)
+                                NPC.NewProjectileDirectInAI<ThunderveinDragon_OnSpawnAnim>(NPC.Center, Vector2.Zero, 1, 0, NPC.target);
                         }
                     }
                     break;
@@ -505,22 +548,20 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                             NPC.frame.Y = 0;
                             NPC.frame.X = 1;
                             NPC.velocity *= 0;
-                            SoundStyle st = CoraliteSoundID.LightningOrb_Item121;
-                            st.Pitch = 0.4f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.LightningOrb_Item121, NPC.Center, pitch: 0.4f);
                             SoundEngine.PlaySound(CoraliteSoundID.Roar, NPC.Center);
                         }
-                        else if (Timer > 15 && Timer < 130)
+                        else if (Timer > 15 && Timer < 130 && !VaultUtils.isServer)
                         {
-                            Vector2 pos = NPC.Center + (NPC.rotation).ToRotationVector2() * 60 * NPC.Center;
+                            Vector2 pos = NPC.Center + (NPC.rotation.ToRotationVector2() * 60 * NPC.Center);
                             if ((int)Timer % 10 == 0)
                             {
                                 var modifyer = new PunchCameraModifier(NPC.Center, Helper.NextVec2Dir(), 8, 12, 20, 1000);
                                 Main.instance.CameraModifiers.Add(modifyer);
-                                Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Coralite.Instance.ThunderveinYellow, 0.2f);
+                                PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Coralite.ThunderveinYellow, 0.2f);
                             }
                             if ((int)Timer % 20 == 0)
-                                Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.2f);
+                                PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.2f);
                         }
 
                         Timer++;
@@ -543,15 +584,18 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             }
             else
             {
-                for (int i = 0; i < 30; i++)
+                if (!VaultUtils.isServer)
                 {
-                    float factor = i / 30f;
-                    float length = Helper.Lerp(80, 400, factor);
-
-                    for (int j = 0; j < 5; j++)
+                    for (int i = 0; i < 30; i++)
                     {
-                        Particle.NewParticle(NPC.Center + Main.rand.NextVector2CircularEdge(length, length),
-                            Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
+                        float factor = i / 30f;
+                        float length = Helper.Lerp(80, 400, factor);
+
+                        for (int j = 0; j < 5; j++)
+                        {
+                            PRTLoader.NewParticle(NPC.Center + Main.rand.NextVector2CircularEdge(length, length),
+                                Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle_Purple>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
+                        }
                     }
                 }
 
@@ -585,7 +629,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             Recorder = 0;
             Recorder2 = 0;
 
-            List<int> moves = new List<int>();
+            List<int> moves = new();
             int oldState = (int)State;
             float distance = Vector2.Distance(NPC.Center, Target.Center);
             int dir = Target.Center.X > NPC.Center.X ? 1 : -1;
@@ -642,9 +686,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         //移除上次使用的招式
                         moves.RemoveAll(i => i == oldState);
 
-                        //随机一个招式出来
-                        State = Main.rand.NextFromList(moves.ToArray());
-                        //State = (int)AIStates.LightningRaid;
+                        if (!VaultUtils.isClient)
+                        {
+                            //随机一个招式出来
+                            State = Main.rand.NextFromList(moves.ToArray());
+                            State = (int)AIStates.LightningRaid;
+                            NPC.netUpdate = true;
+                        }
                     }
                     break;
                 case 2:
@@ -679,9 +727,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         //移除上次使用的招式
                         moves.RemoveAll(i => i == oldState);
 
-                        //随机一个招式出来
-                        State = Main.rand.NextFromList(moves.ToArray());
-                        //State = (int)AIStates.LightningBreath;
+                        if (!VaultUtils.isClient)
+                        {
+                            //随机一个招式出来
+                            State = Main.rand.NextFromList(moves.ToArray());
+                            //State = (int)AIStates.LightningBreath;
+                            NPC.netUpdate = true;
+                        }
 
                         UseMoveCount++;
                         //如果使用了引力雷球那么重置计时
@@ -841,7 +893,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public Vector2 GetMousePos()
         {
-            return NPC.Center + (NPC.rotation - NPC.direction * 0.1f).ToRotationVector2() * 60 * NPC.scale;
+            return NPC.Center + ((NPC.rotation - (NPC.direction * 0.1f)).ToRotationVector2() * 60 * NPC.scale);
         }
 
         /// <summary>
@@ -851,7 +903,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         {
             if (NPC.spriteDirection != oldSpriteDirection)
                 NPC.rotation += 3.141f;
-            float targetRot = NPC.velocity.Y * 0.05f * NPC.spriteDirection + (NPC.spriteDirection > 0 ? 0 : MathHelper.Pi);
+            float targetRot = (NPC.velocity.Y * 0.05f * NPC.spriteDirection) + (NPC.spriteDirection > 0 ? 0 : MathHelper.Pi);
             NPC.rotation = NPC.rotation.AngleLerp(targetRot, rate);
         }
 
@@ -869,7 +921,11 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public static void SetBackgroundLight(float light, int fadeTime, int exchangeTime = 5)
         {
-            ThunderveinSky sky = ((ThunderveinSky)SkyManager.Instance["ThunderveinSky"]);
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
+            ThunderveinSky sky = (ThunderveinSky)SkyManager.Instance["ThunderveinSky"];
             sky.ExchangeTime = sky.MaxExchangeTime = exchangeTime;
             sky.targetLight = light;
             sky.oldLight = sky.light;
@@ -878,7 +934,11 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public static void UpdateSky()
         {
-            ThunderveinSky sky = ((ThunderveinSky)SkyManager.Instance["ThunderveinSky"]);
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
+            ThunderveinSky sky = (ThunderveinSky)SkyManager.Instance["ThunderveinSky"];
             if (sky.Timeleft < 100)
                 sky.Timeleft += 2;
             if (sky.Timeleft > 100)
@@ -887,6 +947,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void InitOldFrame()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             oldFrame ??= new Point[trailCacheLength];
             for (int i = 0; i < trailCacheLength; i++)
                 oldFrame[i] = new Point(NPC.frame.X, NPC.frame.Y);
@@ -894,6 +958,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void InitOldDirection()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             oldDirection ??= new int[trailCacheLength];
             for (int i = 0; i < trailCacheLength; i++)
                 oldDirection[i] = NPC.spriteDirection;
@@ -901,6 +969,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void UpdateOldFrame()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             for (int i = 0; i < oldFrame.Length - 1; i++)
                 oldFrame[i] = oldFrame[i + 1];
             oldFrame[^1] = new Point(NPC.frame.X, NPC.frame.Y);
@@ -908,6 +980,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void UpdateOldDirection()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             for (int i = 0; i < oldDirection.Length - 1; i++)
                 oldDirection[i] = oldDirection[i + 1];
             oldDirection[^1] = NPC.spriteDirection;
@@ -915,6 +991,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void ResetAllOldCaches()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             NPC.InitOldPosCache(trailCacheLength);
             NPC.InitOldRotCache(trailCacheLength);
             InitOldFrame();
@@ -923,6 +1003,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void UpdateAllOldCaches()
         {
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
             NPC.UpdateOldPosCache();
             NPC.UpdateOldRotCache();
             UpdateOldFrame();
@@ -973,7 +1057,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                     SpriteEffects oldEffect = oldDirection[i] > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
                     spriteBatch.Draw(mainTex, oldPos, frameOld, shadowColor * factor, oldrot, origin
-                        , NPC.scale * shadowScale * (1 - (1 - factor) * 0.3f), oldEffect, 0);
+                        , NPC.scale * shadowScale * (1 - ((1 - factor) * 0.3f)), oldEffect, 0);
                 }
             }
 
@@ -990,13 +1074,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 Texture2D exTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "StrikeTrail").Value;
 
-                Vector2 exOrigin = new Vector2(exTex.Width * 6 / 10, exTex.Height / 2);
+                Vector2 exOrigin = new(exTex.Width * 6 / 10, exTex.Height / 2);
 
                 Vector2 scale = new Vector2(1.3f, 1.5f) * NPC.scale;
                 spriteBatch.Draw(exTex, pos, null, ThunderveinYellowAlpha, rot
                     , exOrigin, scale, effects, 0);
                 scale.Y *= 1.2f;
-                spriteBatch.Draw(exTex, pos - NPC.rotation.ToRotationVector2() * 50, null, ThunderveinYellowAlpha * 0.5f, rot
+                spriteBatch.Draw(exTex, pos - (NPC.rotation.ToRotationVector2() * 50), null, ThunderveinYellowAlpha * 0.5f, rot
                     , exOrigin, scale, effects, 0);
             }
 

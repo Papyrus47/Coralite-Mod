@@ -16,6 +16,7 @@ namespace Coralite.Content.Tiles.MagikeSeries2
 
             Main.tileShine2[Type] = true;
             Main.tileShine[Type] = 1000;
+
             Main.tileMergeDirt[Type] = true;
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
@@ -30,7 +31,7 @@ namespace Coralite.Content.Tiles.MagikeSeries2
             AddMapEntry(new Color(141, 171, 178));
 
             MinPick = 150;
-            MineResist = 3;
+            MineResist = 6;
         }
 
         public override IEnumerable<Item> GetItemDrops(int i, int j)

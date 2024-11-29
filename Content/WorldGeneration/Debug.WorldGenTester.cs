@@ -1,5 +1,4 @@
-﻿using Coralite.Content.Tiles.ShadowCastle;
-using Coralite.Core;
+﻿using Coralite.Core;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -30,8 +29,8 @@ namespace Coralite.Content.WorldGeneration
 
         public override bool CanUseItem(Player player)
         {
-            Point pos = Main.MouseWorld.ToTileCoordinates();
-            WorldGen.PlaceObject(pos.X, pos.Y, ModContent.TileType<MercuryPlatformTile>());
+            //Point pos = Main.MouseWorld.ToTileCoordinates();
+            //WorldGen.PlaceObject(pos.X, pos.Y, ModContent.TileType<MercuryPlatformTile>());
 
             //ModItem modItem = ItemLoader.GetItem(5614);
             //Main.NewText(modItem.Name);
@@ -42,10 +41,22 @@ namespace Coralite.Content.WorldGeneration
 
             //Main.tile.ClearEverything();
 
-            //CoraliteWorld.DungeonRoom((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16, TileID.CrystalBlock, WallID.CryocoreBrickWall);
+            ModContent.GetInstance<CoraliteWorld>().GenGroundLock(out _);
+            //ClearWorldTile()
+
+            // Main.NewText(NPC.downedBoss3);
 
             return base.CanUseItem(player);
         }
 
+        /// <summary>
+        /// 清空整个世界的物块
+        /// </summary>
+        public void ClearWorldTile()
+        {
+            for (int i = 0; i < Main.maxTilesX; i++)
+                for (int j = 0; j < Main.maxTilesY; j++)
+                    Main.tile[i, j].Clear(TileDataType.All);
+        }
     }
 }

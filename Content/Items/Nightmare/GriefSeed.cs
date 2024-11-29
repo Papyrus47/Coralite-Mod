@@ -1,16 +1,18 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
 using Coralite.Core;
+using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
+using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
-using static Coralite.Core.Systems.MagikeSystem.MagikeSystem;
 
 namespace Coralite.Content.Items.Nightmare
 {
-    public class GriefSeed : ModItem, IMagikeRemodelable
+    public class GriefSeed : ModItem, IMagikeCraftable
     {
         public override string Texture => AssetDirectory.NightmareItems + Name;
 
@@ -74,7 +76,7 @@ namespace Coralite.Content.Items.Nightmare
                 Vector2 center = Item.Center + new Vector2(0f, Item.height * -0.1f);
                 Vector2 direction = Main.rand.NextVector2CircularEdge(Item.width * 0.6f, Item.height * 0.6f);
                 //float distance = 0.8f + Main.rand.NextFloat() * 0.2f;
-                Vector2 velocity = new Vector2(0f, -Main.rand.NextFloat() * 0.3f - 1.5f);
+                Vector2 velocity = new(0f, (-Main.rand.NextFloat() * 0.3f) - 1.5f);
 
                 Dust dust = Dust.NewDustPerfect(center + direction, DustID.SilverFlame, velocity, newColor: new Color(150, 150, 150));
                 dust.scale = 0.5f;
@@ -96,11 +98,11 @@ namespace Coralite.Content.Items.Nightmare
                 frame = texture.Frame();
 
             Vector2 frameOrigin = frame.Size() / 2f;
-            Vector2 offset = new Vector2(Item.width / 2 - frameOrigin.X, Item.height - frame.Height);
+            Vector2 offset = new((Item.width / 2) - frameOrigin.X, Item.height - frame.Height);
             Vector2 drawPos = Item.position - Main.screenPosition + frameOrigin + offset;
             Vector2 effectDrawPos = drawPos + new Vector2(0, -4);
             float time = Main.GlobalTimeWrappedHourly;
-            float timer = Item.timeSinceItemSpawned / 240f + time * 0.04f;
+            float timer = (Item.timeSinceItemSpawned / 240f) + (time * 0.04f);
 
             time %= 4f;
             time /= 2f;
@@ -108,9 +110,9 @@ namespace Coralite.Content.Items.Nightmare
             if (time >= 1f)
                 time = 2f - time;
 
-            time = time * 0.5f + 0.5f;
+            time = (time * 0.5f) + 0.5f;
 
-            Vector2 mainSparkleScale = new Vector2(2f, 5f);
+            Vector2 mainSparkleScale = new(2f, 5f);
             //中心的闪光
             //ProjectilesHelper.DrawPrettyStarSparkle(1, 0, effectDrawPos, NightmarePlantera.nightmareRed, NightmarePlantera.nightmareRed,
             //    0.5f + time * 0.1f, 0f, 0.5f, 0.5f, 1f, 0, mainSparkleScale, Vector2.One);
@@ -139,8 +141,8 @@ namespace Coralite.Content.Items.Nightmare
 
             var scale2 = scale1.X * 0.65f;
             float exScale = scale1.X * 0.1f;
-            Main.spriteBatch.Draw(flowTex, pos, null, shineC, 1.57f + Main.GlobalTimeWrappedHourly, origin, scale2 + factor * exScale, 0, 0);
-            Main.spriteBatch.Draw(flowTex, pos, null, c * 0.5f, -Main.GlobalTimeWrappedHourly, origin, scale2 - factor * exScale, 0, 0);
+            Main.spriteBatch.Draw(flowTex, pos, null, shineC, 1.57f + Main.GlobalTimeWrappedHourly, origin, scale2 + (factor * exScale), 0, 0);
+            Main.spriteBatch.Draw(flowTex, pos, null, c * 0.5f, -Main.GlobalTimeWrappedHourly, origin, scale2 - (factor * exScale), 0, 0);
 
             //float rot2 = timer * 10f;
             //周围一圈小星星
@@ -167,27 +169,31 @@ namespace Coralite.Content.Items.Nightmare
             for (float i = 0f; i < 1f; i += 0.25f)
             {
                 float radians = (i + timer) * MathHelper.TwoPi;
-                spriteBatch.Draw(texture, drawPos + new Vector2(0f, 8f).RotatedBy(radians) * time, frame, new Color(150, 150, 150, 100), rot, frameOrigin, scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(texture, drawPos + (new Vector2(0f, 8f).RotatedBy(radians) * time), frame, new Color(150, 150, 150, 100), rot, frameOrigin, scale, SpriteEffects.None, 0);
             }
             //Main.NewText(time);
             spriteBatch.Draw(texture, drawPos, frame, lightColor, rot, frameOrigin, scale, SpriteEffects.None, 0);
             return false;
         }
 
-        public void AddMagikeRemodelRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            AddRemodelRecipe<GriefSeed, LostSevensideHook>(1_3500);
-            AddRemodelRecipe<GriefSeed, DreamShears>(1_3500);
-            AddRemodelRecipe<GriefSeed, EuphorbiaMilii>(1_3500);
-            AddRemodelRecipe<GriefSeed, Lycoris>(1_3500);
-            AddRemodelRecipe<GriefSeed, BoneRing>(1_3500);
-            AddRemodelRecipe<GriefSeed, QueensWreath>(1_3500);
-            AddRemodelRecipe<GriefSeed, DevilsClaw>(1_3500);
-            AddRemodelRecipe<GriefSeed, BarrenThornsStaff>(1_3500);
-            AddRemodelRecipe<GriefSeed, Lullaby>(1_3500);
-            AddRemodelRecipe<GriefSeed, PurpleToeStaff>(1_3500);
-            AddRemodelRecipe<GriefSeed, Dreamcatcher>(1_3500);
-            AddRemodelRecipe<GriefSeed, Eden>(1_3500);
+            int cost = MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore, 24, 60 * 8);
+
+            MagikeCraftRecipe.CreateRecipe<GriefSeed, LostSevensideHook>(cost)
+                .RegisterNew<DreamShears>(cost)
+                .RegisterNew<EuphorbiaMilii>(cost)
+                .RegisterNew<Lycoris>(cost)
+                .RegisterNew<BoneRing>(cost)
+                .RegisterNew<QueensWreath>(cost)
+                .RegisterNew<DevilsClaw>(cost)
+                .RegisterNew<BarrenThornsStaff>(cost)
+                .RegisterNew<Lullaby>(cost)
+                .RegisterNew<PurpleToeStaff>(cost)
+                .RegisterNew<Dreamcatcher>(cost)
+                .RegisterNew<Eden>(cost)
+                .RegisterNew<NightmarePlanteraMask>(MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore))
+                .Register();
         }
     }
 }

@@ -74,13 +74,13 @@ namespace Coralite.Content.Tiles.ShadowCastle
         {
             // This is lighting-mode specific, always include this if you draw tiles manually
             //这是特定于照明模式的，如果您手动绘制瓷砖，请始终包含此内容
-            Vector2 offScreen = new Vector2(Main.offScreenRange);
+            Vector2 offScreen = new(Main.offScreenRange);
             if (Main.drawToScreen)
                 offScreen = Vector2.Zero;
 
             // Take the tile, check if it actually exists
             //拿走瓷砖，检查它是否真的存在
-            Point p = new Point(i, j);
+            Point p = new(i, j);
             Tile tile = Main.tile[p.X, p.Y];
             if (tile == null || !tile.HasTile)
                 return;
@@ -97,7 +97,7 @@ namespace Coralite.Content.Tiles.ShadowCastle
             float distance = Vector2.Distance(Main.LocalPlayer.Center, center);
             Vector2 dir = (Main.LocalPlayer.Center - center).SafeNormalize(Vector2.Zero);
 
-            Vector2 drawPos = worldPos + offScreen - Main.screenPosition + dir * Helpers.Helper.Lerp(0, 6, Math.Clamp(distance / 400, 0, 1));
+            Vector2 drawPos = worldPos + offScreen - Main.screenPosition + (dir * Helpers.Helper.Lerp(0, 6, Math.Clamp(distance / 400, 0, 1)));
 
             // 绘制主帖图
             spriteBatch.Draw(texture, drawPos, null, color);

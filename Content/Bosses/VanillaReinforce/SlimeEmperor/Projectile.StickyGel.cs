@@ -18,17 +18,21 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
         BasicEffect effect;
         private Trail trail;
 
-        public StickyGel()
+        public override void Load()
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Main.QueueMainThreadAction(() =>
             {
                 effect = new BasicEffect(Main.instance.GraphicsDevice);
                 effect.VertexColorEnabled = true;
-                effect.Texture = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LaserTrail", AssetRequestMode.ImmediateLoad).Value;
+                effect.Texture = ModContent.Request<Texture2D>(AssetDirectory.Lasers + "VanillaFlowA", AssetRequestMode.ImmediateLoad).Value;
                 effect.TextureEnabled = true;
             });
         }
-
 
         public override void SetDefaults()
         {
@@ -112,7 +116,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             {
                 for (int j = num6; j < num7; j++)
                 {
-                    if (!Main.tile[i, j].HasTile && !Main.rand.NextBool(5) && Math.Abs(i - num2) * Math.Abs(i - num2) + Math.Abs(j - num3) * Math.Abs(j - num3) < num * num)
+                    if (!Main.tile[i, j].HasTile && !Main.rand.NextBool(5) && (Math.Abs(i - num2) * Math.Abs(i - num2)) + (Math.Abs(j - num3) * Math.Abs(j - num3)) < num * num)
                     {
                         WorldGen.PlaceTile(i, j, ModContent.TileType<StickyGelTile>());
                         if (Main.zenithWorld)

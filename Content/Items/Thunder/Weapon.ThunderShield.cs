@@ -2,8 +2,8 @@
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -31,7 +31,8 @@ namespace Coralite.Content.Items.Thunder
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddIngredient<ZapCrystal>(2)
+                .AddIngredient<ZapCrystal>(4)
+                .AddIngredient<InsulationCortex>(6)
                 .AddTile(TileID.MythrilAnvil)
                 .Register();
         }
@@ -75,7 +76,7 @@ namespace Coralite.Content.Items.Thunder
                 for (int i = 0; i < 2; i++)
                 {
                     Projectile.SpawnTrailDust((float)(Projectile.width / 2), DustID.PortalBoltTrail, Main.rand.NextFloat(0.2f, 0.5f),
-                        newColor: Coralite.Instance.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.4f));
+                        newColor: Coralite.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.4f));
                 }
         }
 
@@ -96,7 +97,7 @@ namespace Coralite.Content.Items.Thunder
 
         public override Color GetColor(float factor)
         {
-            return Coralite.Instance.ThunderveinYellow * factor;
+            return Coralite.ThunderveinYellow * factor;
         }
     }
 
@@ -163,7 +164,7 @@ namespace Coralite.Content.Items.Thunder
 
         public override bool? CanDamage()
         {
-            if (Timer > LightingTime + DelayTime / 2)
+            if (Timer > LightingTime + (DelayTime / 2))
                 return false;
             return base.CanDamage();
         }
@@ -180,17 +181,22 @@ namespace Coralite.Content.Items.Thunder
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.damage = (int)(Projectile.damage / 2);
+            Projectile.damage = Projectile.damage / 2;
         }
 
         public override Color ThunderColorFunc_Yellow(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinYellowAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinPurple, ThunderveinDragon.ThunderveinYellow, MathF.Sin(factor * MathHelper.Pi));
         }
 
         public override Color ThunderColorFunc2_Orange(float factor)
         {
-            return Color.Lerp(ThunderveinDragon.ThunderveinPurpleAlpha, ThunderveinDragon.ThunderveinOrangeAlpha, MathF.Sin(factor * MathHelper.Pi)) * ThunderAlpha;
+            return Color.Lerp(ThunderveinDragon.ThunderveinPurple, ThunderveinDragon.ThunderveinOrange, MathF.Sin(factor * MathHelper.Pi));
+        }
+
+        public float GetAlpha2(float factor)
+        {
+            return ThunderAlpha * factor;
         }
 
         public override void AI()
@@ -200,15 +206,17 @@ namespace Coralite.Content.Items.Thunder
                 ThunderAlpha = 1;
                 circles = new ThunderTrail[3];
                 outers = new ThunderTrail[4];
-                Asset<Texture2D> thunderTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightingBody");
+                Asset<Texture2D> thunderTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightingBodyF");
 
                 for (int i = 0; i < circles.Length; i++)
                 {
                     if (i == 0)
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc2_Orange);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc2_Orange, GetAlpha);
                     else
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Yellow);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Yellow, GetAlpha);
 
+                    circles[i].UseNonOrAdd = true;
+                    circles[i].PartitionPointCount = 3;
                     circles[i].SetRange((0, 5));
                     circles[i].SetExpandWidth(0);
                 }
@@ -216,9 +224,11 @@ namespace Coralite.Content.Items.Thunder
                 for (int i = 0; i < outers.Length; i++)
                 {
                     if (i < 2)
-                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange);
+                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange, GetAlpha2);
                     else
-                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow);
+                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow, GetAlpha2);
+
+                    outers[i].UseNonOrAdd = true;
                     outers[i].SetRange((0, 10));
                     outers[i].SetExpandWidth(2);
                 }
@@ -228,13 +238,13 @@ namespace Coralite.Content.Items.Thunder
                     outer.CanDraw = true;
                     Vector2[] vec = new Vector2[5];
                     float length = Main.rand.NextFloat(2, 32);
-                    Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * length;
+                    Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * length);
                     Vector2 dir = (basePos - Projectile.Center).SafeNormalize(Vector2.Zero);
                     vec[0] = basePos;
 
                     for (int i = 1; i < 5; i++)
                     {
-                        vec[i] = basePos + dir * i * (Projectile.width - length) / 10;
+                        vec[i] = basePos + (dir * i * (Projectile.width - length) / 10);
                     }
 
                     outer.BasePositions = vec;
@@ -250,8 +260,8 @@ namespace Coralite.Content.Items.Thunder
                     float baseRot = Main.rand.NextFloat(6.282f);
                     for (int i = 0; i < trailPointCount; i++)
                     {
-                        vec[i] = Projectile.Center + (baseRot + i * MathHelper.TwoPi / 20).ToRotationVector2()
-                            * (Projectile.width / 2 + Main.rand.NextFloat(-8, 8));
+                        vec[i] = Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 20)).ToRotationVector2()
+                            * ((Projectile.width / 2) + Main.rand.NextFloat(-8, 8)));
                     }
 
                     circle.BasePositions = vec;
@@ -269,13 +279,13 @@ namespace Coralite.Content.Items.Thunder
                     {
                         Vector2[] vec = new Vector2[5];
                         float length = Main.rand.NextFloat(2, 32);
-                        Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * length;
+                        Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * length);
                         Vector2 dir = (basePos - Projectile.Center).SafeNormalize(Vector2.Zero);
                         vec[0] = basePos;
 
                         for (int i = 1; i < 5; i++)
                         {
-                            vec[i] = basePos + dir * i * (Projectile.width - length) / 10;
+                            vec[i] = basePos + (dir * i * (Projectile.width - length) / 10);
                         }
 
                         outer.BasePositions = vec;
@@ -297,8 +307,8 @@ namespace Coralite.Content.Items.Thunder
                         float baseRot = Main.rand.NextFloat(6.282f);
                         for (int i = 0; i < trailPointCount; i++)
                         {
-                            vec[i] = Projectile.Center + (baseRot + i * MathHelper.TwoPi / 20).ToRotationVector2()
-                                * (Projectile.width / 2 + Main.rand.NextFloat(-8, 8));
+                            vec[i] = Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 20)).ToRotationVector2()
+                                * ((Projectile.width / 2) + Main.rand.NextFloat(-8, 8)));
                         }
 
                         circle.BasePositions = vec;
@@ -311,7 +321,7 @@ namespace Coralite.Content.Items.Thunder
                 float factor = Timer / LightingTime;
                 float sinFactor = MathF.Sin(factor * MathHelper.Pi);
 
-                ThunderWidth = 10 + sinFactor * 15;
+                ThunderWidth = 10 + (sinFactor * 15);
                 SpawnDusts();
             }
             else
@@ -332,8 +342,8 @@ namespace Coralite.Content.Items.Thunder
         {
             if (Timer % 4 == 0)
             {
-                Particle.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 5, Projectile.width / 5),
-                    Vector2.Zero, CoraliteContent.ParticleType<BigFog>(), Coralite.Instance.ThunderveinYellow * Main.rand.NextFloat(0.5f, 0.8f),
+                PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 5, Projectile.width / 5),
+                    Vector2.Zero, CoraliteContent.ParticleType<BigFog>(), Coralite.ThunderveinYellow * Main.rand.NextFloat(0.5f, 0.8f),
                     Main.rand.NextFloat(0.5f, 1f));
                 ElectricParticle_Follow.Spawn(Projectile.Center, Helper.NextVec2Dir(Projectile.width / 3, Projectile.width * 0.56f), () => Projectile.Center, Main.rand.NextFloat(0.7f, 1.1f));
             }

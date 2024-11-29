@@ -17,9 +17,8 @@ namespace Coralite.Content.Items.Thunder
 
         public override void SetDefaults()
         {
-            Item.damage = 57;
-            Item.useTime = 24;
-            Item.useAnimation = 24;
+            Item.damage = 55;
+            Item.useTime = Item.useAnimation = 24;
             Item.knockBack = 4f;
             Item.maxStack = 1;
             Item.mana = 25;
@@ -51,7 +50,9 @@ namespace Coralite.Content.Items.Thunder
         public override void AddRecipes()
         {
             CreateRecipe()
-            .AddIngredient<ZapCrystal>(2)
+            .AddIngredient<ZapCrystal>(3)
+                .AddIngredient<InsulationCortex>(2)
+                .AddIngredient<ElectrificationWing>()
             .AddTile(TileID.MythrilAnvil)
             .Register();
         }
@@ -152,7 +153,7 @@ namespace Coralite.Content.Items.Thunder
                     {
                         Helper.GetMyGroupIndexAndFillBlackList(Projectile, out var index, out var totalIndexesInGroup);
 
-                        Vector2 idleSpot = CircleMovement(32 + totalIndexesInGroup * 4, 36, accelFactor: 0.6f, angleFactor: 0.9f, baseRot: index * MathHelper.TwoPi / totalIndexesInGroup);
+                        Vector2 idleSpot = CircleMovement(32 + (totalIndexesInGroup * 4), 36, accelFactor: 0.6f, angleFactor: 0.9f, baseRot: index * MathHelper.TwoPi / totalIndexesInGroup);
                         if (Projectile.Distance(idleSpot) < 32f)
                         {
                             Timer = 0f;
@@ -167,7 +168,7 @@ namespace Coralite.Content.Items.Thunder
                 case 0://在玩家头顶盘旋
                     {
                         Helper.GetMyGroupIndexAndFillBlackList(Projectile, out var index2, out var totalIndexesInGroup2);
-                        CircleMovement(32 + totalIndexesInGroup2 * 4, 28, accelFactor: 0.4f, angleFactor: 0.9f, baseRot: index2 * MathHelper.TwoPi / totalIndexesInGroup2);
+                        CircleMovement(32 + (totalIndexesInGroup2 * 4), 28, accelFactor: 0.4f, angleFactor: 0.9f, baseRot: index2 * MathHelper.TwoPi / totalIndexesInGroup2);
                         Projectile.rotation = (Owner.Center - Projectile.Center).ToRotation();
 
                         if (Main.rand.NextBool(20))
@@ -215,7 +216,7 @@ namespace Coralite.Content.Items.Thunder
                             for (int i = 0; i < Projectile.oldPos.Length - 1; i++)
                                 Projectile.oldPos[i] = Vector2.Lerp(Projectile.Center, BasePos, i / (float)Projectile.oldPos.Length);
                             UpdateCaches();
-                            Projectile.SpawnTrailDust(DustID.PortalBoltTrail, Main.rand.NextFloat(0.2f, 0.5f), newColor: Coralite.Instance.ThunderveinYellow);
+                            Projectile.SpawnTrailDust(DustID.PortalBoltTrail, Main.rand.NextFloat(0.2f, 0.5f), newColor: Coralite.ThunderveinYellow);
                             alpha -= 1f / (AttackTime / 2);
                         }
 
@@ -245,7 +246,7 @@ namespace Coralite.Content.Items.Thunder
                                 Target = targetIndex;
                                 Recorder = -1.57f + Main.rand.NextFloat(-0.7f, 0.7f);
                                 CanDrawTrail = false;
-                                Projectile.Center = target.Center + Recorder.ToRotationVector2() * target.height;
+                                Projectile.Center = target.Center + (Recorder.ToRotationVector2() * target.height);
                             }
                             else
                             {
@@ -276,14 +277,14 @@ namespace Coralite.Content.Items.Thunder
                         if (Timer < ReadyTime)
                         {
                             Projectile.velocity = Vector2.Zero;
-                            Projectile.Center = target.Center + Recorder.ToRotationVector2() * (Timer * 4 + target.height);
+                            Projectile.Center = target.Center + (Recorder.ToRotationVector2() * ((Timer * 4) + target.height));
                             Projectile.rotation = (target.Center - Projectile.Center).ToRotation();
                         }
                         else if (Timer == ReadyTime)
                         {
                             CanDrawTrail = true;
                             BasePos = Projectile.Center;
-                            Projectile.velocity = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * (Timer * 4 + target.height) / AttackTime;
+                            Projectile.velocity = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * ((Timer * 4) + target.height) / AttackTime;
                             InitCaches();
                             ResetCaches();
                         }
@@ -294,7 +295,7 @@ namespace Coralite.Content.Items.Thunder
 
                             UpdateCaches();
 
-                            Projectile.SpawnTrailDust(DustID.PortalBoltTrail, Main.rand.NextFloat(0.2f, 0.5f), newColor: Coralite.Instance.ThunderveinYellow);
+                            Projectile.SpawnTrailDust(DustID.PortalBoltTrail, Main.rand.NextFloat(0.2f, 0.5f), newColor: Coralite.ThunderveinYellow);
                         }
                         else if (Timer < ReadyTime + AttackTime + DelayTime)
                         {
@@ -317,7 +318,7 @@ namespace Coralite.Content.Items.Thunder
                                 Timer = 0;
                                 Target = targetIndex;
                                 Recorder = -1.57f + Main.rand.NextFloat(-0.7f, 0.7f);
-                                Projectile.Center = target.Center + Recorder.ToRotationVector2() * target.height;
+                                Projectile.Center = target.Center + (Recorder.ToRotationVector2() * target.height);
                             }
                             else
                             {
@@ -339,7 +340,12 @@ namespace Coralite.Content.Items.Thunder
 
         public Color ThunderColorFunc_Fade(float factor)
         {
-            return ThunderveinDragon.ThunderveinYellowAlpha * ThunderAlpha * (1 - factor);
+            return ThunderveinDragon.ThunderveinYellow * (1 - factor);
+        }
+
+        public override float GetAlpha(float factor)
+        {
+            return ThunderAlpha * (1 - factor);
         }
 
         public void InitCaches()
@@ -347,11 +353,12 @@ namespace Coralite.Content.Items.Thunder
             if (trails == null)
             {
                 trails = new ThunderTrail[3];
-                Asset<Texture2D> thunderTex = Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightingBody");
+                Asset<Texture2D> thunderTex = Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightingBodyF");
 
                 for (int i = 0; i < trails.Length; i++)
                 {
-                    trails[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Fade);
+                    trails[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Fade, GetAlpha);
+                    trails[i].UseNonOrAdd = true;
                     trails[i].SetRange((0, 6));
                     trails[i].SetExpandWidth(4);
                 }
@@ -390,7 +397,7 @@ namespace Coralite.Content.Items.Thunder
 
         public Vector2 CircleMovement(float distance, float speedMax, float accelFactor = 0.25f, float rollingFactor = 5f, float angleFactor = 0.9f, float baseRot = 0f)
         {
-            Vector2 offset = (baseRot + Main.GlobalTimeWrappedHourly / rollingFactor * MathHelper.TwoPi).ToRotationVector2() * distance;
+            Vector2 offset = (baseRot + (Main.GlobalTimeWrappedHourly / rollingFactor * MathHelper.TwoPi)).ToRotationVector2() * distance;
             offset.Y /= 4;
             Vector2 center = Owner.Center + new Vector2(0, -48) + offset;
             Vector2 dir = center - Projectile.Center;

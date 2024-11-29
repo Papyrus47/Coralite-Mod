@@ -16,15 +16,16 @@ namespace Coralite.Content.CustomHooks
 
         public override void Load()
         {
-            On_FilterManager.EndCapture += new On_FilterManager.hook_EndCapture(FilterManager_EndCapture);
+            On_FilterManager.EndCapture += FilterManager_EndCapture;
         }
 
         public override void Unload()
         {
+            On_FilterManager.EndCapture -= FilterManager_EndCapture;
             screen = null;
         }
 
-        private void FilterManager_EndCapture(On_FilterManager.orig_EndCapture orig, Terraria.Graphics.Effects.FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
+        private void FilterManager_EndCapture(On_FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)
         {
             if (screen == null)
                 CreateRender();

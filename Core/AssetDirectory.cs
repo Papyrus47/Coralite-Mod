@@ -18,10 +18,12 @@ namespace Coralite.Core
         public const string NightmarePlantera = Bosses + "NightmarePlantera/";
 
         public const string Bloodiancie = Bosses + "Bloodiancie/";
+        public const string ZacurrentDragon = Bosses + "ZacurrentDragon/";
 
         public const string GodOfWind = Bosses + "GodOfWind/";
 
         public const string Turmoil = Bosses + "Turmoil/";
+        public const string DigDigDigBoss = Bosses + "DigDigDig/";
         #endregion
 
         #region Buff部分！
@@ -31,6 +33,7 @@ namespace Coralite.Core
         public const string MinionBuffs = Buffs + "Minions/";
         public const string PetBuffs = Buffs + "Pets/";
         public const string Debuffs = Buffs + "Debuffs/";
+        public const string PotionBuffs = Buffs + "Potions/";
 
         #endregion
 
@@ -67,6 +70,7 @@ namespace Coralite.Core
         public const string IcicleItems = Items + "Icicle/";
         public const string SteelItems = Items + "Steel/";
         public const string ThunderItems = Items + "Thunder/";
+        public const string GlistentItems = Items + "Glistent/";
         public const string StarsItems = Items + "Stars/";
         public const string DisturbanceItems = Items + "Disturbance/";
         public const string BlazingItems = Items + "Blazing/";
@@ -78,10 +82,11 @@ namespace Coralite.Core
 
         public const string HyacinthSeriesItems = Items + "HyacinthSeries/";
         public const string LandOfTheLustrousSeriesItems = Items + "LandOfTheLustrousSeries/";
-        public const string ZephyrkiloSeriesItems = Items + "ZephyrkiloSeries/";
+        public const string ThyphionSeriesItems = Items + "ThyphionSeries/";
 
         public const string Accessories = Items + "Accessories/";
         public const string Vanity = Items + "Vanity/";
+        public const string PotionItems = Items + "Potions/";
 
         public const string Materials = Items + "Materials/";
         public const string Placeable = Items + "Placeable/";
@@ -108,12 +113,12 @@ namespace Coralite.Core
         public const string MagikeTools = MagikeItems + "Tools/";
         public const string MagikeLens = MagikeItems + "Lens/";
         public const string MagikeColumns = MagikeItems + "Columns/";
-        public const string MagikeEnchantPools = MagikeItems + "EnchantPools/";
-        public const string MagikeRemodelPools = MagikeItems + "RemodelPools/";
         public const string MagikeAltars = MagikeItems + "Altars/";
-        public const string MagikeMultPrisms = MagikeItems + "MultPrisms/";
         public const string MagikeRefractors = MagikeItems + "Refractors/";
+        public const string MagikePedestals = MagikeItems + "Pedestals/";
         public const string MagikeFactories = MagikeItems + "Factories/";
+
+        public const string MagikeFilters = MagikeItems + "Filters/";
 
         public const string Seeds = BotanicalItems + "Seeds/";
         public const string Plants = BotanicalItems + "Plants/";
@@ -163,6 +168,7 @@ namespace Coralite.Core
         public const string IcicleTiles = Tiles + "Icicle/";
         public const string ThunderTiles = Tiles + "Thunder/";
         public const string ShadowCastleTiles = Tiles + "ShadowCastle/";
+        public const string DigDigDigTiles = Tiles + "DigDigDig/";
 
 
         public const string MagikeTiles = Tiles + "Magike/";
@@ -171,9 +177,8 @@ namespace Coralite.Core
         public const string MagikeSeries2Tile = Tiles + "MagikeSeries2/";
 
         public const string MagikeLensTiles = MagikeTiles + "Lens/";
-        public const string MagikeEnchantPoolTiles = MagikeTiles + "EnchantPool/";
-        public const string MagikeRemodelPoolTiles = MagikeTiles + "RemodelPool/";
         public const string MagikeAltarTiles = MagikeTiles + "Altar/";
+        public const string MagikePedestalTiles = MagikeTiles + "Pedestal/";
         public const string MagikeColumnTiles = MagikeTiles + "Column/";
         public const string MagikeRefractorTiles = MagikeTiles + "Refractor/";
         public const string MagikeFactoryTiles = MagikeTiles + "Factory/";
@@ -206,18 +211,37 @@ namespace Coralite.Core
 
         #endregion
 
-        #region UI部分
+        #region UI部分！
 
         public const string UI = Assets + "UI/";
 
         public const string MagikeGuideBook = UI + "MagikeGuideBook/";
+        public const string MagikeUI = UI + "MagikeUI/";
+        public const string WorldIcon = UI + "WorldIcon/";
+
+        public const string CoraliteNote = UI + "CoraliteNote/";
+
+        public const string KeyKnowledgeIcon = CoraliteNote + "KeyKnowledgeIcons/";
+        public const string NoteReadfragment = CoraliteNote + "Readfragment/";
+        public const string NoteMagikeS1 = CoraliteNote + "MagikeS1/";
+
+        #endregion
+
+        #region 特效贴图部分！
+
+        public const string VFX = Assets + "VFX/";
+
+        public const string Trails = VFX + "Trail/";
+        public const string Lasers = VFX + "Laser/";
+        public const string Sparkles = VFX + "Sparkle/";
+        public const string LightBalls = VFX + "LightBall/";
+        public const string Halos = VFX + "Halo/";
 
         #endregion
 
         public const string Backgrounds = Assets + "Backgrounds/";
 
         public const string Misc = Assets + "Misc/";
-
 
         public const string WorldGen = Assets + "WorldGeneration/";
 

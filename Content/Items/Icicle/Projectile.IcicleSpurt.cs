@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -59,7 +59,7 @@ namespace Coralite.Content.Items.Icicle
                 Vector2 targetDir = (Projectile.rotation - 1.57f).ToRotationVector2();
                 for (int i = 0; i < 2; i++)
                 {
-                    if (Framing.GetTileSafely(Projectile.Center + targetDir * i * 16).HasSolidTile())
+                    if (Framing.GetTileSafely(Projectile.Center + (targetDir * i * 16)).HasSolidTile())
                     {
                         Projectile.timeLeft = 10;
                         canDamage = false;
@@ -69,12 +69,12 @@ namespace Coralite.Content.Items.Icicle
                 }
 
                 Color lightColor = Lighting.GetColor((Projectile.Center / 16).ToPoint());
-                Particle.NewParticle(Projectile.Center, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 0.15f, CoraliteContent.ParticleType<Fog>(), lightColor * Alpha, Main.rand.NextFloat(0.6f, 0.8f));
+                PRTLoader.NewParticle(Projectile.Center, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 0.15f, CoraliteContent.ParticleType<Fog>(), lightColor * Alpha, Main.rand.NextFloat(0.6f, 0.8f));
                 if (Projectile.timeLeft % 3 == 0)
-                    Particle.NewParticle(Projectile.Center, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 0.3f, CoraliteContent.ParticleType<SnowFlower>(), lightColor * Alpha, Main.rand.NextFloat(0.2f, 0.4f));
+                    PRTLoader.NewParticle(Projectile.Center, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 0.3f, CoraliteContent.ParticleType<SnowFlower>(), lightColor * Alpha, Main.rand.NextFloat(0.2f, 0.4f));
             }
 
-            Lighting.AddLight(Projectile.Center, Coralite.Instance.IcicleCyan.ToVector3());
+            Lighting.AddLight(Projectile.Center, Coralite.IcicleCyan.ToVector3());
 
             if (Projectile.timeLeft < 10)
             {

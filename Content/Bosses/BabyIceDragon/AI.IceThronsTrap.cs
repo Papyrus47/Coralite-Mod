@@ -1,8 +1,7 @@
-﻿using Coralite.Content.Items.Icicle;
-using Coralite.Content.Particles;
+﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -67,9 +66,13 @@ namespace Coralite.Content.Bosses.BabyIceDragon
                                 NPC.frame.Y = 1;
                                 SoundEngine.PlaySound(CoraliteSoundID.Roar, NPC.Center);
                                 GetMouseCenter(out _, out Vector2 mouseCenter);
-                                Particle.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.1f);
-                                PunchCameraModifier modifier = new PunchCameraModifier(NPC.Center, new Vector2(0.8f, 0.8f), 5f, 20f, 40, 1000f, "BabyIceDragon");
-                                Main.instance.CameraModifiers.Add(modifier);
+
+                                if (!VaultUtils.isServer)
+                                {
+                                    PRTLoader.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.1f);
+                                    PunchCameraModifier modifier = new(NPC.Center, new Vector2(0.8f, 0.8f), 5f, 20f, 40, 1000f, "BabyIceDragon");
+                                    Main.instance.CameraModifiers.Add(modifier);
+                                }
                             }
 
                             if ((int)Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)        //生成冰刺NPC
@@ -84,15 +87,12 @@ namespace Coralite.Content.Bosses.BabyIceDragon
                                 float rot = Main.rand.NextFloat(MathHelper.TwoPi);
                                 for (int i = 0; i < howMany; i++)
                                 {
-                                    int randomWidth = Main.rand.Next(240, 350);
-                                    Vector2 randomPosition = rot.ToRotationVector2() * randomWidth;
-
-                                    NPC npc = NPC.NewNPCDirect(NPC.GetSource_FromAI(), Target.Center + randomPosition,
-                                        ModContent.NPCType<IceThornsTrap>());
-                                    for (int j = 0; j < 2; j++)
-                                        IceStarLight.Spawn(mouseCenter,
-                                            (npc.Center - NPC.Center).SafeNormalize(Vector2.One).RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 10,
-                                            1f, () => npc.Center, 16);
+                                    if (!VaultUtils.isClient)
+                                    {
+                                        int randomWidth = Main.rand.Next(240, 350);
+                                        Vector2 randomPosition = rot.ToRotationVector2() * randomWidth;
+                                        NPC.NewNPCDirect(NPC.GetSource_FromAI(), Target.Center + randomPosition, ModContent.NPCType<IceThornsTrap>());
+                                    }
 
                                     rot += MathHelper.TwoPi / howMany;
                                 }
@@ -102,9 +102,9 @@ namespace Coralite.Content.Bosses.BabyIceDragon
                             {
                                 GetMouseCenter(out _, out Vector2 mouseCenter);
                                 if ((int)Timer % 10 == 0)
-                                    Particle.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Color.White, 0.1f);
+                                    PRTLoader.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Color.White, 0.1f);
                                 if ((int)Timer % 20 == 0)
-                                    Particle.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.1f);
+                                    PRTLoader.NewParticle(mouseCenter, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.1f);
 
                                 break;
                             }

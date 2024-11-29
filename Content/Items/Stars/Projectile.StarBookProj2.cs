@@ -83,7 +83,7 @@ namespace Coralite.Content.Items.Stars
             if (length > 16)
             {
                 length -= 5f;
-                Projectile.Center = Owner.Center + direction.ToRotationVector2() * length;
+                Projectile.Center = Owner.Center + (direction.ToRotationVector2() * length);
             }
             else
             {
@@ -119,17 +119,17 @@ namespace Coralite.Content.Items.Stars
             Main.spriteBatch.Begin(0, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
             Texture2D mainTex = Projectile.GetTexture();
-            Rectangle source = new Rectangle(16 * textureType, 0, 16, 16);     //<---简单粗暴地填数字了，前提是贴图不能有改动
-            Vector2 origin = new Vector2(8, 8);
+            Rectangle source = new(16 * textureType, 0, 16, 16);     //<---简单粗暴地填数字了，前提是贴图不能有改动
+            Vector2 origin = new(8, 8);
 
             float sinProgress = MathF.Sin(timer * 0.1f);      //<---别问我这是什么神秘数字，问就是乱写的
-            int r = (int)(238.5f + sinProgress * 16.5f);
-            int g = (int)(230.5f + sinProgress * 23.5f);
-            int b = (int)(156 + sinProgress * 35);
+            int r = (int)(238.5f + (sinProgress * 16.5f));
+            int g = (int)(230.5f + (sinProgress * 23.5f));
+            int b = (int)(156 + (sinProgress * 35));
             for (int i = 0; i < 6; i++)     //这里是绘制类似于影子拖尾的东西，简单讲就是随机位置画几个透明度低的自己
             {
-                Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + origin * Projectile.scale - Main.screenPosition, source,
-                                                    new Color(r, g, b, 120 - i * 30), Projectile.oldRot[i], origin, Projectile.scale + i * 0.25f, SpriteEffects.None, 0);
+                Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + (origin * Projectile.scale) - Main.screenPosition, source,
+                                                    new Color(r, g, b, 120 - (i * 30)), Projectile.oldRot[i], origin, Projectile.scale + (i * 0.25f), SpriteEffects.None, 0);
             }
 
             Main.spriteBatch.End();
@@ -140,8 +140,8 @@ namespace Coralite.Content.Items.Stars
         public override void PostDraw(Color lightColor)
         {
             Texture2D mainTex = Request<Texture2D>(Texture).Value;
-            Rectangle source = new Rectangle(16 * textureType, 0, 16, 16);
-            Vector2 origin = new Vector2(8, 8);
+            Rectangle source = new(16 * textureType, 0, 16, 16);
+            Vector2 origin = new(8, 8);
 
             Main.spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, source,
                                                     Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);

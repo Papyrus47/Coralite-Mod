@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
@@ -15,7 +15,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
         #region 生成动画
 
         /*
-         * 之后在中心出现一下闪光，展开圆形弹幕         
+         * 之后在中心出现一下闪光，展开圆形弹幕
          * 点击灯之影后出现一个弹幕落下到场地中心的位置
          * 之后影子球自下而上地出现，并生成吼叫粒子
          * 之后召唤小球
@@ -64,10 +64,10 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         //NPC.dontTakeDamage = false;
 
                         if ((int)Timer % 10 == 0)
-                            Particle.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>()
+                            PRTLoader.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>()
                                 , new Color(180, 80, 255), 0.6f);
                         if ((int)Timer % 20 == 0)
-                            Particle.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>()
+                            PRTLoader.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>()
                                 , new Color(180, 80, 255), 0.6f);
 
                         if (Timer > 180)
@@ -79,15 +79,12 @@ namespace Coralite.Content.Bosses.ShadowBalls
                     break;
                 case 3://生成小球并等待小球完成生成
                     {
-                        if (shadowCircle == null)
-                        {
-                            shadowCircle = new ShadowCircleController[3]
+                        shadowCircle ??= new ShadowCircleController[3]
                             {
-                                new ShadowCircleController(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle1", AssetRequestMode.ImmediateLoad)),
-                                new ShadowCircleController(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle2", AssetRequestMode.ImmediateLoad)),
-                                new ShadowCircleController(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle3", AssetRequestMode.ImmediateLoad)),
+                                new(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle1", AssetRequestMode.ImmediateLoad)),
+                                new(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle2", AssetRequestMode.ImmediateLoad)),
+                                new(ModContent.Request<Texture2D>(AssetDirectory.ShadowBalls + "BigCircle3", AssetRequestMode.ImmediateLoad)),
                             };
-                        }
                         InitCaches();
                         ResetState();
                         SpawnSmallBalls();

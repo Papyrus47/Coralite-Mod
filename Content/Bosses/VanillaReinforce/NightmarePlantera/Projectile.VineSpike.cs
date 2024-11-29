@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -136,8 +136,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                         }
 
                         float factor = Timer / ChannelTime;
-                        Vector2 center = Owner.Center + new Vector2(Owner.direction * 40 * factor, 0) + Owner.velocity * 20 * factor;
-                        Vector2 dir = center - Projectile.Center + Angle.ToRotationVector2() * Helper.Lerp(200, 650, factor);
+                        Vector2 center = Owner.Center + new Vector2(Owner.direction * 40 * factor, 0) + (Owner.velocity * 20 * factor);
+                        Vector2 dir = center - Projectile.Center + (Angle.ToRotationVector2() * Helper.Lerp(200, 650, factor));
 
                         float velRot = Projectile.velocity.ToRotation();
                         float targetRot = dir.ToRotation();
@@ -168,7 +168,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                             0 => tentacleColor,
                             _ => tentacleColor * 2f,
                         };
-                        Particle.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(32, 32), Projectile.velocity * Main.rand.NextFloat(0.05f, 0.2f),
+                        PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(32, 32), Projectile.velocity * Main.rand.NextFloat(0.05f, 0.2f),
                             CoraliteContent.ParticleType<SpeedLine>(), c, Main.rand.NextFloat(0.3f, 0.5f));
                         //}
                         if (Main.rand.NextBool())
@@ -178,7 +178,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                                 0 => tentacleColor,
                                 _ => tentacleColor * 2f,
                             };
-                            Particle.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(16, 16), -Projectile.velocity * Main.rand.NextFloat(0.05f, 0.3f),
+                            PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(16, 16), -Projectile.velocity * Main.rand.NextFloat(0.05f, 0.3f),
                                 CoraliteContent.ParticleType<SpeedLine>(), c2, Main.rand.NextFloat(0.3f, 0.5f));
                         }
 
@@ -208,7 +208,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                         Vector2 dir = np.Center - Projectile.Center;
                         Vector2 dir2 = dir.SafeNormalize(Vector2.Zero);
                         Projectile.velocity = dir2 * velLength;
-                        Projectile.rotation = dir2.ToRotation() + MathHelper.Pi + 0.35f * MathF.Sin(Timer * 0.2f);
+                        Projectile.rotation = dir2.ToRotation() + MathHelper.Pi + (0.35f * MathF.Sin(Timer * 0.2f));
 
                         if (dir.Length() < 50 || Timer > 180)
                             Projectile.Kill();
@@ -236,12 +236,12 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 float rotation = tentacle.rotates[i];
                 float scale = tentacle.widthFunc(i / 26f) * 2.5f / leavesTex.Height;
 
-                Main.spriteBatch.Draw(leavesTex, pos2, null, c * (0.75f - i * 0.7f / 26), rotation, selforigin, scale, effect, 0);
+                Main.spriteBatch.Draw(leavesTex, pos2, null, c * (0.75f - (i * 0.7f / 26)), rotation, selforigin, scale, effect, 0);
             }
 
             for (int i = 0; i < 8; i++)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter, null,
-                c * (0.5f - i * 0.5f / 8), Projectile.oldRot[i], mainTex.Size() / 2, Projectile.scale * (1 + i * 0.05f), effect, 0);
+                c * (0.5f - (i * 0.5f / 8)), Projectile.oldRot[i], mainTex.Size() / 2, Projectile.scale * (1 + (i * 0.05f)), effect, 0);
 
             Main.spriteBatch.Draw(mainTex, pos, null, c, Projectile.rotation, selforigin, Projectile.scale, effect, 0);
 

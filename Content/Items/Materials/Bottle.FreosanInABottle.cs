@@ -1,5 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +9,10 @@ using Terraria.ObjectData;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class FreosanInABottle : BaseMaterial, IMagikePolymerizable
+    /// <summary>
+    /// 瓶中冻
+    /// </summary>
+    public class FreosanInABottle : BaseMaterial, IMagikeCraftable
     {
         public FreosanInABottle() : base(9999, Item.sellPrice(0, 0, 1, 50), ItemRarityID.Cyan, AssetDirectory.Materials) { }
 
@@ -18,7 +22,7 @@ namespace Coralite.Content.Items.Materials
             Item.DefaultToPlaceableTile(ModContent.TileType<FreosanInABottleTile>());
         }
 
-        public void AddMagikePolymerizeRecipe()
+        public void AddMagikeCraftRecipe()
         {
             //PolymerizeRecipe.CreateRecipe<FreosanInABottle>(300)
             //    .SetMainItem<>
@@ -47,7 +51,7 @@ namespace Coralite.Content.Items.Materials
             TileObjectData.newTile.LavaDeath = true;
             TileObjectData.addTile(Type);
 
-            AddMapEntry(Coralite.Instance.IcicleCyan);
+            AddMapEntry(Coralite.IcicleCyan);
         }
 
         public override void SpecialDraw(int i, int j, SpriteBatch spriteBatch)

@@ -23,15 +23,11 @@ namespace Coralite.Content.Items.CoreKeeper
     {
         public override string Texture => AssetDirectory.CoreKeeperItems + Name;
 
-        public int useCount;
-        public int oldCombo;
-
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
             Item.damage = 194;
-            Item.useTime = 26;
-            Item.useAnimation = 26;
+            Item.useTime = Item.useAnimation = 30;
             Item.knockBack = 4f;
 
             Item.useStyle = ItemUseStyleID.Rapier;
@@ -58,27 +54,9 @@ namespace Coralite.Content.Items.CoreKeeper
                     return false;
                 }
 
-                int combo = Main.rand.Next(2);
-                if (combo == oldCombo)
-                {
-                    useCount++;
-                    if (useCount > 1)
-                    {
-                        useCount = 0;
-                        combo = combo switch
-                        {
-                            0 => 1,
-                            _ => 0,
-                        };
-
-                    }
-                }
-
                 Helper.PlayPitched("CoreKeeper/swordAttack", 0.7f, Main.rand.NextFloat(0f, 0.1f), player.Center);
                 Projectile.NewProjectile(source, player.Center, Vector2.Zero,
-                    type, (int)(damage * 1.4f), knockback, player.whoAmI, combo);
-
-                oldCombo = combo;
+                    type, (int)(damage * 0.75f), knockback, player.whoAmI, 0);
             }
 
             return false;
@@ -128,7 +106,6 @@ namespace Coralite.Content.Items.CoreKeeper
 
         public ref float Combo => ref Projectile.ai[0];
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
@@ -154,7 +131,6 @@ namespace Coralite.Content.Items.CoreKeeper
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "NormalSlashTrail2s");
             WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
             GradientTexture = Request<Texture2D>(AssetDirectory.CoreKeeperItems + "PoisonousSickleGradient");
         }
@@ -164,7 +140,6 @@ namespace Coralite.Content.Items.CoreKeeper
             if (Main.dedServ)
                 return;
 
-            trailTexture = null;
             WarpTexture = null;
             GradientTexture = null;
         }
@@ -235,8 +210,8 @@ namespace Coralite.Content.Items.CoreKeeper
             Projectile.velocity *= 0f;
             if (Owner.whoAmI == Main.myPlayer)
             {
-                _Rotation = GetStartAngle() - OwnerDirection * startAngle;//设定起始角度
-                totalAngle *= OwnerDirection;
+                _Rotation = GetStartAngle() - (DirSign * startAngle);//设定起始角度
+                totalAngle *= DirSign;
             }
 
             Slasher();
@@ -259,7 +234,7 @@ namespace Coralite.Content.Items.CoreKeeper
             extraScaleAngle = Main.rand.NextFloat(-0.4f, 0.4f);
             recordStartAngle = Math.Abs(startAngle);
             recordTotalAngle = Math.Abs(totalAngle);
-            Projectile.scale = Helper.EllipticalEase(recordStartAngle + extraScaleAngle - recordTotalAngle * Smoother.Smoother(0, maxTime - minTime), 1.5f, 1.7f);
+            Projectile.scale = Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(0, maxTime - minTime)), 1.5f, 1.7f);
         }
 
         protected override void BeforeSlash()
@@ -268,12 +243,12 @@ namespace Coralite.Content.Items.CoreKeeper
             {
                 startAngle += Math.Sign(startAngle) * 0.03f;
 
-                _Rotation = GetStartAngle() - OwnerDirection * startAngle;
+                _Rotation = GetStartAngle() - (DirSign * startAngle);
                 Slasher();
 
                 if (Timer == minTime)
                 {
-                    _Rotation = startAngle = GetStartAngle() - OwnerDirection * startAngle;//设定起始角度
+                    _Rotation = startAngle = GetStartAngle() - (DirSign * startAngle);//设定起始角度
                     InitializeCaches();
                 }
                 return;
@@ -283,8 +258,8 @@ namespace Coralite.Content.Items.CoreKeeper
             {
                 channelCount++;
                 Timer = 1;
-                _Rotation = GetStartAngle() - OwnerDirection * startAngle;
-                totalAngle = recordTotalAngle * OwnerDirection;
+                _Rotation = GetStartAngle() - (DirSign * startAngle);
+                totalAngle = recordTotalAngle * DirSign;
 
                 Slasher();
                 if (channelTimer < ChannelTimeMax)
@@ -315,7 +290,7 @@ namespace Coralite.Content.Items.CoreKeeper
                 {
                     Timer = minTime + 1;
 
-                    _Rotation = startAngle = GetStartAngle() - OwnerDirection * startAngle;//设定起始角度
+                    _Rotation = startAngle = GetStartAngle() - (DirSign * startAngle);//设定起始角度
                     Helper.PlayPitched("CoreKeeper/swooshStrong", 0.9f, 0.2f, Owner.Center);
                     Projectile.damage = (int)(Projectile.damage * 4.5f);
                 }
@@ -351,14 +326,14 @@ namespace Coralite.Content.Items.CoreKeeper
                 _ => 1.1f
             };
 
-            Dust dust = Dust.NewDustPerfect(Top + RotateVec2 * Main.rand.Next(-45, 5), type,
+            Dust dust = Dust.NewDustPerfect(Top + (RotateVec2 * Main.rand.Next(-45, 5)), type,
                    dir * Main.rand.NextFloat(0.5f, 3f), Scale: scale2);
             dust.noGravity = true;
 
             if (Owner.HeldItem.type == ItemType<PoisonousSickle>())
             {
                 scale = Owner.GetAdjustedItemScale(Owner.HeldItem);
-                scale = 1.2f * scale - 0.2f;
+                scale = (1.2f * scale) - 0.2f;
                 if (scale > 3f)
                     scale = 3f;
             }
@@ -367,8 +342,8 @@ namespace Coralite.Content.Items.CoreKeeper
 
             Projectile.scale = Combo switch
             {
-                2 => scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime), 2.4f, 2.6f),
-                _ => scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime), 1.5f, 1.7f),
+                2 => scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime)), 2.4f, 2.6f),
+                _ => scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime)), 1.5f, 1.7f),
             };
             base.OnSlash();
         }
@@ -401,7 +376,7 @@ namespace Coralite.Content.Items.CoreKeeper
                     Scale: target.width);
             }
 
-            Projectile.damage = (int)(Projectile.damage * 0.8f);
+            Projectile.damage = (int)(Projectile.damage * 0.75f);
 
             if (onHitTimer == 0)
             {
@@ -417,12 +392,12 @@ namespace Coralite.Content.Items.CoreKeeper
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
                 {
-                    PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, RotateVec2, strength, 4, 6, 1000);
+                    PunchCameraModifier modifier = new(Projectile.Center, RotateVec2, strength, 4, 6, 1000);
                     Main.instance.CameraModifiers.Add(modifier);
                 }
 
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
 
                 if (VisualEffectSystem.HitEffect_Dusts)
                 {
@@ -450,7 +425,7 @@ namespace Coralite.Content.Items.CoreKeeper
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -458,10 +433,10 @@ namespace Coralite.Content.Items.CoreKeeper
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -476,7 +451,7 @@ namespace Coralite.Content.Items.CoreKeeper
                     Effect effect = Filters.Scene["NoHLGradientTrail"].GetShader().Shader;
 
                     effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
-                    effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                    effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatBlurSmall.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点

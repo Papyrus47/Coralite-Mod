@@ -12,7 +12,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
 
         public Color drawCharColor;
         public Color drawPicColor;
-        public readonly Color blankColor = new Color(0, 0, 0, 0);
+        public readonly Color blankColor = new(0, 0, 0, 0);
 
         public override void SetDefaults()
         {
@@ -40,7 +40,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             //文字渐进
             if (timer < 21)
             {
-                drawCharColor = Color.Lerp(blankColor, Coralite.Instance.IcicleCyan, (float)timer / 20);
+                drawCharColor = Color.Lerp(blankColor, Coralite.IcicleCyan, (float)timer / 20);
                 drawPicColor = Color.Lerp(blankColor, Color.White, (float)timer / 20);
                 return;
             }
@@ -48,7 +48,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             //文字减淡
             if (timer > 239)
             {
-                drawCharColor = Color.Lerp(Coralite.Instance.IcicleCyan, blankColor, (float)(timer - 240) / 20);
+                drawCharColor = Color.Lerp(Coralite.IcicleCyan, blankColor, (float)(timer - 240) / 20);
                 drawPicColor = Color.Lerp(Color.White, blankColor, (float)(timer - 240) / 20);
             }
         }

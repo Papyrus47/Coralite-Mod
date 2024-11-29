@@ -60,7 +60,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                     Owner.immune = true;
                 }
 
-                int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.2f - 0.15f * cp.parryTime / 280f));
+                int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.2f - (0.15f * cp.parryTime / 280f)));
 
                 SoundEngine.PlaySound(CoraliteSoundID.DeathCalling_Item103, projectile.Projectile.Center);
                 Helper.PlayPitched("Misc/ShieldGuard", 0.4f, 0f, projectile.Projectile.Center);
@@ -77,15 +77,15 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
                 int dir2 = Main.rand.NextFromList(1, -1);
                 Vector2 vector54 = new Vector2(Owner.direction, dir2 * 4f).SafeNormalize(Vector2.UnitY).RotatedBy((float)Math.PI * 2f * Main.rand.NextFloatDirection() * 0.08f);
-                Vector2 searchCenter = Owner.MountedCenter + dir * 35 + vector54 * -35f;
+                Vector2 searchCenter = Owner.MountedCenter + (dir * 35) + (vector54 * -35f);
                 searchCenter += Main.rand.NextVector2Circular(20f, 20f);
 
                 dir2 *= projectile.Owner.direction;
                 projectile.Projectile.NewProjectileFromThis<DemonsProtectionClaw>(searchCenter, vector54 * 7.5f
                     , damage, projectile.Projectile.knockBack, 1, dir2);
-                projectile.Projectile.NewProjectileFromThis<DemonsProtectionClaw>(searchCenter + dir * 25, vector54 * 5f
+                projectile.Projectile.NewProjectileFromThis<DemonsProtectionClaw>(searchCenter + (dir * 25), vector54 * 5f
                     , damage, projectile.Projectile.knockBack, 2, dir2);
-                projectile.Projectile.NewProjectileFromThis<DemonsProtectionClaw>(searchCenter + dir * 25 * 2, vector54 * 7.5f
+                projectile.Projectile.NewProjectileFromThis<DemonsProtectionClaw>(searchCenter + (dir * 25 * 2), vector54 * 7.5f
                     , damage, projectile.Projectile.knockBack, 1, dir2);
 
                 if (cp.parryTime < 280)
@@ -146,7 +146,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             Vector2 vector6 = f2.ToRotationVector2();
             Rectangle hitbox = Projectile.Hitbox;
             hitbox.Inflate((int)num11, (int)num11);
-            if (hitbox.Intersects(targetHitbox) && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - vector6 * num11, Projectile.Center + vector6 * num11, num12 * Projectile.scale, ref collisionPoint3))
+            if (hitbox.Intersects(targetHitbox) && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center - (vector6 * num11), Projectile.Center + (vector6 * num11), num12 * Projectile.scale, ref collisionPoint3))
                 return true;
 
             return false;
@@ -175,7 +175,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             float num2 = Projectile.localAI[0] / 36f * 3f;
             if (num2 >= 0f && num2 <= 1.5f)
             {
-                Dust dust = Dust.NewDustPerfect(Vector2.Lerp(Projectile.Center - vector * num, Projectile.Center + vector * num, Projectile.localAI[0] / 36f), 278
+                Dust dust = Dust.NewDustPerfect(Vector2.Lerp(Projectile.Center - (vector * num), Projectile.Center + (vector * num), Projectile.localAI[0] / 36f), 278
                     , vector.RotatedBy((float)Math.PI * 2f * Main.rand.NextFloatDirection() * 0.02f) * 6f * Main.rand.NextFloat(), 0
                     , Main.rand.NextBool(3) ? new Color(60, 0, 150) : new Color(150, 0, 40), 0.6f * num2);
                 dust.noGravity = true;
@@ -192,18 +192,15 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         {
             SpriteBatch spriteBatch = Main.spriteBatch;
             spriteBatch.End();
-            if (_multiplyBlendState == null)
+            _multiplyBlendState ??= new BlendState
             {
-                _multiplyBlendState = new BlendState
-                {
-                    ColorBlendFunction = BlendFunction.ReverseSubtract,
-                    ColorDestinationBlend = Blend.One,
-                    ColorSourceBlend = Blend.SourceAlpha,
-                    AlphaBlendFunction = BlendFunction.ReverseSubtract,
-                    AlphaDestinationBlend = Blend.One,
-                    AlphaSourceBlend = Blend.SourceAlpha
-                };
-            }
+                ColorBlendFunction = BlendFunction.ReverseSubtract,
+                ColorDestinationBlend = Blend.One,
+                ColorSourceBlend = Blend.SourceAlpha,
+                AlphaBlendFunction = BlendFunction.ReverseSubtract,
+                AlphaDestinationBlend = Blend.One,
+                AlphaSourceBlend = Blend.SourceAlpha
+            };
 
             BlendState multiplyBlendState = _multiplyBlendState;
             spriteBatch.Begin(SpriteSortMode.Deferred, multiplyBlendState, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
@@ -216,7 +213,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             float num = Utils.Remap(Projectile.frame, 0f, 3f, 0f, 1f) * Utils.Remap(Projectile.frame, 4f, 12f, 1f, 0f);
             Rectangle value = asset.Frame(1, 13, 0, 12);
             Vector2 origin = vector + new Vector2(0f, 0f);
-            Color c = new Color(255, 0, 155, 255);
+            Color c = new(255, 0, 155, 255);
 
             spriteBatch.Draw(asset.Value, position, value, Color.White * 0.4f * num, Projectile.rotation, origin, new Vector2(1f, 6f) * vector2, SpriteEffects.None, 0f);
             spriteBatch.Draw(asset.Value, position, value, Color.White * 0.4f * num, Projectile.rotation, origin, new Vector2(1.75f, 2f) * vector2, SpriteEffects.None, 0f);

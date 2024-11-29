@@ -3,7 +3,6 @@ using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +55,18 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 effect.Parameters["highlightC"].SetValue(ZumurudProj.highlightC.ToVector4());
                 effect.Parameters["brightC"].SetValue(ZumurudProj.brightC.ToVector4());
                 effect.Parameters["darkC"].SetValue(ZumurudProj.darkC.ToVector4());
-            }, 0.2f);
+            }, 0.2f,
+            effect =>
+            {
+                effect.Parameters["scale"].SetValue(new Vector2(0.7f, 1.75f) / Main.GameZoomTarget);
+                effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.015f);
+                effect.Parameters["lightRange"].SetValue(0.15f);
+                effect.Parameters["lightLimit"].SetValue(0.45f);
+                effect.Parameters["addC"].SetValue(0.35f);
+                effect.Parameters["highlightC"].SetValue(ZumurudProj.highlightC.ToVector4());
+                effect.Parameters["brightC"].SetValue(ZumurudProj.brightC.ToVector4());
+                effect.Parameters["darkC"].SetValue(ZumurudProj.darkC.ToVector4());
+            }, extraSize: new Point(40, 4));
         }
 
         public override void SpawnParticle(DrawableTooltipLine line)
@@ -143,7 +153,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             if (AttackTime > 0)
             {
-                Projectile.rotation = Helper.Lerp(0, MathHelper.Pi, Coralite.Instance.SqrtSmoother.Smoother(1 - AttackTime / Owner.itemTimeMax));
+                Projectile.rotation = Helper.Lerp(0, MathHelper.Pi, Coralite.Instance.SqrtSmoother.Smoother(1 - (AttackTime / Owner.itemTimeMax)));
 
                 if (AttackTime == 1 && Main.myPlayer == Projectile.owner)
                 {
@@ -161,7 +171,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 dir = Helper.NextVec2Dir();
-                        ZumurudProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                        ZumurudProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                     }
                 }
 
@@ -191,27 +201,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public ref float Timer => ref Projectile.ai[1];
         public ref float Rot2 => ref Projectile.ai[2];
 
-        public static Asset<Texture2D> trailTex;
-
-        public static Color highlightC = new Color(206, 248, 239);
-        public static Color brightC = new Color(49, 230, 127);
-        public static Color darkC = new Color(19, 112, 60);
-
-        public override void Load()
-        {
-            if (Main.dedServ)
-                return;
-
-            trailTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "EdgeTrail");
-        }
-
-        public override void Unload()
-        {
-            if (Main.dedServ)
-                return;
-
-            trailTex = null;
-        }
+        public static Color highlightC = new(206, 248, 239);
+        public static Color brightC = new(49, 230, 127);
+        public static Color darkC = new(19, 112, 60);
 
         public override void SetDefaults()
         {
@@ -247,7 +239,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                         float angle = Main.rand.NextFloat(6.282f);
                         for (int i = 0; i < 4; i++)
                         {
-                            Projectile.NewProjectileFromThis<SmallZumurudProj>(Projectile.Center, (angle + MathHelper.PiOver2 * i).ToRotationVector2() * 3
+                            Projectile.NewProjectileFromThis<SmallZumurudProj>(Projectile.Center, (angle + (MathHelper.PiOver2 * i)).ToRotationVector2() * 3
                                 , (int)(Projectile.damage * 0.75f), Projectile.knockBack / 4, Main.rand.NextFloat(-0.3f, 0.3f));
                         }
                     }
@@ -310,7 +302,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                 }
         }
 
@@ -319,16 +311,16 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             if (Projectile.oldPos.Length < 16)
                 return false;
 
-            Texture2D Texture = trailTex.Value;
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            Texture2D Texture = CoraliteAssets.Trail.EdgeA.Value;
+            List<CustomVertexInfo> bars = new();
 
             for (int i = 0; i < 16; i++)
             {
                 float factor = i / 16f;
                 Vector2 Center = Projectile.oldPos[i];
                 Vector2 normal = (Projectile.oldRot[i] + MathHelper.PiOver2).ToRotationVector2();
-                Vector2 Top = Center - Main.screenPosition + normal * 10;
-                Vector2 Bottom = Center - Main.screenPosition - normal * 10;
+                Vector2 Top = Center - Main.screenPosition + (normal * 10);
+                Vector2 Bottom = Center - Main.screenPosition - (normal * 10);
 
                 var color = Color.Lerp(brightC, darkC, factor);//.MultiplyRGB(lightColor);
                 color.A /= 2;
@@ -351,7 +343,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             rand.X += 0.15f;
 
             Helper.DrawCrystal(spriteBatch, Projectile.frame, Projectile.Center + rand, new Vector2(0.4f, 1f)
-                , (float)(Main.timeForVisualEffects) * (Main.gamePaused ? 0.02f : 0.01f) + Projectile.whoAmI / 3f
+                , ((float)Main.timeForVisualEffects * (Main.gamePaused ? 0.02f : 0.01f)) + (Projectile.whoAmI / 3f)
                 , highlightC, brightC, darkC, () =>
                 {
                     Texture2D mainTex = Projectile.GetTexture();
@@ -403,7 +395,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                             if (Helper.TryFindClosestEnemy(Projectile.Center, 600, n => n.CanBeChasedBy() && Collision.CanHit(Projectile, n), out NPC target))
                             {
                                 State = 1;
-                                Projectile.velocity = (target.Center + target.velocity * 4 - Projectile.Center).SafeNormalize(Vector2.Zero) * 9.5f;
+                                Projectile.velocity = (target.Center + (target.velocity * 7) - Projectile.Center).SafeNormalize(Vector2.Zero) * 9.5f;
                                 for (int i = 0; i < 4; i++)
                                 {
                                     Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.GreenTorch, Helper.NextVec2Dir(0.5f, 2), Scale: Main.rand.NextFloat(1f, 1.5f));
@@ -413,7 +405,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                                 for (int i = 0; i < 2; i++)
                                 {
                                     Vector2 dir = Helper.NextVec2Dir();
-                                    ZumurudProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 2f));
+                                    ZumurudProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 2f));
                                 }
                             }
                             else
@@ -457,7 +449,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    ZumurudProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                    ZumurudProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                 }
         }
 

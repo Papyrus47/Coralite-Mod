@@ -112,9 +112,9 @@ namespace Coralite.Content.Items.Nightmare
             if (whoAmI_Y == 2)
                 info.AnchorTilePosition.Y -= 2;
 
-            info.VisualOffset.Y -= 24f; // 将玩家向下移动一个档次，因为床没有普通床高
-                                        //info.VisualOffset.X += info.TargetDirection * 32f;
-                                        //Point faa = info.AnchorTilePosition;
+            info.VisualOffset.Y -= 2f; // 将玩家向下移动一个档次，因为床没有普通床高
+                                       //info.VisualOffset.X += info.TargetDirection * 32f;
+                                       //Point faa = info.AnchorTilePosition;
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num)
@@ -126,7 +126,7 @@ namespace Coralite.Content.Items.Nightmare
         {
             Player player = Main.LocalPlayer;
             Tile tile = Main.tile[i, j];
-            int spawnX = (i - (tile.TileFrameX / 18)) + (tile.TileFrameX >= 72 ? 5 : 2);
+            int spawnX = i - (tile.TileFrameX / 18) + (tile.TileFrameX >= 72 ? 5 : 2);
             int spawnY = j + 2;
 
             if (tile.TileFrameY % 56 != 0)

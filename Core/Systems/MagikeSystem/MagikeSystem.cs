@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.UI;
+using Terraria.UI;
 
 namespace Coralite.Core.Systems.MagikeSystem
 {
     public partial class MagikeSystem : ModSystem
     {
         public static MagikeSystem Instance { get; private set; }
+
+        public static bool DrawSpecialTileText;
+        public static string SpecialTileText;
 
         public MagikeSystem()
         {
@@ -24,8 +28,8 @@ namespace Coralite.Core.Systems.MagikeSystem
             if (Main.dedServ)
                 return;
 
-            RegisterRemodel();
-            RegisterPolymerize();
+            RegisterMagikeCraft();
+            LoadPolarizeFilter();
         }
 
         public override void Load()
@@ -41,27 +45,35 @@ namespace Coralite.Core.Systems.MagikeSystem
 
             UnloadLocalization();
             UnloadAssets();
+            UnLoadPolarizeFilter();
 
-            remodelRecipes?.Clear();
-            remodelRecipes = null;
+            magikeCraftRecipes = null;
+            MagikeCraftRecipes = null;
+        }
 
-            polymerizeRecipes?.Clear();
-            polymerizeRecipes = null;
+        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+        {
+            if (DrawSpecialTileText)
+            {
+                DrawSpecialTileText = false;
+                UICommon.TooltipMouseText(SpecialTileText);
+            }
         }
 
         //额...每增加一个变量就要在这边多写一段，说实话显得很蠢，以后有机会需要修改掉
         public override void SaveWorldData(TagCompound tag)
         {
-            List<string> Knowledge = new List<string>();
+            List<string> Knowledge = new();
             if (learnedMagikeBase)
                 Knowledge.Add("learnedMagikeBase");
             if (learnedMagikeAdvanced)
                 Knowledge.Add("learnedMagikeAdvanced");
 
+            tag.Add("ConnectLineType", (int)CurrentConnectLineType);
+
             SaveData_2_1(Knowledge);
 
             tag.Add("Knowledge", Knowledge);
-
         }
 
         public override void LoadWorldData(TagCompound tag)
@@ -69,6 +81,8 @@ namespace Coralite.Core.Systems.MagikeSystem
             IList<string> list = tag.GetList<string>("Knowledge");
             learnedMagikeBase = list.Contains("learnedMagikeBase");
             learnedMagikeAdvanced = list.Contains("learnedMagikeAdvanced");
+
+            CurrentConnectLineType = (ConnectLineType)tag.GetInt("ConnectLineType");
 
             LoadData_2_1(list);
         }

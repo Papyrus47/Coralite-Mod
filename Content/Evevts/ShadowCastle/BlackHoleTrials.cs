@@ -4,7 +4,6 @@ using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -50,9 +49,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
         public override void OnSpawn(IEntitySource source)
         {
-            SoundStyle st = CoraliteSoundID.ShieldDestroyed_NPCDeath58;
-            st.Pitch = 0.5f;
-            SoundEngine.PlaySound(st, Projectile.Center);
+            Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
         }
 
         public override bool? CanDamage()
@@ -94,9 +91,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
                         {
                             State++;
                             Timer = 0;
-                            SoundStyle st = CoraliteSoundID.ShieldDestroyed_NPCDeath58;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
+                            Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
                         }
                     }
                     break;
@@ -118,7 +113,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                             int delay = 40 - (int)(25 * MathHelper.Clamp(Timer / (60 * 35), 0, 1));
 
-                            if (Timer % delay == 0)
+                            if (Timer % delay == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 pos = Projectile.Center +
                                     (Main.rand.NextBool(10) ?
@@ -142,10 +137,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
                             State++;
                             Timer = 0;
                             warpScale = 0;
-                            SoundStyle st = CoraliteSoundID.ShieldDestroyed_NPCDeath58;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
-
+                            Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
                         }
                     }
                     break;
@@ -179,7 +171,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                             int delay2 = 45 - (int)(25 * MathHelper.Clamp(Timer / (60 * 30), 0, 1));
 
-                            if (Timer % delay2 == 0)
+                            if (Timer % delay2 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 pos = Projectile.Center + Helper.NextVec2Dir(450, 700);
                                 Projectile.NewProjectileFromThis(pos, new Vector2(0, Main.rand.NextFloat(3f, 5)), ModContent.ProjectileType<BlackStarProj>(),
@@ -199,10 +191,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
                             State++;
                             Timer = 0;
                             warpScale = 0;
-                            SoundStyle st = CoraliteSoundID.ShieldDestroyed_NPCDeath58;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
-
+                            Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
                         }
                     }
                     break;
@@ -212,7 +201,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                         if (Timer < 60 * 30)
                         {
-                            scale = 0.5f + 3.5f * Timer / (60 * 30f);
+                            scale = 0.5f + (3.5f * Timer / (60 * 30f));
 
                             int width = (int)(108 * scale);
                             Projectile.Resize(width, width);
@@ -228,7 +217,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                             int delay = 50 - (int)(30 * MathHelper.Clamp(Timer / (60 * 15), 0, 1));
 
-                            if (Timer % delay == 0)
+                            if (Timer % delay == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 pos = Projectile.Center +
                                     (Main.rand.NextBool(10) ?
@@ -240,7 +229,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                             int delay2 = 45 - (int)(20 * MathHelper.Clamp(Timer / (60 * 15), 0, 1));
 
-                            if (Timer % delay2 == 0)
+                            if (Timer % delay2 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 pos = Projectile.Center + Helper.NextVec2Dir(450, 700);
                                 Projectile.NewProjectileFromThis(pos, new Vector2(0, Main.rand.NextFloat(3f, 6)), ModContent.ProjectileType<BlackStarProj>(),
@@ -253,12 +242,8 @@ namespace Coralite.Content.Evevts.ShadowCastle
                             warpScale = 0;
                             State++;
                             Timer = 0;
-                            SoundStyle st = CoraliteSoundID.ShieldDestroyed_NPCDeath58;
-                            st.Pitch = 0.8f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
-
+                            Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
                         }
-
                     }
                     break;
                 case 4:
@@ -402,10 +387,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                         if (Projectile.ai[2] == 80)
                         {
-                            SoundStyle st = CoraliteSoundID.SpiritFlame_Item117;
-                            st.Volume *= 0.5f;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
+                            Helper.PlayPitched(CoraliteSoundID.SpiritFlame_Item117, Projectile.Center, pitch: 0.5f, volume: 0.3f);
 
                             Projectile.velocity = (owner.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(6, 8);
                             Projectile.ai[2]++;
@@ -427,10 +409,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
                             if (Projectile.ai[2] == 80)
                             {
-                                SoundStyle st = CoraliteSoundID.FireBallExplosion_Item74;
-                                st.Volume *= 0.5f;
-                                st.Pitch = 0.5f;
-                                SoundEngine.PlaySound(st, Projectile.Center);
+                                Helper.PlayPitched(CoraliteSoundID.FireBallExplosion_Item74, Projectile.Center, pitch: 0.5f, volume: 0.3f);
 
                                 float Length = Vector2.Distance(owner.Center, Projectile.Center);
                                 Projectile.velocity = new Vector2(Length, Projectile.velocity.Y);
@@ -445,7 +424,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
                                 angle += Projectile.velocity.Y * 0.005f;
 
                                 Projectile.velocity.X -= Projectile.velocity.Y;
-                                Projectile.Center = owner.Center + angle.ToRotationVector2() * Projectile.velocity.X;
+                                Projectile.Center = owner.Center + (angle.ToRotationVector2() * Projectile.velocity.X);
                                 if (Vector2.Distance(owner.Center, Projectile.Center) < 16)
                                     Projectile.Kill();
                             }

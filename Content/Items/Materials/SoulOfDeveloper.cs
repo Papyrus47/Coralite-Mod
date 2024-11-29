@@ -1,13 +1,14 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using static Coralite.Core.Systems.MagikeSystem.MagikeSystem;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class SoulOfDeveloper : BaseMaterial, IMagikeRemodelable
+    public class SoulOfDeveloper : BaseMaterial, IMagikeCraftable
     {
         public override void SetStaticDefaults()
         {
@@ -19,99 +20,100 @@ namespace Coralite.Content.Items.Materials
 
         public SoulOfDeveloper() : base(Item.CommonMaxStack, Item.sellPrice(0, 0, 20), ItemRarityID.Lime, AssetDirectory.Materials) { }
 
-        public void AddMagikeRemodelRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.AaronsHelmet);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.AaronsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.AaronsLeggings);
+            MagikeCraftRecipe.CreateRecipe(ModContent.ItemType<SoulOfDeveloper>(), ItemID.AaronsHelmet, 500)
+                .RegisterNew(ItemID.AaronsBreastplate, 500)
+                .RegisterNew(ItemID.AaronsLeggings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.ArkhalisHat);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.ArkhalisShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.ArkhalisPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Arkhalis);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.ArkhalisWings);
+                .RegisterNew(ItemID.ArkhalisHat, 500)
+                .RegisterNew(ItemID.ArkhalisShirt, 500)
+                .RegisterNew(ItemID.ArkhalisPants, 500)
+                .RegisterNew(ItemID.Arkhalis, 500)
+                .RegisterNew(ItemID.ArkhalisWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsTiara);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsDress);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CenxsDressPants);
+                .RegisterNew(ItemID.CenxsTiara, 500)
+                .RegisterNew(ItemID.CenxsBreastplate, 500)
+                .RegisterNew(ItemID.CenxsLeggings, 500)
+                .RegisterNew(ItemID.CenxsWings, 500)
+                .RegisterNew(ItemID.CenxsDress, 500)
+                .RegisterNew(ItemID.CenxsDressPants, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CrownosMask);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CrownosBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CrownosLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.CrownosWings);
+                .RegisterNew(ItemID.CrownosMask, 500)
+                .RegisterNew(ItemID.CrownosBreastplate, 500)
+                .RegisterNew(ItemID.CrownosLeggings, 500)
+                .RegisterNew(ItemID.CrownosWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.DTownsHelmet);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.DTownsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.DTownsLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.DTownsWings);
+                .RegisterNew(ItemID.DTownsHelmet, 500)
+                .RegisterNew(ItemID.DTownsBreastplate, 500)
+                .RegisterNew(ItemID.DTownsLeggings, 500)
+                .RegisterNew(ItemID.DTownsWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.FoodBarbarianHelm);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.FoodBarbarianArmor);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.FoodBarbarianGreaves);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.FoodBarbarianWings);
+                .RegisterNew(ItemID.FoodBarbarianHelm, 500)
+                .RegisterNew(ItemID.FoodBarbarianArmor, 500)
+                .RegisterNew(ItemID.FoodBarbarianGreaves, 500)
+                .RegisterNew(ItemID.FoodBarbarianWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GhostarSkullPin);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GhostarShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GhostarPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GhostarsWings);
+                .RegisterNew(ItemID.GhostarSkullPin, 500)
+                .RegisterNew(ItemID.GhostarShirt, 500)
+                .RegisterNew(ItemID.GhostarPants, 500)
+                .RegisterNew(ItemID.GhostarsWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GroxTheGreatHelm);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GroxTheGreatArmor);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GroxTheGreatGreaves);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.GroxTheGreatWings);
+                .RegisterNew(ItemID.GroxTheGreatHelm, 500)
+                .RegisterNew(ItemID.GroxTheGreatArmor, 500)
+                .RegisterNew(ItemID.GroxTheGreatGreaves, 500)
+                .RegisterNew(ItemID.GroxTheGreatWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.JimsHelmet);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.JimsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.JimsLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.JimsWings);
+                .RegisterNew(ItemID.JimsHelmet, 500)
+                .RegisterNew(ItemID.JimsBreastplate, 500)
+                .RegisterNew(ItemID.JimsLeggings, 500)
+                .RegisterNew(ItemID.JimsWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.BejeweledValkyrieHead);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.BejeweledValkyrieBody);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.BejeweledValkyrieWing);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.ValkyrieYoyo);
+                .RegisterNew(ItemID.BejeweledValkyrieHead, 500)
+                .RegisterNew(ItemID.BejeweledValkyrieBody, 500)
+                .RegisterNew(ItemID.BejeweledValkyrieWing, 500)
+                .RegisterNew(ItemID.ValkyrieYoyo, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LeinforsHat);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LeinforsShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LeinforsPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LeinforsWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LeinforsAccessory);
+                .RegisterNew(ItemID.LeinforsHat, 500)
+                .RegisterNew(ItemID.LeinforsShirt, 500)
+                .RegisterNew(ItemID.LeinforsPants, 500)
+                .RegisterNew(ItemID.LeinforsWings, 500)
+                .RegisterNew(ItemID.LeinforsAccessory, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LokisHelm);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LokisShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LokisPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LokisWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.LokisDye, 3);
+                .RegisterNew(ItemID.LokisHelm, 500)
+                .RegisterNew(ItemID.LokisShirt, 500)
+                .RegisterNew(ItemID.LokisPants, 500)
+                .RegisterNew(ItemID.LokisWings, 500)
+                .RegisterNew(ItemID.LokisDye, 500, 3)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.RedsHelmet);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.RedsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.RedsLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.RedsWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.RedsYoyo);
+                .RegisterNew(ItemID.RedsHelmet, 500)
+                .RegisterNew(ItemID.RedsBreastplate, 500)
+                .RegisterNew(ItemID.RedsLeggings, 500)
+                .RegisterNew(ItemID.RedsWings, 500)
+                .RegisterNew(ItemID.RedsYoyo, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SafemanSunHair);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SafemanSunDress);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SafemanDressLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SafemanWings);
+                .RegisterNew(ItemID.SafemanSunHair, 500)
+                .RegisterNew(ItemID.SafemanSunDress, 500)
+                .RegisterNew(ItemID.SafemanDressLeggings, 500)
+                .RegisterNew(ItemID.SafemanWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SkiphsHelm);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SkiphsShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SkiphsPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.SkiphsWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.DevDye, 3);
+                .RegisterNew(ItemID.SkiphsHelm, 500)
+                .RegisterNew(ItemID.SkiphsShirt, 500)
+                .RegisterNew(ItemID.SkiphsPants, 500)
+                .RegisterNew(ItemID.SkiphsWings, 500)
+                .RegisterNew(ItemID.DevDye, 500, 3)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.WillsHelmet);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.WillsBreastplate);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.WillsLeggings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.WillsWings);
+                .RegisterNew(ItemID.WillsHelmet, 500)
+                .RegisterNew(ItemID.WillsBreastplate, 500)
+                .RegisterNew(ItemID.WillsLeggings, 500)
+                .RegisterNew(ItemID.WillsWings, 500)
 
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Yoraiz0rHead);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Yoraiz0rShirt);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Yoraiz0rPants);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Yoraiz0rWings);
-            AddRemodelRecipe<SoulOfDeveloper>(1500, ItemID.Yoraiz0rDarkness);
+                .RegisterNew(ItemID.Yoraiz0rHead, 500)
+                .RegisterNew(ItemID.Yoraiz0rShirt, 500)
+                .RegisterNew(ItemID.Yoraiz0rPants, 500)
+                .RegisterNew(ItemID.Yoraiz0rWings, 500)
+                .RegisterNew(ItemID.Yoraiz0rDarkness, 500)
+                .Register();
         }
     }
 }

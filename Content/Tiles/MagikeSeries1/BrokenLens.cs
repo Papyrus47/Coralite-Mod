@@ -34,14 +34,14 @@ namespace Coralite.Content.Tiles.MagikeSeries1
 
             HitSound = CoraliteSoundID.DigStone_Tink;
             DustType = DustID.CrystalSerpent_Pink;
-            AddMapEntry(Coralite.Instance.MagicCrystalPink);
+            AddMapEntry(Coralite.MagicCrystalPink);
         }
 
         public override IEnumerable<Item> GetItemDrops(int i, int j)
         {
             return new Item[1]
             {
-                new Item(ModContent.ItemType<MagicCrystal>())
+                new(ModContent.ItemType<MagicCrystal>())
             };
         }
 

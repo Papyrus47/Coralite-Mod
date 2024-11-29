@@ -2,8 +2,8 @@
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ namespace Coralite.Content.Items.Stars
         {
             if (Main.myPlayer == Projectile.owner)
             {
-                _Rotation = Main.rand.Next(8) * 0.785f - 1.57f;
+                _Rotation = (Main.rand.Next(8) * 0.785f) - 1.57f;
                 Projectile.netUpdate = true;
             }
         }
@@ -117,8 +117,8 @@ namespace Coralite.Content.Items.Stars
             if (timer < 22 && timer % 3 == 0)
             {
                 //发射小符文
-                float rotate = _Rotation + 0.785f * (timer / 3);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center + rotate.ToRotationVector2() * 120f, Vector2.Zero, ProjectileType<StarBookProj2>(), (int)(Projectile.damage * 0.7f * (timer / 3 + 1) / 8), Projectile.knockBack, Projectile.owner);
+                float rotate = _Rotation + (0.785f * (timer / 3));
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center + (rotate.ToRotationVector2() * 120f), Vector2.Zero, ProjectileType<StarBookProj2>(), (int)(Projectile.damage * 0.7f * ((timer / 3) + 1) / 8), Projectile.knockBack, Projectile.owner);
             }
 
             Projectile.Center = Owner.Center;
@@ -164,19 +164,19 @@ namespace Coralite.Content.Items.Stars
         public void DrawTrail()
         {
             //RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> bars = new();
 
             Vector2 dir = Vector2.Normalize(Projectile.velocity.RotatedBy(1.57f));
-            Vector2 Top = Projectile.oldPos[0] + dir * 30;
-            Vector2 Bottom = Projectile.oldPos[0] - dir * 30;
+            Vector2 Top = Projectile.oldPos[0] + (dir * 30);
+            Vector2 Bottom = Projectile.oldPos[0] - (dir * 30);
 
-            Color starYellow = new Color(255, 254, 191, (int)(150 + MathF.Cos(timer * 0.1f) * 100));
+            Color starYellow = new(255, 254, 191, (int)(150 + (MathF.Cos(timer * 0.1f) * 100)));
             var w = 1f;
             bars.Add(new(Top - Main.screenPosition, starYellow, new Vector3(1, 1, w)));
             bars.Add(new(Bottom - Main.screenPosition, starYellow, new Vector3(1, 0, w)));
 
-            Top = Projectile.oldPos[19] + dir * 40;
-            Bottom = Projectile.oldPos[19] - dir * 40;
+            Top = Projectile.oldPos[19] + (dir * 40);
+            Bottom = Projectile.oldPos[19] - (dir * 40);
             w = 1f;
             bars.Add(new(Top - Main.screenPosition, starYellow, new Vector3(0, 1, w)));
             bars.Add(new(Bottom - Main.screenPosition, starYellow, new Vector3(0, 0, w)));
@@ -208,23 +208,23 @@ namespace Coralite.Content.Items.Stars
         public void DrawSelf(SpriteBatch spriteBatch)
         {
             Texture2D mainTex = Projectile.GetTexture();
-            Vector2 origin = new Vector2(128, 128);
+            Vector2 origin = new(128, 128);
 
             float cosProgress = MathF.Cos(timer * 0.1f);
-            float currentScale = LightScale * (1f + cosProgress * 0.1f);
-            int a = (int)(160 - cosProgress * 40);
+            float currentScale = LightScale * (1f + (cosProgress * 0.1f));
+            int a = (int)(160 - (cosProgress * 40));
             //绘制圈圈
-            Rectangle source = new Rectangle(0, 0, 256, 256);
+            Rectangle source = new(0, 0, 256, 256);
 
             spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, source,
                                     new Color(255, 255, 255, a), timer * 0.1f, origin, currentScale, SpriteEffects.None, 0f);
 
             //绘制光球
             source = new Rectangle(0, 256, 256, 256);
-            currentScale = LightScale * (1.5f + cosProgress * 0.3f);
+            currentScale = LightScale * (1.5f + (cosProgress * 0.3f));
             spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, source,
                                     Color.White, timer * 0.15f, origin, currentScale, SpriteEffects.None, 0f);
-            a = (int)(140 + cosProgress * 40);
+            a = (int)(140 + (cosProgress * 40));
             spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, source,
                         new Color(255, 255, 255, a), -timer * 0.17f, origin, currentScale, SpriteEffects.FlipVertically, 0f);
 
@@ -239,8 +239,8 @@ namespace Coralite.Content.Items.Stars
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
             Texture2D mainTex = Projectile.GetTexture();
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 6);
-            Rectangle source = new Rectangle(0, 255, 256, 256);
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 6);
+            Rectangle source = new(0, 255, 256, 256);
 
             Main.spriteBatch.Draw(mainTex, Projectile.Center + new Vector2(Owner.direction * 20, -20) - Main.screenPosition, source, Color.White, timer * 0.1f, origin, LightScale, SpriteEffects.None, 0f);
 
@@ -276,9 +276,9 @@ namespace Coralite.Content.Items.Stars
 
                 if (VisualEffectSystem.HitEffect_SpecialParticles)
                 {
-                    Color starYellow = new Color(255, 254, 191);
+                    Color starYellow = new(255, 254, 191);
                     for (int i = 0; i < 2; i++)
-                        Particle.NewParticle(target.Center + Main.rand.NextVector2Circular(target.width, target.height),
+                        PRTLoader.NewParticle(target.Center + Main.rand.NextVector2Circular(target.width, target.height),
                             Main.rand.NextVector2CircularEdge(1, 1), CoraliteContent.ParticleType<HorizontalStar>(), starYellow, 0.3f);
                 }
             }
@@ -288,9 +288,9 @@ namespace Coralite.Content.Items.Stars
         {
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
-                Color starYellow = new Color(255, 254, 191);
+                Color starYellow = new(255, 254, 191);
                 for (int i = 0; i < 6; i++)
-                    Particle.NewParticle(Projectile.Center, Vector2.Normalize(Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f))) * Main.rand.Next(2, 5),
+                    PRTLoader.NewParticle(Projectile.Center, Vector2.Normalize(Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.6f, 0.6f))) * Main.rand.Next(2, 5),
                        CoraliteContent.ParticleType<HorizontalStar>(), starYellow, 0.3f);
             }
         }

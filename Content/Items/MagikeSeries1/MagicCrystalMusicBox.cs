@@ -50,7 +50,7 @@ namespace Coralite.Content.Items.MagikeSeries1
             TileObjectData.addTile(Type);
 
             LocalizedText name = CreateMapEntryName();
-            AddMapEntry(Coralite.Instance.MagicCrystalPink, name);
+            AddMapEntry(Coralite.MagicCrystalPink, name);
         }
 
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -72,10 +72,10 @@ namespace Coralite.Content.Items.MagikeSeries1
             if (t.TileFrameX == 36 && t.TileFrameY % 36 == 0 && (int)Main.timeForVisualEffects % 7 == 0 && Main.rand.NextBool(3))
             {
                 int num6 = Main.rand.Next(570, 573);
-                Vector2 position4 = new Vector2(i * 16 + 8, j * 16 - 8);
-                Vector2 velocity4 = new Vector2(Main.WindForVisuals * 2f, -0.5f);
-                velocity4.X *= 1f + Main.rand.Next(-50, 51) * 0.01f;
-                velocity4.Y *= 1f + Main.rand.Next(-50, 51) * 0.01f;
+                Vector2 position4 = new((i * 16) + 8, (j * 16) - 8);
+                Vector2 velocity4 = new(Main.WindForVisuals * 2f, -0.5f);
+                velocity4.X *= 1f + (Main.rand.Next(-50, 51) * 0.01f);
+                velocity4.Y *= 1f + (Main.rand.Next(-50, 51) * 0.01f);
                 if (num6 == 572)
                     position4.X -= 8f;
 

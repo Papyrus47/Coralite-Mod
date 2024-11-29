@@ -152,7 +152,6 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public SolarTwinkleSlash() : base(0f, 16) { }
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
@@ -167,7 +166,6 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "SpurtTrail");
             WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
             GradientTexture = Request<Texture2D>(AssetDirectory.FlyingShieldAccessories + "SolarTwinkleGradient");
         }
@@ -226,7 +224,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             Projectile.velocity *= 0f;
             if (Owner.whoAmI == Main.myPlayer)
             {
-                _Rotation = startAngle = GetStartAngle() - Projectile.ai[2] * startAngle;//设定起始角度
+                _Rotation = startAngle = GetStartAngle() - (Projectile.ai[2] * startAngle);//设定起始角度
                 totalAngle *= Projectile.ai[2];
             }
 
@@ -277,11 +275,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             }
 
             if (timer % 20 == 0)
-            {
-                SoundStyle st = CoraliteSoundID.LaserSwing_Item15;
-                st.Volume = 1;
-                SoundEngine.PlaySound(st, Projectile.Center);
-            }
+                Helper.PlayPitched(CoraliteSoundID.LaserSwing_Item15, Projectile.Center, volume: 1);
 
             if (timer < minTime + 8)
             {
@@ -297,7 +291,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             if (alpha > 20)
                 alpha -= 5;
             Slasher();
-            if (Timer < maxTime + delay / 2)
+            if (Timer < maxTime + (delay / 2))
                 scale = Vector2.Lerp(scale, new Vector2(2f, 2.5f), 0.05f);
             else if (Timer < maxTime + delay)
                 scale = Vector2.Lerp(scale, Vector2.Zero, 0.1f);
@@ -315,7 +309,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             }
 
             Projectile.NewProjectileFromThis(target.Center, Vector2.Zero, ProjectileID.SolarWhipSwordExplosion
-                , (int)(Projectile.damage * 0.5f), 10f, 0f, 0.85f + Main.rand.NextFloat() * 1.15f);
+                , (int)(Projectile.damage * 0.5f), 10f, 0f, 0.85f + (Main.rand.NextFloat() * 1.15f));
 
             for (int i = 0; i < 3; i++)
             {
@@ -331,8 +325,8 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 return;
 
             Dust dust;
-            float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-            Vector2 pos = Bottom + RotateVec2 * offset;
+            float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+            Vector2 pos = Bottom + (RotateVec2 * offset);
             if (VisualEffectSystem.HitEffect_Lightning)
             {
                 byte hue = (byte)(0.1f * 255f);
@@ -371,7 +365,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
             for (int i = -3; i < 3; i++)
             {
-                spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition + RotateVec2 * i * 12, mainTex.Frame(),
+                spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition + (RotateVec2 * i * 12), mainTex.Frame(),
                   new Color(232, 108, 26, 200),
                    Projectile.rotation, origin, scale2 * 1.5f, 0, 0f);
             }
@@ -385,7 +379,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -393,10 +387,10 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -416,7 +410,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
                 effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-                effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatVMirror.Value);
                 effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
                 Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
@@ -435,15 +429,15 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
         {
             Texture2D mainTex = Request<Texture2D>(AssetDirectory.Accessories + "SolarTwinkleProj").Value;
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 2);
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 2);
 
             int dir = Math.Sign(totalAngle);
-            float extraRot = OwnerDirection < 0 ? MathHelper.Pi : 0;
-            extraRot += OwnerDirection == dir ? 0 : MathHelper.Pi;
+            float extraRot = DirSign < 0 ? MathHelper.Pi : 0;
+            extraRot += DirSign == dir ? 0 : MathHelper.Pi;
             extraRot += spriteRotation * dir;
 
             if (canDrawSelf)
-                Main.spriteBatch.Draw(mainTex, OwnerCenter() + RotateVec2 * 30 - Main.screenPosition, mainTex.Frame(),
+                Main.spriteBatch.Draw(mainTex, OwnerCenter() + (RotateVec2 * 30) - Main.screenPosition, mainTex.Frame(),
                                                     Color.White, Projectile.rotation + extraRot, origin, Projectile.scale, CheckEffect(), 0f);
         }
     }

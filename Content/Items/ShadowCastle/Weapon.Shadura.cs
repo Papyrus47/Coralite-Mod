@@ -8,7 +8,6 @@ using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.Graphics.CameraModifiers;
@@ -112,7 +111,6 @@ namespace Coralite.Content.Items.ShadowCastle
         public ref float ControlType => ref Projectile.ai[0];
         public ref float Combo => ref Projectile.ai[1];
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> GradientTexture;
 
         public ShaduraSlash() : base(new Vector2(52, 56).ToRotation(), trailCount: 48) { }
@@ -131,7 +129,6 @@ namespace Coralite.Content.Items.ShadowCastle
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "HLightSlashTrail");
             GradientTexture = Request<Texture2D>(AssetDirectory.ShadowCastleItems + "ShaduraGradient");
         }
 
@@ -140,7 +137,6 @@ namespace Coralite.Content.Items.ShadowCastle
             if (Main.dedServ)
                 return;
 
-            trailTexture = null;
             GradientTexture = null;
         }
 
@@ -318,11 +314,7 @@ namespace Coralite.Content.Items.ShadowCastle
                             Projectile.NewProjectileFromThis(OwnerCenter() + new Vector2(0, -16), Vector2.Zero, ProjectileType<ShaduraShoot>(),
                                 Projectile.damage, Projectile.knockBack);
 
-                            SoundStyle st = CoraliteSoundID.SpiritFlame_Item117;
-                            st.Pitch = -0.5f;
-                            //SoundEngine.PlaySound(st, Owner.Center);
-                            SoundEngine.PlaySound(st, Owner.Center);
-
+                            Helper.PlayPitched(CoraliteSoundID.SpiritFlame_Item117, Owner.Center, pitch: -0.5f);
                             break;
                     }
                     break;
@@ -330,7 +322,7 @@ namespace Coralite.Content.Items.ShadowCastle
 
             recordStartAngle = Math.Abs(startAngle);
             recordTotalAngle = Math.Abs(totalAngle);
-            Projectile.scale = Helper.EllipticalEase(recordStartAngle + extraScaleAngle - recordTotalAngle * Smoother.Smoother(0, maxTime - minTime), minScale, maxScale);
+            Projectile.scale = Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(0, maxTime - minTime)), minScale, maxScale);
 
             base.Initializer();
             //extraScaleAngle *= Math.Sign(totalAngle);
@@ -383,7 +375,7 @@ namespace Coralite.Content.Items.ShadowCastle
 
             alpha = (int)(Coralite.Instance.X2Smoother.Smoother(timer, maxTime - minTime) * 140) + 100;
 
-            Projectile.scale = scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime), minScale, maxScale);
+            Projectile.scale = scale * Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(timer, maxTime - minTime)), minScale, maxScale);
 
             if ((ControlType == (int)ComboManager.ControlType.Right_Down ||
                 ControlType == (int)ComboManager.ControlType.Right_Up) && Combo == 3)
@@ -420,12 +412,12 @@ namespace Coralite.Content.Items.ShadowCastle
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
                 {
-                    PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
+                    PunchCameraModifier modifier = new(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
                     Main.instance.CameraModifiers.Add(modifier);
                 }
 
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
                 if (VisualEffectSystem.HitEffect_Lightning)
                 {
                     Vector2 dir = (_Rotation + MathHelper.PiOver2 + Main.rand.NextFloat(-0.2f, 0.2f)).ToRotationVector2();
@@ -436,8 +428,8 @@ namespace Coralite.Content.Items.ShadowCastle
                         for (int j = 0; j < 3; j++)
                             ParticleOrchestrator.RequestParticleSpawn(clientOnly: true, ParticleOrchestraType.ChlorophyteLeafCrystalShot, new ParticleOrchestraSettings
                             {
-                                PositionInWorld = pos + dir * j * 2 + dir * i * (Main.rand.NextFloat(6f, 12f)),
-                                MovementVector = vel * (1 - 0.1f * j),
+                                PositionInWorld = pos + (dir * j * 2) + (dir * i * Main.rand.NextFloat(6f, 12f)),
+                                MovementVector = vel * (1 - (0.1f * j)),
                                 UniqueInfoPiece = hue
                             });
                     }
@@ -448,8 +440,8 @@ namespace Coralite.Content.Items.ShadowCastle
                         for (int j = 0; j < 3; j++)
                             ParticleOrchestrator.RequestParticleSpawn(clientOnly: true, ParticleOrchestraType.ChlorophyteLeafCrystalShot, new ParticleOrchestraSettings
                             {
-                                PositionInWorld = pos - dir * j * 2 - dir * i * (Main.rand.NextFloat(6f, 12f)),
-                                MovementVector = vel * (1 - 0.1f * j),
+                                PositionInWorld = pos - (dir * j * 2) - (dir * i * Main.rand.NextFloat(6f, 12f)),
+                                MovementVector = vel * (1 - (0.1f * j)),
                                 UniqueInfoPiece = hue
                             });
                     }
@@ -460,14 +452,14 @@ namespace Coralite.Content.Items.ShadowCastle
                     int start = Main.rand.Next(2);
                     for (int i = 0; i < 2; i++)
                     {
-                        float rot = ((start + i) % 2) * 0.4f - 0.4f * 2;
+                        float rot = ((start + i) % 2 * 0.4f) - (0.4f * 2);
                         byte hue = (byte)(Main.rand.NextFloat(0.65f, 0.85f) * 255f);
-                        Vector2 vel = RotateVec2.RotatedBy(Main.rand.NextFloat(rot - 0.15f, rot + 0.15f)) * Main.rand.NextFloat(6f * i, 8 + i * 0.9f);
+                        Vector2 vel = RotateVec2.RotatedBy(Main.rand.NextFloat(rot - 0.15f, rot + 0.15f)) * Main.rand.NextFloat(6f * i, 8 + (i * 0.9f));
                         for (int j = 0; j < 4; j++)
                             ParticleOrchestrator.RequestParticleSpawn(clientOnly: true, ParticleOrchestraType.ChlorophyteLeafCrystalShot, new ParticleOrchestraSettings
                             {
                                 PositionInWorld = pos,
-                                MovementVector = vel * (1 - 0.1f * j),
+                                MovementVector = vel * (1 - (0.1f * j)),
                                 UniqueInfoPiece = hue
                             });
                     }
@@ -494,7 +486,7 @@ namespace Coralite.Content.Items.ShadowCastle
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -502,10 +494,10 @@ namespace Coralite.Content.Items.ShadowCastle
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -525,11 +517,11 @@ namespace Coralite.Content.Items.ShadowCastle
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
                 effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-                effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatBright.Value);
                 effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
                 effect.Parameters["worldSize"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight));
                 effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly / 5);
-                effect.Parameters["uExchange"].SetValue(0.87f + 0.05f * MathF.Sin(Main.GlobalTimeWrappedHourly));
+                effect.Parameters["uExchange"].SetValue(0.87f + (0.05f * MathF.Sin(Main.GlobalTimeWrappedHourly)));
 
                 Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
@@ -618,11 +610,11 @@ namespace Coralite.Content.Items.ShadowCastle
             Color c = Color.Purple;
             c.A = 100;
             //Projectile.DrawShadowTrails(Color.MediumPurple, 0.5f, 0.5f / 10, 1, 10, 1, 1.57f, 1.1f);
-            Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
             for (int i = 1; i < 8; i++)
                 Main.spriteBatch.Draw(flowTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, null,
-                c * (0.2f - i * 0.2f / 8), Projectile.oldRot[i] + 0.785f, origin, 1.15f, 0, 0);
+                c * (0.2f - (i * 0.2f / 8)), Projectile.oldRot[i] + 0.785f, origin, 1.15f, 0, 0);
             lightColor.A = 150;
             Main.spriteBatch.Draw(maintex, pos, null, lightColor, rot, origin, 1, 0, 0);
 

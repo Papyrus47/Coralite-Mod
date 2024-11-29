@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
@@ -19,13 +20,15 @@ namespace Coralite.Content.WorldGeneration
         /// </summary>
         public static Point NestCenter;
 
+        public static LocalizedText IceDragonNest { get; set; }
+
         public void GenIceDragonNest(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在制作冰龙巢穴";
+            progress.Message = IceDragonNest.Value;//"正在制作冰龙巢穴";
             progress.Set(0);
             //随机选择雪原上的某个地方
-            int nestCenter_x = (GenVars.snowOriginRight + GenVars.snowOriginLeft) / 2
-                + WorldGen.genRand.Next(GenVars.snowOriginRight - GenVars.snowOriginLeft) / 3;
+            int nestCenter_x = ((GenVars.snowOriginRight + GenVars.snowOriginLeft) / 2)
+                + (WorldGen.genRand.Next(GenVars.snowOriginRight - GenVars.snowOriginLeft) / 3);
             int nestCenter_y = (int)(Main.worldSurface * 0.4f);
 
             for (; nestCenter_y < Main.worldSurface; nestCenter_y++)
@@ -44,17 +47,17 @@ namespace Coralite.Content.WorldGeneration
             Texture2D nestTex = ModContent.Request<Texture2D>(AssetDirectory.IceNest + "IceNest" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
             Texture2D clearTex = ModContent.Request<Texture2D>(AssetDirectory.IceNest + "IceNestClear" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
 
-            int genOrigin_x = nestCenter_x - clearTex.Width / 2;
-            int genOrigin_y = nestCenter_y - clearTex.Height / 2;
+            int genOrigin_x = nestCenter_x - (clearTex.Width / 2);
+            int genOrigin_y = nestCenter_y - (clearTex.Height / 2);
 
             NestCenter = new Point(genOrigin_x + 52, genOrigin_y + 20);
 
-            Dictionary<Color, int> clearDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> clearDic = new()
             {
                 [Color.White] = -2,
                 [Color.Black] = -1
             };
-            Dictionary<Color, int> nestDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> nestDic = new()
             {
                 [new Color(95, 205, 228)] = TileID.IceBlock,
                 [new Color(215, 123, 186)] = TileID.IceBrick,

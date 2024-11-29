@@ -1,11 +1,13 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
+using Coralite.Content.Items.Materials;
 using Coralite.Content.Items.Nightmare;
 using Coralite.Core;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.BossSystems;
 using Coralite.Core.Systems.MagikeSystem;
-using Coralite.Core.Systems.ParticleSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -16,7 +18,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.BossSummons
 {
-    public class NightmareHarp : ModItem, IMagikeRemodelable
+    public class NightmareHarp : ModItem, IMagikeCraftable
     {
         public override string Texture => AssetDirectory.BossSummons + Name;
 
@@ -85,9 +87,19 @@ namespace Coralite.Content.Items.BossSummons
             return false;
         }
 
-        public void AddMagikeRemodelRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            MagikeSystem.AddRemodelRecipe<NightmareHarp>(0f, ItemID.Harp, 10000);
+            MagikeCraftRecipe.CreateRecipe(ItemID.Harp, ModContent.ItemType<NightmareHarp>()
+                , MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore, 24, 60 * 10))
+                .AddIngredient(ItemID.SoulofLight, 7)
+                .AddIngredient(ItemID.SoulofNight, 7)
+                .AddIngredient(ItemID.SoulofMight, 7)
+                .AddIngredient(ItemID.SoulofSight, 7)
+                .AddIngredient(ItemID.SoulofFright, 7)
+                .AddIngredient(ItemID.SoulofFlight, 7)
+                .AddIngredient<SoulOfDeveloper>(7)
+                .AddCondition(Condition.DownedMoonLord)
+                .Register();
         }
     }
 
@@ -216,10 +228,10 @@ namespace Coralite.Content.Items.BossSummons
         public override void AI()
         {
             Owner.itemAnimation = Owner.itemTime = 2;
-            Owner.itemRotation = Owner.direction * (1f + 0.2f * MathF.Sin(Timer * 0.2f));
+            Owner.itemRotation = Owner.direction * (1f + (0.2f * MathF.Sin(Timer * 0.2f)));
 
             Owner.heldProj = Projectile.whoAmI;
-            Projectile.rotation = Owner.direction * (0.3f + 0.3f * MathF.Sin(Timer * 0.02f));
+            Projectile.rotation = Owner.direction * (0.3f + (0.3f * MathF.Sin(Timer * 0.02f)));
 
             Projectile.Center = Owner.Center + new Vector2(Owner.direction * 8, 0);
 
@@ -237,39 +249,39 @@ namespace Coralite.Content.Items.BossSummons
                 SpawnNote(0, 1);
                 PlaySound(So);
             }
-            else if (Timer == 10 + part * 2)
+            else if (Timer == 10 + (part * 2))
             {
                 SpawnNote(0, 2);
                 PlaySound(Rai);
             }
-            else if (Timer == 10 + part * 3)
+            else if (Timer == 10 + (part * 3))
             {
                 SpawnNote(1, 3);
                 PlaySound(Mi);
             }
-            else if (Timer == 10 + part * 3 + part / 2)
+            else if (Timer == 10 + (part * 3) + (part / 2))
                 PlaySound(Fa);
 
-            else if (Timer == 10 + part * 4)
+            else if (Timer == 10 + (part * 4))
             {
                 SpawnNote(0, 4);
                 PlaySound(Mi);
             }
-            else if (Timer == 10 + part * 5)
+            else if (Timer == 10 + (part * 5))
             {
                 SpawnNote(0, 5);
                 PlaySound(Mi);
             }
-            else if (Timer == 10 + part * 6)
+            else if (Timer == 10 + (part * 6))
             {
                 SpawnNote(1, 6);
                 PlaySound(Rai);
             }
-            else if (Timer == 10 + part * 6 + part / 2)
+            else if (Timer == 10 + (part * 6) + (part / 2))
                 PlaySound(Do);
-            else if (Timer == 10 + part * 7)
+            else if (Timer == 10 + (part * 7))
                 PlaySound(Si1);
-            else if (Timer == 10 + part * 7 + part / 2)
+            else if (Timer == 10 + (part * 7) + (part / 2))
             {
                 PlaySound(Do);
 
@@ -283,11 +295,11 @@ namespace Coralite.Content.Items.BossSummons
                 }
             }
 
-            else if (Timer == 10 + part * 8)
+            else if (Timer == 10 + (part * 8))
                 PlaySound(Rai);
-            else if (Timer == 10 + part * 9)
+            else if (Timer == 10 + (part * 9))
                 PlaySound(So1);
-            else if (Timer > 10 + part * 10 + 20)
+            else if (Timer > 10 + (part * 10) + 20)
             {
                 SoundEngine.PlaySound(CoraliteSoundID.IceMagic_Item28);
                 if (Main.myPlayer == Projectile.owner)
@@ -319,7 +331,7 @@ namespace Coralite.Content.Items.BossSummons
 
         public void PlaySound(SoundStyle style)
         {
-            Particle.NewParticle(Owner.Center, new Vector2(Projectile.owner), CoraliteContent.ParticleType<NightmareHarpParticle>()
+            PRTLoader.NewParticle(Owner.Center, new Vector2(Projectile.owner), CoraliteContent.ParticleType<NightmareHarpParticle>()
                 , NightmarePlantera.nightPurple, 0.1f);
             SoundEngine.PlaySound(style);
         }
@@ -387,7 +399,7 @@ namespace Coralite.Content.Items.BossSummons
             Projectile.localAI[0]++;
 
             float factor2 = Math.Clamp(Projectile.localAI[0] / 140, 0, 1);
-            Vector2 pos = Owner.Center + (Main.GlobalTimeWrappedHourly + MathHelper.TwoPi * Which / 7).ToRotationVector2() * (96 + factor * 16);
+            Vector2 pos = Owner.Center + ((Main.GlobalTimeWrappedHourly + (MathHelper.TwoPi * Which / 7)).ToRotationVector2() * (96 + (factor * 16)));
             float length = Vector2.Distance(pos, Projectile.Center);
             Projectile.velocity = (pos - Projectile.Center).SafeNormalize(Vector2.Zero) * factor2 * (length < 16 ? length : 16);
 
@@ -435,53 +447,56 @@ namespace Coralite.Content.Items.BossSummons
     /// <summary>
     /// 使用速度的X传入拥有者
     /// </summary>
-    public class NightmareHarpParticle : Particle
+    public class NightmareHarpParticle : BasePRT
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "Flow";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             Rotation = Main.rand.NextFloat(6.282f);
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override bool ShouldUpdateCenter() => false;
+        public override bool ShouldUpdatePosition() => false;
 
-        public override void Update()
+        public override void AI()
         {
             int ownerIndex = (int)Velocity.X;
             if (Main.player.IndexInRange(ownerIndex))
             {
-                Center = Main.player[ownerIndex].Center;
+                Position = Main.player[ownerIndex].Center;
             }
 
             Rotation += 0.05f;
-            fadeIn++;
+            Opacity++;
 
-            if (fadeIn < 15)
+            if (Opacity < 15)
             {
                 Scale *= 1.08f;
             }
-            else if (fadeIn < 20)
+            else if (Opacity < 20)
             {
                 Scale *= 0.94f;
             }
             else
             {
                 Scale *= 1.02f;
-                if (fadeIn > 30)
-                    color.A = (byte)(color.A * 0.82f);
+                if (Opacity > 30)
+                    Color.A = (byte)(Color.A * 0.82f);
             }
 
-            if (color.A < 10)
+            if (Color.A < 10)
                 active = false;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override bool PreDraw(SpriteBatch spriteBatch)
         {
-            Texture2D mainTex = GetTexture().Value;
+            Texture2D mainTex = TexValue;
             Vector2 origin = mainTex.Size() / 2;
 
-            spriteBatch.Draw(mainTex, Center - Main.screenPosition, null, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, Position - Main.screenPosition, null, Color, Rotation, origin, Scale, SpriteEffects.None, 0f);
+
+            return false;
         }
     }
 }

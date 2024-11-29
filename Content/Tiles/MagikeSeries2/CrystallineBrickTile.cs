@@ -14,11 +14,11 @@ namespace Coralite.Content.Tiles.MagikeSeries2
             Main.tileBlockLight[Type] = true;
 
             MineResist = 3f;
-            DustType = DustID.CorruptionThorns;
+            DustType = DustID.PurpleTorch;
             HitSound = CoraliteSoundID.DigStone_Tink;
             MinPick = 150;
 
-            AddMapEntry(Coralite.Instance.CrystallineMagikePurple);
+            AddMapEntry(Coralite.CrystallineMagikePurple);
         }
 
         public override bool CanExplode(int i, int j) => false;

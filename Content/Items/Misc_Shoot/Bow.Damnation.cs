@@ -69,7 +69,7 @@ namespace Coralite.Content.Items.Misc_Shoot
         {
             Owner.heldProj = Projectile.whoAmI;
 
-            Projectile.Center = Owner.Center + Projectile.rotation.ToRotationVector2() * 16;
+            Projectile.Center = Owner.Center + (Projectile.rotation.ToRotationVector2() * 16);
             Projectile.rotation = -1.57f + Math.Clamp((Main.MouseWorld.X - Owner.Center.X) / 400f * 0.3f, -0.4f, 0.4f);
         }
 
@@ -78,7 +78,7 @@ namespace Coralite.Content.Items.Misc_Shoot
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 center = Projectile.Center - Main.screenPosition;
 
-            Main.spriteBatch.Draw(mainTex, center, null, lightColor, Projectile.rotation, mainTex.Size() / 2, 1.1f, OwnerDirection > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
+            Main.spriteBatch.Draw(mainTex, center, null, lightColor, Projectile.rotation, mainTex.Size() / 2, 1.1f, DirSign > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
 
             return false;
         }

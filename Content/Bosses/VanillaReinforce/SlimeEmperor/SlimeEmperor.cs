@@ -18,23 +18,27 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
     /// <summary>
     /// 史莱姆皇帝，加强版史莱姆王
     /// 
-    /// “又是这个囊地过分的波斯”
+    /// “蚩尤说：又是这个囊地过分的波斯”
     /// “300颗够吗，应该够了吧”
+    /// “这个武器打这个BOSS，从来没试过哦”
+    /// “这个波斯对我来说超囊的”
     /// “来吧，试一下米妮”
     /// “诶呀，亡了亡了，我没有史莱姆ang啊”
     /// 
+    ///    591 60 15 3
+    /// 
     /// 粘滑生物真正的领袖，史莱姆王？不过是个小弟罢了
-    ///                                            /\
-    ///                                | \      /      \      /|
-    ///                                |    \/           \/    |
-    ///                                |            ◇           |
-    ///                          ——————————
-    ///                      /                                         \
-    ///                   /              □               □             \
-    ///                 /                                                   \
-    ///               |                                □                     |
-    ///                 \                                                  /
-    ///                     ————————————
+    ///                                     /\
+    ///                                |\  /  \  /|
+    ///                                | \/    \/ |
+    ///                                |    ◇     |
+    ///                                 ——————————
+    ///                             /                \
+    ///                           /      □       □     \
+    ///                         /                        \
+    ///                        |                □        |
+    ///                         \                       /
+    ///                            ---————————————----
     /// </summary>
     [AutoloadBossHead]
     public partial class SlimeEmperor : ModNPC
@@ -117,14 +121,14 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((5600 + numPlayers * 1460) / journeyScale);
+                    NPC.lifeMax = (int)((5600 + (numPlayers * 1460)) / journeyScale);
                     NPC.damage = 75;
                     NPC.defense = 10;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((6200 + numPlayers * 3030) / journeyScale);
+                    NPC.lifeMax = (int)((6200 + (numPlayers * 3030)) / journeyScale);
                     NPC.scale *= 1.25f;
                     NPC.defense = 14;
                     NPC.damage = 100;
@@ -140,13 +144,13 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                 return;
             }
 
-            NPC.lifeMax = 5600 + numPlayers * 1460;
+            NPC.lifeMax = 5600 + (numPlayers * 1460);
             NPC.damage = 75;
             NPC.defense = 10;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 6200 + numPlayers * 3030;
+                NPC.lifeMax = 6200 + (numPlayers * 3030);
                 NPC.scale *= 1.25f;
                 NPC.defense = 14;
                 NPC.damage = 100;
@@ -154,7 +158,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 6800 + numPlayers * 4060;
+                NPC.lifeMax = 6800 + (numPlayers * 4060);
                 NPC.damage = 140;
                 NPC.scale *= 1.25f;
                 NPC.defense = 16;
@@ -169,17 +173,18 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             npcLoot.Add(ItemDropRule.Common(ItemType<RoyalGelCannon>(), 10));
             npcLoot.Add(ItemDropRule.Common(ItemType<SlimeEmperorMask>(), 7));
 
-            LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
+            LeadingConditionRule notExpertRule = new(new Conditions.NotExpert());
 
-            IItemDropRule[] weaponTypes = new IItemDropRule[] {
+            IItemDropRule[] weaponTypes = [
                 ItemDropRule.Common(ItemType<SlimeEruption>(), 1, 1, 1),
                 ItemDropRule.Common(ItemType<GelWhip>(), 1, 1, 1),
                 ItemDropRule.Common(ItemType<RoyalClassics>(), 1, 1, 1),
                 ItemDropRule.Common(ItemType<SlimeSceptre>(), 1, 1, 1),
-            };
+            ];
 
             notExpertRule.OnSuccess(new OneFromRulesRule(1, weaponTypes));
             notExpertRule.OnSuccess(ItemDropRule.Common(ItemID.Gel, 1, 30, 100));
+            notExpertRule.OnSuccess(ItemDropRule.Common(ItemType<EmperorGel>(), 1, 15, 30));
 
             npcLoot.Add(notExpertRule);
         }
@@ -403,7 +408,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                         }
 
                         int height = GetCrownBottom();
-                        float groundHeight = NPC.Bottom.Y - Scale.Y * height;
+                        float groundHeight = NPC.Bottom.Y - (Scale.Y * height);
                         crown.Bottom.X = MathHelper.Lerp(crown.Bottom.X, NPC.Center.X, 0.5f);
 
                         if (crown.Bottom.Y < groundHeight - 2) //重力
@@ -743,7 +748,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             NPC.defense = NPC.defDefense;
 
             crown.Velocity_Y *= 0;
-            crown.Rotation = Main.rand.NextFloat(MathHelper.Pi + MathHelper.Pi / 4, MathHelper.TwoPi - MathHelper.Pi / 4) + MathHelper.Pi / 2;
+            crown.Rotation = Main.rand.NextFloat(MathHelper.Pi + (MathHelper.Pi / 4), MathHelper.TwoPi - (MathHelper.Pi / 4)) + (MathHelper.Pi / 2);
             crown.Bottom = NPC.Top;
         }
 
@@ -778,7 +783,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             Texture2D crownTex = CrownTex.Value;
 
             Rectangle frameBox = mainTex.Frame(1, Main.npcFrameCount[Type], 0, NPC.frame.Y);
-            Vector2 origin = new Vector2(frameBox.Width / 2, frameBox.Height);
+            Vector2 origin = new(frameBox.Width / 2, frameBox.Height);
 
             Vector2 crownOrigin;
             Vector2 crownPos;
@@ -798,10 +803,10 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                     spriteBatch.Draw(mainTex, NPC.Bottom + offset, frameBox, drawColor, NPC.rotation, origin, scale, 0, 0f);
                     if (CanDrawShadow)
                     {
-                        Vector2 toBottom = new Vector2(NPC.width / 2, NPC.height);
+                        Vector2 toBottom = new(NPC.width / 2, NPC.height);
                         for (int i = 1; i < 12; i += 2)
                         {
-                            spriteBatch.Draw(mainTex, NPC.oldPos[i] + toBottom + offset, frameBox, drawColor * (0.4f - i * 0.04f), NPC.rotation, origin, scale, 0, 0f);
+                            spriteBatch.Draw(mainTex, NPC.oldPos[i] + toBottom + offset, frameBox, drawColor * (0.4f - (i * 0.04f)), NPC.rotation, origin, scale, 0, 0f);
                         }
                     }
 
@@ -821,7 +826,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
         #endregion
 
-        private struct CrownDatas
+        public struct CrownDatas
         {
             public Vector2 Bottom;
             public float Velocity_Y;

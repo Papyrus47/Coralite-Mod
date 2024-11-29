@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Terraria;
 using Terraria.Audio;
 
@@ -63,13 +63,14 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                             NPC.frame.X = 1;
 
                             shadowScale = 1.2f;
-                            SoundStyle st = CoraliteSoundID.LightningOrb_Item121;
-                            st.Pitch = 0.4f;
-                            SoundEngine.PlaySound(st, NPC.Center);
+                            Helper.PlayPitched(CoraliteSoundID.LightningOrb_Item121, NPC.Center, pitch: 0.4f);
                             SoundEngine.PlaySound(CoraliteSoundID.Roar, NPC.Center);
 
-                            NPC.NewProjectileDirectInAI<ExchangePhaseAnmi>(NPC.Center, Vector2.Zero, 1, 0, NPC.target,
+                            if (!VaultUtils.isClient)
+                            {
+                                NPC.NewProjectileDirectInAI<ExchangePhaseAnmi>(NPC.Center, Vector2.Zero, 1, 0, NPC.target,
                                 BurstTime, NPC.whoAmI);
+                            }
                         }
                     }
                     break;
@@ -77,28 +78,31 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     {
                         UpdateAllOldCaches();
 
-                        if (Timer < BurstTime)
+                        if (!VaultUtils.isServer)
                         {
-                            float factor = Timer / BurstTime;
-                            float length = Helper.Lerp(80, 1400, factor);
-
-                            for (int i = 0; i < 5; i++)
+                            if (Timer < BurstTime)
                             {
-                                Particle.NewParticle(NPC.Center + Main.rand.NextVector2CircularEdge(length, length),
-                                    Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
-                            }
-                        }
+                                float factor = Timer / BurstTime;
+                                float length = Helper.Lerp(80, 1400, factor);
 
-                        if (Timer < RoaringTime)
-                        {
-                            float factor = Timer / RoaringTime;
-                            shadowScale = Helper.Lerp(1f, 2.5f, factor);
-                            shadowAlpha = Helper.Lerp(1f, 0f, factor);
-                            Vector2 pos = NPC.Center + (NPC.rotation).ToRotationVector2() * 60;
-                            if ((int)Timer % 10 == 0)
-                                Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Coralite.Instance.ThunderveinYellow, 0.2f);
-                            if ((int)Timer % 20 == 0)
-                                Particle.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.2f);
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    PRTLoader.NewParticle(NPC.Center + Main.rand.NextVector2CircularEdge(length, length),
+                                        Vector2.Zero, CoraliteContent.ParticleType<ElectricParticle>(), Scale: Main.rand.NextFloat(0.9f, 1.3f));
+                                }
+                            }
+
+                            if (Timer < RoaringTime)
+                            {
+                                float factor = Timer / RoaringTime;
+                                shadowScale = Helper.Lerp(1f, 2.5f, factor);
+                                shadowAlpha = Helper.Lerp(1f, 0f, factor);
+                                Vector2 pos = NPC.Center + (NPC.rotation.ToRotationVector2() * 60);
+                                if ((int)Timer % 10 == 0)
+                                    PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringWave>(), Coralite.ThunderveinYellow, 0.2f);
+                                if ((int)Timer % 20 == 0)
+                                    PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<RoaringLine>(), Color.White, 0.2f);
+                            }
                         }
 
                         Timer++;

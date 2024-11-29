@@ -51,7 +51,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void SetOtherValues()
         {
-            flyingTime = 18;
+            flyingTime = 16;
             backTime = 22;
             backSpeed = 17;
             trailCachesLength = 6;
@@ -65,7 +65,7 @@ namespace Coralite.Content.Items.FlyingShields
                 //射流星
                 Projectile.NewProjectileFromThis<LeonidsMeteor>(Projectile.Center
                     , (Projectile.extraUpdates + 1) * Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.25f, 0.25f)) * Main.rand.NextFloat(0.8f, 1.2f),
-                    (int)(Projectile.damage * 0.86f), Projectile.knockBack);
+                    (int)(Projectile.damage * 0.8f), Projectile.knockBack);
             }
         }
 
@@ -103,13 +103,13 @@ namespace Coralite.Content.Items.FlyingShields
             Vector2 origin2 = frameBox.Size() / 2;
 
             //绘制基底
-            Main.spriteBatch.Draw(mainTex, pos - dir * 5, frameBox, c, rotation, origin2, scale, effect, 0);
+            Main.spriteBatch.Draw(mainTex, pos - (dir * 5), frameBox, c, rotation, origin2, scale, effect, 0);
             Main.spriteBatch.Draw(mainTex, pos, frameBox, lightColor, rotation, origin2, scale, effect, 0);
 
             //绘制上部
             frameBox = mainTex.Frame(2, 1, 1, 0);
-            Main.spriteBatch.Draw(mainTex, pos + dir * 3, frameBox, c, rotation, origin2, scale, effect, 0);
-            Main.spriteBatch.Draw(mainTex, pos + dir * 7, frameBox, lightColor, rotation, origin2, scale, effect, 0);
+            Main.spriteBatch.Draw(mainTex, pos + (dir * 3), frameBox, c, rotation, origin2, scale, effect, 0);
+            Main.spriteBatch.Draw(mainTex, pos + (dir * 7), frameBox, lightColor, rotation, origin2, scale, effect, 0);
         }
     }
 
@@ -141,7 +141,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Coralite.Instance.IcicleCyan.ToVector3());
+            Lighting.AddLight(Projectile.Center, Coralite.IcicleCyan.ToVector3());
 
             Projectile.UpdateOldPosCache(addVelocity: true);
             Projectile.UpdateOldRotCache();
@@ -157,7 +157,7 @@ namespace Coralite.Content.Items.FlyingShields
                 Vector2 dir = (i * MathHelper.PiOver2).ToRotationVector2();
                 for (int j = 0; j < 6; j++)
                 {
-                    Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Clentaminator_Cyan, dir * (1 + j * 0.8f), Scale: 1.6f - j * 0.15f);
+                    Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Clentaminator_Cyan, dir * (1 + (j * 0.8f)), Scale: 1.6f - (j * 0.15f));
                     d.noGravity = true;
                 }
             }
@@ -182,17 +182,17 @@ namespace Coralite.Content.Items.FlyingShields
 
         public virtual void DrawTrails()
         {
-            Texture2D Texture = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "CircleTrail").Value;
+            Texture2D Texture = CoraliteAssets.Trail.CircleA.Value;
 
-            List<CustomVertexInfo> bars = new List<CustomVertexInfo>();
+            List<CustomVertexInfo> bars = new();
 
             for (int i = 0; i < trailCachesLength; i++)
             {
                 float factor = (float)i / trailCachesLength;
                 Vector2 Center = Projectile.oldPos[i];
                 Vector2 normal = (Projectile.oldRot[i] + MathHelper.PiOver2).ToRotationVector2();
-                Vector2 Top = Center - Main.screenPosition + normal * 5 * factor;
-                Vector2 Bottom = Center - Main.screenPosition - normal * 5 * factor;
+                Vector2 Top = Center - Main.screenPosition + (normal * 5 * factor);
+                Vector2 Bottom = Center - Main.screenPosition - (normal * 5 * factor);
 
                 var Color = new Color(20, 255, 199, 0) * factor;
                 bars.Add(new(Top, Color, new Vector3(factor, 0, 1)));

@@ -92,7 +92,6 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         /// </summary>
         /// <param name="player"></param>
         /// <param name="source"></param>
-        /// <param name="position"></param>
         /// <param name="velocity"></param>
         /// <param name="type"></param>
         /// <param name="damage"></param>
@@ -110,16 +109,16 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (Main.keyState.PressingShift())//TODO: 增加本地化
+            if (Main.keyState.PressingShift())
             {
                 string text = FlyingShieldSystem.FSDescriptionLong.Value;
-                TooltipLine line = new TooltipLine(Mod, "Coralite FlyingShield Description", text);
+                TooltipLine line = new(Mod, "Coralite FlyingShield Description", text);
                 tooltips.Add(line);
             }
             else
             {
                 string text = FlyingShieldSystem.FSDescriptionShort.Value;
-                TooltipLine line = new TooltipLine(Mod, "Coralite FlyingShield Description", text);
+                TooltipLine line = new(Mod, "Coralite FlyingShield Description", text);
                 tooltips.Add(line);
             }
         }

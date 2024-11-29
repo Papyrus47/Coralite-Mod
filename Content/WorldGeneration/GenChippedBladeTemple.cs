@@ -8,15 +8,18 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
+using Terraria.Localization;
 using Terraria.WorldBuilding;
 
 namespace Coralite.Content.WorldGeneration
 {
     public partial class CoraliteWorld
     {
+        public static LocalizedText ChippedBladeTemple { get; set; }
+
         public void GenChippedBladeTemple(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "正在生成破碎剑刃神庙";
+            progress.Message = ChippedBladeTemple.Value;//"正在生成破碎剑刃神庙";
 
             int itemCount = 1;
             int gened = 0;
@@ -31,20 +34,20 @@ namespace Coralite.Content.WorldGeneration
                 itemCount++;
             }
 
-            Dictionary<Color, int> clearDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> clearDic = new()
             {
                 [Color.White] = -2,
                 [Color.Black] = -1
             };
 
-            Dictionary<Color, int> mainDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> mainDic = new()
             {
                 [new Color(155, 173, 183)] = TileID.LeadBrick,
                 [new Color(7, 60, 49)] = ModContent.TileType<HartcoreObsidianTile>(),
                 [Color.Black] = -1
             };
 
-            Dictionary<Color, int> wallDic = new Dictionary<Color, int>()
+            Dictionary<Color, int> wallDic = new()
             {
                 [new Color(77, 146, 185)] = WallID.LeadBrick,
                 [Color.Black] = -1
@@ -55,18 +58,18 @@ namespace Coralite.Content.WorldGeneration
                 try
                 {
                     int offset = GenVars.dungeonSide;
-                    int origin = GenVars.jungleOriginX - offset * 350;
+                    int origin = GenVars.jungleOriginX - (offset * 350);
                     int junglePos = Main.rand.Next(origin - 60, origin + 60);//(GenVars.jungleMaxX + GenVars.jungleMinX) / 2;
-                    float r = Math.Abs(junglePos - Main.maxTilesX / 2);
+                    float r = Math.Abs(junglePos - (Main.maxTilesX / 2));
 
-                    Vector2 pos = new Vector2(Main.maxTilesX / 2, (float)Main.worldSurface);
+                    Vector2 pos = new(Main.maxTilesX / 2, (float)Main.worldSurface);
                     float angle = Main.rand.NextFloat(0, MathHelper.Pi);
 
                     pos += angle.ToRotationVector2() * r;
 
                     Point position = pos.ToPoint();
 
-                    Dictionary<ushort, int> tileDictionary = new Dictionary<ushort, int>();
+                    Dictionary<ushort, int> tileDictionary = new();
                     if (!WorldGen.InWorld(position.X - 25, position.Y - 25) || !WorldGen.InWorld(position.X - 25 + 50, position.Y - 25 + 50))
                         continue;
 

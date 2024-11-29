@@ -1,0 +1,68 @@
+DescriptionPage.Description: Mods.Coralite.Knowledges.DescriptionPage.Description
+
+GetMagikeKnowledge1Page: {
+	Title: Mods.Coralite.Knowledges.GetMagikeKnowledge1Page.Title
+	Welcome: Mods.Coralite.Knowledges.GetMagikeKnowledge1Page.Welcome
+	ClickButton: Mods.Coralite.Knowledges.GetMagikeKnowledge1Page.ClickButton
+	ContiuneRead: Mods.Coralite.Knowledges.GetMagikeKnowledge1Page.ContiuneRead
+}
+
+WhatIsMagikePage: {
+	Title: Mods.Coralite.Knowledges.WhatIsMagikePage.Title
+	Description: Mods.Coralite.Knowledges.WhatIsMagikePage.Description
+}
+
+PlaceFirstLens: {
+	BuildYourFirstMagike: Mods.Coralite.Knowledges.PlaceFirstLens.BuildYourFirstMagike
+	ExtractLens: Mods.Coralite.Knowledges.PlaceFirstLens.ExtractLens
+	FourWayPlace: Mods.Coralite.Knowledges.PlaceFirstLens.FourWayPlace
+	TryMouseHover: Mods.Coralite.Knowledges.PlaceFirstLens.TryMouseHover
+}
+
+PlacePolarizedFilter: {
+	NeedPolarizedFilter: Mods.Coralite.Knowledges.PlacePolarizedFilter.NeedPolarizedFilter
+	HowToUsePolarizedFilter: Mods.Coralite.Knowledges.PlacePolarizedFilter.HowToUsePolarizedFilter
+	SeeItemToolTip: Mods.Coralite.Knowledges.PlacePolarizedFilter.SeeItemToolTip
+}
+
+PutItemIn: {
+	WhatIsItemWithMagike: Mods.Coralite.Knowledges.PutItemIn.WhatIsItemWithMagike
+	TurnToMagikeProducer: Mods.Coralite.Knowledges.PutItemIn.TurnToMagikeProducer
+}
+
+UIDescriptionPage: {
+	OpenUI: Mods.Coralite.Knowledges.UIDescriptionPage.OpenUI
+	UIDescription: Mods.Coralite.Knowledges.UIDescriptionPage.UIDescription
+}
+
+StoneMaker: {
+	UseMagikeToDoSomething: Mods.Coralite.Knowledges.StoneMaker.UseMagikeToDoSomething
+	MakeAStoneMaker: Mods.Coralite.Knowledges.StoneMaker.MakeAStoneMaker
+	InsertPolarizedFilter: Mods.Coralite.Knowledges.StoneMaker.InsertPolarizedFilter
+}
+
+PartJumpPage: {
+	P1Title: Mods.Coralite.Knowledges.PartJumpPage.P1Title
+	P2Title: Mods.Coralite.Knowledges.PartJumpPage.P2Title
+	P3Title: Mods.Coralite.Knowledges.PartJumpPage.P3Title
+	P4Title: Mods.Coralite.Knowledges.PartJumpPage.P4Title
+	P5Title: Mods.Coralite.Knowledges.PartJumpPage.P5Title
+	P6Title: Mods.Coralite.Knowledges.PartJumpPage.P6Title
+	P7Title: Mods.Coralite.Knowledges.PartJumpPage.P7Title
+	P8Title: Mods.Coralite.Knowledges.PartJumpPage.P8Title
+}
+
+ConnectStaff: {
+	HowToMoveMagike: Mods.Coralite.Knowledges.ConnectStaff.HowToMoveMagike
+	ConnectStep1: Mods.Coralite.Knowledges.ConnectStaff.ConnectStep1
+	ConnectStep2: Mods.Coralite.Knowledges.ConnectStaff.ConnectStep2
+	UseConnectStaff: Mods.Coralite.Knowledges.ConnectStaff.UseConnectStaff
+	BuyConnectStaff: Mods.Coralite.Knowledges.ConnectStaff.BuyConnectStaff
+}
+
+ActivatedTheMachine: {
+	BuyActivateStaff: Mods.Coralite.Knowledges.ActivatedTheMachine.BuyActivateStaff
+	HowToUseActivateStaff: Mods.Coralite.Knowledges.ActivatedTheMachine.HowToUseActivateStaff
+	WorkingBeLike: Mods.Coralite.Knowledges.ActivatedTheMachine.WorkingBeLike
+	HarvestTheProduct: Mods.Coralite.Knowledges.ActivatedTheMachine.HarvestTheProduct
+}

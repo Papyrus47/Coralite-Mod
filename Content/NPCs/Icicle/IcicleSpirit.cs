@@ -65,7 +65,7 @@ namespace Coralite.Content.NPCs.Icicle
             {
                 NPC.frameCounter = 0;
                 NPC.frame.Y += NPC.frame.Height;
-                if (NPC.frame.Y > NPC.frame.Height * (Main.npcFrameCount[Type]) - 1)
+                if (NPC.frame.Y > (NPC.frame.Height * Main.npcFrameCount[Type]) - 1)
                     NPC.frame.Y = 0;
             }
 
@@ -150,7 +150,7 @@ namespace Coralite.Content.NPCs.Icicle
             } while (false);
 
             NPC.oldPos[0] = NPC.Center;
-            Lighting.AddLight(NPC.Center, Coralite.Instance.IcicleCyan.ToVector3());
+            Lighting.AddLight(NPC.Center, Coralite.IcicleCyan.ToVector3());
             if (Main.rand.NextBool(30))
             {
                 Dust dust = Dust.NewDustPerfect(NPC.Center, DustID.FrostStaff, Main.rand.NextFloat(6.282f).ToRotationVector2() * Main.rand.NextFloat(4, 6));

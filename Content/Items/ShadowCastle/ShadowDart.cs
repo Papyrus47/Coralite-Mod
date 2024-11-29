@@ -50,7 +50,7 @@ namespace Coralite.Content.Items.ShadowCastle
     {
         public override string Texture => AssetDirectory.Blank;
 
-        public Vector2 TargetPos => new Vector2(Projectile.ai[0], Projectile.ai[1]);
+        public Vector2 TargetPos => new(Projectile.ai[0], Projectile.ai[1]);
 
         public override void SetDefaults()
         {
@@ -73,9 +73,9 @@ namespace Coralite.Content.Items.ShadowCastle
                         Projectile.localAI[1] = 22;
                     }
                     Projectile.velocity =
-                        (Projectile.velocity.ToRotation()
+                        Projectile.velocity.ToRotation()
                         .AngleLerp((TargetPos - Projectile.Center).ToRotation(), Projectile.localAI[1] / 20).ToRotationVector2()
-                        * Projectile.velocity.Length());
+                        * Projectile.velocity.Length();
                     Projectile.localAI[1]++;
                 }
 

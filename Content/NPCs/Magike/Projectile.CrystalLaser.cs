@@ -15,12 +15,10 @@ namespace Coralite.Content.NPCs.Magike
     /// </summary>
     public class CrystalLaser : ModProjectile, IDrawAdditive
     {
-        public override string Texture => AssetDirectory.OtherProjectiles + "LaserCore";
+        public override string Texture => AssetDirectory.Lasers + "VanillaCoreA";
 
-        public static Asset<Texture2D> FlowTex;
         public static Asset<Texture2D> GlowTex;
         public static Asset<Texture2D> StarTex;
-        public static Asset<Texture2D> LaserBodyTex;
         public static Asset<Texture2D> BlackTex;
 
         public Vector2 endPoint;
@@ -44,10 +42,8 @@ namespace Coralite.Content.NPCs.Magike
             if (Main.dedServ)
                 return;
 
-            FlowTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LaserTrail");
             GlowTex = ModContent.Request<Texture2D>(AssetDirectory.Dusts + "GlowBall");
             StarTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "Hexagram2");
-            LaserBodyTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LaserBody");
             BlackTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "GradientBlack");
         }
 
@@ -56,10 +52,8 @@ namespace Coralite.Content.NPCs.Magike
             if (Main.dedServ)
                 return;
 
-            FlowTex = null;
             GlowTex = null;
             StarTex = null;
-            LaserBodyTex = null;
             BlackTex = null;
         }
 
@@ -86,7 +80,7 @@ namespace Coralite.Content.NPCs.Magike
         {
             for (int k = 0; k < 80; k++)
             {
-                Vector2 posCheck = Projectile.Center + Vector2.UnitX.RotatedBy(LaserRotation) * k * 8;
+                Vector2 posCheck = Projectile.Center + (Vector2.UnitX.RotatedBy(LaserRotation) * k * 8);
 
                 if (Helper.PointInTile(posCheck) || k == 79)
                 {
@@ -97,7 +91,7 @@ namespace Coralite.Content.NPCs.Magike
 
             int width = (int)(Projectile.Center - endPoint).Length();
             Vector2 dir = Vector2.UnitX.RotatedBy(LaserRotation);
-            Color color = new Color(162, 42, 131);
+            Color color = new(162, 42, 131);
 
             do
             {
@@ -123,7 +117,7 @@ namespace Coralite.Content.NPCs.Magike
                 {
                     for (int i = 0; i < width - 128; i += 24)
                     {
-                        Dust.NewDustPerfect(Projectile.Center + dir * i + Main.rand.NextVector2Circular(8, 8), ModContent.DustType<GlowBall>(),
+                        Dust.NewDustPerfect(Projectile.Center + (dir * i) + Main.rand.NextVector2Circular(8, 8), ModContent.DustType<GlowBall>(),
                             dir * Main.rand.NextFloat(width / 160f), 0, color, 0.35f);
                     }
                 }
@@ -140,10 +134,10 @@ namespace Coralite.Content.NPCs.Magike
 
                 for (int i = 0; i < width; i += 16)
                 {
-                    Lighting.AddLight(Projectile.position + Vector2.UnitX.RotatedBy(LaserRotation) * i, color.ToVector3() * height * 0.030f);
+                    Lighting.AddLight(Projectile.position + (Vector2.UnitX.RotatedBy(LaserRotation) * i), color.ToVector3() * height * 0.030f);
                     if (Main.rand.NextBool(20))
                     {
-                        Dust.NewDustPerfect(Projectile.Center + dir * i + Main.rand.NextVector2Circular(8, 8), ModContent.DustType<GlowBall>(),
+                        Dust.NewDustPerfect(Projectile.Center + (dir * i) + Main.rand.NextVector2Circular(8, 8), ModContent.DustType<GlowBall>(),
                             dir * Main.rand.NextFloat(min, max), 0, color, 0.25f);
                     }
                 }
@@ -172,9 +166,9 @@ namespace Coralite.Content.NPCs.Magike
         public void DrawAdditive(SpriteBatch spriteBatch)
         {
             Texture2D laserTex = Projectile.GetTexture();
-            Texture2D flowTex = FlowTex.Value;
+            Texture2D flowTex = CoraliteAssets.Laser.VanillaFlowA.Value;
 
-            Color color = new Color(162, 42, 131);
+            Color color = new(162, 42, 131);
 
             Effect effect = Coralite.Instance.Assets.Request<Effect>("Effects/GlowingDust").Value;
 
@@ -216,7 +210,7 @@ namespace Coralite.Content.NPCs.Magike
             spriteBatch.Begin(default, BlendState.Additive, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
 
             //绘制主体光束
-            Texture2D bodyTex = LaserBodyTex.Value;
+            Texture2D bodyTex = CoraliteAssets.Laser.Body.Value;
 
             color = new Color(211, 103, 156);
 

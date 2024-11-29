@@ -47,7 +47,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         }
 
                         SetRotationNormally();
-                        float edge = 400 + 220 * Math.Clamp(Timer / ReadyTime, 0, 1);
+                        float edge = 400 + (220 * Math.Clamp(Timer / ReadyTime, 0, 1));
                         edge /= 2;
                         for (int i = 0; i < 4; i++)
                         {
@@ -84,21 +84,33 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                                 //生成爆炸弹幕
 
                                 NPC.TargetClosest();
-                                int damage = Helper.GetProjDamage(100, 130, 180);
-                                if (Phase == 1)
-                                    NPC.NewProjectileDirectInAI<DischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
-                                        , burstTime, NPC.whoAmI);
-                                else
-                                    NPC.NewProjectileDirectInAI<StrongDischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
-                                        , burstTime, NPC.whoAmI);
+
+                                if (!VaultUtils.isClient)
+                                {
+                                    int damage = Helper.GetProjDamage(100, 130, 180);
+                                    if (Phase == 1)
+                                    {
+                                        NPC.NewProjectileDirectInAI<DischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
+                                            , burstTime, NPC.whoAmI);
+                                    }
+                                    else
+                                    {
+                                        NPC.NewProjectileDirectInAI<StrongDischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
+                                            , burstTime, NPC.whoAmI);
+                                    }
+                                }
 
                                 SoundEngine.PlaySound(CoraliteSoundID.NoUse_Electric_Item93, NPC.Center);
                                 SoundEngine.PlaySound(CoraliteSoundID.BigBOOM_Item62, NPC.Center);
                                 canDrawShadows = true;
                                 currentSurrounding = true;
                                 SetBackgroundLight(0.5f, burstTime - 3, 8);
-                                var modifyer = new PunchCameraModifier(NPC.Center, Vector2.UnitY * 1.4f, 26, 26, 25, 1000);
-                                Main.instance.CameraModifiers.Add(modifyer);
+
+                                if (!VaultUtils.isServer)
+                                {
+                                    var modifyer = new PunchCameraModifier(NPC.Center, Vector2.UnitY * 1.4f, 26, 26, 25, 1000);
+                                    Main.instance.CameraModifiers.Add(modifyer);
+                                }
 
                                 ResetAllOldCaches();
                             }
@@ -147,15 +159,19 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public void SpawnDischargingDust(float edge)
         {
+            if (!VaultUtils.isServer)
+            {
+                return;
+            }
             Vector2 pos = NPC.Center + Main.rand.NextVector2CircularEdge(edge, edge);
             Dust d = Dust.NewDustPerfect(pos, DustID.PortalBoltTrail
                 , (pos - NPC.Center).SafeNormalize(Vector2.Zero).RotatedBy(NPC.direction * MathHelper.PiOver2) * Main.rand.NextFloat(4f, 8f)
-                , newColor: Coralite.Instance.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.5f));
+                , newColor: Coralite.ThunderveinYellow, Scale: Main.rand.NextFloat(1f, 1.5f));
             d.noGravity = true;
             pos = NPC.Center + Main.rand.NextVector2Circular(edge, edge);
             d = Dust.NewDustPerfect(pos, DustID.PortalBoltTrail
                 , (pos - NPC.Center).SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(4f, 8f)
-                , newColor: Coralite.Instance.ThunderveinYellow);
+                , newColor: Coralite.ThunderveinYellow);
             d.noGravity = true;
         }
     }

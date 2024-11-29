@@ -147,7 +147,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                         {
                             float currentLength = Vector2.Distance(SpikeTop, Projectile.Center);
                             currentLength = Helper.Lerp(currentLength, SpurtLength, 0.7f);
-                            SpikeTop = Projectile.Center + Projectile.rotation.ToRotationVector2() * currentLength;
+                            SpikeTop = Projectile.Center + (Projectile.rotation.ToRotationVector2() * currentLength);
                             spikeWidth += 4f;
                         }
 
@@ -184,7 +184,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             if (warningLineAlpha > 0)
             {
                 Texture2D warningTex = NightmareSpike.WarningLineTex.Value;
-                Rectangle destination = new Rectangle((int)pos.X, (int)pos.Y, (int)SpurtLength, warningTex.Height);
+                Rectangle destination = new((int)pos.X, (int)pos.Y, (int)SpurtLength, warningTex.Height);
 
                 spriteBatch.Draw(warningTex, destination, null, new Color(190, 0, 101, (byte)(warningLineAlpha * 255)), Projectile.rotation, new Vector2(0, warningTex.Height / 2), 0, 0);
             }
@@ -201,7 +201,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             var sparkleFrame = sparkleTex.Frame(1, 2, 0, Projectile.ai[1] == -1 ? 0 : 1);
             var sparkleOrigin = sparkleFrame.Size() / 2;
-            spriteBatch.Draw(sparkleTex, pos, sparkleFrame, c, Main.GlobalTimeWrappedHourly * 0.5f, sparkleOrigin, SelfScale / 3 + Main.rand.NextFloat(0, 0.02f), 0, 0);
+            spriteBatch.Draw(sparkleTex, pos, sparkleFrame, c, Main.GlobalTimeWrappedHourly * 0.5f, sparkleOrigin, (SelfScale / 3) + Main.rand.NextFloat(0, 0.02f), 0, 0);
 
             //Effect e = Filters.Scene["HurricaneTwistReverse"].GetShader().Shader;
             //e.Parameters["uColor"].SetValue(drawColor.ToVector3());

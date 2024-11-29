@@ -16,7 +16,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
         private Vector2 recordVelocity;
 
-        public ParticleGroup triangles;
+        public PrimitivePRTGroup triangles;
 
         public override void SetDefaults()
         {
@@ -46,7 +46,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
         public override void AI()
         {
-            triangles ??= new ParticleGroup();
+            triangles ??= new PrimitivePRTGroup();
 
             if (Timer < 80 * 2)//反方向运动
             {
@@ -79,7 +79,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                 }
             }
 
-            triangles.UpdateParticles();
+            triangles.Update();
             Timer++;
         }
 
@@ -91,7 +91,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
             Main.PlayerRenderer.DrawPlayer(Main.Camera, owner, Projectile.Center + new Vector2(-16, -24), 0f, owner.fullRotationOrigin, Shadow);
 
-            triangles?.DrawParticles(Main.spriteBatch);
+            triangles?.Draw(Main.spriteBatch);
 
             return false;
         }

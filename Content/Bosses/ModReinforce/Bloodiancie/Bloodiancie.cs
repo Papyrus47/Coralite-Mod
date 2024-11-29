@@ -38,8 +38,8 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
         /// <summary> 目前的AI循环的计数 </summary>
         internal ref float MoveCount => ref NPC.localAI[1];
 
-        internal static readonly Color red = new Color(221, 50, 50);
-        internal static readonly Color grey = new Color(91, 93, 102);
+        internal static readonly Color red = new(221, 50, 50);
+        internal static readonly Color grey = new(91, 93, 102);
         public const int ON_KILL_ANIM_TIME = 250;
 
         public List<BloodiancieFollower> followers;
@@ -82,14 +82,14 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((21000 + numPlayers * 9500) / journeyScale);
+                    NPC.lifeMax = (int)((21000 + (numPlayers * 9500)) / journeyScale);
                     NPC.damage = 90;
                     NPC.defense = 18;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((25500 + numPlayers * 11500) / journeyScale);
+                    NPC.lifeMax = (int)((25500 + (numPlayers * 11500)) / journeyScale);
                     NPC.damage = 115;
                     NPC.defense = 20;
                 }
@@ -102,20 +102,20 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
                 return;
             }
 
-            NPC.lifeMax = 21000 + numPlayers * 9500;
+            NPC.lifeMax = 21000 + (numPlayers * 9500);
             NPC.damage = 90;
             NPC.defense = 18;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 25500 + numPlayers * 11500;
+                NPC.lifeMax = 25500 + (numPlayers * 11500);
                 NPC.damage = 115;
                 NPC.defense = 20;
             }
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 30000 + numPlayers * 14500;
+                NPC.lifeMax = 30000 + (numPlayers * 14500);
                 NPC.damage = 115;
                 NPC.defense = 14;//因为FTW种能够拥有非常多的弹药所以就降低一下基础防御了
             }
@@ -128,7 +128,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
             npcLoot.Add(ItemDropRule.BossBag(ItemType<BloodiancieBossBag>()));
             //npcLoot.Add(ItemDropRule.Common(ItemType<RediancieTrophy>(), 10));
 
-            LeadingConditionRule notExpertRule = new LeadingConditionRule(new Conditions.NotExpert());
+            LeadingConditionRule notExpertRule = new(new Conditions.NotExpert());
             notExpertRule.OnSuccess(ItemDropRule.Common(ItemType<BloodJade>(), 1, 30, 38));
             npcLoot.Add(notExpertRule);
         }

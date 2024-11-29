@@ -96,7 +96,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             set => position = value - new Vector2(height / 2, width);
         }
 
-        public Rectangle HitBox => new Rectangle((int)position.X, (int)position.Y, width, height);
+        public Rectangle HitBox => new((int)position.X, (int)position.Y, width, height);
 
         protected sealed override void Register()
         {
@@ -156,7 +156,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             //限制不能出圈
             Vector2 webCenter = catcher.webCenter.ToWorldCoordinates();
             if (Vector2.Distance(Center, webCenter) > catcher.webRadius)
-                Center = webCenter + (Center - webCenter).SafeNormalize(Vector2.Zero) * catcher.webRadius;
+                Center = webCenter + ((Center - webCenter).SafeNormalize(Vector2.Zero) * catcher.webRadius);
 
             switch (State)
             {
@@ -262,7 +262,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             if (Timer < 1)
                 State = AIState.FreeMoving;
 
-            alpha = 1 - Timer / 60f;
+            alpha = 1 - (Timer / 60f);
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
             active = false;
 
             //new一个物品出来
-            Item i = new Item(ItemType);
+            Item i = new(ItemType);
 
             //为物品的字段赋值，如果这个物品不是一个仙灵那么就跳过
             if (i.ModItem is BaseFairyItem fairyitem && player.TryGetModPlayer(out FairyCatcherPlayer fcp))
@@ -439,7 +439,7 @@ namespace Coralite.Core.Systems.FairyCatcherSystem
                 0f, FairySystem.ProgressBarOuter.Size() / 2, scale, SpriteEffects.None, 0f);
 
             Texture2D innerTex = FairySystem.ProgressBarInner.Value;
-            var topLeft = new Vector2(center.X - innerTex.Width * scale / 2, center.Y - innerTex.Height * scale / 2);
+            var topLeft = new Vector2(center.X - (innerTex.Width * scale / 2), center.Y - (innerTex.Height * scale / 2));
 
             var source = new Rectangle(0, 0, (int)(innerTex.Width * factor), innerTex.Height);
 

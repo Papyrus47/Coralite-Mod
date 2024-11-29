@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -42,7 +42,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             };
 
             if (Main.rand.NextBool())
-                Particle.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(8, 8),
+                PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(8, 8),
                     Helpers.Helper.NextVec2Dir(2, 6), CoraliteContent.ParticleType<Fog>(), color, Main.rand.NextFloat(4f, 6f));
 
             if (Main.rand.NextBool(5))

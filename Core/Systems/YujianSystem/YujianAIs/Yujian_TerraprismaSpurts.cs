@@ -25,7 +25,7 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
 
             Vector2 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
 
-            Vector2 originCenter = new Vector2(Projectile.localAI[0], Projectile.localAI[1]);
+            Vector2 originCenter = new(Projectile.localAI[0], Projectile.localAI[1]);
             originCenter += new Vector2(0f, Utils.GetLerpValue(0f, 0.4f, factor, clamped: true) * -100f);
             Vector2 v = targetCenter - originCenter;
             Vector2 vector6 = v.SafeNormalize(Vector2.Zero) * MathHelper.Clamp(v.Length(), 60f, 150f);
@@ -33,7 +33,7 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
 
             float lerpValue3 = Utils.GetLerpValue(0.4f, 0.6f, factor, clamped: true);
             float lerpValue4 = Utils.GetLerpValue(0.6f, 1f, factor, clamped: true);
-            float targetAngle = v.SafeNormalize(Vector2.Zero).ToRotation() + (float)Math.PI / 2f;
+            float targetAngle = v.SafeNormalize(Vector2.Zero).ToRotation() + ((float)Math.PI / 2f);
 
             Projectile.rotation = Projectile.rotation.AngleTowards(targetAngle, (float)Math.PI / 5f);
             Projectile.Center = Vector2.Lerp(originCenter, targetCenter, lerpValue3);

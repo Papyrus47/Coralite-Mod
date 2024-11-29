@@ -6,7 +6,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.Steel
 {
-    //[AutoloadEquip(EquipType.Head)]
+    [AutoloadEquip(EquipType.Head)]
     public class OsirisPillar : BaseAccessory
     {
         public override string Texture => AssetDirectory.SteelItems + Name;
@@ -15,14 +15,22 @@ namespace Coralite.Content.Items.Steel
         {
         }
 
+        public override void AutoDefaults() { }
+
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            return !((equippedItem.type == ModContent.ItemType<LifePulseDevice>())//下位
+                && incomingItem.type == ModContent.ItemType<OsirisPillar>());
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 cp.AddEffect(nameof(OsirisPillar));
 
-                //if (!hideVisual)
-                //    cp.AddEffect(nameof(OsirisPillar) + "Vanity");
+                if (!hideVisual)
+                    cp.AddEffect(nameof(OsirisPillar) + "Vanity");
             }
 
             player.statManaMax2 += 20;

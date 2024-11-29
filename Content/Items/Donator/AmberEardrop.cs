@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
+using Coralite.Content.GlobalNPCs;
 using Coralite.Content.Items.Icicle;
 using Coralite.Content.Items.LandOfTheLustrousSeries;
-using Coralite.Content.NPCs.GlobalNPC;
 using Coralite.Content.Tiles.RedJades;
 using Coralite.Core;
 using Coralite.Core.Configs;
@@ -25,9 +25,9 @@ namespace Coralite.Content.Items.Donator
         public override void SetDefs()
         {
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.Orange3, Item.sellPrice(0, 3));
-            Item.SetWeaponValues(24, 4);
+            Item.SetWeaponValues(23, 4);
             Item.useTime = Item.useAnimation = 35;
-            Item.mana = 8;
+            Item.mana = 6;
 
             Item.shoot = ModContent.ProjectileType<AmberEardropProj>();
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -149,7 +149,7 @@ namespace Coralite.Content.Items.Donator
 
         public override void Move()
         {
-            Vector2 idlePos = Owner.Center + new Vector2(OwnerDirection * 48, 0);
+            Vector2 idlePos = Owner.Center + new Vector2(DirSign * 48, 0);
             for (int i = 0; i < 8; i++)//检测头顶2个方块并尝试找到没有物块阻挡的那个
             {
                 Tile idleTile = Framing.GetTileSafely(idlePos.ToTileCoordinates());
@@ -164,7 +164,7 @@ namespace Coralite.Content.Items.Donator
 
             if (AttackTime > 0)
             {
-                Vector2 dir = (Main.MouseWorld - Projectile.Center);
+                Vector2 dir = Main.MouseWorld - Projectile.Center;
                 if (dir.Length() < 48)
                     idlePos += dir;
                 else
@@ -222,7 +222,7 @@ namespace Coralite.Content.Items.Donator
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 dir = Helper.NextVec2Dir();
-                        AmberProj.SpawnTriangleParticle(Projectile.Center + new Vector2(0, 12) + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                        AmberProj.SpawnTriangleParticle(Projectile.Center + new Vector2(0, 12) + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                     }
                 }
 
@@ -252,11 +252,11 @@ namespace Coralite.Content.Items.Donator
             Texture2D mainTex = Projectile.GetTexture();
             var frame = mainTex.Frame(2, Main.projFrames[Projectile.type], frameX, Projectile.frame);
             var origin = new Vector2(frame.Width / 2, 0);
-            Vector2 toCenter = new Vector2(Projectile.width / 2, 0);
+            Vector2 toCenter = new(Projectile.width / 2, 0);
 
             for (int i = 0; i < 4; i++)
                 Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition, frame,
-                   AmberProj.brightC * (0.3f - i * 0.3f / 4), Projectile.oldRot[i] + 0, origin, Projectile.scale, 0, 0);
+                   AmberProj.brightC * (0.3f - (i * 0.3f / 4)), Projectile.oldRot[i] + 0, origin, Projectile.scale, 0, 0);
 
             Main.spriteBatch.Draw(mainTex, Projectile.Top - Main.screenPosition, frame, lightColor, Projectile.rotation,
                 origin, Projectile.scale, 0, 0);
@@ -268,9 +268,9 @@ namespace Coralite.Content.Items.Donator
     {
         public override string Texture => AssetDirectory.Donator + Name;
 
-        public static Color highlightC = new Color(255, 251, 201);
-        public static Color brightC = new Color(252, 193, 45);
-        public static Color darkC = new Color(142, 45, 0);
+        public static Color highlightC = new(255, 251, 201);
+        public static Color brightC = new(252, 193, 45);
+        public static Color darkC = new(142, 45, 0);
 
         public ref float RecordY => ref Projectile.ai[0];
         public ref float TileCollide => ref Projectile.ai[1];
@@ -340,7 +340,7 @@ namespace Coralite.Content.Items.Donator
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                 }
         }
 
@@ -413,7 +413,7 @@ namespace Coralite.Content.Items.Donator
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 5f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 5f));
                 }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
-using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -9,7 +9,10 @@ using Terraria.ObjectData;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class HeatanInABottle : BaseMaterial, IMagikePolymerizable
+    /// <summary>
+    /// 瓶中灼
+    /// </summary>
+    public class HeatanInABottle : BaseMaterial, IMagikeCraftable
     {
         public HeatanInABottle() : base(9999, Item.sellPrice(0, 0, 1, 50), ItemRarityID.Yellow, AssetDirectory.Materials) { }
 
@@ -19,13 +22,13 @@ namespace Coralite.Content.Items.Materials
             Item.DefaultToPlaceableTile(ModContent.TileType<HeatanInABottleTile>());
         }
 
-        public void AddMagikePolymerizeRecipe()
+        public void AddMagikeCraftRecipe()
         {
-            PolymerizeRecipe.CreateRecipe<HeatanInABottle>(60)
-                .SetMainItem(ItemID.Bottle)
-                .AddIngredient(ItemID.LivingFireBlock, 20)
-                .AddIngredient<EmpyrosPowder>(7)
-                .Register();
+            //MagikeCraftRecipe.CreateRecipe<HeatanInABottle>(60)
+            //    .SetMainItem(ItemID.Bottle)
+            //    .AddIngredient(ItemID.LivingFireBlock, 20)
+            //    .AddIngredient<EmpyrosPowder>(7)
+            //    .Register();
         }
     }
 

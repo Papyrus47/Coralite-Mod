@@ -5,8 +5,8 @@ using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -94,7 +94,6 @@ namespace Coralite.Content.Items.RedJades
 
         public ref float Combo => ref Projectile.ai[0];
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
@@ -110,7 +109,6 @@ namespace Coralite.Content.Items.RedJades
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "NormalSlashTrail2");
             WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
             GradientTexture = Request<Texture2D>(AssetDirectory.RedJadeItems + "BloodJadeMeleeGradient");
         }
@@ -120,7 +118,6 @@ namespace Coralite.Content.Items.RedJades
             if (Main.dedServ)
                 return;
 
-            trailTexture = null;
             WarpTexture = null;
             GradientTexture = null;
         }
@@ -248,12 +245,12 @@ namespace Coralite.Content.Items.RedJades
                     break;
                 case 2:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(1.2f - 4.2f * Smoother.Smoother(timer, maxTime - minTime), 1.2f, 1.4f);
+                    Projectile.scale = Helper.EllipticalEase(1.2f - (4.2f * Smoother.Smoother(timer, maxTime - minTime)), 1.2f, 1.4f);
                     break;
                 case 3:
                 case 4:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 80) + 160;
-                    Projectile.scale = Helper.EllipticalEase(2.6f + 4.6f * Smoother.Smoother(timer, maxTime - minTime), 1.4f, 1.8f);
+                    Projectile.scale = Helper.EllipticalEase(2.6f + (4.6f * Smoother.Smoother(timer, maxTime - minTime)), 1.4f, 1.8f);
                     break;
             }
             base.OnSlash();
@@ -284,8 +281,8 @@ namespace Coralite.Content.Items.RedJades
                 }
 
                 Dust dust;
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
                 if (VisualEffectSystem.HitEffect_Lightning)
                 {
                     dust = Dust.NewDustPerfect(pos, DustType<BloodJadeStrikeDust>(),
@@ -325,7 +322,7 @@ namespace Coralite.Content.Items.RedJades
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -333,10 +330,10 @@ namespace Coralite.Content.Items.RedJades
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -356,7 +353,7 @@ namespace Coralite.Content.Items.RedJades
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
                 effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-                effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlat.Value);
                 effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
                 Main.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
@@ -497,8 +494,8 @@ namespace Coralite.Content.Items.RedJades
                     cp.parryTime += 100;
             }
 
-            Particle.NewParticle(Projectile.Center, Vector2.Zero,
-                CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.Instance.RedJadeRed, 1.5f);
+            PRTLoader.NewParticle(Projectile.Center, Vector2.Zero,
+                CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.RedJadeRed, 1.5f);
             SoundEngine.PlaySound(CoraliteSoundID.Ding_Item4, Projectile.Center);
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, Vector2.Zero, ProjectileType<BloodJadeSlash>(),
                 (int)(Projectile.damage * 0.8f), Projectile.knockBack, Projectile.owner, 4);
@@ -510,13 +507,13 @@ namespace Coralite.Content.Items.RedJades
             Texture2D mainTex = Projectile.GetTexture();
 
             Color c = lightColor * alpha;
-            Color c2 = Coralite.Instance.RedJadeRed;
+            Color c2 = Coralite.RedJadeRed;
             c2.A = 150;
             c2 *= 0.6f * alpha;
             for (int i = 0; i < 3; i++)
             {
-                Vector2 offset = (Main.GlobalTimeWrappedHourly + i * MathHelper.TwoPi / 3).ToRotationVector2();
-                Main.spriteBatch.Draw(mainTex, Projectile.Center + offset * 4 - Main.screenPosition, null, c2, Projectile.rotation + 0.785f,
+                Vector2 offset = (Main.GlobalTimeWrappedHourly + (i * MathHelper.TwoPi / 3)).ToRotationVector2();
+                Main.spriteBatch.Draw(mainTex, Projectile.Center + (offset * 4) - Main.screenPosition, null, c2, Projectile.rotation + 0.785f,
                     mainTex.Size() / 2, Projectile.scale, 0, 0);
             }
 
@@ -645,27 +642,27 @@ namespace Coralite.Content.Items.RedJades
             Vector2 center = Projectile.Center;
             Helper.PlayPitched("RedJade/RedJadeBoom", 1f, -1f, center);
 
-            Color red = new Color(221, 50, 50);
+            Color red = new(221, 50, 50);
             int type = CoraliteContent.ParticleType<LightBall>();
 
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    Particle.NewParticle(center, Helper.NextVec2Dir(38, 40), type, red, Main.rand.NextFloat(0.15f, 0.2f));
+                    PRTLoader.NewParticle(center, Helper.NextVec2Dir(38, 40), type, red, Main.rand.NextFloat(0.15f, 0.2f));
                 }
                 for (int i = 0; i < 10; i++)
                 {
-                    Particle.NewParticle(center, Helper.NextVec2Dir(24, 30), type, red, Main.rand.NextFloat(0.1f, 0.15f));
-                    Particle.NewParticle(center, Helper.NextVec2Dir(24, 30), type, Color.White, Main.rand.NextFloat(0.05f, 0.1f));
+                    PRTLoader.NewParticle(center, Helper.NextVec2Dir(24, 30), type, red, Main.rand.NextFloat(0.1f, 0.15f));
+                    PRTLoader.NewParticle(center, Helper.NextVec2Dir(24, 30), type, Color.White, Main.rand.NextFloat(0.05f, 0.1f));
                     Dust dust = Dust.NewDustPerfect(center, DustID.GemRuby, Helper.NextVec2Dir(6, 10), Scale: Main.rand.NextFloat(2f, 2.4f));
                     dust.noGravity = true;
                 }
             }
 
-            RedExplosionParticle.Spawn(center, 1.4f, Coralite.Instance.RedJadeRed);
-            RedGlowParticle.Spawn(center, 1.3f, Coralite.Instance.RedJadeRed, 0.4f);
-            RedGlowParticle.Spawn(center, 1.3f, Coralite.Instance.RedJadeRed, 0.4f);
+            RedExplosionParticle.Spawn(center, 1.4f, Coralite.RedJadeRed);
+            RedGlowParticle.Spawn(center, 1.3f, Coralite.RedJadeRed, 0.4f);
+            RedGlowParticle.Spawn(center, 1.3f, Coralite.RedJadeRed, 0.4f);
 
             if (VisualEffectSystem.HitEffect_ScreenShaking)
             {

@@ -2,6 +2,7 @@
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -56,7 +57,7 @@ namespace Coralite.Content.Items.Shadow
     {
         public override string Texture => AssetDirectory.Blank;
 
-        public ParticleGroup triangles;
+        public PrimitivePRTGroup triangles;
         public Vector2[] aimPositions;
 
         public override void SetStaticDefaults()
@@ -99,7 +100,7 @@ namespace Coralite.Content.Items.Shadow
                 return;
             }
 
-            triangles ??= new ParticleGroup();
+            triangles ??= new PrimitivePRTGroup();
 
             triangles.NewParticle(Projectile.position + new Vector2(Main.rand.Next(Projectile.width), Main.rand.Next(Projectile.height))
                 , Helpers.Helper.NextVec2Dir(0.5f, 1.5f), CoraliteContent.ParticleType<ShadowTriangle>(),
@@ -117,7 +118,7 @@ namespace Coralite.Content.Items.Shadow
             Projectile.position = Vector2.Lerp(aimPositions[0], aimPositions[1], Projectile.ai[0] / 3);
             Projectile.ai[0]++;
 
-            triangles.UpdateParticles();
+            triangles.Update();
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -128,36 +129,37 @@ namespace Coralite.Content.Items.Shadow
 
             for (int i = 1; i < 7; i++)
             {
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, owner, Projectile.oldPos[i], 0f, owner.fullRotationOrigin, 0.5f + i * 0.5f / 7);
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, owner, Projectile.oldPos[i], 0f, owner.fullRotationOrigin, 0.5f + (i * 0.5f / 7));
             }
 
-            triangles?.DrawParticles(Main.spriteBatch);
+            triangles?.Draw(Main.spriteBatch);
             return false;
         }
     }
 
-    public class ShadowTriangle : Particle
+    public class ShadowTriangle : BasePRT
     {
         public override string Texture => AssetDirectory.Particles + "Triangle";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             Rotation = Main.rand.NextFloat(6.282f);
             Frame = new Rectangle(0, Main.rand.Next(0, 5) * 64, 64, 64);
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override void Update()
+        public override void AI()
         {
             Rotation += 0.15f;
             Scale *= 0.97f;
-            color *= 0.92f;
+            Color *= 0.92f;
 
-            fadeIn++;
-            if (fadeIn > 5)
+            Opacity++;
+            if (Opacity > 5)
             {
                 Velocity *= 0.97f;
             }
-            if (fadeIn > 40 || color.A < 10)
+            if (Opacity > 40 || Color.A < 10)
             {
                 active = false;
             }

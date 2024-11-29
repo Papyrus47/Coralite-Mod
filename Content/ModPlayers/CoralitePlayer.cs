@@ -30,8 +30,8 @@ namespace Coralite.Content.ModPlayers
         /// <summary>
         /// 各种效果
         /// </summary>
-        public HashSet<string> Effects = new HashSet<string>();
-        public List<IInventoryCraftStation> inventoryCraftStations = new List<IInventoryCraftStation>();
+        public HashSet<string> Effects = new();
+        public List<IInventoryCraftStation> inventoryCraftStations = new();
 
         #region 装备类字段
 
@@ -66,48 +66,35 @@ namespace Coralite.Content.ModPlayers
         public int nightmareEnergy;
         public int nightmareEnergyMax;
 
-        /// <summary>
-        /// 爆伤加成
-        /// </summary>
+        /// <summary> 爆伤加成 </summary>
         public float critDamageBonus;
-        /// <summary>
-        /// 回复量乘算加成
-        /// </summary>
+        /// <summary> 回复量乘算加成 </summary>
         public float lifeReganBonus;
-        /// <summary>
-        /// 来自BOSS的伤害减免
-        /// </summary>
+        /// <summary> 来自BOSS的伤害减免 </summary>
         public float bossDamageReduce;
 
-        /// <summary>
-        /// 地心护核者的闪避
-        /// </summary>
+        /// <summary> 地心护核者的闪避 </summary>
         public float coreKeeperDodge;
 
-        /// <summary>
-        /// 摔落伤害倍率
-        /// </summary>
-        public StatModifier fallDamageModifyer = new StatModifier();
-        /// <summary>
-        /// 生命上限加成
-        /// </summary>
-        public StatModifier LifeMaxModifyer = new StatModifier();
+        /// <summary> 摔落伤害倍率 </summary>
+        public StatModifier fallDamageModifyer = new();
+        /// <summary> 生命上限加成 </summary>
+        public StatModifier LifeMaxModifyer = new();
 
-        /// <summary>
-        /// 使用特殊攻击
-        /// </summary>
+        /// <summary> 使用特殊攻击 </summary>
         public bool useSpecialAttack;
 
         public Vector2 oldOldVelocity;
         public Vector2 oldVelocity;
+        public Vector2 oldOldCenter;
+        public Vector2 oldCenter;
 
-        /// <summary>
-        /// 冷系伤害加成
-        /// </summary>
+        /// <summary> 冷系伤害加成 </summary>
         public StatModifier coldDamageBonus;
-        /// <summary>
-        /// 宝石武器攻速加成
-        /// </summary>
+        /// <summary> 美味伤害加成 </summary>
+        public StatModifier deliciousDamageBonus;
+
+        /// <summary> 宝石武器攻速加成 </summary>
         public StatModifier GemWeaponAttSpeedBonus;
 
         public override void Load()
@@ -145,6 +132,7 @@ namespace Coralite.Content.ModPlayers
 
             fallDamageModifyer = new StatModifier();
             coldDamageBonus = new StatModifier();
+            deliciousDamageBonus = new StatModifier();
             GemWeaponAttSpeedBonus = new StatModifier();
 
             ResetFlyingShieldSets();
@@ -162,7 +150,7 @@ namespace Coralite.Content.ModPlayers
                     float rot = Main.rand.NextFloat(6.282f);
                     for (int i = 0; i < 8; i++)
                     {
-                        Dust dust = Dust.NewDustPerfect(Player.Center, DustID.Clentaminator_Red, (rot + i * MathHelper.TwoPi / 8).ToRotationVector2() * 3,
+                        Dust dust = Dust.NewDustPerfect(Player.Center, DustID.Clentaminator_Red, (rot + (i * MathHelper.TwoPi / 8)).ToRotationVector2() * 3,
                             255, Scale: Main.rand.Next(20, 26) * 0.1f);
                         dust.noLight = true;
                         dust.noGravity = true;
@@ -185,9 +173,9 @@ namespace Coralite.Content.ModPlayers
             {
                 if (NightmarePlantera.NightmarePlanteraAlive(out _))
                 {
-                    Rectangle rectangle = new Rectangle((int)Player.Center.X, (int)Player.Center.Y, 2, 2);
+                    Rectangle rectangle = new((int)Player.Center.X, (int)Player.Center.Y, 2, 2);
 
-                    CombatText.NewText(rectangle, Coralite.Instance.MagicCrystalPink, "协调的力量被临时封印了");
+                    CombatText.NewText(rectangle, Coralite.MagicCrystalPink, "协调的力量被临时封印了");
                     return false;
                 }
             }
@@ -202,7 +190,6 @@ namespace Coralite.Content.ModPlayers
             nianliRegain = BaseNianliRegain;
             nianliMax = BaseNianliMax;
         }
-
 
         public override void PreUpdateMovement()
         {
@@ -335,7 +322,7 @@ namespace Coralite.Content.ModPlayers
                     Player.lifeRegen = 0;
 
                 Player.lifeRegenTime = 0;
-                int damage = (int)(3 + Player.velocity.Length() * 1.5f);
+                int damage = (int)(3 + (Player.velocity.Length() * 1.5f));
 
                 if (damage > 15)
                     damage = 15;
@@ -376,6 +363,9 @@ namespace Coralite.Content.ModPlayers
             nianli = Math.Clamp(nianli, 0f, nianliMax);  //只是防止意外发生
             oldOldVelocity = oldVelocity;
             oldVelocity = Player.velocity;
+
+            oldOldCenter = oldCenter;
+            oldCenter = Player.Center;
         }
 
         public override void UpdateDead()
@@ -443,7 +433,7 @@ namespace Coralite.Content.ModPlayers
             if (HasEffect(nameof(Items.RedJades.RedJadePendant)) && Main.myPlayer == Player.whoAmI
                 && hurtInfo.Damage > 5 && Main.rand.NextBool(3))
                 Projectile.NewProjectile(Player.GetSource_Accessory(Player.armor.First((item) => item.type == ItemType<Items.RedJades.RedJadePendant>())),
-                    Player.Center + (proj.Center - Player.Center).SafeNormalize(Vector2.One) * 16, Vector2.Zero, ProjectileType<Items.RedJades.RedJadeBoom>(), 80, 8f, Player.whoAmI);
+                    Player.Center + ((proj.Center - Player.Center).SafeNormalize(Vector2.One) * 16), Vector2.Zero, ProjectileType<Items.RedJades.RedJadeBoom>(), 80, 8f, Player.whoAmI);
         }
 
         public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
@@ -451,7 +441,7 @@ namespace Coralite.Content.ModPlayers
             if (HasEffect(nameof(Items.RedJades.RedJadePendant)) && Main.myPlayer == Player.whoAmI
                 && hurtInfo.Damage > 5 && Main.rand.NextBool(3))
                 Projectile.NewProjectile(Player.GetSource_Accessory(Player.armor.First((item) => item.type == ItemType<Items.RedJades.RedJadePendant>())),
-                    Player.Center + (npc.Center - Player.Center).SafeNormalize(Vector2.One) * 16, Vector2.Zero, ProjectileType<Items.RedJades.RedJadeBoom>(), 80, 8f, Player.whoAmI);
+                    Player.Center + ((npc.Center - Player.Center).SafeNormalize(Vector2.One) * 16), Vector2.Zero, ProjectileType<Items.RedJades.RedJadeBoom>(), 80, 8f, Player.whoAmI);
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -497,7 +487,7 @@ namespace Coralite.Content.ModPlayers
                     for (int i = 0; i < 3; i++)//爆金币粒子
                     {
                         int num36 = Gore.NewGore(new EntitySource_OnHit(Player, target), new Vector2(target.position.X, target.Center.Y - 10f), Vector2.Zero, 1218);
-                        Main.gore[num36].velocity = new Vector2(Main.rand.Next(1, 10) * 0.3f * 2f * modifiers.HitDirection, 0f - (2.5f + Main.rand.Next(4) * 0.3f));
+                        Main.gore[num36].velocity = new Vector2(Main.rand.Next(1, 10) * 0.3f * 2f * modifiers.HitDirection, 0f - (2.5f + (Main.rand.Next(4) * 0.3f)));
                     }
 
                     if (target.CanBeChasedBy() && !target.SpawnedFromStatue)//别想刷钱
@@ -592,9 +582,9 @@ namespace Coralite.Content.ModPlayers
 
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (HasEffect(nameof(FlaskOfThunderBuff)) && item.DamageType == DamageClass.Melee)
+            if (HasEffect(nameof(FlaskOfThunderBuff)) && item.DamageType.CountsAsClass(DamageClass.Melee))
                 target.AddBuff(BuffType<ThunderElectrified>(), 6 * 60);
-            if (HasEffect(nameof(FlaskOfRedJadeBuff)) && item.DamageType == DamageClass.Melee && Main.rand.NextBool(4))
+            if (HasEffect(nameof(FlaskOfRedJadeBuff)) && item.DamageType.CountsAsClass(DamageClass.Melee) && Main.rand.NextBool(4))
                 Projectile.NewProjectile(Player.GetSource_FromThis(), target.Center, Vector2.Zero,
                     ProjectileType<RedJadeBoom>(), (int)(item.damage * 0.75f), 0, Player.whoAmI);
         }
@@ -698,7 +688,8 @@ namespace Coralite.Content.ModPlayers
             useSpecialAttack = Core.Loaders.KeybindLoader.SpecialAttack.Current;
             Item item = Player.inventory[Player.selectedItem];
 
-            if (useSpecialAttack && Player.itemAnimation == 0 && item.useStyle != ItemUseStyleID.None)
+            if (useSpecialAttack && Player.itemAnimation == 0 && item.useStyle != ItemUseStyleID.None &&
+                (item.type < ItemID.Count || item.ModItem.Mod.Name == "Coralite" || item.ModItem.Mod is ICoralite))//放置其他模组干扰
             {
                 bool flag3 = !item.IsAir && CombinedHooks.CanUseItem(Player, item);
 
@@ -741,7 +732,7 @@ namespace Coralite.Content.ModPlayers
 
         public override void OnEnterWorld()
         {
-            if (CoraliteWorld.coralCatWorld)
+            if (CoraliteWorld.CoralCatWorld)
                 Player.QuickSpawnItem(Player.GetSource_FromThis(), ItemID.Meowmere);
         }
     }

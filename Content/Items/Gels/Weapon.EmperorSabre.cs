@@ -99,7 +99,6 @@ namespace Coralite.Content.Items.Gels
 
         public ref float Combo => ref Projectile.ai[0];
 
-        public static Asset<Texture2D> trailTexture;
         public static Asset<Texture2D> WarpTexture;
         public static Asset<Texture2D> GradientTexture;
 
@@ -113,7 +112,6 @@ namespace Coralite.Content.Items.Gels
             if (Main.dedServ)
                 return;
 
-            trailTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "NormalSlashTrail3");
             WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
             GradientTexture = Request<Texture2D>(AssetDirectory.GelItems + "EmperorSabreGradient");
         }
@@ -123,7 +121,6 @@ namespace Coralite.Content.Items.Gels
             if (Main.dedServ)
                 return;
 
-            trailTexture = null;
             WarpTexture = null;
             GradientTexture = null;
         }
@@ -237,22 +234,22 @@ namespace Coralite.Content.Items.Gels
                 default:
                 case 0:
                     alpha = (int)(Coralite.Instance.X2Smoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(2.3f - 4.6f * Smoother.Smoother(timer, maxTime - minTime), 0.8f, 1.2f);
+                    Projectile.scale = Helper.EllipticalEase(2.3f - (4.6f * Smoother.Smoother(timer, maxTime - minTime)), 0.8f, 1.2f);
                     break;
                 case 1:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 140) + 100;
                     break;
                 case 3:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(1.6f - 4.6f * Smoother.Smoother(timer, maxTime - minTime), 1.2f, 1f);
+                    Projectile.scale = Helper.EllipticalEase(1.6f - (4.6f * Smoother.Smoother(timer, maxTime - minTime)), 1.2f, 1f);
                     break;
                 case 5:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 80) + 160;
-                    Projectile.scale = Helper.EllipticalEase(1.6f - 4.6f * Smoother.Smoother(timer, maxTime - minTime), 1.4f, 1.6f);
+                    Projectile.scale = Helper.EllipticalEase(1.6f - (4.6f * Smoother.Smoother(timer, maxTime - minTime)), 1.4f, 1.6f);
                     break;
                 case 6:
                     alpha = (int)(Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 80) + 160;
-                    Projectile.scale = Helper.EllipticalEase(1.6f - 4.6f * Smoother.Smoother(timer, maxTime - minTime), 1.6f, 1.4f);
+                    Projectile.scale = Helper.EllipticalEase(1.6f - (4.6f * Smoother.Smoother(timer, maxTime - minTime)), 1.6f, 1.4f);
                     break;
             }
             base.OnSlash();
@@ -287,13 +284,13 @@ namespace Coralite.Content.Items.Gels
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
                 {
-                    PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
+                    PunchCameraModifier modifier = new(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
                     Main.instance.CameraModifiers.Add(modifier);
                 }
 
                 Dust dust;
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
                 if (VisualEffectSystem.HitEffect_Lightning)
                 {
                     dust = Dust.NewDustPerfect(pos, DustType<EmperorSabreStrikeDust>(),
@@ -340,7 +337,7 @@ namespace Coralite.Content.Items.Gels
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -348,10 +345,10 @@ namespace Coralite.Content.Items.Gels
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - ControlTrailBottomWidth(factor) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -366,7 +363,7 @@ namespace Coralite.Content.Items.Gels
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
                     effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
-                    effect.Parameters["sampleTexture"].SetValue(trailTexture.Value);
+                    effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
@@ -460,11 +457,11 @@ namespace Coralite.Content.Items.Gels
                 default:
                 case 2:
                     alpha = (int)(Coralite.Instance.X2Smoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(1.4f - 4f * Smoother.Smoother(timer, maxTime - minTime), 0.8f, 2.2f);
+                    Projectile.scale = Helper.EllipticalEase(1.4f - (4f * Smoother.Smoother(timer, maxTime - minTime)), 0.8f, 2.2f);
                     break;
                 case 4:
                     alpha = (int)(Coralite.Instance.X2Smoother.Smoother(timer, maxTime - minTime) * 140) + 100;
-                    Projectile.scale = Helper.EllipticalEase(2.8f - 5.6f * Smoother.Smoother(timer, maxTime - minTime), 0.9f, 2.6f);
+                    Projectile.scale = Helper.EllipticalEase(2.8f - (5.6f * Smoother.Smoother(timer, maxTime - minTime)), 0.9f, 2.6f);
                     break;
             }
 
@@ -507,13 +504,13 @@ namespace Coralite.Content.Items.Gels
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
                 {
-                    PunchCameraModifier modifier = new PunchCameraModifier(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
+                    PunchCameraModifier modifier = new(Projectile.Center, RotateVec2, strength, 6, 6, 1000);
                     Main.instance.CameraModifiers.Add(modifier);
                 }
 
                 Dust dust;
-                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, Projectile.width * Projectile.scale - Projectile.localAI[1]);
-                Vector2 pos = Bottom + RotateVec2 * offset;
+                float offset = Projectile.localAI[1] + Main.rand.NextFloat(0, (Projectile.width * Projectile.scale) - Projectile.localAI[1]);
+                Vector2 pos = Bottom + (RotateVec2 * offset);
                 if (VisualEffectSystem.HitEffect_Lightning)
                 {
                     dust = Dust.NewDustPerfect(pos, DustType<EmperorSabreStrikeDust>(),
@@ -560,7 +557,7 @@ namespace Coralite.Content.Items.Gels
         protected override void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<VertexPositionColorTexture> bars = new List<VertexPositionColorTexture>();
+            List<VertexPositionColorTexture> bars = new();
             GetCurrentTrailCount(out float count);
 
             for (int i = 0; i < count; i++)
@@ -568,10 +565,10 @@ namespace Coralite.Content.Items.Gels
                 if (oldRotate[i] == 100f)
                     continue;
 
-                float factor = 1f - i / count;
+                float factor = 1f - (i / count);
                 Vector2 Center = GetCenter(i);
-                Vector2 Top = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]);
-                Vector2 Bottom = Center + oldRotate[i].ToRotationVector2() * (oldLength[i] * 0.3f + oldDistanceToOwner[i]);
+                Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
+                Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * ((oldLength[i] * 0.3f) + oldDistanceToOwner[i]));
 
                 var topColor = Color.Lerp(new Color(238, 218, 130, alpha), new Color(167, 127, 95, 0), 1 - factor);
                 var bottomColor = Color.Lerp(new Color(109, 73, 86, alpha), new Color(83, 16, 85, 0), 1 - factor);
@@ -586,7 +583,7 @@ namespace Coralite.Content.Items.Gels
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
                     effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
-                    effect.Parameters["sampleTexture"].SetValue(EmperorSabreSlash.trailTexture.Value);
+                    effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(EmperorSabreSlash.GradientTexture.Value);
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes) //应用shader，并绘制顶点
@@ -626,7 +623,7 @@ namespace Coralite.Content.Items.Gels
 
         protected override float GetStartAngle()
         {
-            return (Owner.direction > 0 ? 0 : MathHelper.Pi);
+            return Owner.direction > 0 ? 0 : MathHelper.Pi;
         }
 
         protected override void Initializer()
@@ -651,7 +648,7 @@ namespace Coralite.Content.Items.Gels
             startAngle -= Math.Sign(totalAngle) * 0.03f;
             _Rotation = startAngle;
             RotateVec2 = _Rotation.ToRotationVector2();
-            Projectile.Center = Owner.Center + RotateVec2 * (Projectile.scale * Projectile.height / 2 + distanceToOwner);
+            Projectile.Center = Owner.Center + (RotateVec2 * ((Projectile.scale * Projectile.height / 2) + distanceToOwner));
             Projectile.rotation = Projectile.rotation.AngleTowards(_Rotation, 0.1f);
         }
 
@@ -715,7 +712,7 @@ namespace Coralite.Content.Items.Gels
             for (int i = 0; i < 4; i++)
             {
                 Vector2 dir = rot.ToRotationVector2();
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + dir * Main.rand.NextFloat(60, 80),
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + (dir * Main.rand.NextFloat(60, 80)),
                     dir * Main.rand.NextFloat(2, 4), ProjectileType<GelChaser>(), damage, Projectile.knockBack, Projectile.owner, ai1: Projectile.Center.X, ai2: Projectile.Center.Y);
                 rot += Main.rand.NextFloat(MathHelper.PiOver2 - 0.3f, MathHelper.PiOver2 + 0.3f);
             }
@@ -740,7 +737,7 @@ namespace Coralite.Content.Items.Gels
         protected ref float State => ref Projectile.ai[0];
         protected Vector2 Center
         {
-            get => new Vector2(Projectile.ai[1], Projectile.ai[2]);
+            get => new(Projectile.ai[1], Projectile.ai[2]);
             set
             {
                 Projectile.ai[1] = value.X;

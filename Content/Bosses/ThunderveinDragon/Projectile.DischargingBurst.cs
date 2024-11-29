@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -34,7 +34,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
         public override bool? CanDamage()
         {
-            if (Timer > LightingTime + DelayTime / 2)
+            if (Timer > LightingTime + (DelayTime / 2))
                 return false;
 
             return null;
@@ -67,7 +67,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 float factor = Timer / LightingTime;
                 float sinFactor = MathF.Sin(factor * MathHelper.Pi);
 
-                ThunderWidth = 30 + sinFactor * 30;
+                ThunderWidth = 30 + (sinFactor * 30);
                 SpawnDusts();
             }
             else
@@ -96,9 +96,9 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 for (int i = 0; i < circles.Length; i++)
                 {
                     if (i == 0)
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc2_Orange);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc2_Orange, GetAlpha);
                     else
-                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Yellow);
+                        circles[i] = new ThunderTrail(thunderTex, ThunderWidthFunc2, ThunderColorFunc_Yellow, GetAlpha);
 
                     circles[i].SetRange((5, 10));
                     circles[i].SetExpandWidth(8);
@@ -107,9 +107,9 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 for (int i = 0; i < outers.Length; i++)
                 {
                     if (i < 2)
-                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange);
+                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc2_Orange, GetAlpha);
                     else
-                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow);
+                        outers[i] = new ThunderTrail(thunderTex, ThunderWidthFunc_Sin, ThunderColorFunc_Yellow, GetAlpha);
                     outers[i].SetRange((5, 30));
                     outers[i].SetExpandWidth(8);
                 }
@@ -119,13 +119,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     outer.CanDraw = true;
                     Vector2[] vec = new Vector2[6];
                     float length = Main.rand.NextFloat(2, 32);
-                    Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * length;
+                    Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * length);
                     Vector2 dir = (basePos - Projectile.Center).SafeNormalize(Vector2.Zero);
                     vec[0] = basePos;
 
                     for (int i = 1; i < 6; i++)
                     {
-                        vec[i] = basePos + dir * i * (Projectile.width - length) / 10;
+                        vec[i] = basePos + (dir * i * (Projectile.width - length) / 10);
                     }
 
                     outer.BasePositions = vec;
@@ -141,8 +141,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     float baseRot = Main.rand.NextFloat(6.282f);
                     for (int i = 0; i < trailPointCount; i++)
                     {
-                        vec[i] = Projectile.Center + (baseRot + i * MathHelper.TwoPi / 40).ToRotationVector2()
-                            * (Projectile.width / 2 + Main.rand.NextFloat(-8, 8));
+                        vec[i] = Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 40)).ToRotationVector2()
+                            * ((Projectile.width / 2) + Main.rand.NextFloat(-8, 8)));
                     }
 
                     circle.BasePositions = vec;
@@ -163,13 +163,13 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     {
                         Vector2[] vec = new Vector2[6];
                         float length = Main.rand.NextFloat(2, 32);
-                        Vector2 basePos = Projectile.Center + Helper.NextVec2Dir() * length;
+                        Vector2 basePos = Projectile.Center + (Helper.NextVec2Dir() * length);
                         Vector2 dir = (basePos - Projectile.Center).SafeNormalize(Vector2.Zero);
                         vec[0] = basePos;
 
                         for (int i = 1; i < 6; i++)
                         {
-                            vec[i] = basePos + dir * i * (Projectile.width - length) / 10;
+                            vec[i] = basePos + (dir * i * (Projectile.width - length) / 10);
                         }
 
                         outer.BasePositions = vec;
@@ -190,8 +190,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         float baseRot = Main.rand.NextFloat(6.282f);
                         for (int i = 0; i < trailPointCount; i++)
                         {
-                            vec[i] = Projectile.Center + (baseRot + i * MathHelper.TwoPi / 40).ToRotationVector2()
-                                * (Projectile.width / 2 + Main.rand.NextFloat(-8, 8));
+                            vec[i] = Projectile.Center + ((baseRot + (i * MathHelper.TwoPi / 40)).ToRotationVector2()
+                                * ((Projectile.width / 2) + Main.rand.NextFloat(-8, 8)));
                         }
 
                         circle.BasePositions = vec;
@@ -204,8 +204,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
         {
             if (Timer % 2 == 0)
             {
-                Particle.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 5, Projectile.width / 5),
-                    Vector2.Zero, CoraliteContent.ParticleType<BigFog>(), Coralite.Instance.ThunderveinYellow * Main.rand.NextFloat(0.5f, 0.8f),
+                PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 5, Projectile.width / 5),
+                    Vector2.Zero, CoraliteContent.ParticleType<BigFog>(), Coralite.ThunderveinYellow * Main.rand.NextFloat(0.5f, 0.8f),
                     Main.rand.NextFloat(2f, 2.5f));
                 ElectricParticle_Follow.Spawn(Projectile.Center, Helper.NextVec2Dir(Projectile.width / 3, Projectile.width * 0.56f), () => Projectile.Center, Main.rand.NextFloat(0.7f, 1.1f));
             }

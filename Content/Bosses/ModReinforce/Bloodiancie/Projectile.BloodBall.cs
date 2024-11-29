@@ -3,6 +3,7 @@ using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
@@ -18,7 +19,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
         public ref float Timer => ref Projectile.ai[0];
         public Player Owner => Main.player[Projectile.owner];
 
-        public ParticleGroup particles;
+        public PrimitivePRTGroup particles;
 
         public Vector2 shootDir;
 
@@ -38,7 +39,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
         public override void AI()
         {
-            particles ??= new ParticleGroup();
+            particles ??= new PrimitivePRTGroup();
 
             do
             {
@@ -51,8 +52,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        particles.NewParticle<Fog>(Projectile.Center, Helper.NextVec2Dir(2, 4),
-                             Color.DarkRed, Main.rand.NextFloat(1f, 1.5f));
+                        PRTLoader.NewParticle<Fog>(Projectile.Center, Helper.NextVec2Dir(2, 4), Color.DarkRed, Main.rand.NextFloat(1f, 1.5f));
                     }
 
                     Vector2 targetCenter = Owner.Center + new Vector2(0, -450);
@@ -68,7 +68,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
                 {
                     Projectile.velocity *= 0;
                     shootDir = (Owner.Center - Projectile.Center).SafeNormalize(Vector2.Zero);
-                    particles.NewParticle<RedArrow>(Projectile.Center + shootDir * 20, shootDir * 8,
+                    particles.NewParticle<RedArrow>(Projectile.Center + (shootDir * 20), shootDir * 8,
                         Scale: 2f);
 
                     SoundEngine.PlaySound(CoraliteSoundID.AngryNimbus_NPCDeath33, Projectile.Center);
@@ -108,7 +108,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
             } while (false);
 
-            particles?.UpdateParticles();
+            particles?.Update();
 
             Timer++;
         }
@@ -120,7 +120,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
         {
-            particles?.DrawParticles(spriteBatch);
+            particles?.Draw(spriteBatch);
         }
     }
 
@@ -179,27 +179,28 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
         }
     }
 
-    public class RedArrow : Particle
+    public class RedArrow : BasePRT
     {
         public override string Texture => AssetDirectory.Bloodiancie + Name;
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
-            color = Color.White;
-            Frame = GetTexture().Frame();
+            Color = Color.White;
+            Frame = TexValue.Frame();
             Rotation = Velocity.ToRotation();
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override void Update()
+        public override void AI()
         {
-            fadeIn++;
+            Opacity++;
 
-            if (fadeIn > 30)
+            if (Opacity > 30)
             {
-                color.A = (byte)(color.A * 0.7f);
+                Color.A = (byte)(Color.A * 0.7f);
             }
 
-            if (color.A < 10)
+            if (Color.A < 10)
             {
                 active = false;
             }

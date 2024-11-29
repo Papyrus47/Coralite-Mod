@@ -4,7 +4,6 @@ using Coralite.Core.Configs;
 using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Linq;
 using Terraria;
@@ -23,7 +22,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public override void SetDefs()
         {
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.Yellow8, Item.sellPrice(0, 13));
-            Item.SetWeaponValues(83, 4);
+            Item.SetWeaponValues(79, 4);
             Item.useTime = Item.useAnimation = 35;
             Item.mana = 27;
 
@@ -60,8 +59,19 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 effect.Parameters["addC"].SetValue(0.7f);
                 effect.Parameters["highlightC"].SetValue(SapphireProj.highlightC.ToVector4());
                 effect.Parameters["brightC"].SetValue(SapphireProj.brightC.ToVector4());
+                effect.Parameters["darkC"].SetValue(new Color(50, 50, 255).ToVector4());
+            }, 0.2f,
+            effect =>
+            {
+                effect.Parameters["scale"].SetValue(new Vector2(1f) / Main.GameZoomTarget);
+                effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.015f);
+                effect.Parameters["lightRange"].SetValue(0.1f);
+                effect.Parameters["lightLimit"].SetValue(0.15f);
+                effect.Parameters["addC"].SetValue(0.7f);
+                effect.Parameters["highlightC"].SetValue(SapphireProj.highlightC.ToVector4());
+                effect.Parameters["brightC"].SetValue(SapphireProj.brightC.ToVector4());
                 effect.Parameters["darkC"].SetValue(SapphireProj.darkC.ToVector4());
-            }, 0.2f);
+            }, extraSize: new Point(35, 2));
         }
 
         public override void SpawnParticle(DrawableTooltipLine line)
@@ -161,7 +171,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 dir = Helper.NextVec2Dir();
-                        SapphireProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                        SapphireProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                     }
                 }
 
@@ -198,8 +208,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public ref float Target => ref Projectile.ai[2];
 
         public static Color highlightC = Color.White;
-        public static Color brightC = new Color(80, 150, 255);
-        public static Color darkC = new Color(0, 0, 255);
+        public static Color brightC = new(80, 150, 255);
+        public static Color darkC = new(0, 0, 255);
 
         public Vector2 rand = Main.rand.NextVector2CircularEdge(64, 64);
 
@@ -236,7 +246,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                         float baseSpeed = Helper.Lerp(3.5f, 0.2f, factor2);
                         for (int i = 0; i < 3; i++)
                         {
-                            float factor = MathF.Sin(Main.GlobalTimeWrappedHourly + Timer * 0.05f + i * MathHelper.PiOver2);
+                            float factor = MathF.Sin(Main.GlobalTimeWrappedHourly + (Timer * 0.05f) + (i * MathHelper.PiOver2));
                             Dust d = Dust.NewDustPerfect(Projectile.Center, DustID.Firework_Blue
                                 , -dir.RotatedBy(factor) * Main.rand.NextFloat(baseSpeed, baseSpeed + 0.05f), Scale: Main.rand.NextFloat(0.1f, 0.7f));
                             d.noGravity = true;
@@ -298,8 +308,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
                         length = num481 / length;
                         dir *= length;
-                        Projectile.velocity.X = (Projectile.velocity.X * 24f + dir.X) / 25f;
-                        Projectile.velocity.Y = (Projectile.velocity.Y * 24f + dir.Y) / 25f;
+                        Projectile.velocity.X = ((Projectile.velocity.X * 24f) + dir.X) / 25f;
+                        Projectile.velocity.Y = ((Projectile.velocity.Y * 24f) + dir.Y) / 25f;
 
                         Timer++;
                         if (Timer > 120 * Projectile.MaxUpdates || length2 < 32)
@@ -335,8 +345,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
                         length = num481 / length;
                         dir *= length;
-                        Projectile.velocity.X = (Projectile.velocity.X * 19f + dir.X) / 20f;
-                        Projectile.velocity.Y = (Projectile.velocity.Y * 19f + dir.Y) / 20f;
+                        Projectile.velocity.X = ((Projectile.velocity.X * 19f) + dir.X) / 20f;
+                        Projectile.velocity.Y = ((Projectile.velocity.Y * 19f) + dir.Y) / 20f;
                     }
                     break;
             }
@@ -364,7 +374,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 6f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 6f));
                 }
         }
 
@@ -398,24 +408,24 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 , 0.5f, 0, 0.3f, 0.7f, 1
                 , 0, new Vector2(2f, 0.8f), Vector2.One / 3);
             Helper.DrawPrettyStarSparkle(1, 0, pos, highlightC, brightC
-                , MathF.Sin((int)Main.timeForVisualEffects * 0.4f) / 2 + 0.5f, 0, 0.3f, 0.7f, 1
+                , (MathF.Sin((int)Main.timeForVisualEffects * 0.4f) / 2) + 0.5f, 0, 0.3f, 0.7f, 1
                 , 0, new Vector2(3f, 1f), Vector2.One / 3);
 
             rand -= Projectile.velocity / 10;
             Color c = lightColor;
 
             Helper.DrawCrystal(Main.spriteBatch, Projectile.frame, Projectile.Center + rand, new Vector2(0.7f)
-                , (float)Main.timeForVisualEffects * 0.02f + Projectile.whoAmI / 3f
+                , ((float)Main.timeForVisualEffects * 0.02f) + (Projectile.whoAmI / 3f)
                 , highlightC, brightC, darkC, () =>
                 {
                     Texture2D exTex = TextureAssets.Extra[98].Value;
 
-                    Vector2 toCenter = new Vector2(Projectile.width / 2, Projectile.height / 2);
+                    Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
                     var origin = exTex.Size() / 2;
 
                     for (int i = 0; i < 12; i++)
                         Main.spriteBatch.Draw(exTex, Projectile.oldPos[i] + toCenter, null,
-                            Color.White * (0.4f - i * 0.4f / 12), Projectile.oldRot[i] + 1.57f, origin, 0.6f, 0, 0);
+                            Color.White * (0.4f - (i * 0.4f / 12)), Projectile.oldRot[i] + 1.57f, origin, 0.6f, 0, 0);
 
                     Main.spriteBatch.Draw(mainTex, Projectile.Center, null, c, Projectile.rotation + Projectile.localAI[0], origin1, Projectile.scale, 0, 0);
                 }, sb =>
@@ -432,27 +442,14 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
     {
         public override string Texture => AssetDirectory.Blank;
 
-        private VertexStrip _vertexStrip = new VertexStrip();
+        private VertexStrip _vertexStrip = new();
         private Trail trail;
 
         public ref float Owner => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.ai[1];
         public ref float State => ref Projectile.ai[2];
 
-        public static Asset<Texture2D> TrailTex;
-
         private Vector2[] oldPos2;
-
-        public override void Load()
-        {
-            if (!Main.dedServ)
-                TrailTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "FadeTrail");
-        }
-
-        public override void Unload()
-        {
-            TrailTex = null;
-        }
 
         public override void SetStaticDefaults()
         {
@@ -510,8 +507,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
                         length = num481 / length;
                         dir *= length;
-                        Projectile.velocity.X = (Projectile.velocity.X * 39f + dir.X) / 40f;
-                        Projectile.velocity.Y = (Projectile.velocity.Y * 39f + dir.Y) / 40f;
+                        Projectile.velocity.X = ((Projectile.velocity.X * 39f) + dir.X) / 40f;
+                        Projectile.velocity.Y = ((Projectile.velocity.Y * 39f) + dir.Y) / 40f;
 
                         if (length2 < 32)
                         {
@@ -521,12 +518,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                             Projectile.tileCollide = true;
                             Projectile.StartAttack();
 
-                            SoundStyle st = CoraliteSoundID.MeteorImpact_Item89;
-                            st.Pitch = 0.5f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
-                            st = CoraliteSoundID.Crystal_Item101;
-                            st.Pitch = -0.2f;
-                            SoundEngine.PlaySound(st, Projectile.Center);
+                            Helper.PlayPitched(CoraliteSoundID.MeteorImpact_Item89, Projectile.Center, pitch: 0.5f);
+                            Helper.PlayPitched(CoraliteSoundID.Crystal_Item101, Projectile.Center, pitch: -0.2f);
                             Helper.PlayPitched("Crystal/CrystalStrike", 0.2f, -0.2f, Projectile.Center);
 
                             float angle = Main.rand.NextFloat(6.282f);
@@ -534,7 +527,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                             for (int i = 0; i < 6; i++)
                             {
                                 Projectile.NewProjectileFromThis<SapphireSmallProj>(Projectile.Center
-                                    , (angle + MathHelper.TwoPi / 6 * i).ToRotationVector2() * velocity, (int)(Projectile.damage * 0.75f), Projectile.knockBack);
+                                    , (angle + (MathHelper.TwoPi / 6 * i)).ToRotationVector2() * velocity, (int)(Projectile.damage * 0.75f), Projectile.knockBack);
                             }
                         }
                     }
@@ -565,7 +558,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 dir2 = Helper.NextVec2Dir();
-                    SapphireProj.SpawnTriangleParticle(Projectile.Center + dir2 * Main.rand.NextFloat(6, 12), dir2 * Main.rand.NextFloat(0.5f, 3f));
+                    SapphireProj.SpawnTriangleParticle(Projectile.Center + (dir2 * Main.rand.NextFloat(6, 12)), dir2 * Main.rand.NextFloat(0.5f, 3f));
                 }
 
             if (!VisualEffectSystem.HitEffect_Dusts)
@@ -596,7 +589,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int j = 0; j < 8; j++)
                 {
                     Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24, 24),
-                        DustID.Firework_Blue, Helper.NextVec2Dir(1 + i * 2, 2 + i * 2),
+                        DustID.Firework_Blue, Helper.NextVec2Dir(1 + (i * 2), 2 + (i * 2)),
                         Scale: Main.rand.NextFloat(0.3f, 0.7f));
                     d.noGravity = true;
                 }
@@ -640,7 +633,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
             effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
-            effect.Parameters["sampleTexture"].SetValue(TrailTex.Value);
+            effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.Meteor.Value);
             trail?.Render(effect);
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
@@ -652,7 +645,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             miscShaderData.UseSaturation(-2.8f);
             miscShaderData.UseOpacity(2f);
             miscShaderData.Apply();
-            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + Projectile.Size / 2);
+            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + (Projectile.Size / 2));
             _vertexStrip.DrawTrail();
 
             Texture2D mainTex = TextureAssets.Extra[57].Value;
@@ -660,7 +653,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             var origin = mainTex.Size() / 2;
 
             for (int i = 0; i < 4; i++)
-                spriteBatch.Draw(mainTex, pos + (Main.GlobalTimeWrappedHourly + i * MathHelper.PiOver2).ToRotationVector2() * 3
+                spriteBatch.Draw(mainTex, pos + ((Main.GlobalTimeWrappedHourly + (i * MathHelper.PiOver2)).ToRotationVector2() * 3)
                     , null, new Color(255, 255, 255, 50), 0, origin, 0.7f, 0, 0);
 
             spriteBatch.Draw(mainTex, pos, null, Color.White, 0, origin, 0.7f, 0, 0);
@@ -706,7 +699,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             for (int i = 0; i < 2; i++)
             {
-                int num249 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.velocity.X, Projectile.velocity.Y, 50, default(Color), 1.1f);
+                int num249 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.UnusedWhiteBluePurple, Projectile.velocity.X, Projectile.velocity.Y, 50, default, 1.1f);
                 Dust dust2 = Main.dust[num249];
                 dust2.position = (dust2.position + Projectile.Center) / 2f;
                 dust2.noGravity = true;
@@ -716,9 +709,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             for (int o = 0; o < 1; o++)
             {
-                int num249 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.MushroomTorch, Projectile.velocity.X, Projectile.velocity.Y, 50, default(Color), 0.6f);
+                int num249 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.MushroomTorch, Projectile.velocity.X, Projectile.velocity.Y, 50, default, 0.6f);
                 Dust dust2 = Main.dust[num249];
-                dust2.position = (dust2.position + Projectile.Center * 5f) / 6f;
+                dust2.position = (dust2.position + (Projectile.Center * 5f)) / 6f;
                 dust2.velocity *= 0.4f;
                 dust2.noGravity = true;
                 dust2.fadeIn = 0.9f * factor;
@@ -747,18 +740,18 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             for (int i = 0; i < 10; i++)
             {
                 int num187 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height
-                    , DustID.BlueTorch, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 0, default(Color), 0.5f);
+                    , DustID.BlueTorch, Projectile.velocity.X * 0.1f, Projectile.velocity.Y * 0.1f, 0, default, 0.5f);
                 Dust dust2;
                 if (Main.rand.NextBool(3))
                 {
-                    Main.dust[num187].fadeIn = 0.75f + (float)Main.rand.Next(-10, 11) * 0.01f;
-                    Main.dust[num187].scale = 0.25f + (float)Main.rand.Next(-10, 11) * 0.005f;
+                    Main.dust[num187].fadeIn = 0.75f + (Main.rand.Next(-10, 11) * 0.01f);
+                    Main.dust[num187].scale = 0.25f + (Main.rand.Next(-10, 11) * 0.005f);
                     dust2 = Main.dust[num187];
                     dust2.type++;
                 }
                 else
                 {
-                    Main.dust[num187].scale = 1f + (float)Main.rand.Next(-10, 11) * 0.01f;
+                    Main.dust[num187].scale = 1f + (Main.rand.Next(-10, 11) * 0.01f);
                 }
 
                 Main.dust[num187].noGravity = true;

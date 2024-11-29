@@ -26,7 +26,7 @@ namespace Coralite.Content.Tiles.RedJades
             TileObjectData.newTile.StyleHorizontal = false;
             TileObjectData.addTile(Type);
 
-            AddMapEntry(Coralite.Instance.RedJadeRed, Language.GetText("MapObject.Relic"));
+            AddMapEntry(Coralite.RedJadeRed, Language.GetText("MapObject.Relic"));
         }
 
         public override bool CanDrop(int i, int j) => true;
@@ -35,7 +35,7 @@ namespace Coralite.Content.Tiles.RedJades
         {
             return new Item[]
             {
-                new Item(ModContent.ItemType<Items.RedJades.BloodiancieRelic>())
+                new(ModContent.ItemType<Items.RedJades.BloodiancieRelic>())
             };
         }
     }

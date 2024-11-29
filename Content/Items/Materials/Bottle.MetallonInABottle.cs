@@ -1,5 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +9,10 @@ using Terraria.ObjectData;
 
 namespace Coralite.Content.Items.Materials
 {
-    public class MetallonInABottle : BaseMaterial, IMagikePolymerizable
+    /// <summary>
+    /// 瓶中刚
+    /// </summary>
+    public class MetallonInABottle : BaseMaterial, IMagikeCraftable
     {
         public MetallonInABottle() : base(9999, Item.sellPrice(0, 0, 1, 50), ItemRarityID.Gray, AssetDirectory.Materials) { }
 
@@ -18,7 +22,7 @@ namespace Coralite.Content.Items.Materials
             Item.DefaultToPlaceableTile(ModContent.TileType<MetallonInABottleTile>());
         }
 
-        public void AddMagikePolymerizeRecipe()
+        public void AddMagikeCraftRecipe()
         {
             //PolymerizeRecipe.CreateRecipe<FreosanInABottle>(300)
             //    .SetMainItem<>

@@ -1,12 +1,54 @@
-// Players.CoralitePlayer.ThunderElectrifiedDeath: 被雷劈死了
+DamageClasses: {
+	FairyDamage.DisplayName: 仙灵伤害
+	CreateAxeDamage.DisplayName: 创意伤害
+	CreateDamage.DisplayName: 创意伤害
+	CreateExtraDamage.DisplayName: 创意伤害
+	CreateHammerDamage.DisplayName: 创意伤害
+	CreatePickaxeDamage.DisplayName: 创意伤害
+	CreateShovelDamage.DisplayName: 创意伤害
+}
 
-ClobalItems: {
-	CoraliteGlobalItem: {
-		// CopperCoralCat: 铜质猫猫币
-		// RubyCoralCat: 红玉猫猫币
-		// TerraCoralCat: 泰拉猫猫币
-		// RainBowCoralCat: 彩虹猫猫币
+Players.CoralitePlayer.ThunderElectrifiedDeath: 被雷劈死了
+
+Conditions: {
+	CoraliteConditions: {
+		LearnedMagikeBase: 需要学习魔能基础
+		CoralCat: 需要在彩虹猫的世界（CoralCat）
+		MagikeCraft: 需要使用魔能合成坛来合成
+		LearnedMagikeAdvance: 需要学习魔能进阶
+		InDigDigDig: 需要在劳工挖挖挖的世界（DigDigDig）
+		NotInDigDigDig: 需要不在劳工挖挖挖的世界（DigDigDig）
+		UseMultiBlockStructure: 使用多方块结构合成
 	}
 }
 
-DamageClasses.FairyDamage.DisplayName: 仙灵伤害
+WorldGeneration: {
+	CoraliteWorld: {
+		StoneBack: 挖石头挖石头挖石头挖挖挖挖挖挖挖！
+		SmallBasalt: 正在散布玄武岩
+		ChippedBladeTemple: 正在修建破碎剑刃神庙
+		ClearGemstoneMaze: 正在修建透明宝石迷宫
+		EvilChest: 正在向邪恶地形添加遗迹
+		IceDragonNest: 正在孕育冰龙巢穴
+		MagicCrystalCaveText: 正在凝聚魔力水晶洞
+		ShadowCastleText: 正在实现影之城
+		WindStoneTablet: 正在风化石碑
+		ReplaceVanillaChestText: 正在向宝箱内塞入更多战利品
+		ReadyDig: 带好装备，准备开挖！
+		DigTheJungle: 挖丛林挖丛林挖丛林挖挖挖挖挖挖挖！
+		DigTheIce: 挖冰块挖冰块挖冰块挖挖挖挖挖挖挖！
+		DigClearUpText: 拿好你的工具，现在是挖掘时间！
+		DigDesert: 挖沙漠挖沙漠挖沙漠挖挖挖挖挖挖挖！
+		DigHell: 挖下界挖下界挖下界挖挖挖挖挖挖挖！
+		DigSky: 挖地表挖地表挖地表挖挖挖挖挖挖挖！
+		DigTheCrystalCave: 挖水晶洞挖水晶洞挖水晶洞挖挖挖挖挖挖挖！
+		DigTheNPC: 这是什么？笨拙史莱姆？生成一下。这是什么？渔夫？生成一下。这是什么？发型师？生成一下。
+		DigTheGMHalfCircle: 挖花岗岩挖大理石挖花岗岩挖大理石挖挖挖挖挖挖挖！
+		DigTheMushroomCircle: 挖发光蘑菇挖发光蘑菇挖发光蘑菇挖挖挖挖挖挖挖！
+		DigTheEvil: 挖邪恶挖邪恶挖邪恶挖挖挖挖挖挖挖！
+		DigTheJungleTemple: 挖神庙挖神庙挖神庙挖挖挖挖挖挖挖！
+		DigTheShimmer: 挖微光挖微光挖微光挖挖挖挖挖挖挖！
+		DigTheIceDragonNest: 挖冰龙巢挖冰龙巢挖冰龙巢挖挖挖挖挖挖挖！
+		DigTheDigDungeon: 挖地牢挖地牢挖地牢挖挖挖挖挖挖挖！
+	}
+}

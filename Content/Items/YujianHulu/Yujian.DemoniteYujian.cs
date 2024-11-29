@@ -101,9 +101,9 @@ namespace Coralite.Content.Items.YujianHulu
                 float length = targetVector.Length();
 
                 if (length > distanceToKeep + 20)
-                    Projectile.velocity = (Projectile.velocity * 20f + targetDirection * 2) / 21f;
+                    Projectile.velocity = ((Projectile.velocity * 20f) + (targetDirection * 2)) / 21f;
                 else if (length < distanceToKeep - 20)
-                    Projectile.velocity = (Projectile.velocity * 20f + targetDirection * -2) / 21f;
+                    Projectile.velocity = ((Projectile.velocity * 20f) + (targetDirection * -2)) / 21f;
                 else
                     Projectile.velocity *= slowdownFactor;
 
@@ -116,7 +116,7 @@ namespace Coralite.Content.Items.YujianHulu
             {
                 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
                 int spurtTime = firstPhaseTime - SecondPhaseTime;
-                float speed = (Vector2.Distance(targetCenter, Projectile.Center) + distanceToKeep * 0.3f) / spurtTime;
+                float speed = (Vector2.Distance(targetCenter, Projectile.Center) + (distanceToKeep * 0.3f)) / spurtTime;
                 Vector2 targetDir = (targetCenter - Projectile.Center).SafeNormalize(Vector2.One);
 
                 Projectile.velocity = targetDir * speed;
@@ -189,17 +189,17 @@ namespace Coralite.Content.Items.YujianHulu
             //绘制影子拖尾
             Texture2D mainTex = Projectile.GetTexture();
             Rectangle source = mainTex.Frame();
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 2);
-            float scale = 1.2f + yujianProj.trailCacheLength * 0.015f;
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 2);
+            float scale = 1.2f + (yujianProj.trailCacheLength * 0.015f);
 
             for (int i = yujianProj.trailCacheLength - 1; i > 0; i -= 3)
             {
                 Color shadowColor = Color.Lerp(yujianProj.color1, yujianProj.color2, (float)i / yujianProj.trailCacheLength);
-                int a = 20 + i * 4;
+                int a = 20 + (i * 4);
                 if (a > 255)
                     a = 255;
                 shadowColor.A = (byte)a;
-                spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, source, shadowColor, Projectile.oldRot[i], origin, scale - i * 0.015f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, source, shadowColor, Projectile.oldRot[i], origin, scale - (i * 0.015f), SpriteEffects.None, 0f);
             }
         }
     }
@@ -265,9 +265,9 @@ namespace Coralite.Content.Items.YujianHulu
                 return false;
 
             Texture2D mainTex = TextureAssets.Extra[98].Value;
-            Vector2 scale = new Vector2(Width / mainTex.Width, (Projectile.Center - center).Length() / mainTex.Height);
+            Vector2 scale = new(Width / mainTex.Width, (Projectile.Center - center).Length() / mainTex.Height);
             Vector2 Center = center - Projectile.velocity - Main.screenPosition;
-            Vector2 origin = new Vector2(mainTex.Width / 2, 0);
+            Vector2 origin = new(mainTex.Width / 2, 0);
             float rotation = Projectile.rotation + 3.141f;
 
             Main.spriteBatch.Draw(mainTex, Center, null, Color.Purple * Alpha, rotation, origin, scale, SpriteEffects.None, 0);
@@ -327,7 +327,7 @@ namespace Coralite.Content.Items.YujianHulu
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D mainTex = TextureAssets.Extra[98].Value;
-            Vector2 scale = new Vector2(Projectile.ai[0] / mainTex.Width, Projectile.localAI[0] / mainTex.Height);
+            Vector2 scale = new(Projectile.ai[0] / mainTex.Width, Projectile.localAI[0] / mainTex.Height);
             Vector2 Center = Projectile.Center - Main.screenPosition;
             Vector2 origin = mainTex.Size() / 2;
             float rotation = Projectile.rotation + 3.141f;

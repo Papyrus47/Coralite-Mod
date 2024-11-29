@@ -1,9 +1,9 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -29,7 +29,7 @@ namespace Coralite.Content.Items.YujianHulu
 
     public class GoldYujianProj : BaseYujianProj
     {
-        public override string SlashTexture => AssetDirectory.OtherProjectiles + "LiteSlash";
+        public override string SlashTexture => AssetDirectory.Trails + "LiteSlash";
 
         public GoldYujianProj() : base(
             new YujianAI[]
@@ -90,7 +90,7 @@ namespace Coralite.Content.Items.YujianHulu
             if (yujianProj.Timer > firstPhaseTime)  //准备阶段
             {
                 //从1到0
-                float factor = (yujianProj.Timer - firstPhaseTime) / (float)(StartTime - firstPhaseTime);
+                float factor = (yujianProj.Timer - firstPhaseTime) / (StartTime - firstPhaseTime);
 
                 Vector2 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
                 Vector2 targetVector = targetCenter - Projectile.Center;
@@ -101,9 +101,9 @@ namespace Coralite.Content.Items.YujianHulu
                 float length = targetVector.Length();
 
                 if (length > distanceToKeep + 20)
-                    Projectile.velocity = (Projectile.velocity * 20f + targetDirection * 2) / 21f;
+                    Projectile.velocity = ((Projectile.velocity * 20f) + (targetDirection * 2)) / 21f;
                 else if (length < distanceToKeep - 20)
-                    Projectile.velocity = (Projectile.velocity * 20f + targetDirection * -2) / 21f;
+                    Projectile.velocity = ((Projectile.velocity * 20f) + (targetDirection * -2)) / 21f;
                 else
                     Projectile.velocity *= slowdownFactor;
 
@@ -116,7 +116,7 @@ namespace Coralite.Content.Items.YujianHulu
             {
                 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
                 int spurtTime = firstPhaseTime - SecondPhaseTime;
-                float speed = (Vector2.Distance(targetCenter, Projectile.Center) + distanceToKeep * 0.3f) / spurtTime;
+                float speed = (Vector2.Distance(targetCenter, Projectile.Center) + (distanceToKeep * 0.3f)) / spurtTime;
                 Projectile.velocity = (targetCenter - Projectile.Center).SafeNormalize(Vector2.One) * speed;
 
                 Projectile.rotation = (targetCenter - Projectile.Center).ToRotation() + 1.57f;
@@ -153,17 +153,17 @@ namespace Coralite.Content.Items.YujianHulu
             //绘制影子拖尾
             Texture2D mainTex = Projectile.GetTexture();
             Rectangle source = mainTex.Frame();
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 2);
-            float scale = 1.6f + yujianProj.trailCacheLength * 0.015f;
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 2);
+            float scale = 1.6f + (yujianProj.trailCacheLength * 0.015f);
 
             for (int i = yujianProj.trailCacheLength - 1; i > 0; i -= 3)
             {
                 Color shadowColor = Color.Lerp(yujianProj.color1, yujianProj.color2, (float)i / yujianProj.trailCacheLength);
-                int a = 20 + i * 4;
+                int a = 20 + (i * 4);
                 if (a > 255)
                     a = 255;
                 shadowColor.A = (byte)a;
-                spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, source, shadowColor, Projectile.oldRot[i], origin, scale - i * 0.015f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, source, shadowColor, Projectile.oldRot[i], origin, scale - (i * 0.015f), SpriteEffects.None, 0f);
             }
         }
     }
@@ -211,7 +211,7 @@ namespace Coralite.Content.Items.YujianHulu
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Particle particle = Particle.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(16, 16) + i * Projectile.velocity, Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Gold, Main.rand.NextFloat(0.1f, 0.15f));
+                    BasePRT particle = PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(16, 16) + (i * Projectile.velocity), Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Gold, Main.rand.NextFloat(0.1f, 0.15f));
                     particle.Rotation = 1.57f;
                 }
             }
@@ -238,7 +238,7 @@ namespace Coralite.Content.Items.YujianHulu
                 return false;
 
             Texture2D mainTex = TextureAssets.Extra[98].Value;
-            Vector2 scale = new Vector2(Width / mainTex.Width, (Projectile.Center - center).Length() / mainTex.Height);
+            Vector2 scale = new(Width / mainTex.Width, (Projectile.Center - center).Length() / mainTex.Height);
 
             Main.spriteBatch.Draw(mainTex, center - Projectile.velocity - Main.screenPosition, null, Color.Gold * Alpha, Projectile.rotation + 3.141f, new Vector2(mainTex.Width / 2, 0), scale, SpriteEffects.None, 0);
 

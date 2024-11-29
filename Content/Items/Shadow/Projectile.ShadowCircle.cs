@@ -287,7 +287,7 @@ namespace Coralite.Content.Items.Shadow
             Texture2D mainTex = Projectile.GetTexture();
             Rectangle frameBox = mainTex.Frame(1, 3, 0, Projectile.frame);
             Vector2 center = Projectile.Center - Main.screenPosition;
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 6);
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 6);
 
             Main.spriteBatch.Draw(mainTex, center, frameBox, lightColor, 0, origin, 1.3f, SpriteEffects.None, 0);
             if ((int)State != (int)AIState.idle)
@@ -374,7 +374,7 @@ namespace Coralite.Content.Items.Shadow
                         if (Main.myPlayer == Projectile.owner)
                         {
                             Vector2 rot = Helper.NextVec2Dir();
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[targetIndex2].Center + rot * 128, Main.npc[targetIndex2].Center - rot * 128,
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Main.npc[targetIndex2].Center + (rot * 128), Main.npc[targetIndex2].Center - (rot * 128),
                                 ModContent.ProjectileType<ShadowCircle_MeleeClaw>(), Projectile.damage, 0, Projectile.owner);
                         }
                         SoundEngine.PlaySound(CoraliteSoundID.WhipSwing_Item152, Projectile.Center);
@@ -393,14 +393,14 @@ namespace Coralite.Content.Items.Shadow
                 Vector2 center = Projectile.Center;
                 float num198 = num186 - center.X;
                 float num199 = num187 - center.Y;
-                float dis2Target = MathF.Sqrt(num198 * num198 + num199 * num199);
+                float dis2Target = MathF.Sqrt((num198 * num198) + (num199 * num199));
                 dis2Target = num197 / dis2Target;
                 num198 *= dis2Target;
                 num199 *= dis2Target;
                 int chase = 16;
 
-                Projectile.velocity.X = (Projectile.velocity.X * (chase - 1) + num198) / chase;
-                Projectile.velocity.Y = (Projectile.velocity.Y * (chase - 1) + num199) / chase;
+                Projectile.velocity.X = ((Projectile.velocity.X * (chase - 1)) + num198) / chase;
+                Projectile.velocity.Y = ((Projectile.velocity.Y * (chase - 1)) + num199) / chase;
             }
 
             #endregion
@@ -417,7 +417,7 @@ namespace Coralite.Content.Items.Shadow
     /// </summary>
     public class ShadowCircle_MeleeClaw : ModProjectile, IDrawNonPremultiplied
     {
-        public override string Texture => AssetDirectory.OtherProjectiles + "ShadowClaw";
+        public override string Texture => AssetDirectory.Trails + "ClawSlash3APurple";
 
         public ref float PosFactor => ref Projectile.ai[0];
         public ref float ScaleFactor => ref Projectile.ai[1];
@@ -482,7 +482,7 @@ namespace Coralite.Content.Items.Shadow
             Texture2D mainTex = Projectile.GetTexture();
 
             Vector2 center = Vector2.Lerp(Projectile.Center, Projectile.velocity, PosFactor);
-            Vector2 scale = new Vector2(ScaleFactor * MaxScale, YScale);
+            Vector2 scale = new(ScaleFactor * MaxScale, YScale);
             Vector2 origin = mainTex.Size() / 2;
 
             spriteBatch.Draw(mainTex, center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
@@ -634,14 +634,14 @@ namespace Coralite.Content.Items.Shadow
                 Vector2 center = Projectile.Center;
                 float num198 = num186 - center.X;
                 float num199 = num187 - center.Y;
-                float dis2Target = MathF.Sqrt(num198 * num198 + num199 * num199);
+                float dis2Target = MathF.Sqrt((num198 * num198) + (num199 * num199));
                 dis2Target = num197 / dis2Target;
                 num198 *= dis2Target;
                 num199 *= dis2Target;
                 int chase = 16;
 
-                Projectile.velocity.X = (Projectile.velocity.X * (chase - 1) + num198) / chase;
-                Projectile.velocity.Y = (Projectile.velocity.Y * (chase - 1) + num199) / chase;
+                Projectile.velocity.X = ((Projectile.velocity.X * (chase - 1)) + num198) / chase;
+                Projectile.velocity.Y = ((Projectile.velocity.Y * (chase - 1)) + num199) / chase;
             }
 
             #endregion
@@ -816,14 +816,14 @@ namespace Coralite.Content.Items.Shadow
             #region 泰拉棱镜的冲刺
             //在一般时间之前先缓慢地靠近
             //之后快速突刺到目标身后
-            Vector2 originCenter = new Vector2(Projectile.localAI[0], Projectile.localAI[1]);
+            Vector2 originCenter = new(Projectile.localAI[0], Projectile.localAI[1]);
             originCenter += new Vector2(0f, Utils.GetLerpValue(0f, 0.4f, lerpValue2, clamped: true) * -100f);
             Vector2 v = target.Center - originCenter;
             Vector2 vector6 = v.SafeNormalize(Vector2.Zero) * MathHelper.Clamp(v.Length(), 60f, 150f);
             Vector2 value = target.Center + vector6;
             float lerpValue3 = Utils.GetLerpValue(0.4f, 0.6f, lerpValue2, clamped: true);
             float lerpValue4 = Utils.GetLerpValue(0.6f, 1f, lerpValue2, clamped: true);
-            float targetAngle = v.SafeNormalize(Vector2.Zero).ToRotation() - (float)Math.PI / 2f;   //这里调整了角度
+            float targetAngle = v.SafeNormalize(Vector2.Zero).ToRotation() - ((float)Math.PI / 2f);   //这里调整了角度
             Projectile.rotation = Projectile.rotation.AngleTowards(targetAngle, (float)Math.PI / 5f);
             Projectile.Center = Vector2.Lerp(originCenter, target.Center, lerpValue3);
             if (lerpValue4 > 0f)
@@ -856,7 +856,7 @@ namespace Coralite.Content.Items.Shadow
         {
             idleRotation = 0;
             float num2 = (totalIndexes - 1f) / 2f;
-            idleSpot = Owner.Center - Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 33f + new Vector2(16, 0);
+            idleSpot = Owner.Center - (Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 33f) + new Vector2(16, 0);
             idleSpot += Main.GlobalTimeWrappedHourly.ToRotationVector2() * 8;
         }
 
@@ -924,12 +924,12 @@ namespace Coralite.Content.Items.Shadow
         {
             Texture2D mainTex = Projectile.GetTexture();
             Rectangle frameBox = mainTex.Frame(1, 7, 0, Projectile.frame);
-            Vector2 origin = new Vector2(mainTex.Width / 2, mainTex.Height / 14);
+            Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 14);
 
             if (Projectile.ai[0] > 0)
                 for (int i = 1; i < 6; i++)
                 {
-                    Color color = Color.Purple * (0.34f - i * 0.02f);
+                    Color color = Color.Purple * (0.34f - (i * 0.02f));
                     Main.spriteBatch.Draw(mainTex, Projectile.oldPos[i] - Main.screenPosition, frameBox, color, Projectile.oldRot[i], origin, 1.2f, SpriteEffects.None, 0);
                 }
 

@@ -2,8 +2,8 @@
 using Coralite.Content.Buffs;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Terraria;
 using Terraria.ID;
 using static Terraria.ModLoader.ModContent;
@@ -92,7 +92,7 @@ namespace Coralite.Content.Items.Icicle
                 case (int)AIStates.idle:    //回到玩家身边
                     Timer = 0;
                     Helper.GetMyProjIndexWithSameType(Type, Projectile.whoAmI, Projectile.owner, out int index, out int totalIndexes);
-                    Vector2 idlePosition = Owner.Center + new Vector2(0, -16 - totalIndexes * 2).RotatedBy(6.282f * index / totalIndexes);
+                    Vector2 idlePosition = Owner.Center + new Vector2(0, -16 - (totalIndexes * 2)).RotatedBy(6.282f * index / totalIndexes);
 
                     if (Vector2.Distance(idlePosition, Projectile.position) > 2000)
                         Projectile.Center = idlePosition;
@@ -117,7 +117,7 @@ namespace Coralite.Content.Items.Icicle
                         Projectile.localAI[1] += 0.01f;
                     }
 
-                    Projectile.rotation += Projectile.velocity.Length() * 0.05f + 0.02f;
+                    Projectile.rotation += (Projectile.velocity.Length() * 0.05f) + 0.02f;
                     return;
                 case (int)AIStates.normalAttack:    //普通攻击：不断冲向敌人位置
 
@@ -127,7 +127,7 @@ namespace Coralite.Content.Items.Icicle
                         return;
                     }
 
-                    Projectile.rotation += Projectile.velocity.Length() * 0.05f + 0.05f;
+                    Projectile.rotation += (Projectile.velocity.Length() * 0.05f) + 0.05f;
 
                     if (Timer == 0)
                     {
@@ -155,7 +155,7 @@ namespace Coralite.Content.Items.Icicle
                     if (Timer < 25)
                     {
                         if (Timer % 15 == 0)
-                            Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.15f);
+                            PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.15f);
                         break;
                     }
 
@@ -185,15 +185,15 @@ namespace Coralite.Content.Items.Icicle
 
                     if (Timer == 25)
                     {
-                        Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceBurstHalo_Reverse>(), Scale: 1.5f);
-                        Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceBurstHalo_Reverse>(), Scale: 1f);
-                        Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.Instance.IcicleCyan, 0.8f);
+                        PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceBurstHalo_Reverse>(), Scale: 1.5f);
+                        PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceBurstHalo_Reverse>(), Scale: 1f);
+                        PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<Sparkle_Big>(), Coralite.IcicleCyan, 0.8f);
                     }
 
                     if (Timer >= 40)
                     {
-                        Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.6f);
-                        Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.4f);
+                        PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.6f);
+                        PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceHalo>(), Scale: 0.4f);
                         for (int j = 0; j < 8; j++)
                         {
                             Dust.NewDustPerfect(Projectile.Center, DustType<CrushedIceDust>(), -Vector2.UnitY.RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.NextFloat(2f, 5f),

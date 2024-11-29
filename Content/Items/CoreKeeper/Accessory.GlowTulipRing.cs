@@ -54,12 +54,16 @@ namespace Coralite.Content.Items.CoreKeeper
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            float factor = polished ? 0.8f : 0.6f;
-            Lighting.AddLight(player.Center, new Microsoft.Xna.Framework.Vector3(0.55f, 0.95f, 0.8f) * factor);
+            float factor = 0.6f;
             if (polished)
             {
-                player.lifeRegen += 2;
+                factor = 0.8f;
+                player.manaRegenBonus += 5;
+                player.GetDamage(DamageClass.Magic) += 0.078f;
             }
+
+            Lighting.AddLight(player.Center, new Vector3(0.55f, 0.95f, 0.8f) * factor);
+
         }
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -84,7 +88,7 @@ namespace Coralite.Content.Items.CoreKeeper
         {
             base.LoadData(tag);
             if (polished)
-                Item.rare = RarityType<RareRarity>();
+                Item.rare = RarityType<EpicRarity>();
         }
     }
 }

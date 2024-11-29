@@ -25,9 +25,9 @@ namespace Coralite.Content.Items.HyacinthSeries
         public override void Initialize()
         {
             base.Initialize();
-            float rotation = TargetRot + (OwnerDirection > 0 ? 0 : MathHelper.Pi);
+            float rotation = TargetRot + (DirSign > 0 ? 0 : MathHelper.Pi);
             Vector2 dir = rotation.ToRotationVector2();
-            Vector2 center = Projectile.Center + dir * 32;
+            Vector2 center = Projectile.Center + (dir * 32);
             for (int i = 0; i < 16; i++)
             {
                 Dust dust = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(8, 8), DustID.Snow, dir.RotatedBy(Main.rand.NextFloat(-0.8f, 0.8f)) * Main.rand.NextFloat(4f, 8f), Scale: Main.rand.NextFloat(0.8f, 1.2f));
@@ -136,7 +136,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             {
                 if (Main.myPlayer == Projectile.owner && Helper.FindClosestEnemy(Projectile.Center, 600, npc => npc.active && !npc.friendly && npc.CanBeChasedBy()) is not null)
                 {
-                    Vector2 center = Projectile.Top + (Projectile.rotation + 1.57f).ToRotationVector2() * 40;
+                    Vector2 center = Projectile.Top + ((Projectile.rotation + 1.57f).ToRotationVector2() * 40);
                     Vector2 dir = (center - Projectile.Top).SafeNormalize(Vector2.Zero);
 
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), center, dir * 7, ModContent.ProjectileType<SnowSpirit>(), (int)(Projectile.damage * 0.8f), Projectile.knockBack, Projectile.owner);
@@ -158,7 +158,7 @@ namespace Coralite.Content.Items.HyacinthSeries
         {
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 center = Projectile.Center - Main.screenPosition;
-            Vector2 origin = new Vector2(28, 0);
+            Vector2 origin = new(28, 0);
 
             Main.spriteBatch.Draw(mainTex, center, mainTex.Frame(1, 2, 0, 0), lightColor * Projectile.ai[0], Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(mainTex, center, mainTex.Frame(1, 2, 0, 1), Color.White, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
@@ -243,6 +243,11 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public SnowSpirit()
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Main.QueueMainThreadAction(() =>
             {
                 effect = new BasicEffect(Main.instance.GraphicsDevice);
@@ -336,14 +341,14 @@ namespace Coralite.Content.Items.HyacinthSeries
                 Vector2 center = Projectile.Center;
                 float num198 = num186 - center.X;
                 float num199 = num187 - center.Y;
-                float dis2Target = MathF.Sqrt(num198 * num198 + num199 * num199);
+                float dis2Target = MathF.Sqrt((num198 * num198) + (num199 * num199));
                 dis2Target = num197 / dis2Target;
                 num198 *= dis2Target;
                 num199 *= dis2Target;
                 int chase = 24;
 
-                Projectile.velocity.X = (Projectile.velocity.X * (chase - 1) + num198) / chase;
-                Projectile.velocity.Y = (Projectile.velocity.Y * (chase - 1) + num199) / chase;
+                Projectile.velocity.X = ((Projectile.velocity.X * (chase - 1)) + num198) / chase;
+                Projectile.velocity.Y = ((Projectile.velocity.Y * (chase - 1)) + num199) / chase;
             }
 
 

@@ -1,8 +1,9 @@
 ﻿using Coralite.Content.Raritys;
+using Coralite.Content.UI;
 using Coralite.Core;
+using Coralite.Core.Loaders;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.MagikeSystem;
-using Coralite.Core.Systems.MagikeSystem.Base;
 using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
@@ -10,7 +11,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.ObjectData;
 
 namespace Coralite.Content.Items.MagikeSeries1
 {
@@ -34,31 +34,54 @@ namespace Coralite.Content.Items.MagikeSeries1
         public override bool CanUseItem(Player player)
         {
             Point16 pos = Main.MouseWorld.ToTileCoordinates16();
-            Rectangle rectangle = Helper.QuickMouseRectangle();
 
             //右键打开UI
-            if (player.altFunctionUse==2)
+            if (player.altFunctionUse == 2 && MagikeConnectUI.visible)
             {
-                //MagikeConnectUI.sender = sender;
-                //UILoader.GetUIState<MagikeConnectUI>()?.Recalculate();
-                //MagikeConnectUI.visible = true;
-                return false;
+                MagikeConnectUI.visible = false;
             }
 
             //左键寻找发送器
-            if (MagikeHelper.TryGetEntityWithComponent<MagikeLinerSender>(pos.X, pos.Y, MagikeComponentID.MagikeSender, out BaseMagikeTileEntity entity))    //找到了
+            if (MagikeHelper.TryGetEntityWithComponent<MagikeLinerSender>(pos.X, pos.Y, MagikeComponentID.MagikeSender, out MagikeTP entity))    //找到了
             {
-                CombatText.NewText(rectangle, Coralite.Instance.MagicCrystalPink,
-                    MagikeSystem.GetConnectStaffText(MagikeSystem.ConnectStaffID.ChooseSender_Found));
+                if (player.altFunctionUse == 2)
+                {
+                    MagikeLinerSender senderComponent = entity.GetSingleComponent<MagikeLinerSender>(MagikeComponentID.MagikeSender);
 
-                Point16 p = entity.Position;
-                Projectile.NewProjectile(new EntitySource_ItemUse(Main.LocalPlayer, Main.LocalPlayer.HeldItem), p.ToWorldCoordinates(8, 8),
-                    Vector2.Zero, ModContent.ProjectileType<MagConnectProj>(), 1, 0, Main.myPlayer, p.X, p.Y);
+                    MagikeConnectUI.sender = senderComponent;
+                    UILoader.GetUIState<MagikeConnectUI>()?.Recalculate();
+                    MagikeConnectUI.visible = true;
+                    Helper.PlayPitched("UI/Tick", 0.4f, 0, player.Center);
 
+                    return false;
+                }
+
+                PopupText.NewText(new AdvancedPopupRequest()
+                {
+                    Color = Coralite.MagicCrystalPink,
+                    Text = MagikeSystem.GetConnectStaffText(MagikeSystem.StaffTextID.ChooseSender_Found),
+                    DurationInFrames = 60,
+                    Velocity = -Vector2.UnitY
+                }, Main.MouseWorld - (Vector2.UnitY * 32));
+
+                Point16 topLeft = entity.Position;
+                Projectile.NewProjectile(new EntitySource_ItemUse(Main.LocalPlayer, Main.LocalPlayer.HeldItem), topLeft.ToWorldCoordinates(8, 8),
+                    Vector2.Zero, ModContent.ProjectileType<MagConnectProj>(), 0, 0, Main.myPlayer, topLeft.X, topLeft.Y);
+
+                MagikeHelper.SpawnLozengeParticle_WithTopLeft(topLeft);
+                Helper.PlayPitched("Fairy/FairyBottleClick2", 0.4f, 0, player.Center);
             }
             else
-                CombatText.NewText(rectangle, Coralite.Instance.MagicCrystalPink,
-                    MagikeSystem.GetConnectStaffText(MagikeSystem.ConnectStaffID.ChooseSender_NotFound));
+            {
+                Helper.PlayPitched("UI/Error", 0.4f, 0, player.Center);
+                PopupText.NewText(new AdvancedPopupRequest()
+                {
+                    Color = Coralite.MagicCrystalPink,
+                    Text = MagikeSystem.GetConnectStaffText(MagikeSystem.StaffTextID.ChooseSender_NotFound),
+                    DurationInFrames = 60,
+                    Velocity = -Vector2.UnitY
+                }, Main.MouseWorld - (Vector2.UnitY * 32));
+            }
 
             return true;
         }
@@ -71,6 +94,7 @@ namespace Coralite.Content.Items.MagikeSeries1
         private Vector2 selfPos;
         private Vector2 aimPos;
         private Color c;
+        private bool start = true;
 
         public override void SetDefaults()
         {
@@ -95,43 +119,82 @@ namespace Coralite.Content.Items.MagikeSeries1
 
             Projectile.timeLeft = 2;
 
-            Point16 position = new Point16((int)Projectile.ai[0], (int)Projectile.ai[1]);
-            selfPos = Helper.GetTileCenter(position);
+            Point16 position = new((int)Projectile.ai[0], (int)Projectile.ai[1]);
+            selfPos = Helper.GetMagikeTileCenter(position);
 
-            Point16 p2 = new Point16((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16);
-            aimPos = p2.ToWorldCoordinates();
+            Point16 currentPoint = new((int)Main.MouseWorld.X / 16, (int)Main.MouseWorld.Y / 16);
+            aimPos = currentPoint.ToWorldCoordinates();
 
-            IMagikeContainer receiver = null;
-
-            if (MagikeHelper.TryGetEntity(p2.X, p2.Y, out receiver))
+            if (!MagikeHelper.TryGetEntityWithComponent<MagikeLinerSender>(position.X, position.Y, MagikeComponentID.MagikeSender
+                , out MagikeTP sender))
             {
-                Tile tile2 = Framing.GetTileSafely(p2);
-                TileObjectData data2 = TileObjectData.GetTileData(tile2);
-                int x2 = data2 == null ? 8 : data2.Width * 16 / 2;
-                int y2 = data2 == null ? 8 : data2.Height * 16 / 2;
-
-                p2 = receiver.GetPosition;
-                aimPos = receiver.GetPosition.ToWorldCoordinates(x2, y2);
+                Projectile.Kill();
+                return;
             }
 
-            if (MagikeHelper.TryGetEntityWithTopLeft(position.X, position.Y, out IMagikeSender_Line sender))
+            MagikeHelper.TryGetEntity(currentPoint.X, currentPoint.Y, out MagikeTP receiver);
+
+            if (receiver != null)
             {
-                c = sender.CanConnect(p2) ? Color.GreenYellow : Color.MediumVioletRed;
+                currentPoint = receiver.Position;
+                aimPos = Helper.GetMagikeTileCenter(currentPoint);
+            }
 
-                if (Owner.controlUseItem)
+            if (sender == receiver)
+                return;
+
+            MagikeLinerSender senderComponent = sender.GetSingleComponent<MagikeLinerSender>(MagikeComponentID.MagikeSender);
+
+            bool canConnect = senderComponent.CanConnect(currentPoint, out string failText);
+            c = canConnect ? Color.GreenYellow : Color.MediumVioletRed;
+
+            if (start)
+            {
+                if (!Owner.controlUseItem)
                 {
-                    Rectangle rectangle = new Rectangle((int)Main.MouseWorld.X, (int)Main.MouseWorld.Y, 2, 2);
-
-                    if (receiver != null && sender.ConnectToRecevier(receiver))  //能连接，建立连接
-                    {
-                        CombatText.NewText(rectangle, Coralite.Instance.MagicCrystalPink, this.GetLocalization("ConnectSuccessfully", () => "成功建立连接！").Value);
-                        sender.ShowConnection();
-                    }
-                    else
-                        CombatText.NewText(rectangle, Coralite.Instance.MagicCrystalPink, this.GetLocalization("ConnectFailed", () => "连接失败！").Value);
-
-                    Projectile.Kill();
+                    start = false;
                 }
+
+                return;
+            }
+
+            if (Owner.controlUseItem)
+            {
+                do
+                {
+                    if (receiver == null || !canConnect)//无法连接，并写明原因
+                    {
+                        Helper.PlayPitched("UI/Error", 0.4f, 0, Owner.Center);
+
+                        PopupText.NewText(new AdvancedPopupRequest()
+                        {
+                            Color = Coralite.MagicCrystalPink,
+                            Text = failText,
+                            DurationInFrames = 60,
+                            Velocity = -Vector2.UnitY
+                        }, Main.MouseWorld - (Vector2.UnitY * 32));
+
+                        break;
+                    }
+
+                    senderComponent.Connect(receiver.Position);
+                    PopupText.NewText(new AdvancedPopupRequest()
+                    {
+                        Color = Coralite.MagicCrystalPink,
+                        Text = MagikeSystem.GetConnectStaffText(MagikeSystem.StaffTextID.Connect_Success),
+                        DurationInFrames = 60,
+                        Velocity = -Vector2.UnitY
+                    }, Main.MouseWorld - (Vector2.UnitY * 32));
+
+                    MagikeHelper.SpawnLozengeParticle_WithTopLeft(sender.Position);
+                    MagikeHelper.SpawnLozengeParticle_WithTopLeft(receiver.Position);
+                    MagikeHelper.SpawnDustOnSend(sender.Position, receiver.Position);
+
+                    Helper.PlayPitched("Fairy/CursorExpand", 0.4f, 0, Owner.Center);
+
+                } while (false);
+
+                Projectile.Kill();
             }
         }
 
@@ -141,17 +204,8 @@ namespace Coralite.Content.Items.MagikeSeries1
             spriteBatch.End();
             spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Texture2D laserTex = ModContent.Request<Texture2D>(AssetDirectory.OtherItems + "MagikeArrow").Value;
+            MagikeSystem.DrawConnectLine(spriteBatch, selfPos, aimPos, Main.screenPosition, c);
 
-            Color drawColor = c;
-            var origin = new Vector2(0, laserTex.Height / 2);
-            Vector2 startPos = selfPos - Main.screenPosition;
-            int width = (int)(selfPos - aimPos).Length();   //这个就是激光长度
-
-            var laserTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, laserTex.Height);
-            var laserSource = new Rectangle((int)(-Main.GlobalTimeWrappedHourly * laserTex.Width), 0, width, laserTex.Height);
-
-            spriteBatch.Draw(laserTex, laserTarget, laserSource, drawColor, (aimPos - selfPos).ToRotation(), origin, 0, 0);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, default, DepthStencilState.None, spriteBatch.GraphicsDevice.RasterizerState, null, Main.GameViewMatrix.TransformationMatrix);
 

@@ -7,8 +7,20 @@
         public const int MagikeProducer = 2;
         public const int MagikeFactory = 3;
         public const int MagikeFilter = 4;
-        public const int Container = 5;
-        public const int GetOnlyContainer = 6;
+        public const int ItemContainer = 5;
+        public const int ItemGetOnlyContainer = 6;
         public const int ItemSender = 7;
+
+        public const int Count = 8;
+
+        /// <summary>
+        /// 是否为单一实例
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        public static bool IsSingleton(int ID)
+        {
+            return ID != MagikeFilter;
+        }
     }
 }

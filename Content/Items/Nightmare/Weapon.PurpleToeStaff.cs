@@ -67,7 +67,7 @@ namespace Coralite.Content.Items.Nightmare
 
         private RotateTentacle tentacle;
         private Color tentacleColor;
-        private Vector2 exVec2 = new Vector2(0, -300);
+        private Vector2 exVec2 = new(0, -300);
 
         private const int NormalAttackTime = 50;
         private const int PowerfulAttackTime = 35;
@@ -135,7 +135,7 @@ namespace Coralite.Content.Items.Nightmare
                 float num2 = (float)Math.PI * 2f / totalIndexesInGroup;
                 float num3 = totalIndexesInGroup * 0.66f;
                 Vector2 vector2 = new Vector2(50f, 8f) / 3f * (totalIndexesInGroup - 1);
-                Vector2 vector3 = Vector2.UnitY.RotatedBy(num2 * index + Main.GlobalTimeWrappedHourly % num3 / num3 * ((float)Math.PI * 2f));
+                Vector2 vector3 = Vector2.UnitY.RotatedBy((num2 * index) + (Main.GlobalTimeWrappedHourly % num3 / num3 * ((float)Math.PI * 2f)));
                 vector += vector3 * vector2;
                 vector.Y += player.gfxOffY;
                 vector = vector.Floor();
@@ -171,7 +171,7 @@ namespace Coralite.Content.Items.Nightmare
                     SoundEngine.PlaySound(CoraliteSoundID.Swing_Item1, Projectile.position);
                     for (int i = 0; i < 2; i++)
                     {
-                        Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.VilePowder, Projectile.oldVelocity.X * 0.2f, Projectile.oldVelocity.Y * 0.2f, 0, default(Color), 1.4f);
+                        Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.VilePowder, Projectile.oldVelocity.X * 0.2f, Projectile.oldVelocity.Y * 0.2f, 0, default, 1.4f);
                         if (!Main.rand.NextBool(3))
                         {
                             dust.scale *= 1.3f;
@@ -187,7 +187,7 @@ namespace Coralite.Content.Items.Nightmare
 
                 Projectile.UpdateFrameNormally(4, Main.projFrames[Projectile.type] - 1);
                 Target += 1f;
-                Projectile.rotation += Projectile.velocity.X * 0.1f + Projectile.velocity.Y * 0.05f;
+                Projectile.rotation += (Projectile.velocity.X * 0.1f) + (Projectile.velocity.Y * 0.05f);
                 Projectile.velocity *= 0.92f;
                 if (Target >= 9f)
                 {
@@ -222,7 +222,7 @@ namespace Coralite.Content.Items.Nightmare
                 if (Timer < -1)
                 {
                     Vector2 dir = (target.Center - Owner.Center).SafeNormalize(Vector2.Zero);
-                    Vector2 idlePos = Owner.Center + dir * 64;
+                    Vector2 idlePos = Owner.Center + (dir * 64);
                     Projectile.Center = Projectile.Center.MoveTowards(idlePos, 36);
 
                     Projectile.rotation = Projectile.rotation.AngleTowards(dir.ToRotation(), (float)Math.PI / 5f);
@@ -254,7 +254,7 @@ namespace Coralite.Content.Items.Nightmare
 
                 float lerpValue2 = Utils.GetLerpValue(AttackTimer, resetTimer, Timer, clamped: true);
 
-                Vector2 originCenter = new Vector2(Projectile.localAI[0], Projectile.localAI[1]);
+                Vector2 originCenter = new(Projectile.localAI[0], Projectile.localAI[1]);
                 originCenter += Utils.GetLerpValue(0f, 0.4f, lerpValue2, clamped: true) * exVec2;
                 Vector2 v = target.Center - originCenter;
                 Vector2 vector6 = v.SafeNormalize(Vector2.Zero) * MathHelper.Clamp(v.Length(), 60f, 150f);

@@ -60,7 +60,7 @@ namespace Coralite.Content.NPCs.Magike
         {
             if (spawnInfo.Player.townNPCs > 2f)
                 return 0;
-            if ((!Main.dayTime && spawnInfo.Player.ZoneForest))
+            if (!Main.dayTime && spawnInfo.Player.ZoneForest)
                 return 0.08f;
             if (spawnInfo.Player.InModBiome<MagicCrystalCave>())
                 return 0.04f;
@@ -73,7 +73,7 @@ namespace Coralite.Content.NPCs.Magike
             if (NPC.life <= 0)
             {
                 for (int i = 0; i < 6; i++)
-                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Teleporter, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 100, Coralite.Instance.MagicCrystalPink, 1f);
+                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Teleporter, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 100, Coralite.MagicCrystalPink, 1f);
             }
             else
             {

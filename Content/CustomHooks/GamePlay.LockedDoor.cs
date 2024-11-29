@@ -9,6 +9,11 @@ namespace Coralite.Content.CustomHooks
             On_WorldGen.OpenDoor += LockDoor;
         }
 
+        public override void Unload()
+        {
+            On_WorldGen.OpenDoor -= LockDoor;
+        }
+
         private bool LockDoor(On_WorldGen.orig_OpenDoor orig, int i, int j, int direction)
         {
             Tile tile = Main.tile[i, j];

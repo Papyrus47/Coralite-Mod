@@ -3,6 +3,7 @@ using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -79,7 +80,7 @@ namespace Coralite.Content.Items.Nightmare
     {
         public override string Texture => AssetDirectory.Blank;
 
-        private ParticleGroup group;
+        private PrimitivePRTGroup group;
 
         public ref float Powerful => ref Projectile.ai[0];
 
@@ -136,7 +137,7 @@ namespace Coralite.Content.Items.Nightmare
             }
 
             if (Main.netMode != NetmodeID.Server)
-                group ??= new ParticleGroup();
+                group ??= new PrimitivePRTGroup();
 
             Color color;
             if (Powerful == 1)
@@ -153,7 +154,7 @@ namespace Coralite.Content.Items.Nightmare
             group?.NewParticle(Projectile.Center + Main.rand.NextVector2Circular(8, 8),
                 Helper.NextVec2Dir(0.5f, 3), CoraliteContent.ParticleType<BarrenFogParticle>(), color, Main.rand.NextFloat(1f, 2f));
 
-            group?.UpdateParticles();
+            group?.Update();
 
             Delay--;
 
@@ -171,7 +172,7 @@ namespace Coralite.Content.Items.Nightmare
                 {
                     float num336 = Main.npc[i].position.X + (Main.npc[i].width / 2);
                     float num337 = Main.npc[i].position.Y + (Main.npc[i].height / 2);
-                    float num338 = Math.Abs(Projectile.position.X + (Projectile.width / 2) - num336) + Math.Abs(Projectile.position.Y + (float)(Projectile.height / 2) - num337);
+                    float num338 = Math.Abs(Projectile.position.X + (Projectile.width / 2) - num336) + Math.Abs(Projectile.position.Y + (Projectile.height / 2) - num337);
                     if (num338 < num334 && Collision.CanHit(Projectile.position, Projectile.width, Projectile.height, Main.npc[i].position, Main.npc[i].width, Main.npc[i].height))
                     {
                         num334 = num338;
@@ -186,7 +187,7 @@ namespace Coralite.Content.Items.Nightmare
                 Vector2 center = Projectile.Center;
                 float velX = x2 - center.X;
                 float velY = y2 - center.Y;
-                float distance = (float)Math.Sqrt(velX * velX + velY * velY);
+                float distance = (float)Math.Sqrt((velX * velX) + (velY * velY));
                 distance = num339 / distance;
                 velX *= distance;
                 velY *= distance;
@@ -265,7 +266,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public void DrawAdditive(SpriteBatch spriteBatch)
         {
-            group?.DrawParticles(spriteBatch);
+            group?.Draw(spriteBatch);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
@@ -383,25 +384,26 @@ namespace Coralite.Content.Items.Nightmare
         }
     }
 
-    public class BarrenFogParticle : Particle
+    public class BarrenFogParticle : BasePRT
     {
         public override string Texture => AssetDirectory.Particles + "Fog";
 
-        public override void OnSpawn()
+        public override void SetProperty()
         {
             Rotation = Main.rand.NextFloat(6.282f);
             Frame = new Rectangle(0, Main.rand.Next(4) * 64, 64, 64);
+            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
 
-        public override void Update()
+        public override void AI()
         {
             Velocity *= 0.96f;
             Rotation += 0.01f;
             Scale *= 0.997f;
-            color.A = (byte)(color.A * 0.92f);
+            Color.A = (byte)(Color.A * 0.92f);
 
-            fadeIn++;
-            if (fadeIn > 40 || color.A < 10)
+            Opacity++;
+            if (Opacity > 40 || Color.A < 10)
                 active = false;
         }
     }

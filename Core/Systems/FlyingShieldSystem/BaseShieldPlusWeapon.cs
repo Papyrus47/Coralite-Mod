@@ -1,4 +1,4 @@
-﻿using Coralite.Content.Items.GlobalItems;
+﻿using Coralite.Content.GlobalItems;
 using Coralite.Content.ModPlayers;
 using Coralite.Helpers;
 using System.Collections.Generic;
@@ -53,8 +53,8 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
                     return true;//右键时没有左键弹幕
                 }
 
-                if (player.ownedProjectileCounts[Item.shoot] >= cp.MaxFlyingShield)
-                    return false;
+                //if (player.ownedProjectileCounts[Item.shoot] >= cp.MaxFlyingShield)
+                //    return false;
             }
 
             return true;
@@ -118,16 +118,16 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            if (Main.keyState.PressingShift())//TODO: 增加本地化
+            if (Main.keyState.PressingShift())
             {
                 string text = FlyingShieldSystem.ShieldPlusDescriptionLong.Value;
-                TooltipLine line = new TooltipLine(Mod, "Coralite ShieldPlus Description", text);
+                TooltipLine line = new(Mod, "Coralite ShieldPlus Description", text);
                 tooltips.Add(line);
             }
             else
             {
                 string text = FlyingShieldSystem.ShieldPlusDescriptionShort.Value;
-                TooltipLine line = new TooltipLine(Mod, "Coralite ShieldPlus Description", text);
+                TooltipLine line = new(Mod, "Coralite ShieldPlus Description", text);
                 tooltips.Add(line);
             }
         }

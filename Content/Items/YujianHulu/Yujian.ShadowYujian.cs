@@ -1,11 +1,11 @@
 ﻿using Coralite.Content.Items.Shadow;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Core.Systems.Trails;
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
@@ -120,9 +120,9 @@ namespace Coralite.Content.Items.YujianHulu
                         yujianProj.Timer = StartTime;
                         startElliptical = Helper.EllipticalEase(StartAngle, halfShortAxis, halfLongAxis);
                         //重设中心点以及角度和拖尾数组
-                        Vector2 slashCenter = new Vector2(Projectile.localAI[0], Projectile.localAI[1]);
+                        Vector2 slashCenter = new(Projectile.localAI[0], Projectile.localAI[1]);
                         Projectile.rotation = targetRotation + StartAngle;
-                        Projectile.Center = slashCenter + Projectile.rotation.ToRotationVector2() * SlashWidth;
+                        Projectile.Center = slashCenter + (Projectile.rotation.ToRotationVector2() * SlashWidth);
                         Projectile.rotation += 1.57f;
 
                         yujianProj.InitTrailCaches();
@@ -148,10 +148,10 @@ namespace Coralite.Content.Items.YujianHulu
 
                 Vector2 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
                 Vector2 targetDir = (targetCenter - Projectile.Center).SafeNormalize(Vector2.Zero);
-                Projectile.Center = targetCenter + targetDir * distance;
+                Projectile.Center = targetCenter + (targetDir * distance);
                 Projectile.rotation = targetDir.ToRotation() + 1.57f;
 
-                Vector2 slashCenter = Projectile.Center - (Projectile.rotation - 1.57f).ToRotationVector2() * SlashWidth;
+                Vector2 slashCenter = Projectile.Center - ((Projectile.rotation - 1.57f).ToRotationVector2() * SlashWidth);
                 Projectile.localAI[0] = slashCenter.X;
                 Projectile.localAI[1] = slashCenter.Y;
                 targetDir = (targetCenter - Projectile.Center).SafeNormalize(Vector2.Zero);
@@ -175,7 +175,7 @@ namespace Coralite.Content.Items.YujianHulu
                 r += 0.45f;
             }
 
-            Particle.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Purple, 0.2f);
+            PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Purple, 0.2f);
         }
 
         protected override void OnStartAttack(BaseYujianProj yujianProj)
@@ -241,9 +241,9 @@ namespace Coralite.Content.Items.YujianHulu
                 float length = targetVector.Length();
 
                 if (length > 220)
-                    projectile.velocity = (projectile.velocity * 20f + targetDirection * 2) / 21f;
+                    projectile.velocity = ((projectile.velocity * 20f) + (targetDirection * 2)) / 21f;
                 else if (length < 180)
-                    projectile.velocity = (projectile.velocity * 20f + targetDirection * -2) / 21f;
+                    projectile.velocity = ((projectile.velocity * 20f) + (targetDirection * -2)) / 21f;
                 else
                     projectile.velocity *= 0.97f;
 
@@ -255,7 +255,7 @@ namespace Coralite.Content.Items.YujianHulu
                 float rot = Main.rand.NextFloat(6.282f);
                 for (int i = 0; i < 3; i++)
                 {
-                    Projectile.NewProjectile(projectile.GetSource_FromAI(), projectile.Center + (rot + i * 6.282f / 3).ToRotationVector2() * 64, Vector2.Zero,
+                    Projectile.NewProjectile(projectile.GetSource_FromAI(), projectile.Center + ((rot + (i * 6.282f / 3)).ToRotationVector2() * 64), Vector2.Zero,
                             ModContent.ProjectileType<ShadowYujianSummons>(), projectile.damage * 2, 0f, projectile.owner, targetCenter.X, targetCenter.Y);
                 }
 
@@ -298,7 +298,7 @@ namespace Coralite.Content.Items.YujianHulu
 
         public override void AI()
         {
-            Vector2 targetCenter = new Vector2(Projectile.ai[0], Projectile.ai[1]);
+            Vector2 targetCenter = new(Projectile.ai[0], Projectile.ai[1]);
             if (Timer == 0)
                 Projectile.velocity = -(targetCenter - Projectile.Center).SafeNormalize(Vector2.One) * 1.5f;
             else if (Timer < 15)
@@ -306,7 +306,7 @@ namespace Coralite.Content.Items.YujianHulu
             else if (Timer == 15)
             {
                 Vector2 targetDir = (targetCenter - Projectile.Center).SafeNormalize(Vector2.One);
-                Vector2 truelyCenter = targetCenter + targetDir * 150;
+                Vector2 truelyCenter = targetCenter + (targetDir * 150);
                 Projectile.velocity = targetDir * (truelyCenter - Projectile.Center).Length() / 15;
                 Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
                 for (int i = 0; i < 6; i++)
@@ -340,7 +340,7 @@ namespace Coralite.Content.Items.YujianHulu
         {
             Texture2D mainTex = Projectile.GetTexture();
 
-            Main.spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, null, Color.Black * 0.5f, Projectile.rotation - 1 / 57f, mainTex.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, null, Color.Black * 0.5f, Projectile.rotation - (1 / 57f), mainTex.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
     }

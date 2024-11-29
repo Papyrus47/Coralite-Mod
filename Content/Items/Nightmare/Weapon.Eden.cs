@@ -109,7 +109,7 @@ namespace Coralite.Content.Items.Nightmare
             Player owner = Main.player[Projectile.owner];
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // Without PiOver2, the rotation would be off by 90 degrees counterclockwise.
 
-            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * Timer;
+            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + (Projectile.velocity * Timer);
             Lighting.AddLight(Projectile.Center, NightmarePlantera.nightmareRed.ToVector3());
             Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
 
@@ -170,7 +170,7 @@ namespace Coralite.Content.Items.Nightmare
         {
             Texture2D texture = TextureAssets.FishingLine.Value;
             Rectangle frame = texture.Frame();
-            Vector2 origin = new Vector2(frame.Width / 2, 2);
+            Vector2 origin = new(frame.Width / 2, 2);
 
             Vector2 pos = list[0];
             for (int i = 0; i < list.Count - 2; i++)
@@ -180,7 +180,7 @@ namespace Coralite.Content.Items.Nightmare
 
                 float rotation = diff.ToRotation() - MathHelper.PiOver2;
                 Color color = Lighting.GetColor(element.ToTileCoordinates(), Color.Gray);
-                Vector2 scale = new Vector2(2, (diff.Length() + 2) / frame.Height);
+                Vector2 scale = new(2, (diff.Length() + 2) / frame.Height);
 
                 Main.EntitySpriteDraw(texture, pos - Main.screenPosition, frame, color, rotation, origin, scale, SpriteEffects.None, 0);
 
@@ -190,7 +190,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public override bool PreDraw(ref Color lightColor)
         {
-            List<Vector2> list = new List<Vector2>();
+            List<Vector2> list = new();
             Projectile.FillWhipControlPoints(Projectile, list);
 
             DrawLine(list);
@@ -204,7 +204,7 @@ namespace Coralite.Content.Items.Nightmare
 
             for (int i = 0; i < list.Count - 1; i++)
             {
-                Rectangle frame = new Rectangle(0, 0, 34, 24); // 鞭子把手的大小
+                Rectangle frame = new(0, 0, 34, 24); // 鞭子把手的大小
                 float scale = 1;
 
                 if (i == list.Count - 2)
@@ -351,12 +351,12 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.oldRot[0] = FinalRotationOffset;
 
             for (int i = 1; i < CACHE_LENGTH; i++)
-                Projectile.oldPos[i] = Projectile.oldPos[i - 1] + Projectile.velocity.RotatedBy(Projectile.oldRot[i - 1]) * PerPartLength;
+                Projectile.oldPos[i] = Projectile.oldPos[i - 1] + (Projectile.velocity.RotatedBy(Projectile.oldRot[i - 1]) * PerPartLength);
 
 
             Projectile.Center = Owner.Center;
             Owner.heldProj = Projectile.whoAmI;
-            Owner.itemRotation = Projectile.rotation + (OwnerDirection > 0 ? 0 : MathHelper.Pi);
+            Owner.itemRotation = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
             Owner.itemTime = Owner.itemAnimation = 2;
         }
 
@@ -367,20 +367,20 @@ namespace Coralite.Content.Items.Nightmare
 
             Texture2D mainTex = Projectile.GetTexture();
 
-            Rectangle frame = new Rectangle(0, 0, 34, 24); // 鞭子把手的大小
+            Rectangle frame = new(0, 0, 34, 24); // 鞭子把手的大小
 
             //绘制握把
             SpriteEffects effect = SpriteEffects.FlipHorizontally;
             float rot = Projectile.oldRot[0] + Projectile.rotation - MathHelper.PiOver2;
             float exRot = 0f;
-            if (OwnerDirection < 0)
+            if (DirSign < 0)
             {
                 rot -= MathHelper.Pi;
                 //exRot = MathHelper.Pi;
                 effect = SpriteEffects.None;
             }
             Vector2 originCenter = Projectile.oldPos[0] - Main.screenPosition;
-            Main.spriteBatch.Draw(mainTex, originCenter + Projectile.velocity * 14, frame, lightColor, rot, frame.Size() / 2, Projectile.scale, effect, 0);
+            Main.spriteBatch.Draw(mainTex, originCenter + (Projectile.velocity * 14), frame, lightColor, rot, frame.Size() / 2, Projectile.scale, effect, 0);
 
             //绘制中断
             for (int i = 1; i < CACHE_LENGTH - 1; i++)

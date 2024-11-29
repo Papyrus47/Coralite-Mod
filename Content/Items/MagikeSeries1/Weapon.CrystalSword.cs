@@ -1,7 +1,7 @@
 ﻿using Coralite.Content.Dusts;
 using Coralite.Content.Raritys;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Items;
+using Coralite.Core.Systems.MagikeSystem.BaseItems;
 using Coralite.Helpers;
 using Terraria;
 using Terraria.Audio;
@@ -12,7 +12,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.MagikeSeries1
 {
-    public class CrystalSword : BaseMagikeChargeableItem
+    public class CrystalSword : MagikeChargeableItem
     {
         public CrystalSword() : base(150, Item.sellPrice(0, 0, 10, 0)
             , ModContent.RarityType<MagicCrystalRarity>(), 50, AssetDirectory.MagikeSeries1Item)
@@ -48,7 +48,7 @@ namespace Coralite.Content.Items.MagikeSeries1
     {
         public override string Texture => AssetDirectory.Blank;
 
-        private VertexStrip _vertexStrip = new VertexStrip();
+        private VertexStrip _vertexStrip = new();
 
         public override void SetStaticDefaults()
         {
@@ -73,7 +73,7 @@ namespace Coralite.Content.Items.MagikeSeries1
             if (Main.rand.NextBool())
             {
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4, 4), ModContent.DustType<GlowBall>(),
-                    -Projectile.velocity * 0.1f, 0, Coralite.Instance.MagicCrystalPink, 0.15f);
+                    -Projectile.velocity * 0.1f, 0, Coralite.MagicCrystalPink, 0.15f);
             }
 
             int num18 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.RainbowMk2, 0f, 0f, 100, new Color(162, 42, 131), 1f);
@@ -90,7 +90,7 @@ namespace Coralite.Content.Items.MagikeSeries1
         {
             for (int i = 0; i < 8; i++)
             {
-                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Teleporter, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 100, Coralite.Instance.MagicCrystalPink, 1f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Teleporter, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 100, Coralite.MagicCrystalPink, 1f);
                 //dust.noGravity = true;
             }
         }
@@ -101,12 +101,12 @@ namespace Coralite.Content.Items.MagikeSeries1
             miscShaderData.UseSaturation(-1.8f);
             miscShaderData.UseOpacity(2f);
             miscShaderData.Apply();
-            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + Projectile.Size / 2f);
+            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + (Projectile.Size / 2f));
             _vertexStrip.DrawTrail();
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             //ProjectilesHelper.DrawPrettyStarSparkle(Projectile.Opacity, SpriteEffects.None, Projectile.oldPos[0]+new Vector2(8,8) - Main.screenPosition,
-            //    Color.White * 0.8f, Coralite.Instance.MagicCrystalPink, 0.5f, 0f, 0.5f, 0.5f, 0f, 0f,
+            //    Color.White * 0.8f, Coralite.MagicCrystalPink, 0.5f, 0f, 0.5f, 0.5f, 0f, 0f,
             //    new Vector2(0.5f, 0.5f), Vector2.One*0.5f);
             return false;
         }

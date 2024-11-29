@@ -20,8 +20,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public override void SetDefs()
         {
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.LightPurple6, Item.sellPrice(0, 9));
-            Item.SetWeaponValues(60, 4);
-            Item.useTime = Item.useAnimation = 34;
+            Item.SetWeaponValues(63, 4);
+            Item.useTime = Item.useAnimation = 30;
             Item.mana = 17;
 
             Item.shoot = ModContent.ProjectileType<RubyScepterProj>();
@@ -57,8 +57,19 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 effect.Parameters["addC"].SetValue(0.55f);
                 effect.Parameters["highlightC"].SetValue(RubyProj.highlightC.ToVector4());
                 effect.Parameters["brightC"].SetValue(RubyProj.brightC.ToVector4());
+                effect.Parameters["darkC"].SetValue(new Color(150, 30, 30).ToVector4());
+            }, 0.2f,
+            effect =>
+            {
+                effect.Parameters["scale"].SetValue(new Vector2(0.6f) / Main.GameZoomTarget);
+                effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.015f);
+                effect.Parameters["lightRange"].SetValue(0.15f);
+                effect.Parameters["lightLimit"].SetValue(0.2f);
+                effect.Parameters["addC"].SetValue(0.55f);
+                effect.Parameters["highlightC"].SetValue(RubyProj.highlightC.ToVector4());
+                effect.Parameters["brightC"].SetValue(RubyProj.brightC.ToVector4());
                 effect.Parameters["darkC"].SetValue(RubyProj.darkC.ToVector4());
-            }, 0.2f);
+            }, extraSize: new Point(45, 4));
         }
 
         public override void SpawnParticle(DrawableTooltipLine line)
@@ -152,7 +163,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     {
                         Projectile.NewProjectileFromThis<RubyProj>(Projectile.Center,
                             dir2.RotatedBy((i % 2 == 0 ? -0.53f : 0.35f) + Main.rand.NextFloat(-0.15f, 0.15f)) * Main.rand.NextFloat(3f, 13f)
-                            , Owner.GetWeaponDamage(Owner.HeldItem), Projectile.knockBack, ai1: (Main.MouseWorld - Projectile.Center).ToRotation(), ai2: 35 + i * 35);
+                            , Owner.GetWeaponDamage(Owner.HeldItem), Projectile.knockBack, ai1: (Main.MouseWorld - Projectile.Center).ToRotation(), ai2: 35 + (i * 35));
                     }
 
                     Helper.PlayPitched("Crystal/CrystalStrike", 0.4f, -0.2f, Projectile.Center);
@@ -167,7 +178,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     for (int i = 0; i < 3; i++)
                     {
                         Vector2 dir = Helper.NextVec2Dir();
-                        RubyProj.SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                        RubyProj.SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                     }
                 }
 
@@ -222,9 +233,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 return;
 
             Projectile.Center = owner.Center + new Vector2(0, -16);
-            LaserRotation = LaserRotation.AngleLerp((Main.MouseWorld - Projectile.Center).ToRotation(), 0.04f);
+            LaserRotation = LaserRotation.AngleLerp((Main.MouseWorld - Projectile.Center).ToRotation(), 0.08f);
 
-            GetEndPoint(160);
+            GetEndPoint(90);
             LaserAI();
 
             Projectile.UpdateFrameNormally(8, 19);
@@ -253,7 +264,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             for (int k = 0; k < count; k++)
             {
-                Vector2 posCheck = Projectile.Center + Vector2.UnitX.RotatedBy(LaserRotation) * k * 8;
+                Vector2 posCheck = Projectile.Center + (Vector2.UnitX.RotatedBy(LaserRotation) * k * 16);
 
                 if (Helper.PointInTile(posCheck) || k == count - 1)
                 {
@@ -277,17 +288,17 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
                 for (int i = 0; i < width; i += 16)
                 {
-                    Lighting.AddLight(Projectile.position + Vector2.UnitX.RotatedBy(LaserRotation) * i, color.ToVector3() * height * 0.030f);
+                    Lighting.AddLight(Projectile.position + (Vector2.UnitX.RotatedBy(LaserRotation) * i), color.ToVector3() * height * 0.030f);
                     if (Main.rand.NextBool(50))
                     {
-                        RubyProj.SpawnTriangleParticle(Projectile.Center + dir * i + Main.rand.NextVector2Circular(8, 8)
+                        RubyProj.SpawnTriangleParticle(Projectile.Center + (dir * i) + Main.rand.NextVector2Circular(8, 8)
                             , dir * Main.rand.NextFloat(min, max));
                     }
                 }
 
                 if (Timer > delayTime)
                 {
-                    LaserHeight = Helper.Lerp(0, 1, 1 - (Timer - delayTime) / (TotalAttackTime - delayTime));
+                    LaserHeight = Helper.Lerp(0, 1, 1 - ((Timer - delayTime) / (TotalAttackTime - delayTime)));
 
                     SpawnLaserParticle();
                     break;
@@ -297,7 +308,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 {
                     for (int i = 0; i < width - 128; i += 24)
                     {
-                        Vector2 pos = Projectile.Center + dir * i + Main.rand.NextVector2Circular(8, 8);
+                        Vector2 pos = Projectile.Center + (dir * i) + Main.rand.NextVector2Circular(8, 8);
                         if (Main.rand.NextBool(4))
                         {
                             if (Main.rand.NextBool())
@@ -347,7 +358,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public virtual void DrawAdditive(SpriteBatch spriteBatch)
         {
             Texture2D laserTex = Projectile.GetTexture();
-            Texture2D flowTex = CrystalLaser.LaserBodyTex.Value;
+            Texture2D flowTex = CoraliteAssets.Laser.Body.Value;
 
             rand += LaserRotation.ToRotationVector2() * 3;
             Color color = RubyProj.darkC;
@@ -358,7 +369,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Vector2 startPos = Projectile.Center;
             Vector2 endPos = endPoint - Main.screenPosition;
 
-            var laserTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, (int)(height));
+            var laserTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, (int)height);
             var flowTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, (int)(height * 0.55f));
 
             var laserSource = new Rectangle((int)(Projectile.timeLeft / 20f * laserTex.Width), 0, laserTex.Width, laserTex.Height);
@@ -368,7 +379,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             var origin2 = new Vector2(0, flowTex.Height / 2);
 
             Helper.DrawCrystal(spriteBatch, Projectile.frame, Projectile.Center + rand, Vector2.One * 0.8f
-                , (float)Main.timeForVisualEffects * 0.02f + Projectile.whoAmI / 3f
+                , ((float)Main.timeForVisualEffects * 0.02f) + (Projectile.whoAmI / 3f)
                 , RubyProj.highlightC, RubyProj.brightC, RubyProj.darkC, () =>
                 {
                     //绘制流动效果
@@ -381,7 +392,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 }, 0.1f, 0.35f, 0f);
 
             //绘制主体光束
-            Texture2D bodyTex = CrystalLaser.LaserBodyTex.Value;
+            Texture2D bodyTex = CoraliteAssets.Laser.Body.Value;
 
             color = RubyProj.brightC;
 
@@ -401,7 +412,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             for (int i = 0; i < 5; i++)
             {
-                spriteBatch.Draw(glowTex, endPos, null, color * (height * 0.2f), LaserRotation + i * 0.785f, glowTex.Size() / 2, height * 0.05f * new Vector2(0.5f, 0.1f), 0, 0);
+                spriteBatch.Draw(glowTex, endPos, null, color * (height * 0.2f), LaserRotation + (i * 0.785f), glowTex.Size() / 2, height * 0.05f * new Vector2(0.5f, 0.1f), 0, 0);
             }
 
             spriteBatch.Draw(glowTex, startPos, null, color * (height * 0.06f), 0, glowTex.Size() / 2, 0.5f, 0, 0);
@@ -421,9 +432,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
     {
         public ref float State => ref Projectile.ai[0];
 
-        public static Color highlightC = new Color(255, 164, 163);
-        public static Color brightC = new Color(238, 51, 53);
-        public static Color darkC = new Color(73, 10, 0);
+        public static Color highlightC = new(255, 164, 163);
+        public static Color brightC = new(238, 51, 53);
+        public static Color darkC = new(73, 10, 0);
 
         public static void SpawnTriangleParticle(Vector2 pos, Vector2 velocity)
         {
@@ -441,7 +452,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             base.SetDefaults();
             Projectile.width = Projectile.height = 20;
-            Projectile.idStaticNPCHitCooldown = 20;
+            Projectile.idStaticNPCHitCooldown = 10;
         }
 
         public override void AI()
@@ -452,7 +463,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 Projectile.tileCollide = true;
                 Timer--;
                 Projectile.rotation += Projectile.velocity.X / 8;
-                LaserRotation = LaserRotation.AngleLerp((Main.MouseWorld - Projectile.Center).ToRotation(), 0.1f);
+                LaserRotation = LaserRotation.AngleLerp((Main.MouseWorld - Projectile.Center).ToRotation(), 0.14f);
 
                 if (Timer < 1)
                 {
@@ -473,7 +484,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             else
             {
                 LaserRotation = LaserRotation.AngleLerp((Main.MouseWorld - Projectile.Center).ToRotation(), 0.02f);
-                GetEndPoint(60);
+                GetEndPoint(40);
                 LaserAI();
             }
 
@@ -511,7 +522,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 dir = Helper.NextVec2Dir();
-                    SpawnTriangleParticle(Projectile.Center + dir * Main.rand.NextFloat(6, 12), dir * Main.rand.NextFloat(1f, 3f));
+                    SpawnTriangleParticle(Projectile.Center + (dir * Main.rand.NextFloat(6, 12)), dir * Main.rand.NextFloat(1f, 3f));
                 }
         }
 

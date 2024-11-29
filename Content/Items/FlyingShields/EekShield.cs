@@ -22,7 +22,7 @@ namespace Coralite.Content.Items.FlyingShields
             Item.shoot = ModContent.ProjectileType<EekShieldProj>();
             Item.knockBack = 2;
             Item.shootSpeed = 15;
-            Item.damage = 42;
+            Item.damage = 44;
         }
 
         public override bool PreDrawTooltipLine(DrawableTooltipLine line, ref int yOffset)
@@ -36,25 +36,25 @@ namespace Coralite.Content.Items.FlyingShields
 
                 Vector2 size = ChatManager.GetStringSize(line.Font, line.Text, line.BaseScale);
 
-                Vector2 pos = new Vector2(line.X, line.Y);
-                Vector2 pos2 = new Vector2(line.X + size.X, line.Y);
+                Vector2 pos = new(line.X, line.Y);
+                Vector2 pos2 = new(line.X + size.X, line.Y);
 
                 for (int i = 0; i < 3; i++)
                 {
-                    Main.spriteBatch.Draw(mainTex, pos + (Main.GlobalTimeWrappedHourly + i * MathHelper.TwoPi / 3).ToRotationVector2() * 2, frameBox, new Color(255, 100, 100, 0)
+                    Main.spriteBatch.Draw(mainTex, pos + ((Main.GlobalTimeWrappedHourly + (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 2), frameBox, new Color(255, 100, 100, 0)
                         , 0, origin, 1.2f, 0, 0);
-                    Main.spriteBatch.Draw(mainTex, pos2 + (-Main.GlobalTimeWrappedHourly - i * MathHelper.TwoPi / 3).ToRotationVector2() * 2, frameBox2, new Color(255, 100, 100, 0)
+                    Main.spriteBatch.Draw(mainTex, pos2 + ((-Main.GlobalTimeWrappedHourly - (i * MathHelper.TwoPi / 3)).ToRotationVector2() * 2), frameBox2, new Color(255, 100, 100, 0)
                         , 0, origin, 1.2f, 0, 0);
                 }
 
                 Main.spriteBatch.Draw(mainTex, pos, frameBox, Color.White, 0, origin, 1.2f, 0, 0);
                 Main.spriteBatch.Draw(mainTex, pos2, frameBox2, Color.White, 0, origin, 1.2f, 0, 0);
 
-                Vector2 pos3 = new Vector2(line.X + size.X / 2, line.Y);
+                Vector2 pos3 = new(line.X + (size.X / 2), line.Y);
                 for (int i = -1; i < 2; i += 2)
                 {
                     Helper.DrawPrettyStarSparkle(1, 0, pos3 + new Vector2(i * size.X / 4, 15), Color.White,
-                        Color.SkyBlue, 0.5f + MathF.Sin(Main.GlobalTimeWrappedHourly) * 0.18f, 0, 0.5f,
+                        Color.SkyBlue, 0.5f + (MathF.Sin(Main.GlobalTimeWrappedHourly) * 0.18f), 0, 0.5f,
                         0.5f, 1, 0, size / size.Y, Vector2.One);
                 }
             }
@@ -95,7 +95,7 @@ namespace Coralite.Content.Items.FlyingShields
                 float angle = Main.rand.NextFloat(6.282f);
                 for (int i = 0; i < 3; i++)
                 {
-                    Vector2 dir = (angle + i * MathHelper.TwoPi / 3).ToRotationVector2();
+                    Vector2 dir = (angle + (i * MathHelper.TwoPi / 3)).ToRotationVector2();
                     Projectile.NewProjectileFromThis<EekShieldEXProj>(target.Center, dir * 5,
                         Projectile.damage / 2, Projectile.knockBack);
                 }
@@ -160,7 +160,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void AI()
         {
-            Projectile.SpawnTrailDust(DustID.RedTorch, Main.rand.NextFloat(0.1f, 0.5f), (int)(255 - alpha * 255));
+            Projectile.SpawnTrailDust(DustID.RedTorch, Main.rand.NextFloat(0.1f, 0.5f), (int)(255 - (alpha * 255)));
             Projectile.velocity = Projectile.velocity.RotatedBy(MathF.Sin(Projectile.timeLeft * 0.12f) * 0.25f);
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft < 20)

@@ -129,7 +129,7 @@ namespace Coralite.Content.Items.Misc_Melee
             }
             else
             {
-                distanceToOwner = MathHelper.Lerp(60, 30, (Timer - maxTime / 2f) / (maxTime / 2f));
+                distanceToOwner = MathHelper.Lerp(60, 30, (Timer - (maxTime / 2f)) / (maxTime / 2f));
             }
 
             base.OnSlash();
@@ -161,8 +161,8 @@ namespace Coralite.Content.Items.Misc_Melee
 
             //绘制自己
             int dir = Math.Sign(totalAngle);
-            float extraRot = OwnerDirection < 0 ? MathHelper.Pi : 0;
-            extraRot += OwnerDirection == dir ? 0 : MathHelper.Pi;
+            float extraRot = DirSign < 0 ? MathHelper.Pi : 0;
+            extraRot += DirSign == dir ? 0 : MathHelper.Pi;
             extraRot += spriteRotation * dir;
 
             Main.spriteBatch.Draw(mainTex, endPos, null, lightColor, Projectile.rotation + extraRot, mainTex.Size() / 2, Projectile.scale, CheckEffect(), 0);
@@ -236,7 +236,7 @@ namespace Coralite.Content.Items.Misc_Melee
                 float length = (Owner.Center - Projectile.Center).Length();
                 for (int i = 0; i < length; i += 8)
                 {
-                    Dust.NewDustPerfect(Projectile.Center + direction * i + Main.rand.NextVector2Circular(4, 4), DustID.Iron, Scale: Main.rand.NextFloat(1f, 1.2f));
+                    Dust.NewDustPerfect(Projectile.Center + (direction * i) + Main.rand.NextVector2Circular(4, 4), DustID.Iron, Scale: Main.rand.NextFloat(1f, 1.2f));
                 }
             }
         }

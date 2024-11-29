@@ -1,9 +1,11 @@
-﻿using Coralite.Core;
+﻿using Coralite.Content.Items.Thunder;
+using Coralite.Core;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 
 namespace Coralite.Content.Bosses.ThunderveinDragon
 {
@@ -40,14 +42,14 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((2200 + numPlayers * 500) / journeyScale);
+                    NPC.lifeMax = (int)((2200 + (numPlayers * 700)) / journeyScale);
                     NPC.damage = 66;
                     NPC.defense = 35;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((2200 + numPlayers * 1000) / journeyScale);
+                    NPC.lifeMax = (int)((2200 + (numPlayers * 1400)) / journeyScale);
                     NPC.damage = 72;
                     NPC.defense = 35;
                 }
@@ -66,20 +68,20 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                 return;
             }
 
-            NPC.lifeMax = 2200 + numPlayers * 500;
+            NPC.lifeMax = 2200 + (numPlayers * 700);
             NPC.damage = 66;
             NPC.defense = 35;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 2200 + numPlayers * 1000;
+                NPC.lifeMax = 2200 + (numPlayers * 1400);
                 NPC.damage = 72;
                 NPC.defense = 35;
             }
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 2500 + numPlayers * 1200;
+                NPC.lifeMax = 2500 + (numPlayers * 1600);
                 NPC.damage = 80;
                 NPC.defense = 35;
             }
@@ -88,6 +90,11 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             {
                 NPC.scale = 0.4f;
             }
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ElectrificationWing>(), 1, 1, 2));
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
@@ -112,7 +119,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         {
                             State++;
                             Timer = 0;
-                            NPC.Center += new Vector2(Main.rand.NextFromList(-1, 1) * 200 + Main.rand.Next(-250, 250), 0);
+                            NPC.Center += new Vector2((Main.rand.NextFromList(-1, 1) * 200) + Main.rand.Next(-250, 250), 0);
                             ThunderveinDragon.SetBackgroundLight(0.9f, 50, 18);
                             SoundEngine.PlaySound(CoraliteSoundID.Thunder, NPC.Center);
                             NPC.dontTakeDamage = false;
@@ -142,7 +149,8 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                             Vector2 pos = NPC.Center;
                             int damage = Helper.GetProjDamage(60, 70, 80);
 
-                            NPC.NewProjectileDirectInAI<StrongThunderFalling>(
+                            if (!VaultUtils.isClient)
+                                NPC.NewProjectileDirectInAI<StrongThunderFalling>(
                                 pos + new Vector2(0, -Main.rand.Next(170, 320)), pos + new Vector2(0, 750), damage, 0, NPC.target
                                 , 20, NPC.whoAmI, 70);
                         }
@@ -150,13 +158,15 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         {
                             SoundEngine.PlaySound(CoraliteSoundID.NoUse_ElectricMagic_Item122, NPC.Center);
                             int damage = Helper.GetProjDamage(20, 40, 60);
-
-                            for (int i = -1; i < 2; i += 2)
+                            if (!VaultUtils.isClient)
                             {
-                                Vector2 pos = NPC.Center + new Vector2(i * (Timer / 12) * PhantomDistance, 0);
-                                NPC.NewProjectileDirectInAI<StrongThunderFalling>(
-                                    pos + new Vector2(0, -Main.rand.Next(170, 320)), pos + new Vector2(0, 750), damage, 0, NPC.target
-                                    , 7, NPC.whoAmI, 70);
+                                for (int i = -1; i < 2; i += 2)
+                                {
+                                    Vector2 pos = NPC.Center + new Vector2(i * (Timer / 12) * PhantomDistance, 0);
+                                    NPC.NewProjectileDirectInAI<StrongThunderFalling>(
+                                        pos + new Vector2(0, -Main.rand.Next(170, 320)), pos + new Vector2(0, 750), damage, 0, NPC.target
+                                        , 7, NPC.whoAmI, 70);
+                                }
                             }
                         }
 

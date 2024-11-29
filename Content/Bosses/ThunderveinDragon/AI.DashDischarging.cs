@@ -99,9 +99,9 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         else
                             NPC.velocity.Y *= 0.95f;
 
-                        const int maxTime = 7 * 4 + 20;
+                        const int maxTime = (7 * 4) + 20;
                         Timer++;
-                        float edge = 200 + 420 * Math.Clamp(Timer / maxTime, 0, 1);
+                        float edge = 200 + (420 * Math.Clamp(Timer / maxTime, 0, 1));
                         edge /= 2;
                         for (int i = 0; i < 4; i++)
                         {
@@ -125,13 +125,21 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                                 NPC.TargetClosest();
                                 int damage = Helper.GetProjDamage(120, 140, 200);
-                                NPC.NewProjectileDirectInAI<StrongDischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
+
+                                if (!VaultUtils.isClient)
+                                {
+                                    NPC.NewProjectileDirectInAI<StrongDischargingBurst>(NPC.Center, Vector2.Zero, damage, 0, NPC.target
                                     , burstTime, NPC.whoAmI);
+                                }
 
                                 SoundEngine.PlaySound(CoraliteSoundID.NoUse_Electric_Item93, NPC.Center);
                                 SoundEngine.PlaySound(CoraliteSoundID.BigBOOM_Item62, NPC.Center);
-                                var modifyer = new PunchCameraModifier(NPC.Center, Vector2.UnitY * 1.4f, 26, 26, 25, 1000);
-                                Main.instance.CameraModifiers.Add(modifyer);
+
+                                if (!VaultUtils.isServer)
+                                {
+                                    var modifyer = new PunchCameraModifier(NPC.Center, Vector2.UnitY * 1.4f, 26, 26, 25, 1000);
+                                    Main.instance.CameraModifiers.Add(modifyer);
+                                }
 
                                 canDrawShadows = true;
                                 currentSurrounding = true;

@@ -5,25 +5,12 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
-using Terraria.Localization;
 
 namespace Coralite.Content.Items.Misc_Melee
 {
     public class TrueNightsCage : ModItem
     {
         public override string Texture => AssetDirectory.Misc_Melee + Name;
-
-        public static LocalizedText craftCondition;
-
-        public override void Load()
-        {
-            craftCondition = this.GetLocalization("CraftCondition", () => "在CoralCat的世界中合成");
-        }
-
-        public override void Unload()
-        {
-            craftCondition = null;
-        }
 
         public override void SetDefaults()
         {
@@ -54,7 +41,7 @@ namespace Coralite.Content.Items.Misc_Melee
                 .AddIngredient(ItemID.SoulofMight, 20)
                 .AddIngredient(ItemID.SoulofSight, 20)
                 .AddTile(TileID.MythrilAnvil)
-                .AddCondition(craftCondition, () => CoraliteWorld.coralCatWorld)
+                .AddCondition(CoraliteConditions.CoralCat)
                 .Register();
         }
 
@@ -70,7 +57,7 @@ namespace Coralite.Content.Items.Misc_Melee
 
         public void Transform()
         {
-            if (!CoraliteWorld.coralCatWorld)
+            if (!CoraliteWorld.CoralCatWorld)
             {
                 SoundEngine.PlaySound(CoraliteSoundID.Meowmere);
                 Item.SetDefaults(ItemID.TrueNightsEdge);
@@ -136,21 +123,21 @@ namespace Coralite.Content.Items.Misc_Melee
 
             // Keep locked onto the player, but extend further based on the given velocity (Requires ShouldUpdatePosition returning false to work)
             Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter, reverseRotation: false, addGfxOffY: false);
-            Projectile.Center = playerCenter + Projectile.velocity * (Timer - 1f);
+            Projectile.Center = playerCenter + (Projectile.velocity * (Timer - 1f));
 
             // Set spriteDirection based on moving left or right. Left -1, right 1
             Projectile.spriteDirection = (Vector2.Dot(Projectile.velocity, Vector2.UnitX) >= 0f).ToDirectionInt();
 
             // Point towards where it is moving, applied offset for top right of the sprite respecting spriteDirection
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - MathHelper.PiOver4 * Projectile.spriteDirection;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2 - (MathHelper.PiOver4 * Projectile.spriteDirection);
 
             if (Main.rand.NextBool(5))
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Demonite
-                    , Main.player[Projectile.owner].direction * 2, 0f, 150, default(Color), 1.4f);
+                    , Main.player[Projectile.owner].direction * 2, 0f, 150, default, 1.4f);
 
             int num3 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height,
-                DustID.Shadowflame, Projectile.velocity.X * 0.2f + (float)(Main.player[Projectile.owner].direction * 3)
-                , Projectile.velocity.Y * 0.2f, 100, default(Color), 1.2f);
+                DustID.Shadowflame, (Projectile.velocity.X * 0.2f) + (Main.player[Projectile.owner].direction * 3)
+                , Projectile.velocity.Y * 0.2f, 100, default, 1.2f);
             Main.dust[num3].noGravity = true;
             Main.dust[num3].velocity.X /= 2f;
             Main.dust[num3].velocity.Y /= 2f;
@@ -197,7 +184,7 @@ namespace Coralite.Content.Items.Misc_Melee
             // "cutting tiles" refers to breaking pots, grass, queen bee larva, etc.
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+            Vector2 end = start + (Projectile.velocity.SafeNormalize(-Vector2.UnitY) * 10f);
             Utils.PlotTileLine(start, end, CollisionWidth, DelegateMethods.CutTiles);
         }
 
@@ -206,7 +193,7 @@ namespace Coralite.Content.Items.Misc_Melee
             // "Hit anything between the player and the tip of the sword"
             // shootSpeed is 2.1f for reference, so this is basically plotting 12 pixels ahead from the center
             Vector2 start = Projectile.Center;
-            Vector2 end = start + Projectile.velocity * 6f;
+            Vector2 end = start + (Projectile.velocity * 6f);
             float collisionPoint = 0f; // Don't need that variable, but required as parameter
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, CollisionWidth, ref collisionPoint);
         }

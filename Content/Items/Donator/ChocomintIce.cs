@@ -1,8 +1,8 @@
-﻿using Coralite.Content.Items.GlobalItems;
+﻿using Coralite.Content.GlobalItems;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -63,7 +63,7 @@ namespace Coralite.Content.Items.Donator
     public class ChocomintIceRarity : ModRarity
     {
         public override Color RarityColor => Color.Lerp(new Color(141, 255, 202), new Color(77, 180, 149)
-            , MathF.Sin(Main.GlobalTimeWrappedHourly) / 2 + 0.5f);
+            , (MathF.Sin(Main.GlobalTimeWrappedHourly) / 2) + 0.5f);
     }
 
     public class ChocomintIceBuff : ModBuff
@@ -221,8 +221,8 @@ namespace Coralite.Content.Items.Donator
 
                                 num484 = num481 / num484;
                                 dir *= num484;
-                                Projectile.velocity.X = (Projectile.velocity.X * 14f + dir.X) / 15f;
-                                Projectile.velocity.Y = (Projectile.velocity.Y * 14f + dir.Y) / 15f;
+                                Projectile.velocity.X = ((Projectile.velocity.X * 14f) + dir.X) / 15f;
+                                Projectile.velocity.Y = ((Projectile.velocity.Y * 14f) + dir.Y) / 15f;
                             }
                             else
                             {
@@ -260,13 +260,13 @@ namespace Coralite.Content.Items.Donator
         public void CircleMovement(int stackedIndex, int totalIndexes, out Vector2 idleSpot)
         {
             float num2 = (totalIndexes - 1f) / 2f;
-            idleSpot = Owner.Center + -Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 50f;
+            idleSpot = Owner.Center + (-Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 50f);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Helper.SpawnDirDustJet(target.Center, () => Helper.NextVec2Dir(), 2, 8, i => i * 0.8f, DustID.IceTorch);
-            Particle.NewParticle<StarRot>(target.Center, Helper.NextVec2Dir(1, 4), Main.rand.NextBool() ? Color.White : Color.Cyan
+            PRTLoader.NewParticle<StarRot>(target.Center, Helper.NextVec2Dir(1, 4), Main.rand.NextBool() ? Color.White : Color.Cyan
                 , Main.rand.NextFloat(0.4f, 0.6f));
             target.AddBuff(BuffID.Frostburn, 60 * 5);
             Projectile.friendly = false;

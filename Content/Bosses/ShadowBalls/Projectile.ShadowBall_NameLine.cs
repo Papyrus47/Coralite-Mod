@@ -36,7 +36,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
             else if (timer > 200)
             {
-                RectScale = 1 - (timer - 240) / 60f;
+                RectScale = 1 - ((timer - 240) / 60f);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
             var pos = Main.LocalPlayer.Center - screenPosition;
             var origin = mainTex.Size() / 2;
 
-            Vector2 size = new Vector2(RectScale * 380, Main.screenHeight);
+            Vector2 size = new(RectScale * 380, Main.screenHeight);
 
             RasterizerState rasterizerState = spriteBatch.GraphicsDevice.RasterizerState;
             Rectangle scissorRectangle = spriteBatch.GraphicsDevice.ScissorRectangle;
@@ -66,7 +66,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
 
             var barPos = Main.LocalPlayer.Center - new Vector2(0, 225) - screenPosition;
             for (int i = 0; i < 8; i++)
-                spriteBatch.Draw(mainTex, barPos + (i * MathHelper.PiOver4).ToRotationVector2() * 2, null
+                spriteBatch.Draw(mainTex, barPos + ((i * MathHelper.PiOver4).ToRotationVector2() * 2), null
                     , Color.Purple * 0.5f, 0f, origin, 1.7f, SpriteEffects.None, 0f);
             spriteBatch.Draw(mainTex, barPos, null, Color.White, 0f, origin, 1.7f, SpriteEffects.None, 0f);
 
@@ -85,12 +85,12 @@ namespace Coralite.Content.Bosses.ShadowBalls
             float height = frameBox.Y;
 
             Vector2 position = center + new Vector2(-width / 2, -height / 2);
-            Vector2 size = new Vector2(width, height);
+            Vector2 size = new(width, height);
             position = Vector2.Transform(position, Main.Transform);
             //size = Vector2.Transform(size, Main.Transform);
             size *= Main.GameZoomTarget;
 
-            Rectangle rectangle = new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y);
+            Rectangle rectangle = new((int)position.X, (int)position.Y, (int)size.X, (int)size.Y);
             int screenWidth = Main.screenWidth;
             int screenHeight = Main.screenHeight;
             rectangle.X = Utils.Clamp(rectangle.X, 0, screenWidth);

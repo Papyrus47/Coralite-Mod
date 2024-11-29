@@ -15,7 +15,7 @@ namespace Coralite.Content.Items.Magike.Towers
         public override string Texture => AssetDirectory.Blank;
 
         //private Trail trail;
-        private static VertexStrip _vertexStrip = new VertexStrip();
+        private static VertexStrip _vertexStrip = new();
 
         public override void SetStaticDefaults()
         {
@@ -61,7 +61,7 @@ namespace Coralite.Content.Items.Magike.Towers
             //trail ??= new Trail(Main.instance.GraphicsDevice, 12, new TriangularTip(16), factor => 16,
             //factor =>
             //{
-            //    return Color.Lerp(new Color(0, 0, 0, 0), Coralite.Instance.MagicCrystalPink, factor.X);
+            //    return Color.Lerp(new Color(0, 0, 0, 0), Coralite.MagicCrystalPink, factor.X);
             //});
 
             //for (int i = 0; i < 11; i++)
@@ -74,8 +74,8 @@ namespace Coralite.Content.Items.Magike.Towers
             int num18 = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.RainbowMk2, 0f, 0f, 100, new Color(162, 42, 131), 1f);
             Main.dust[num18].velocity *= 0.1f;
             Main.dust[num18].velocity += Projectile.velocity * 0.2f;
-            Main.dust[num18].position.X = Projectile.Center.X + 4f + (float)Main.rand.Next(-2, 3);
-            Main.dust[num18].position.Y = Projectile.Center.Y + (float)Main.rand.Next(-2, 3);
+            Main.dust[num18].position.X = Projectile.Center.X + 4f + Main.rand.Next(-2, 3);
+            Main.dust[num18].position.Y = Projectile.Center.Y + Main.rand.Next(-2, 3);
             Main.dust[num18].noGravity = true;
         }
 
@@ -83,7 +83,7 @@ namespace Coralite.Content.Items.Magike.Towers
         {
             for (int i = 0; i < 16; i++)
             {
-                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Teleporter, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 100, Coralite.Instance.MagicCrystalPink, 1f);
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Teleporter, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 100, Coralite.MagicCrystalPink, 1f);
                 //dust.noGravity = true;
             }
         }
@@ -94,12 +94,12 @@ namespace Coralite.Content.Items.Magike.Towers
             miscShaderData.UseSaturation(-1.8f);
             miscShaderData.UseOpacity(2f);
             miscShaderData.Apply();
-            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + Projectile.Size / 2f);
+            _vertexStrip.PrepareStripWithProceduralPadding(Projectile.oldPos, Projectile.oldRot, StripColors, StripWidth, -Main.screenPosition + (Projectile.Size / 2f));
             _vertexStrip.DrawTrail();
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             Helper.DrawPrettyStarSparkle(Projectile.Opacity, SpriteEffects.None, Projectile.oldPos[0] - Main.screenPosition,
-                Color.White * 0.8f, Coralite.Instance.MagicCrystalPink, 0.5f, 0f, 0.5f, 0.5f, 0f, 0f,
+                Color.White * 0.8f, Coralite.MagicCrystalPink, 0.5f, 0f, 0.5f, 0.5f, 0f, 0f,
                 new Vector2(2f, 1f), Vector2.One);
             return false;
         }

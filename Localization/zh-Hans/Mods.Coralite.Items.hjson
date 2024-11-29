@@ -276,11 +276,11 @@ BabyIceDragonTrophy: {
 }
 
 IcicleBow: {
-	DisplayName: 冰晶弓
+	DisplayName: 冰雹
 	Tooltip:
 		'''
 		将箭矢转化为冰晶箭
-		双击A/D进行滑步
+		双击方向键进行滑步，滑步期间短暂无敌
 		滑步时按住鼠标左键汇聚冰魔法，之后松开左键射出冰光箭
 		'''
 }
@@ -333,11 +333,6 @@ CrossBreedMachine_G1Item: {
 IceyPowder: {
 	DisplayName: 冰魔尘
 	Tooltip: 含有微弱的冰魔力
-}
-
-MaglitePowder: {
-	DisplayName: Maglite Powder
-	Tooltip: Contains a faint magic power
 }
 
 SandlitePowder: {
@@ -583,11 +578,6 @@ Arethusa: {
 	Tooltip: 迟来的爱
 }
 
-ArethusaNormalMode: {
-	DisplayName: 幽兰
-	Tooltip: 迟来的爱
-}
-
 Astrosniper: {
 	DisplayName: 天文狙击枪
 	Tooltip: 去狙击那颗垂死的星星吧！
@@ -741,105 +731,28 @@ IcicleCoccyx: {
 		'''
 }
 
-CrystalLens: {
-	DisplayName: 水晶透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
-}
-
-DebugStick: {
-	DisplayName: 无限晶簇魔杖
-	Tooltip:
-		'''
-		右键切换模式
-		充能模式：点击魔能存储器将其魔能充满
-		清空模式：点击魔能存储器将其魔能清空
-		'''
-}
-
 MagConnectStaff: {
 	DisplayName: 魔能连接仪
 	Tooltip:
 		'''
-		左键点击选中魔能发送器，之后打开UI，可查看连接情况
-		左键点击按钮后可开始连接
-		右键点击按钮清空当前的连接
+		◇ 左键点击发送器，再次左键点击接收器并建立连接
+		◇ 右键点击发送器打开UI，点击旋转出的按钮以取消连接
 		'''
 }
 
 MagicCrystal: {
 	DisplayName: 魔力晶体
-	Tooltip: 蕴含微弱的魔能
-	MoreDescription: “去地下寻找水晶洞穴吧，其中藏有如何使用魔能的知识”
-}
-
-CrimtaneLens: {
-	DisplayName: 猩红透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
-}
-
-DemoniteLens: {
-	DisplayName: 魔化透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
-}
-
-BrilliantLens: {
-	DisplayName: 璀璨透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
+	Tooltip: 微弱的魔能散发出粉色的光芒
+	MoreDescription:
+		'''
+		去地下寻找水晶洞穴吧，其中藏有如何使用魔能的知识
+		或许可以制造一个魔力诱饵来为你指引方向
+		'''
 }
 
 CrystallineMagike: {
 	DisplayName: 蕴魔水晶
-	Tooltip: 蕴含充沛的魔能
-}
-
-CrystalRefractor: {
-	DisplayName: 水晶广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
-}
-
-BrilliantRefractor: {
-	DisplayName: 璀璨广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
-}
-
-CrimtaneRefractor: {
-	DisplayName: 猩红广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
-}
-
-DemoniteRefractor: {
-	DisplayName: 魔化广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
-}
-
-BrilliantColumn: {
-	DisplayName: 璀璨水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-CrimtaneColumn: {
-	DisplayName: 猩红水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-CrystalColumn: {
-	DisplayName: 水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-DemoniteColumn: {
-	DisplayName: 魔化水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-Diprism: {
-	DisplayName: 二相镜
-	Tooltip: ""
-}
-
-BrilliantRemodelPool: {
-	DisplayName: 璀璨重塑池
-	Tooltip: 右键打开UI，放入物品并选择指定合成表后激活以进行物品重塑
+	Tooltip: 充沛的魔能折射出璀璨的紫色
 }
 
 CondensedCrystalBall: {
@@ -849,42 +762,7 @@ CondensedCrystalBall: {
 
 MagikeActivator: {
 	DisplayName: 魔能激活杖
-	Tooltip: 激活鼠标位置的魔能机器，电路也能够激活他们
-}
-
-SunlightLens: {
-	DisplayName: 日光透镜
-	Tooltip: 在白天缓慢生产魔能
-}
-
-CrystalRemodelPool: {
-	DisplayName: 水晶重塑池
-	Tooltip: 右键打开UI，放入物品并选择指定合成表后激活以进行物品重塑
-}
-
-EvilRemodelPool: {
-	DisplayName: 邪化重塑池
-	Tooltip: 右键打开UI，放入物品并选择指定合成表后激活以进行物品重塑
-}
-
-MoonlightLens: {
-	DisplayName: 月光透镜
-	Tooltip: 在夜晚缓慢生产魔能
-}
-
-FeatheredLens: {
-	DisplayName: 羽蛇透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
-}
-
-HolylightLens: {
-	DisplayName: 圣光透镜
-	Tooltip: 在白天生产魔能
-}
-
-BloodMoonLens: {
-	DisplayName: 红月透镜
-	Tooltip: 在夜晚生产魔能
+	Tooltip: ◇ 左键点击激活魔能工作站
 }
 
 IcicleHeart: {
@@ -903,11 +781,6 @@ RedJadeCore: {
 		产生“爆竹能量”的核心部位
 		召唤赤玉灵，不消耗
 		'''
-}
-
-WaterflowLens: {
-	DisplayName: 水流透镜
-	Tooltip: 底座淹没在水中时缓慢生产魔能
 }
 
 RedJadeLens: {
@@ -934,16 +807,6 @@ RedJadeCluster: {
 		'''
 }
 
-LavaLens: {
-	DisplayName: 熔岩透镜
-	Tooltip: 底座淹没在岩浆中时生产魔能
-}
-
-SweetLens: {
-	DisplayName: 甜蜜透镜
-	Tooltip: 底座淹没在蜂蜜中时生产魔能
-}
-
 CrystalSpotlighter: {
 	DisplayName: 晶体炮
 	Tooltip:
@@ -955,22 +818,11 @@ CrystalSpotlighter: {
 
 OceanLens: {
 	DisplayName: 海洋透镜
-	Tooltip: 在海洋环境中生产魔能
-}
-
-BrilliantQuadprism: {
-	DisplayName: 璀璨四棱镜
-	Tooltip: ""
-}
-
-CrimtaneTriprism: {
-	DisplayName: 猩红三棱镜
-	Tooltip: ""
-}
-
-DemoniteTriprism: {
-	DisplayName: 魔化三棱镜
-	Tooltip: ""
+	Tooltip:
+		'''
+		在海洋环境生产魔能，只能放置在沙块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
 }
 
 RedJadeDiprism: {
@@ -998,29 +850,22 @@ WorldGenTester: {
 	Tooltip: ！测试用物品！
 }
 
-BoneLens: {
-	DisplayName: 骸骨透镜
-	Tooltip: 在地牢生产魔能
-}
-
 ForestLens: {
 	DisplayName: 森林透镜
-	Tooltip: 在森林生产魔能
+	Tooltip:
+		'''
+		在森林生产魔能，只能放置在草块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
 }
 
 GlowingMushroomLens: {
 	DisplayName: 夜光蘑菇透镜
-	Tooltip: 在夜光蘑菇环境生产魔能
-}
-
-BrightnessLens: {
-	DisplayName: 光明透镜
-	Tooltip: 在明亮的地方生产魔能
-}
-
-DarknessLens: {
-	DisplayName: 黑暗透镜
-	Tooltip: 在黑暗的地方生产魔能
+	Tooltip:
+		'''
+		在夜光蘑菇环境生产魔能，只能放置在蘑菇草块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
 }
 
 BasaltChest: {
@@ -1053,39 +898,9 @@ HardBasalt: {
 	Tooltip: ""
 }
 
-HellLens: {
-	DisplayName: 地狱透镜
-	Tooltip: 在地狱生产魔能
-}
-
-BreezeLens: {
-	DisplayName: 微风透镜
-	Tooltip: 根据风速生产魔能
-}
-
-DrizzleLens: {
-	DisplayName: 细雨透镜
-	Tooltip: 下雨时生产魔能
-}
-
 HardBasaltWall: {
 	DisplayName: 硬化玄武岩墙
 	Tooltip: ""
-}
-
-GraniteLens: {
-	DisplayName: 花岗岩透镜
-	Tooltip: 在花岗岩地形生产魔能
-}
-
-MarbleLens: {
-	DisplayName: 大理石透镜
-	Tooltip: 在大理石环境产生魔能
-}
-
-HoneypotLens: {
-	DisplayName: 甘甜透镜
-	Tooltip: 底座淹没在蜂蜜中时生产魔能
 }
 
 BloodyHook: {
@@ -1097,24 +912,9 @@ BloodyHook: {
 		'''
 }
 
-ChlorophyteLens: {
-	DisplayName: 叶绿透镜
-	Tooltip: 在丛林生产魔能
-}
-
-ParadiseLens: {
-	DisplayName: 天堂透镜
-	Tooltip: 在天空生产魔能
-}
-
 DemoniteEnchantPool: {
 	DisplayName: 魔化注魔池
 	Tooltip: 为你的装备带来额外的强化
-}
-
-ScorchingLens: {
-	DisplayName: 灼岩透镜
-	Tooltip: 底座淹没在岩浆中时生产魔能
 }
 
 CopperRing: {
@@ -1125,11 +925,6 @@ CopperRing: {
 TinRing: {
 	DisplayName: 锡戒指
 	Tooltip: 攻击 -6%
-}
-
-CogLens: {
-	DisplayName: 齿轮透镜
-	Tooltip: 自动生产魔能
 }
 
 IronRing: {
@@ -1151,16 +946,6 @@ LeadRing: {
 		'''
 }
 
-SoulRemodelPool: {
-	DisplayName: 灵魂重塑池
-	Tooltip: 右键打开UI，放入物品并选择指定合成表后激活以进行物品重塑
-}
-
-RainstormLens: {
-	DisplayName: 骤雨透镜
-	Tooltip: 下雨时生产魔能
-}
-
 SplendorMagicore: {
 	DisplayName: 辉界晶核
 	Tooltip: 蕴含浓厚的魔能
@@ -1175,34 +960,9 @@ CorruptJavelin: {
 		'''
 }
 
-BrilliantEnchantPool: {
-	DisplayName: 璀璨注魔池
-	Tooltip: 为你的装备带来额外的强化
-}
-
-CrimtaneEnchantPool: {
-	DisplayName: 猩红注魔池
-	Tooltip: 为你的装备带来额外的强化
-}
-
-CrystalEnchantPool: {
-	DisplayName: 水晶注魔池
-	Tooltip: 为你的装备带来额外的强化
-}
-
-SoulEnchantPool: {
-	DisplayName: 灵魂注魔池
-	Tooltip: 为你的装备带来额外的强化
-}
-
 SoulOfDeveloper: {
 	DisplayName: 开发者之魂
 	Tooltip: “很适合用来冒充开发者！”
-}
-
-SplendorRemodelPool: {
-	DisplayName: 光辉重塑池
-	Tooltip: 右键打开UI，放入物品并选择指定合成表后激活以进行物品重塑
 }
 
 GelInvitation: {
@@ -1222,16 +982,6 @@ EmperorSabre: {
 MagicCrystalHook: {
 	DisplayName: 魔力晶体钩
 	Tooltip: ""
-}
-
-MagikeSymbol: {
-	DisplayName: ！该合成表只能通过魔能重塑进行！
-	Tooltip:
-		'''
-		合成表仅供参考，该合成表需要通过魔能重塑进行
-		使用任意的魔能重塑池放入物品后选择重塑表，之后激活以合成
-		需要足够的魔能和物品数量才能成功激活
-		'''
 }
 
 GelThrone: {
@@ -1292,27 +1042,6 @@ NightmareHarp: {
 		'''
 }
 
-CrystalStoneMaker: {
-	DisplayName: 晶体造石机
-	Tooltip: 消耗魔能生产石块
-}
-
-CrystalAltar: {
-	DisplayName: 晶体聚合坛
-	Tooltip:
-		'''
-		右键打开UI放入物品并选择聚合配方
-		使用魔能连接仪连接到台座上
-		在台座内放入聚合配方中的次要物品
-		激活后开始聚合
-		'''
-}
-
-CrystalPedestal: {
-	DisplayName: 晶体台座
-	Tooltip: 右键打开UI，可放入物品
-}
-
 EmpyrosPowder: {
 	DisplayName: 火魔尘
 	Tooltip: 含有微弱的火魔力
@@ -1331,17 +1060,6 @@ LeafStone: {
 MagicalPowder: {
 	DisplayName: 魔尘
 	Tooltip: 含有微弱的魔力
-}
-
-MagikePolySymbol: {
-	DisplayName: ！该合成表只能通过魔能聚合进行！
-	Tooltip:
-		'''
-		该合成表需要通过魔能聚合进行！
-		除魔能外的第一个物品为主要物品，需要放置在聚合坛中
-		其余物品为次要物品，需要放置在台座中
-		之后激活聚合坛以进行合成，需要足够的物品数量和魔能量才能成功激活
-		'''
 }
 
 CrystalCrate: {
@@ -1709,64 +1427,9 @@ PhantomMirror: {
 	Tooltip: 照出你的魅影们，它们将沿着你的运动轨迹行动
 }
 
-SplendorLens: {
-	DisplayName: 光辉透镜
-	Tooltip: 右键打开UI，放入包含魔能的物品后将物品转化为魔能存储在自身中
-}
-
-SoulColumn: {
-	DisplayName: 灵魂水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-FeatheredRefractor: {
-	DisplayName: 羽蛇广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
-}
-
 FlyingSnakeFeather: {
 	DisplayName: 羽蛇神之羽
 	Tooltip: ""
-}
-
-CrystalRefinery: {
-	DisplayName: 晶体炼化器
-	Tooltip: 消耗魔能生成魔力晶体
-}
-
-BrilliantRefiner: {
-	DisplayName: 璀璨炼化器
-	Tooltip: 消耗魔能生成魔力晶体
-}
-
-SplendorRefiner: {
-	DisplayName: 光辉炼化器
-	Tooltip: 消耗魔能生成魔力晶体
-}
-
-SplendorColumn: {
-	DisplayName: 光辉水晶柱
-	Tooltip: 能够容纳很多魔能
-}
-
-SplendorPentaprism: {
-	DisplayName: 光辉五棱镜
-	Tooltip: ""
-}
-
-BrilliantRefinery: {
-	DisplayName: 璀璨炼化器
-	Tooltip: 消耗魔能生成魔力晶体
-}
-
-SplendorRefinery: {
-	DisplayName: 光辉炼化器
-	Tooltip: 消耗魔能生成魔力晶体
-}
-
-SplendorRefractor: {
-	DisplayName: 光辉广角镜
-	Tooltip: 拥有较强的发送能力，能够进行较远距离的魔能传输
 }
 
 MiniBrilliantColumn: {
@@ -1806,21 +1469,6 @@ CrystalSword: {
 
 BrilliantCharger: {
 	DisplayName: 璀璨充能站
-	Tooltip: 右键打开UI，放入可容纳魔能的物品后激活为该物品充能
-}
-
-CrystalCharger: {
-	DisplayName: 水晶充能站
-	Tooltip: 右键打开UI，放入可容纳魔能的物品后激活为该物品充能
-}
-
-GlistentCharger: {
-	DisplayName: 晶莹充能站
-	Tooltip: 右键打开UI，放入可容纳魔能的物品后激活为该物品充能
-}
-
-SplendorCharger: {
-	DisplayName: 光辉充能站
 	Tooltip: 右键打开UI，放入可容纳魔能的物品后激活为该物品充能
 }
 
@@ -1913,7 +1561,11 @@ BloodJadeRangesWeapon: {
 
 MagikeGuideBook: {
 	DisplayName: 魔能辞典
-	Tooltip: 记载着魔能的知识，物品栏内右键使用，使用鼠标滚轮翻页
+	Tooltip:
+		'''
+		该物品并未准备就绪...
+		记载着魔能的知识，物品栏内右键使用，使用鼠标滚轮翻页
+		'''
 }
 
 MagikeNote1: {
@@ -2042,7 +1694,8 @@ GlowTulipRing: {
 	PolishedToolTip:
 		'''
 		+4亮光
-		每秒+1.0点生命值
+		+7.8% 魔法伤害
+		略微增加魔力回复
 		'''
 }
 
@@ -2072,15 +1725,15 @@ GoldCrystalNecklace: {
 	DisplayName: 黄金水晶项链
 	Tooltip:
 		'''
-		+9.0%近战伤害
-		+9.4%远程伤害
+		+9.0% 魔法伤害
+		+9.4% 召唤伤害
 		[c/8e8e8e:将最为贵重的几种材料结合起来打造而成的饰物，闪闪发亮。]
 		'''
 	Polished: "经过抛光的 "
 	PolishedToolTip:
 		'''
-		+12.3%近战伤害
-		+12.5%远程伤害
+		+12.3% 魔法伤害
+		+12.5% 召唤伤害
 		'''
 }
 
@@ -2097,16 +1750,6 @@ GoldCrystalRing: {
 		+8.9%远程伤害
 		+4%远程攻击速度
 		'''
-}
-
-OctarineBar: {
-	DisplayName: 幻光金属锭
-	Tooltip: ""
-}
-
-OctarineOre: {
-	DisplayName: 幻光金属矿石
-	Tooltip: ""
 }
 
 SkyRing: {
@@ -2153,9 +1796,9 @@ BubblePearlNecklace: {
 	DisplayName: 气泡珍珠项链
 	Tooltip:
 		'''
-		+12点生命值上限
-		+7护甲
-		+5闪避几率
+		+6% 魔法伤害
+		略微增加魔力再生速率
+		+5 闪避几率
 		[c/8e8e8e:自然生成的首饰，用稀有的气泡珍珠打造而成。]
 		'''
 }
@@ -2222,11 +1865,6 @@ MercuryDroplight: {
 BlackHoleChest: {
 	DisplayName: 黑洞箱
 	Tooltip: 从理想的世界中诞生的微型黑洞，能够分成两半，里面可以存放一些物品。
-}
-
-Cosmophore: {
-	DisplayName: 宙切
-	Tooltip: 以理想的天体为原型制作的近战武器
 }
 
 Shadura: {
@@ -3136,36 +2774,12 @@ MedusaLightArmor: {
 MedusaMask: {
 	DisplayName: 美杜莎面罩
 	Tooltip: +6% 远程伤害
-	NotHasMedusaSoul: 美杜莎之魂：装备至少2件套后触发效果
-	MedusaSoul2Part:
-		'''
-		美杜莎之魂：对远处的敌人造成更多伤害，
-		但对近处的敌人伤害降低
-		[c/807b7d:最多增加] [c/9e82b5:15%] [c/807b7d:伤害]
-		[c/807b7d:最多减少] [c/9e82b5:75%] [c/807b7d:伤害]
-		'''
-	MedusaSoul3Part:
-		'''
-		美杜莎之魂：对远处的敌人造成更多伤害，
-		但对近处的敌人伤害降低
-		[c/807b7d:最多增加] [c/9e82b5:25%] [c/807b7d:伤害]
-		[c/807b7d:最多减少] [c/9e82b5:50%] [c/807b7d:伤害]
-		'''
-	NotHasSplit: 分裂：装备至少2件套后触发效果
-	Split2Part:
-		'''
-		分裂：远程武器射出更多的投掷物
-		[c/807b7d:(2)件套]
-		[c/807b7d:分裂等级] [c/9e82b5:+1]
-		[c/807b7d:伤害补正] [c/9e82b5:65%]
-		'''
-	Split3Part:
-		'''
-		分裂：远程武器射出更多的投掷物
-		[c/807b7d:(3)件套]
-		[c/807b7d:分裂等级] [c/9e82b5:+2]
-		[c/807b7d:伤害补正] [c/9e82b5:55%]
-		'''
+	NotHasMedusaSoul: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasMedusaSoul}"
+	MedusaSoul2Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul2Part}"
+	MedusaSoul3Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul3Part}"
+	NotHasSplit: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasSplit}"
+	Split2Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split2Part}"
+	Split3Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split3Part}"
 	MedusaBonus: 隐秘行动：远程伤害，远程暴击率，移动速度各增加5%
 }
 
@@ -3176,36 +2790,12 @@ MedusaSlippers: {
 		+6% 远程伤害
 		移动速度增加10%
 		'''
-	NotHasMedusaSoul: 美杜莎之魂：装备至少2件套后触发效果
-	MedusaSoul2Part:
-		'''
-		美杜莎之魂：对远处的敌人造成更多伤害，
-		但对近处的敌人伤害降低
-		[c/807b7d:最多增加] [c/9e82b5:15%] [c/807b7d:伤害]
-		[c/807b7d:最多减少] [c/9e82b5:75%] [c/807b7d:伤害]
-		'''
-	MedusaSoul3Part:
-		'''
-		美杜莎之魂：对远处的敌人造成更多伤害，
-		但对近处的敌人伤害降低
-		[c/807b7d:最多增加] [c/9e82b5:25%] [c/807b7d:伤害]
-		[c/807b7d:最多减少] [c/9e82b5:50%] [c/807b7d:伤害]
-		'''
-	NotHasSplit: 分裂：装备至少2件套后触发效果
-	Split2Part:
-		'''
-		分裂：远程武器射出更多的投掷物
-		[c/807b7d:(2)件套]
-		[c/807b7d:分裂等级] [c/9e82b5:+1]
-		[c/807b7d:伤害补正] [c/9e82b5:65%]
-		'''
-	Split3Part:
-		'''
-		分裂：远程武器射出更多的投掷物
-		[c/807b7d:(3)件套]
-		[c/807b7d:分裂等级] [c/9e82b5:+2]
-		[c/807b7d:伤害补正] [c/9e82b5:55%]
-		'''
+	NotHasMedusaSoul: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasMedusaSoul}"
+	MedusaSoul2Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul2Part}"
+	MedusaSoul3Part: "{$Mods.Coralite.Items.MedusaLightArmor.MedusaSoul3Part}"
+	NotHasSplit: "{$Mods.Coralite.Items.MedusaLightArmor.NotHasSplit}"
+	Split2Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split2Part}"
+	Split3Part: "{$Mods.Coralite.Items.MedusaLightArmor.Split3Part}"
 }
 
 Arachnopyre: {
@@ -3412,7 +3002,12 @@ RedJadeBullet: {
 
 ReverseFlash: {
 	DisplayName: 逆闪电
-	Tooltip: 射击时从远处朝玩家生成一道电光
+	Tooltip:
+		'''
+		射击时从远处朝玩家生成一道电光
+		双击方向键进行伏闪，之后生成一道逆闪电
+		[c/fbf236:电闪雷鸣]
+		'''
 }
 
 TenkoFigurine: {
@@ -3604,7 +3199,6 @@ MagicCrystalMusicBox: {
 }
 
 Meowmeo: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 彩虹猫圣剑
 	Tooltip: ~喵喵喵~喵喵喵~喵喵喵~
 }
@@ -3623,31 +3217,26 @@ HylianShield: {
 }
 
 Nuranasa: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 妖刀·小村正
 	Tooltip: 小小的也很可爱
 }
 
 SmallVolcano: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 火柴
 	Tooltip: 小土坡也是山
 }
 
 TerraShortSword: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 泰拉水果刀
 	Tooltip: 非常适合用来给水果削皮
 }
 
 TomatoButcherer: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 番茄屠夫
 	Tooltip: 这些是番茄酱而不是血，对吧？
 }
 
 TrueNightsCage: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 真·夜之囚笼
 	Tooltip: 让你在黑夜中穿梭自如
 }
@@ -3658,79 +3247,68 @@ BrokenHeroShortSword: {
 }
 
 BladeOfCatnip: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 猫薄荷剑
 	Tooltip: 令瓶中猫猫爱不释手的武器
+	CraftCondition: 在CoralCat的世界中合成
 }
 
 Excatbar: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 超级猫条
 	Tooltip: 这是圣剑？
 }
 
 NightsCage: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 夜之囚笼
 	Tooltip: 我看你是不想睡觉了
 }
 
 ShadowsBane: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 暗之驱逐
 	Tooltip: 好像也不会发光
 }
 
 TrueExcatbar: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 真·超级猫猫条
 	Tooltip: 尝起来是草莓与蓝莓的混合口味
 }
 
 BeamShortSword: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 光束小刀
 	Tooltip: 虽然很短但是也能够射出激光
+	CraftCondition: 在CoralCat的世界中合成
 }
 
 Cattongue: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 猫舌剑
 	Tooltip: 它很怕烫！
 }
 
 CatTreeSword: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 猫爬架剑
 	Tooltip: 猫猫很喜欢在上面玩耍
 }
 
 FlyingDragonBaby: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 飞龙宝宝
 	Tooltip: 小飞龙出生时就已经能够吐出光波了
 }
 
 IceShortSword: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 冰雪匕首
 	Tooltip: 据说这是古剑豹幼崽换牙时掉落的
 }
 
 SmallBee: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 小蜜蜂
 	Tooltip: 嗡嗡嗡嗡嗡
 }
 
 TheCatMansBlade: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 猫猫骑士团之剑
 	Tooltip: 黑猫团长的佩剑
 }
 
 Treeler: {
-	CraftCondition: 在CoralCat的世界中合成
 	DisplayName: 大树弯刀
 	Tooltip: 从种子长成了一棵树
 }
@@ -3994,15 +3572,6 @@ PrimaryRoughGemstone: {
 		'''
 }
 
-AmethystNeckLace: {
-	DisplayName: 第六轮回项链
-	Tooltip:
-		'''
-		生成轮回紫晶并向敌人发射紫晶光束
-		右键使用可以关闭紫晶光束的持续音效
-		'''
-}
-
 FriedShrimpWhip: {
 	DisplayName: 炸虾鞭
 	Tooltip:
@@ -4024,7 +3593,7 @@ ChocomintIce: {
 
 Aquamarine: {
 	DisplayName: 海蓝宝石
-	Tooltip: 使用提炼机从初级宝石原石中提取
+	Tooltip: "{$Mods.Coralite.Items.Pyrope.Tooltip}"
 }
 
 AquamarineBracelet: {
@@ -4047,7 +3616,7 @@ AmethystNecklace: {
 
 PinkDiamond: {
 	DisplayName: 粉钻
-	Tooltip: 使用提炼机从初级宝石原石中提取
+	Tooltip: "{$Mods.Coralite.Items.Pyrope.Tooltip}"
 }
 
 PinkDiamondRose: {
@@ -4133,7 +3702,7 @@ PeridotTalisman: {
 
 Peridot: {
 	DisplayName: 橄榄石
-	Tooltip: 使用提炼机从上级宝石原石中提取
+	Tooltip: "{$Mods.Coralite.Items.Zumurud.Tooltip}"
 }
 
 SapphireHairpin: {
@@ -4149,7 +3718,7 @@ SilkAgate: {
 	DisplayName: 缠丝玛瑙
 	Tooltip:
 		'''
-		使用提炼机从上级宝石原石中提取
+		{$Mods.Coralite.Items.Zumurud.Tooltip}
 		+12% 宝石武器攻击速度
 		'''
 }
@@ -4190,7 +3759,7 @@ Zircon: {
 
 FlyingShieldBattleGuide: {
 	DisplayName: 飞盾战斗指南
-	Tooltip: 盾冲与格挡变得更加自由
+	Tooltip: 让盾冲与格挡变得更加自由
 }
 
 Terranascence: {
@@ -4209,7 +3778,7 @@ AlloySpring: {
 		'''
 		增加冲刺速度
 		冲刺时根据防御力增加伤害，最多10%
-		让格挡和盾冲更加自由
+		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
 
@@ -4219,7 +3788,7 @@ GravitationalCatapult: {
 		'''
 		大幅增加冲刺速度，增加冲刺时间
 		冲刺时根据防御力增加伤害，最多20%
-		让格挡和盾冲更加自由
+		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
 
@@ -4235,7 +3804,12 @@ BigMacHamburger: {
 
 Afterglow: {
 	DisplayName: 晚霞
-	Tooltip: 点燃木箭
+	Tooltip:
+		'''
+		双击方向键进行冲刺，期间摩擦地面引燃木箭
+		冰块能擦出霜火
+		[c/c2370d:"落日余晖"]
+		'''
 }
 
 SurviveAndPerish: {
@@ -4263,7 +3837,7 @@ CrystallineSkarn: {
 
 Skarn: {
 	DisplayName: 矽卡岩
-	Tooltip: ""
+	Tooltip: 暂时通过玄武岩重塑获得
 }
 
 AmberEardrop: {
@@ -4464,7 +4038,956 @@ Night_luminescentPearl: {
 	Tooltip: 月球领主的核心部位
 }
 
-TaiJiYujian: {
-	DisplayName: 太极御剑
+MagikeWorldBall: {
+	DisplayName: 魔能球
+	Tooltip:
+		'''
+		投掷它可改变魔能流动的面貌！
+		“是时候重新观测了”
+		'''
+}
+
+BasicRefractor: {
+	DisplayName: 基础广角镜
+	Tooltip:
+		'''
+		连接距离很远
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+Thyphion: {
+	DisplayName: 千气象
+	Tooltip: ""
+}
+
+MagicCrystalFishingRod: {
+	DisplayName: 魔力水晶钓竿
+	Tooltip: ""
+}
+
+MagicCrystalPolarizedFilter: {
+	DisplayName: 偏振滤镜-晶体
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+BasicFilter: {
+	DisplayName: 基础滤镜
+	Tooltip: 一块基础的滤镜，在上面蚀刻出不同的法阵就能让它有不同的功能
+}
+
+CorruptionPolarizedFilter: {
+	DisplayName: 偏振滤镜-腐化
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+CrimsonPolarizedFilter: {
+	DisplayName: 偏振滤镜-猩红
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+CrystallineMagikePolarizedFilter: {
+	DisplayName: 偏振滤镜-蕴魔
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FeatherPolarizedFilter: {
+	DisplayName: 偏振滤镜-羽蛇
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+GlistentPolarizedFilter: {
+	DisplayName: 偏振滤镜-晶莹
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HallowPolarizedFilter: {
+	DisplayName: 偏振滤镜-神圣
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HolyLightPolarizedFilter: {
+	DisplayName: 偏振滤镜-圣光
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+IciclePolarizedFilter: {
+	DisplayName: 偏振滤镜-冰晶
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ShadowPolarizedFilter: {
+	DisplayName: 偏振滤镜-影子
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SoulPolarizedFilter: {
+	DisplayName: 偏振滤镜-灵魂
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SplendorMagicorePolarizedFilter: {
+	DisplayName: 偏振滤镜-光辉
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+InfinityClusterWand: {
+	ChargeMode: 充能模式
+	ClearMode: 清空模式
+	DisplayName: 无限晶簇魔杖
+	Tooltip:
+		'''
+		右键切换模式
+		充能模式：点击魔能存储器将其魔能充满
+		清空模式：点击魔能存储器将其魔能清空
+		'''
+}
+
+BasicColumn: {
+	DisplayName: 基础水晶柱
+	Tooltip:
+		'''
+		能容纳较多魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BasicPrism: {
+	DisplayName: 基础棱镜
+	Tooltip:
+		'''
+		基础连接数量为2
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+Cosmophore: {
+	DisplayName: 宙切
+	Tooltip: 以理想的天体为原型制作的近战武器
+}
+
+GelFiberBow: {
+	DisplayName: 凝胶纤维弓
+	Tooltip: 射出凝胶纤维球，碰撞物块后射出使用的弹药
+}
+
+GelFiberHammer: {
+	DisplayName: 凝胶纤维锤
+	Tooltip: ""
+}
+
+MagicElementalBannerItem: {
+	DisplayName: 魔力精旗帜
+	Tooltip: ""
+}
+
+MaragonBannerItem: {
+	DisplayName: 魔龙旗
+	Tooltip: ""
+}
+
+LeafeoBoots: {
+	DisplayName: 叶林靴
+	Tooltip: -25% 摔落伤害
+}
+
+LeafeoHelmet: {
+	DisplayName: 叶林头盔
+	Tooltip: +1 召唤栏
+}
+
+LeafeoLightArmor: {
+	DisplayName: 叶林轻甲
+	Tooltip: ""
+	ArmorBonus:
+		'''
+		叶子防守
+		   生成叶子护盾，抵消一个负面Buff
+		   叶子护盾有30秒的冷却时间
+		'''
+}
+
+FreezePotion: {
+	DisplayName: 冻结药剂
+	Tooltip: 增加寒冷伤害，并且让你的身体变脆
+}
+
+HungryPotion: {
+	DisplayName: 饥饿药剂
+	Tooltip: 增加美味伤害，但是饥饿让你抬不起脚
+}
+
+MagikeAnalyser: {
+	DisplayName: 魔谱分析仪
+	Tooltip: 放置在背包内时可以查看魔能仪器的状况
+}
+
+TremblingBow: {
+	DisplayName: 颤弦弓
+	Tooltip: 射出交错电流
+}
+
+PooToilet: {
+	DisplayName: 臭臭马桶
+	Tooltip: ""
+}
+
+BasicExtractLens: {
+	DisplayName: 基础提取透镜
+	Tooltip:
+		'''
+		从含有魔能的物品中提取魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EmperorGel: {
+	DisplayName: 帝凝胶
+	Tooltip: 水润且尝起来甜甜的
+}
+
+PelagicPolarizedFilter: {
+	DisplayName: 偏振滤镜-远洋
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SeashorePolarizedFilter: {
+	DisplayName: 偏振滤镜-海滨
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+SkyLens: {
+	DisplayName: 天空透镜
+	Tooltip:
+		'''
+		在天空生产魔能，只能放置在任意云块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EiderdownPolarizedFilter: {
+	DisplayName: 偏振滤镜-羽毛
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+EmperorPolarizedFilter: {
+	DisplayName: 偏振滤镜-帝凝胶
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FlightPolarizedFilter: {
+	DisplayName: 偏振滤镜-飞翔
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+DesertLens: {
+	DisplayName: 沙漠透镜
+	Tooltip:
+		'''
+		在沙漠生产魔能，只能放置在沙块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+EternalFlamePolarizedFilter: {
+	DisplayName: 偏振滤镜-薪火
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ForbiddenPolarizedFilter: {
+	DisplayName: 偏振滤镜-禁戒
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+FrostPolarizedFilter: {
+	DisplayName: 偏振滤镜-寒霜
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HellstonePolarizedFilter: {
+	DisplayName: 偏振滤镜-狱石
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+QuicksandPolarizedFilter: {
+	DisplayName: 偏振滤镜-流沙
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+ElectrificationWing: {
+	DisplayName: 荒雷龙的带电翼膜
+	Tooltip: 从荒雷龙的电翼上取下的一小部分，时刻保持着带电状态
+}
+
+InsulationCortex: {
+	DisplayName: 荒雷龙的绝缘壳
+	Tooltip: 荒雷龙身体上覆盖的绝缘甲壳，可以保护自身的重要部位不被电流伤害
+}
+
+ShroomitePolarizedFilter: {
+	DisplayName: 偏振滤镜-蘑菇矿锭
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+PlasmaBow: {
+	DisplayName: 电浆弓
+	Tooltip: 射出球形闪电
+}
+
+Heptachromic: {
+	DisplayName: 七色花
+	Tooltip:
+		'''
+		根据装备的染料数量依次增加以下效果
+		   防御力，移动速度，发光，跳跃能力
+		   生命值上限，伤害，暴击率
+		'''
+	Bonus: 当前触发效果数：{0}
+}
+
+BasicPedestal: {
+	DisplayName: 基础置物台
+	Tooltip: 可以在内部放入物品拱展示或魔能合成
+}
+
+GelFiberBreastplate: {
+	ArmorBonus: 静止时增加伤害减免与近战伤害
+	DisplayName: 凝胶纤维盔甲
+	Tooltip: ""
+}
+
+GelFiberBoots: {
+	DisplayName: 凝胶纤维鞋
+	Tooltip: ""
+}
+
+GelFiberHelmet: {
+	DisplayName: 凝胶纤维头盔
+	Tooltip: ""
+}
+
+SymbolOfMagike: {
+	DisplayName: 魔能徽记
+	Tooltip:
+		'''
+		该合成表仅供查看，该物品无法获得
+		请使用魔能合成坛进行魔能合成
+		'''
+	MagikeNeed: "魔能需求量 "
+}
+
+SnowfieldLens: {
+	DisplayName: 雪原透镜
+	Tooltip:
+		'''
+		在雪原生产魔能，只能放置在冰雪块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+SunlightLens: {
+	DisplayName: 日光透镜
+	Tooltip:
+		'''
+		在日光照射时生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+FarAwaySky: {
+	DisplayName: 遥远青空
+	Tooltip:
+		'''
+		双击方向键冲刺，之后射出云箭为自身增加攻击和移动速度
+		[c/61c3e7:“雨过天晴”]
+		'''
+}
+
+MagikeBasePage: {
+	DisplayName: 魔能基础残页
+	Tooltip: 使用以学习魔能基础知识
+}
+
+LeprechaunBait: {
+	DisplayName: 魔力诱饵
+	Tooltip:
+		'''
+		使用后抛出诱饵，吸引一些来自魔力水晶洞的小精灵
+		小精灵会为你指引魔力水晶洞的方向
+		'''
+}
+
+EternalVengeance: {
+	Tooltip: ""
+	DisplayName: 龙蚀剑盾
+}
+
+BasicAltar: {
+	Tooltip:
+		'''
+		魔能合成的必须仪器，按以下步骤进行魔能合成
+		 1：右键合成坛物块，使用UI界面向内部放入主要物品
+		 2：选择合适的魔能合成表
+		 3：满足合成所需的所有条件，如魔能，次要物品等
+		    次要物品需要放在带有物品容器功能的魔能物块内，并将合成坛连接到其上
+		 4：使用魔能激活杖激活合成坛
+
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+	DisplayName: 基础合成坛
+}
+
+RadiantSun: {
+	DisplayName: 旭日
+	Tooltip:
+		'''
+		双击方向键滑步，之后射出旭日箭对鼠标位置发动流星闪击
+		[c/ffe021:“银白的巨狮在天空中奔跑，为世间带来阳光”]
+		'''
+}
+
+MagicCrystalClusters: {
+	DisplayName: 魔力水晶簇
+	Tooltip: 可以使用同等级的光束采集器采挖魔力晶体
+}
+
+MoonlightLens: {
+	DisplayName: 月光透镜
+	Tooltip:
+		'''
+		在月光照射时生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BloodJadePolarizedFilter: {
+	DisplayName: 偏振滤镜-赤血玉
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+RedJadePolarizedFilter: {
+	DisplayName: 偏振滤镜-赤玉
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HellLens: {
+	DisplayName: 地狱透镜
+	Tooltip:
+		'''
+		在地狱生产魔能，需要将底座放置在灰烬或地狱建筑方块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+LavaLens: {
+	DisplayName: 熔岩透镜
+	Tooltip:
+		'''
+		底座沐浴在熔岩中时消耗熔岩生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+CoralAmulet: {
+	DisplayName: 珊瑚护身符
+	Tooltip:
+		'''
+		+6% 移动速度
+		[c/8e8e8e:用漂亮的珊瑚徽章和白色鹅卵石制成的项链。]
+		'''
+	Polished: "经过抛光的 "
+	PolishedToolTip:
+		'''
+		+10% 移动速度
+		+5 渔力
+		'''
+}
+
+CoralRing: {
+	DisplayName: 珊瑚戒指
+	Tooltip:
+		'''
+		+45 生命值上限
+		让你在水中畅游无阻
+		[c/8e8e8e:粉色珊瑚枝上天然生成的戒指，相当精致。]
+		'''
+}
+
+ChannelingGemstone: {
+	DisplayName: 引导宝石
+	Tooltip:
+		'''
+		独一无二的制作用部件。
+		[c/8e8e8e:一块特意雕刻过的上古宝石，能将能量汇聚于尖端。]
+		[c/8e8e8e:似乎曾是某件强力上古武器的核心部分。]
+		'''
+}
+
+EnergyString: {
+	DisplayName: 能量丝
+	Tooltip:
+		'''
+		独一无二的制作用部件。
+		[c/8e8e8e:一条纤细的丝状物，里面被织入了许多上古宝石微粒。]
+		[c/8e8e8e:无论当初创造它的人是谁，它的存在都证明了这位高人对各种制作材料的绝对掌控能力。]
+		'''
+}
+
+FracturedLimbs: {
+	DisplayName: 断裂的碎片
+	Tooltip:
+		'''
+		独一无二的制作用部件。
+		[c/8e8e8e:一些金色的碎片，似乎曾被熔接到仪器，用以承受强大的压力。]
+		[c/8e8e8e:想必是被某种天生力大无穷的东西击打过，才会变成这种四分五裂的模样吧。]
+		'''
+}
+
+HoneyLens: {
+	DisplayName: 蜂蜜透镜
+	Tooltip:
+		'''
+		底座沐浴在蜂蜜中时消耗蜂蜜生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+WaterflowLens: {
+	DisplayName: 水流透镜
+	Tooltip:
+		'''
+		底座沐浴在水中时消耗水生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BeeswaxPolarizedFilter: {
+	DisplayName: 偏振滤镜-蜂蜡
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+GreenOnionBurritos: {
+	DisplayName: 大葱卷饼
+	Tooltip:
+		'''
+		左键丢出大葱，大葱在碰到卷饼后会变为大葱卷饼并造成更高伤害
+		飞盾与防御均为卷饼
+		'''
+}
+
+DungeonLens: {
+	DisplayName: 地牢透镜
+	Tooltip:
+		'''
+		在地牢生产魔能，只能放置在地牢砖上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BonePolarizedFilter: {
+	DisplayName: 偏振滤镜-骨头
+	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
+}
+
+HallowLens: {
+	DisplayName: 神圣透镜
+	Tooltip:
+		'''
+		在神圣地生产魔能，只能放置在神圣方块上
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+LaserCollector: {
+	NoTile: 未找到物块！
+	NoCrystalCluster: 未找到水晶簇！
+	LevelIncorrect: 等级与晶簇等级不符！
+	MagikeNotEnough: 魔能不足！
+	DisplayName: 光束采集器
+	Tooltip: 将顶部对准一个水晶簇后激活就能从水晶簇中开采物品
+}
+
+StoneMaker: {
+	CantMake: 无法生产这种方块！
+	MagikeNotEnough: 魔能不足！
+	DisplayName: 地质再生祭坛
+	Tooltip:
+		'''
+		放置在部分石块上后激活以消耗魔能生产石块
+		可生产的种类：泥土，石头，大理石，花岗岩，猩红石块
+		  腐化石块，珍珠石块，灰烬，玄武岩，矽卡岩
+		'''
+}
+
+BrilliantConnectStaff: {
+	DisplayName: 璀璨连接杖
+	Tooltip:
+		'''
+		◇ 左键框选区域内所有发送器，再次左键框选区域内所有接收器，并建立连接
+		◇ 物品栏内右键切换取消连接的方式
+		  ▶ UI模式：右键点击发送器打开连接UI，点击按钮以取消连接
+		  ▶ 框选模式：右键选择区域，取消区域内所有连接
+		'''
+	CurrentState: 当前取消连接方式：
+	UIDisconnect: UI模式
+	DisconnectAll: 框选模式
+	DisconnectSuccess: 成功断开连接
+}
+
+OpticalPathCalibrator: {
+	TimerNotFound: 未找到计时器！
+	TimerChosen: 已选择计时器
+	TimerSynced: 计时器已同步
+	DisplayName: 光路校准仪
+	Tooltip:
+		'''
+		左键选择具有倒计时组件的魔能仪器
+		再次左键同样的仪器以同步二者的计时器
+		'''
+}
+
+BrilliantCalibrator: {
+	DisplayName: 璀璨校准仪
+	Tooltip:
+		'''
+		左键选择区域
+		松开左键后将区域内的所有魔能仪器计时器重置
+		'''
+}
+
+BrilliantMagikeActivator: {
+	DisplayName: 璀璨激活杖
+	Tooltip: ◇ 左键选择区域，激活区域内的魔能工作站
+}
+
+MagicCrystalTRFilter: {
+	DisplayName: 全反射滤镜-晶体
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.TotalReflectionFilterTooltip}
+		[c/80d3ff:增加 10%]
+		'''
+}
+
+MagicCrystalDiffractionFilter: {
+	DisplayName: 衍射滤镜-晶体
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.DiffractionFilterFilterTooltip}
+		[c/80d3ff:增加 1]
+		'''
+}
+
+MagicCrystalInterferenceFilter: {
+	DisplayName: 干涉滤镜-晶体
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.InterferenceFilterTooltip}
+		[c/80d3ff:增加 10%]
+		'''
+}
+
+MagicCrystalExcitedFilter: {
+	DisplayName: 激发滤镜-晶体
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.ExcitedFilterTooltip}
+		[c/80d3ff:增加 10%]
+		'''
+}
+
+MagicCrystalPulseFilter: {
+	DisplayName: 脉冲滤镜-晶体
+	Tooltip:
+		'''
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.PulseFilterTooltip}
+		[c/80d3ff:增加 10%]
+		'''
+}
+
+TreasureLens: {
+	DisplayName: 财宝透镜
+	Tooltip:
+		'''
+		消耗有价值的物品生产魔能
+		产量为物品价值等量的银币数，最多不超过100
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+BrilliantScanner: {
+	DisplayName: 璀璨扫描镜
+	Tooltip: 放在背包内时可以观测到魔能流动以及仪器情况
+}
+
+SkarnBrick: {
+	DisplayName: 矽卡砖
+	Tooltip: ""
+}
+
+Chalcedony: {
+	DisplayName: 玉髓木
+	Tooltip: 吸收矽卡岩的养分之后形成的木头，已经完全结晶化
+}
+
+ChalcedonyBathtub: {
+	DisplayName: 玉髓浴缸
+	Tooltip: ""
+}
+
+ChalcedonyBed: {
+	DisplayName: 玉髓床
+	Tooltip: ""
+}
+
+ChalcedonyBigDroplight: {
+	DisplayName: 玉髓大吊灯
+	Tooltip: ""
+}
+
+ChalcedonyBookcase: {
+	DisplayName: 玉髓书架
+	Tooltip: ""
+}
+
+ChalcedonyCandelabra: {
+	DisplayName: 玉髓烛台
+	Tooltip: ""
+}
+
+ChalcedonyCandle: {
+	DisplayName: 玉髓蜡烛
+	Tooltip: ""
+}
+
+ChalcedonyChair: {
+	DisplayName: 玉髓椅子
+	Tooltip: ""
+}
+
+ChalcedonyClock: {
+	DisplayName: 玉髓钟
+	Tooltip: ""
+}
+
+ChalcedonyDoor: {
+	DisplayName: 玉髓门
+	Tooltip: ""
+}
+
+ChalcedonyDresser: {
+	DisplayName: 玉髓梳妆台
+	Tooltip: ""
+}
+
+ChalcedonyDroplight: {
+	DisplayName: 玉髓吊灯
+	Tooltip: ""
+}
+
+ChalcedonyFloorLamp: {
+	DisplayName: 玉髓灯柱
+	Tooltip: ""
+}
+
+ChalcedonyPiano: {
+	DisplayName: 玉髓钢琴
+	Tooltip: ""
+}
+
+ChalcedonyPlatform: {
+	DisplayName: 玉髓平台
+	Tooltip: ""
+}
+
+ChalcedonySink: {
+	DisplayName: 玉髓水槽
+	Tooltip: ""
+}
+
+ChalcedonySofa: {
+	DisplayName: 玉髓沙发
+	Tooltip: ""
+}
+
+ChalcedonyTable: {
+	DisplayName: 玉髓桌
+	Tooltip: ""
+}
+
+ChalcedonyToilet: {
+	DisplayName: 玉髓马桶
+	Tooltip: ""
+}
+
+ChalcedonyWallItem: {
+	DisplayName: 玉髓墙
+	Tooltip: ""
+}
+
+ChalcedonyWorkBench: {
+	DisplayName: 玉髓工作台
+	Tooltip: ""
+}
+
+LeafChalcedony: {
+	DisplayName: 缠叶玉髓木
+	Tooltip: 用叶石包裹并压缩后的玉髓木，更适合用于各种加工
+}
+
+ChalcedonyChest: {
+	DisplayName: 玉髓箱
+	Tooltip: ""
+}
+
+Princesstrawberry: {
+	DisplayName: 公主草莓
+	Tooltip: "{$CommonItemTooltip.MinorStats}"
+}
+
+Woodbine: {
+	DisplayName: 忍冬
+	Tooltip: "{$CommonItemTooltip.MinorStats}"
+}
+
+Buttermilk: {
+	DisplayName: 玄饮酪浆
+	Tooltip: "{$CommonItemTooltip.MajorStats}"
+}
+
+RoyalKonjac: {
+	DisplayName: 王室蒟蒻
+	Tooltip: "{$CommonItemTooltip.MajorStats}"
+}
+
+SkarnBrickPlatform: {
+	DisplayName: 矽卡砖平台
+	Tooltip: ""
+}
+
+StoneRelic: {
+	DisplayName: 石块，地质的运动
+	Tooltip: ""
+}
+
+SmoothSkarn: {
+	DisplayName: 平滑矽卡岩
+	Tooltip: ""
+}
+
+SmoothSkarnWallItem: {
+	DisplayName: 平滑矽卡岩墙
+	Tooltip: ""
+}
+
+ConchHat: {
+	DisplayName: 海螺盔
+	Tooltip:
+		'''
+		+20 最大魔力值
+		+4% 魔法暴击几率
+		'''
+	ArmorBonus:
+		'''
+		当消耗一半的魔力后获得泡泡祝福，获得快速奔跑能力并+3防御力
+		泡泡祝福持续一段时间后消失
+		'''
+}
+
+ConchRobe: {
+	DisplayName: 海螺长袍
+	Tooltip: +20 最大魔力值
+}
+
+StoneMakerCore: {
+	DisplayName: 石块，凝结核心
+	Tooltip:
+		'''
+		用于制作 [i:Coralite/StoneMaker] {$Mods.Coralite.Items.StoneMaker.DisplayName}
+		通过搭建以下的多方块结构并右键核心进行合成
+
+		[i:Coralite/MagicCrystalBrick]   [i:Coralite/MagicCrystalBrick]
+		[i:Coralite/Basalt][i:Coralite/StoneMakerCore][i:Coralite/Basalt]
+		[i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt]
+
+		物块名：
+		[i:Coralite/Basalt]·{$Mods.Coralite.Items.Basalt.DisplayName}
+		[i:Coralite/HardBasalt]·{$Mods.Coralite.Items.HardBasalt.DisplayName}
+		[i:Coralite/MagicCrystalBrick]·{$Mods.Coralite.Items.MagicCrystalBrick.DisplayName}
+		'''
+}
+
+PremissionAltar: {
+	DisplayName: 矽卡祭坛
+	Tooltip:
+		'''
+		来自古代的造物，授予拥有光明与黑暗之魂的生灵进入蕴魔空岛的权限
+		向矽卡光明与黑暗之祭坛献上对应的魂魄后再次右键该物块能产生意想不到的效果
+		'''
+}
+
+SkarnBrickWallItem: {
+	DisplayName: 矽卡砖墙
+	Tooltip: ""
+}
+
+SoulOfLightAltar: {
+	DisplayName: 矽卡光明祭坛
+	Tooltip: 来自古代的造物，向祭坛献上古老的光明之魂吧
+}
+
+SoulOfNightAltar: {
+	DisplayName: 矽卡黑暗祭坛
+	Tooltip: 来自古代的造物，向祭坛献上古老的光明之魂吧
+}
+
+LASER: {
+	DisplayName: 激光器
+	Tooltip:
+		'''
+		一次性将自身内的所有魔能发送到正对着的仪器中
+		发送距离极远
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+LASERCore: {
+	DisplayName: 激光器核心
+	Tooltip:
+		'''
+		用于制作 [i:Coralite/LASER] {$Mods.Coralite.Items.LASER.DisplayName}
+		通过搭建以下的多方块结构并右键核心进行合成
+
+		[i:Coralite/HardBasalt][i:Coralite/HardBasalt]   [i:Coralite/HardBasalt][i:Coralite/HardBasalt]
+		[i:Coralite/Basalt]   [i:Coralite/MagicCrystalBlock]    [i:Coralite/Basalt]
+		[i:Coralite/Basalt]   [i:Coralite/MagicCrystalBlock]    [i:Coralite/Basalt]
+		[i:2173][i:2173][i:Coralite/LASERCore][i:2173][i:2173]
+		[i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt]
+
+		物块名：
+		[i:Coralite/Basalt]·{$Mods.Coralite.Items.Basalt.DisplayName}
+		[i:Coralite/HardBasalt]·{$Mods.Coralite.Items.HardBasalt.DisplayName}
+		[i:Coralite/MagicCrystalBlock]·{$Mods.Coralite.Items.MagicCrystalBlock.DisplayName}
+		[i:2173]·{$ItemName.CopperPlating}
+		.
+		'''
+}
+
+CogLens: {
+	DisplayName: 机械透镜
+	Tooltip:
+		'''
+		自动生产魔能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+CoraliteNote: {
+	DisplayName: 珊瑚笔记
+	Tooltip: ""
+}
+
+Phosphophyllite: {
+	DisplayName: 磷叶石
 	Tooltip: ""
 }

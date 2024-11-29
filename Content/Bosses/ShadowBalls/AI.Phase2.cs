@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
-using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -34,11 +34,11 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         for (int j = 0; j < 3; j++)
                         {
                             float speedDir = NPC.velocity.ToRotation();
-                            float factor2 = MathF.Sin((Timer - j / 3f) * 0.3f);
+                            float factor2 = MathF.Sin((Timer - (j / 3f)) * 0.3f);
 
                             for (int i = -1; i < 2; i += 2)
                             {
-                                Dust d = Dust.NewDustPerfect(Vector2.Lerp(NPC.Center, NPC.oldPos[0], j / 3f) + (speedDir + 1.57f * i).ToRotationVector2() * factor2 * 16,
+                                Dust d = Dust.NewDustPerfect(Vector2.Lerp(NPC.Center, NPC.oldPos[0], j / 3f) + ((speedDir + (1.57f * i)).ToRotationVector2() * factor2 * 16),
                                      DustID.Clentaminator_Purple, -NPC.velocity * 0.05f);
                                 d.noGravity = true;
                             }
@@ -62,8 +62,8 @@ namespace Coralite.Content.Bosses.ShadowBalls
                             {
                                 if (NPC.velocity.Y > -20)//向上加速度逐渐递减
                                 {
-                                    float factor = MathHelper.Clamp(1 - Timer / 15, 0, 1);
-                                    NPC.velocity.Y -= 0.2f + factor * 1.8f;
+                                    float factor = MathHelper.Clamp(1 - (Timer / 15), 0, 1);
+                                    NPC.velocity.Y -= 0.2f + (factor * 1.8f);
                                 }
                             }
                             else
@@ -74,7 +74,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         }
                         else//自然下落至指定高度
                         {
-                            Vector2 targetPos = new Vector2(Target.Center.X, Recorder);
+                            Vector2 targetPos = new(Target.Center.X, Recorder);
                             SetDirection(targetPos, out float xLength, out _);
 
                             if (xLength > 250)
@@ -109,7 +109,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         {
                             if (Timer == 2)
                             {
-                                Particle.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<Sparkle_Big>(),
+                                PRTLoader.NewParticle(NPC.Center, Vector2.Zero, CoraliteContent.ParticleType<Sparkle_Big>(),
                                     Color.Purple, 1.2f);
 
                                 NPC.rotation = (Target.Center - NPC.Center).ToRotation();
@@ -149,9 +149,9 @@ namespace Coralite.Content.Bosses.ShadowBalls
                             if (Timer == 2)
                             {
                                 float xLength = Target.Center.X - NPC.Center.X;
-                                float velocityX = MathHelper.Clamp((xLength / 30), -5.5f, 5.5f);
+                                float velocityX = MathHelper.Clamp(xLength / 30, -5.5f, 5.5f);
 
-                                Vector2 velocity = new Vector2(velocityX, -30);
+                                Vector2 velocity = new(velocityX, -30);
 
                                 int damage = Helper.ScaleValueForDiffMode(20, 30, 25, 25);
                                 ShadowBallSlash.Spawn(NPC, damage, ShadowBallSlash.ComboType.SmashDown_Shouryuukenn, velocity.ToRotation());
@@ -162,7 +162,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         {
                             //向上冲刺并生成弹幕，让地面逐渐消失并生成爆炸弹幕
                             float xLength = Target.Center.X - NPC.Center.X;
-                            float velocityX = MathHelper.Clamp((xLength / 30), -5.5f, 5.5f);
+                            float velocityX = MathHelper.Clamp(xLength / 30, -5.5f, 5.5f);
 
                             NPC.velocity = new Vector2(velocityX, -30);
                             CanDamage = true;
@@ -237,7 +237,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
             CanDamage = false;
 
             //检测玩家位置，如果离自身较高就升龙，否则直接回旋斩
-            Vector2 targetPos = new Vector2(Target.Center.X, Recorder);
+            Vector2 targetPos = new(Target.Center.X, Recorder);
             SetDirection(targetPos, out float xLength, out _);
 
             if (xLength < 200 && Target.Center.Y < NPC.Center.Y - 100)
@@ -372,7 +372,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                             }
 
                             float factor = Timer / ReadyTime;
-                            UpdateCacheRandom(factor * 64, (int)(80 - factor * 70));
+                            UpdateCacheRandom(factor * 64, (int)(80 - (factor * 70)));
                             alpha = 1 - factor;
                         }
                         else if (Timer == ReadyTime)
@@ -402,7 +402,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                             //聚集重组回来
                             float factor = (Timer - SlashTime) / (DelayTime - SlashTime);
                             factor = 1 - factor;
-                            UpdateCacheRandom(factor * 64, (int)(80 - factor * 70));
+                            UpdateCacheRandom(factor * 64, (int)(80 - (factor * 70)));
                             alpha = 1 - factor;
                         }
                         else
@@ -463,7 +463,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         {
                             Recorder = Target.Center.X;
                             Recorder2 = Target.Center.Y - yOffset;
-                            Vector2 targetPos = new Vector2(Recorder, Recorder2);
+                            Vector2 targetPos = new(Recorder, Recorder2);
 
                             float distance = (targetPos - NPC.Center).Length();
                             NPC.velocity = (targetPos - NPC.Center).SafeNormalize(Vector2.Zero) * distance / (DashTime - ChasingTime);
@@ -782,7 +782,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         if (Timer < FadeTime)//消散
                         {
                             float factor = Timer / FadeTime;
-                            UpdateCacheRandom(factor * 80, (int)(80 - factor * 70));
+                            UpdateCacheRandom(factor * 80, (int)(80 - (factor * 70)));
                             alpha = 1 - factor;
                         }
                         else if (Timer < WaitTime) { }
@@ -794,7 +794,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
                         {
                             float factor = (Timer - WaitTime) / (ReTime - WaitTime);
                             factor = 1 - factor;
-                            UpdateCacheRandom(factor * 80, (int)(80 - factor * 70));
+                            UpdateCacheRandom(factor * 80, (int)(80 - (factor * 70)));
                             alpha = 1 - factor;
                         }
                         else

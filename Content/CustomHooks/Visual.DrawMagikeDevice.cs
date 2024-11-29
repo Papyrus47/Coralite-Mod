@@ -1,17 +1,18 @@
 ﻿using Coralite.Content.Items.MagikeSeries1;
 using Coralite.Content.ModPlayers;
-using Coralite.Core;
-using Coralite.Core.Systems.MagikeSystem.TileEntities;
+using Coralite.Core.Systems.MagikeSystem;
+using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.ObjectData;
 
 namespace Coralite.Content.CustomHooks
 {
     public class DrawMagikeDevice : HookGroup
     {
+        public static List<MagikeLinerSender> LinerSenders = new(128);
+
         // 应该不会干涉任何东西
         public override SafetyLevel Safety => SafetyLevel.Safe;
 
@@ -30,72 +31,33 @@ namespace Coralite.Content.CustomHooks
             if (Main.gameMenu)
                 return;
 
-            if (Main.LocalPlayer.TryGetModPlayer(out CoralitePlayer cp) && cp.HasEffect(nameof(MagikeMonoclastic)))
+            if (Main.LocalPlayer.TryGetModPlayer(out CoralitePlayer cp) && cp.HasEffect(nameof(MagikeMonoclastic))
+                && LinerSenders.Count > 0)
             {
                 Main.spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
-                Texture2D laserTex = ModContent.Request<Texture2D>(AssetDirectory.OtherItems + "MagikeArrow").Value;
-                Color drawColor = Coralite.Instance.MagicCrystalPink * 0.6f;
+
+                Texture2D laserTex = MagikeSystem.GetConnectLine();
+                Color drawColor = Coralite.MagicCrystalPink * 0.6f;
                 var origin = new Vector2(0, laserTex.Height / 2);
 
-                foreach (var entity in TileEntity.ByPosition)
+                foreach (var linerSender in LinerSenders)
                 {
-                    if (entity.Value is IMagikeSender_Line sender)
+                    //以上是获取线性发送器组件
+                    Vector2 selfPos = Helper.GetMagikeTileCenter(linerSender.Entity.Position);
+                    Vector2 startPos = selfPos - Main.screenPosition;
+
+                    if (linerSender.Receivers.Count == 0)
+                        continue;
+
+                    for (int i = 0; i < linerSender.Receivers.Count; i++)
                     {
-                        Tile tile = Framing.GetTileSafely(entity.Key);
-                        TileObjectData data = TileObjectData.GetTileData(tile);
-                        int x = data == null ? 8 : data.Width * 16 / 2;
-                        int y = data == null ? 8 : data.Height * 16 / 2;
-
-                        Vector2 selfPos = entity.Value.Position.ToWorldCoordinates(x, y);
-                        Vector2 startPos = selfPos - Main.screenPosition;
-
-                        if (Helper.OnScreen(startPos))
-                        {
-                            for (int i = 0; i < sender.receiverPoints.Length; i++)
-                            {
-                                if (sender.receiverPoints[i] == Point16.NegativeOne)
-                                    continue;
-                                Tile tile2 = Framing.GetTileSafely(sender.receiverPoints[i]);
-                                TileObjectData data2 = TileObjectData.GetTileData(tile2);
-                                int x2 = data2 == null ? 8 : data2.Width * 16 / 2;
-                                int y2 = data2 == null ? 8 : data2.Height * 16 / 2;
-                                Vector2 aimPos = sender.receiverPoints[i].ToWorldCoordinates(x2, y2);
-
-                                int width = (int)(selfPos - aimPos).Length();   //这个就是激光长度
-
-                                var laserTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, laserTex.Height);
-                                var laserSource = new Rectangle((int)(-Main.GlobalTimeWrappedHourly * laserTex.Width), 0, width, laserTex.Height);
-
-                                Main.spriteBatch.Draw(laserTex, laserTarget, laserSource, drawColor, (aimPos - selfPos).ToRotation(), origin, 0, 0);
-                            }
-                            continue;
-                        }
-
-                        for (int i = 0; i < sender.receiverPoints.Length; i++)
-                        {
-                            if (sender.receiverPoints[i] == Point16.NegativeOne)
-                                continue;
-
-                            Tile tile2 = Framing.GetTileSafely(sender.receiverPoints[i]);
-                            TileObjectData data2 = TileObjectData.GetTileData(tile2);
-                            int x2 = data2 == null ? 8 : data2.Width * 16 / 2;
-                            int y2 = data2 == null ? 8 : data2.Height * 16 / 2;
-                            Vector2 aimPos = sender.receiverPoints[i].ToWorldCoordinates(x2, y2);
-
-                            if (!Helper.OnScreen(aimPos - Main.screenPosition))
-                                continue;
-
-                            int width = (int)(selfPos - aimPos).Length();   //这个就是激光长度
-
-                            var laserTarget = new Rectangle((int)startPos.X, (int)startPos.Y, width, laserTex.Height);
-                            var laserSource = new Rectangle((int)(-Main.GlobalTimeWrappedHourly * laserTex.Width), 0, width, laserTex.Height);
-
-                            Main.spriteBatch.Draw(laserTex, laserTarget, laserSource, drawColor, (aimPos - selfPos).ToRotation(), origin, 0, 0);
-                        }
+                        Vector2 aimPos = Helper.GetMagikeTileCenter(linerSender.Receivers[i]);
+                        MagikeSystem.DrawConnectLine(Main.spriteBatch, selfPos, aimPos, Main.screenPosition, drawColor);
                     }
                 }
 
                 Main.spriteBatch.End();
+                LinerSenders.Clear();
             }
         }
     }

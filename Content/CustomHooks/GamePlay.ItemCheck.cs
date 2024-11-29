@@ -1,4 +1,4 @@
-﻿using Coralite.Content.Items.GlobalItems;
+﻿using Coralite.Content.GlobalItems;
 using Coralite.Content.ModPlayers;
 using System;
 using Terraria;
@@ -54,7 +54,7 @@ namespace Coralite.Content.CustomHooks
             int projToShoot = sItem.shoot;
             float speed = sItem.shootSpeed;
             int damage = sItem.damage;
-            if (sItem.DamageType == DamageClass.Melee && !ProjectileID.Sets.NoMeleeSpeedVelocityScaling[projToShoot])
+            if (sItem.DamageType.CountsAsClass(DamageClass.Melee) && !ProjectileID.Sets.NoMeleeSpeedVelocityScaling[projToShoot])
                 speed /= 1 / player.GetTotalAttackSpeed(DamageClass.Melee);
 
             // Copied as-is from 1.3
@@ -123,13 +123,13 @@ namespace Coralite.Content.CustomHooks
                     player.ChangeDir(-1);
             }
 
-            float num2 = (float)Main.mouseX + Main.screenPosition.X - pointPoisition.X;
-            float num3 = (float)Main.mouseY + Main.screenPosition.Y - pointPoisition.Y;
+            float num2 = Main.mouseX + Main.screenPosition.X - pointPoisition.X;
+            float num3 = Main.mouseY + Main.screenPosition.Y - pointPoisition.Y;
 
             if (player.gravDir == -1f)
-                num3 = Main.screenPosition.Y + (float)Main.screenHeight - (float)Main.mouseY - pointPoisition.Y;
+                num3 = Main.screenPosition.Y + Main.screenHeight - Main.mouseY - pointPoisition.Y;
 
-            float num4 = (float)Math.Sqrt(num2 * num2 + num3 * num3);
+            float num4 = (float)Math.Sqrt((num2 * num2) + (num3 * num3));
             float num5 = num4;
             if ((float.IsNaN(num2) && float.IsNaN(num3)) || (num2 == 0f && num3 == 0f))
             {
@@ -145,12 +145,15 @@ namespace Coralite.Content.CustomHooks
             num2 *= num4;
             num3 *= num4;
 
-            Vector2 velocity = new Vector2(num2, num3);
+            Vector2 velocity = new(num2, num3);
 
             CombinedHooks.ModifyShootStats(player, sItem, ref pointPoisition, ref velocity, ref projToShoot, ref Damage, ref KnockBack);
 
             num2 = velocity.X;
             num3 = velocity.Y;
+
+            //傻呗tml，这id都没了还给我搁着提示修改
+#pragma warning disable ChangeMagicNumberToID // Change magic numbers into appropriate ID values
 
             if (sItem.useStyle == ItemUseStyleID.Shoot)
             {
@@ -165,6 +168,7 @@ namespace Coralite.Content.CustomHooks
                 NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, player.whoAmI);
                 NetMessage.SendData(41, -1, -1, null, player.whoAmI);
             }
+#pragma warning restore ChangeMagicNumberToID // Change magic numbers into appropriate ID values
 
             CombinedHooks.Shoot(player, sItem, (EntitySource_ItemUse_WithAmmo)projectileSource_Item_WithPotentialAmmo, pointPoisition, velocity, projToShoot, Damage, KnockBack);
         }

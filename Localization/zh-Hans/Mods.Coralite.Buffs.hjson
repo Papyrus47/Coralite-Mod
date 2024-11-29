@@ -23,11 +23,6 @@ RedianciePetBuff: {
 	Description: 小赤玉灵环绕在你身边
 }
 
-ShadowCircleBuff: {
-	DisplayName: a
-	// Description: Mods.Coralite.Buffs.ShadowCircleBuff.Description
-}
-
 BloodyHookDebuff: {
 	DisplayName: 鲜血斩击
 	Description: 你在流血！
@@ -192,4 +187,36 @@ GravitationalCatapultBuff: {
 AmberDebuff: {
 	// DisplayName: Amber Debuff
 	// Description: Mods.Coralite.Buffs.AmberDebuff.Description
+}
+
+FreezePotionBuff: {
+	DisplayName: 冻结精华
+	Description:
+		'''
+		+10% 寒冷伤害
+		-8 防御力
+		'''
+}
+
+HungryPotionBuff: {
+	DisplayName: 饥饿精华
+	Description:
+		'''
+		+10% 美味伤害
+		-8% 移动速度
+		'''
+}
+
+LeafeoShieldCD: {
+	DisplayName: 叶子护盾冷却
+	Description: 正在进行光合作用以生产叶子护盾...
+}
+
+CloudBonus: {
+	DisplayName: 穿云
+	Description:
+		'''
+		+15% 移动速度
+		+15% 远程伤害
+		'''
 }

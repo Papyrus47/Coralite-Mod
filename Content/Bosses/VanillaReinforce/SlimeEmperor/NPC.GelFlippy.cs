@@ -61,7 +61,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             }
 
             //尝试飞到玩家上方并隔一段时间滴出一个小凝胶球
-            Vector2 aimCenter = Target.Center + new Vector2(MathF.Sin(Main.GlobalTimeWrappedHourly * 2 + NPC.ai[1]) * 100, NPC.ai[1]);
+            Vector2 aimCenter = Target.Center + new Vector2(MathF.Sin((Main.GlobalTimeWrappedHourly * 2) + NPC.ai[1]) * 100, NPC.ai[1]);
             float length2TargetX = aimCenter.X - NPC.Center.X;
             float length2TargetY = aimCenter.Y - NPC.Center.Y;
             bool shouldMoveX = Math.Abs(length2TargetX) > 40;
@@ -113,7 +113,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             Texture2D mainTex = TextureAssets.Npc[Type].Value;
 
             Rectangle frameBox = mainTex.Frame(1, Main.npcFrameCount[Type], 0, NPC.frame.Y);
-            Vector2 origin = new Vector2(frameBox.Width / 2, frameBox.Height);
+            Vector2 origin = new(frameBox.Width / 2, frameBox.Height);
             SpriteEffects effect = SpriteEffects.FlipHorizontally;
 
             if (NPC.spriteDirection < 0)
