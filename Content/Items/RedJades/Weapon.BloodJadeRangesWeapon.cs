@@ -2,10 +2,10 @@
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -76,7 +76,7 @@ namespace Coralite.Content.Items.RedJades
     /// <summary>
     /// 向前射出，之后飞回玩家身边，碰到墙壁可以反弹2次
     /// </summary>
-    public class BloodJadeFrisbee : ModProjectile, IDrawPrimitive
+    public class BloodJadeFrisbee : BaseHeldProj, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.RedJadeItems + "BloodJadeRangesWeapon";
 
@@ -110,31 +110,20 @@ namespace Coralite.Content.Items.RedJades
             Projectile.localNPCHitCooldown = 45;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[14];
-            for (int i = 0; i < 14; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(14);
         }
 
         public override void AI()
         {
-            Player projOwner = Main.player[Projectile.owner];
-
-            trail ??= new Trail(Main.instance.GraphicsDevice, 14, new NoTip(), factor => Helper.Lerp(4, 8, factor), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, 14, new EmptyMeshGenerator(), factor => Helper.Lerp(4, 8, factor), factor =>
             {
                 if (factor.X < 0.7f)
                     return Color.Lerp(Color.Transparent, new Color(81, 11, 47, 150), factor.X / 0.7f);
 
                 return Color.Lerp(new Color(81, 11, 47, 150), Color.Transparent, (factor.X - 0.7f) / 0.3f);
             });
-            //trail2 ??= new Trail(Main.instance.GraphicsDevice, 6, new NoTip(), factor => Helper.Lerp(8, 10, factor), factor =>
-            //{
-            //    if (factor.X < 0.7f)
-            //        return Color.Lerp(Color.Transparent, Color.White*0.5f, factor.X / 0.7f);
-
-            //    return Color.Lerp(Color.White*0.5f, Color.Transparent, (factor.X - 0.7f) / 0.3f);
-            //});
 
             Projectile.rotation += 0.35f;
 
@@ -153,13 +142,13 @@ namespace Coralite.Content.Items.RedJades
                     break;
                 case 1://回收
                     {
-                        if (Vector2.Distance(projOwner.Center, Projectile.Center) < 24)
+                        if (Vector2.Distance(Owner.Center, Projectile.Center) < 24)
                             Projectile.Kill();
 
-                        else if (Vector2.Distance(projOwner.Center, Projectile.Center) < 200)
-                            Projectile.velocity += Vector2.Normalize(projOwner.Center - Projectile.Center) * 4;
+                        else if (Vector2.Distance(Owner.Center, Projectile.Center) < 200)
+                            Projectile.velocity += Vector2.Normalize(Owner.Center - Projectile.Center) * 4;
                         else
-                            Projectile.velocity += Vector2.Normalize(projOwner.Center - Projectile.Center);
+                            Projectile.velocity += Vector2.Normalize(Owner.Center - Projectile.Center);
 
                         if (Projectile.velocity.Length() > 14)
                             Projectile.velocity = Vector2.Normalize(Projectile.velocity) * 14;
@@ -176,7 +165,7 @@ namespace Coralite.Content.Items.RedJades
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[13] = Projectile.Center + Projectile.velocity;
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
             //trail2.Positions = Projectile.oldPos;
         }
 
@@ -284,7 +273,7 @@ namespace Coralite.Content.Items.RedJades
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.EdgeA.Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
             //trail2?.Render(effect);
         }
     }

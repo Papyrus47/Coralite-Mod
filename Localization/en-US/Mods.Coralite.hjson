@@ -6,9 +6,16 @@ DamageClasses: {
 	CreateHammerDamage.DisplayName: Create Hammer Damage
 	CreatePickaxeDamage.DisplayName: Create Pickaxe Damage
 	CreateShovelDamage.DisplayName: Create Shovel Damage
+	MagikeDamage.DisplayName: Magike Damage
+	RangedNoAttackSpeed.DisplayName: Ranged No Attack Speed
 }
 
-Players.CoralitePlayer.ThunderElectrifiedDeath: killed by lightning
+Players: {
+	CoralitePlayer: {
+		ThunderElectrifiedDeath: killed by lightning
+		CoreKeeperDodgeText: Mods.Coralite.Players.CoralitePlayer.CoreKeeperDodgeText
+	}
+}
 
 Conditions: {
 	CoraliteConditions: {
@@ -16,9 +23,21 @@ Conditions: {
 		CoralCat: Need in the world of rainbow cats (CoralCat)
 		MagikeCraft: Requires using magike craft altar to craft
 		LearnedMagikeAdvance: Need to learn the advance of magike
-		InDigDigDig: Mods.Coralite.Conditions.CoraliteConditions.InDigDigDig
-		NotInDigDigDig: Mods.Coralite.Conditions.CoraliteConditions.NotInDigDigDig
-		UseMultiBlockStructure: Mods.Coralite.Conditions.CoraliteConditions.UseMultBlockStructure
+		InDigDigDig: Need in the world of stone (DigDigDig)
+		NotInDigDigDig: Need not in the world of stone (DigDigDig)
+		UseMultiBlockStructure: Use Multiblock to craft
+		DownedGolemCondition: Need to defeat the Golem
+		UnlockDyeTrder: Mods.Coralite.Conditions.CoraliteConditions.UnlockDyeTrder
+		UnlockStylist: Mods.Coralite.Conditions.CoraliteConditions.UnlockStylist
+		UnlockMechanic: Mods.Coralite.Conditions.CoraliteConditions.UnlockMechanic
+		UnlockPartyGirl: Mods.Coralite.Conditions.CoraliteConditions.UnlockPartyGirl
+		UnlockTaxCollector: Mods.Coralite.Conditions.CoraliteConditions.UnlockTaxCollector
+		UnlockPrincess: Mods.Coralite.Conditions.CoraliteConditions.UnlockPrincess
+		SpellCraft: Mods.Coralite.Conditions.CoraliteConditions.SpellCraft
+		InMagicCrystalCave: Mods.Coralite.Conditions.CoraliteConditions.InMagicCrystalCave
+		InCrystallineSkyIsland: Mods.Coralite.Conditions.CoraliteConditions.InCrystallineSkyIsland
+		UseShlimmerTranslation: Mods.Coralite.Conditions.CoraliteConditions.UseShlimmerTranslation
+		UseRuneParchment: Mods.Coralite.Conditions.CoraliteConditions.UseRuneParchment
 	}
 }
 
@@ -41,14 +60,18 @@ WorldGeneration: {
 		DigDesert: Dig the desert! Dig the desert! Dig! Dig! Dig! Dig! Dig!
 		DigHell: Dig the underworld! Dig the underworld! Dig! Dig! Dig! Dig! Dig!
 		DigSky: Dig the sky! Dig the sky! Dig! Dig! Dig! Dig! Dig!
-		DigTheCrystalCave: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheCrystalCave
-		DigTheNPC: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheNPC
-		DigTheGMHalfCircle: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheGMHalfCircle
-		DigTheMushroomCircle: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheMushroomCircle
-		DigTheEvil: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheEvil
-		DigTheJungleTemple: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheJungleTemple
-		DigTheShimmer: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheShimmer
-		DigTheIceDragonNest: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheIceDragonNest
-		DigTheDigDungeon: Mods.Coralite.WorldGeneration.CoraliteWorld.DigTheDigDungeon
+		DigTheCrystalCave: Dig the Crystal Cave! Dig the sky! Dig! Dig! Dig! Dig! Dig!
+		DigTheNPC: What is it? Clumsy slime? Generate it. What is it? Fisherman? Generate it. What is it? Hairstylist? Generate it.
+		DigTheGMHalfCircle: Dig the granite! Dig the marble! Dig! Dig! Dig! Dig! Dig!
+		DigTheMushroomCircle: Dig the mushroom! Dig the mushroom! Dig! Dig! Dig! Dig! Dig!
+		DigTheEvil: Dig the evil! Dig the evil! Dig! Dig! Dig! Dig! Dig!
+		DigTheJungleTemple: Dig the temple! Dig the temple! Dig! Dig! Dig! Dig! Dig!
+		DigTheShimmer: Dig the shimmer! Dig the shimmer! Dig! Dig! Dig! Dig! Dig!
+		DigTheIceDragonNest: Dig the ice dragon nest Dig! Dig! Dig! Dig! Dig!
+		DigTheDigDungeon: Dig the dungeon! Dig the dungeon! Dig! Dig! Dig! Dig! Dig!
+		CoraliteNoteRoom: Coral lost items are being placed
+		CrystallineSkyIsland: Mods.Coralite.WorldGeneration.CoraliteWorld.CrystallineSkyIsland
 	}
 }
+
+Important.CoraliteSystem.OnEnterWorld: ""

@@ -7,6 +7,7 @@ using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.CameraSystem;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -104,6 +105,9 @@ namespace Coralite.Content.Items.ShieldPlus
 
         public override void HoldItem(Player player)
         {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+                cp.AddDash(this);
+
             if (player.ownedProjectileCounts[ModContent.ProjectileType<TerranascenceTag>()] < 1)
             {
                 Projectile.NewProjectile(player.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<TerranascenceTag>()
@@ -189,7 +193,7 @@ namespace Coralite.Content.Items.ShieldPlus
                 CheckGuardProj(Player.GetModPlayer<CoralitePlayer>(), Player);
 
                 if (cp.TryGetFlyingShieldGuardProj(out BaseFlyingShieldGuard flyingShieldGuard)
-                && flyingShieldGuard.CanDash())
+                    && flyingShieldGuard.CanDash())
                 {
                     SoundEngine.PlaySound(CoraliteSoundID.WhipSwing_Item152, Player.Center);
 
@@ -429,7 +433,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
         public void SpurtBy(Vector2 velocity)
         {
-            Projectile.damage = (int)(Owner.GetWeaponDamage(Owner.HeldItem) * 0.75f);
+            Projectile.damage = (int)(Owner.GetWeaponDamage(Item) * 0.75f);
             StayTime = 0;
             RollingTime = 3 * 60;
             State = (int)FlyingShieldStates.Shooting;
@@ -490,7 +494,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
         public override void OnParry()
         {
-            if (Owner.HeldItem.ModItem is Terranascence terranascence
+            if (Item.ModItem is Terranascence terranascence
                 && Owner.TryGetModPlayer(out CoralitePlayer cp))
             {
                 if (terranascence.ConsumeEnergy())
@@ -560,7 +564,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
         public override void AI()
         {
-            if (Owner.HeldItem.type != ModContent.ItemType<Terranascence>())
+            if (Item.type != ModContent.ItemType<Terranascence>())
             {
                 Projectile.Kill();
                 return;
@@ -568,7 +572,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
             Projectile.timeLeft = 2;
             Projectile.Center = Owner.Center;
-            if (Owner.HeldItem.ModItem is Terranascence terranascence)
+            if (Item.ModItem is Terranascence terranascence)
             {
                 int count = terranascence.energy;
 
@@ -600,7 +604,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Owner.HeldItem.ModItem is Terranascence terranascence)
+            if (Item.ModItem is Terranascence terranascence)
             {
                 Texture2D mainTex = Projectile.GetTexture();
 
@@ -656,7 +660,7 @@ namespace Coralite.Content.Items.ShieldPlus
             GradientTexture = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = -1;
@@ -673,9 +677,9 @@ namespace Coralite.Content.Items.ShieldPlus
             return 45 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -721,10 +725,10 @@ namespace Coralite.Content.Items.ShieldPlus
                     break;
             }
 
-            if (Owner.HeldItem.ModItem is Terranascence terranascence && terranascence.SwordLightNormalAttack)
+            if (Item.ModItem is Terranascence terranascence && terranascence.SwordLightNormalAttack)
                 useSlashTrail = true;
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         private void ExtraInit()
@@ -756,8 +760,8 @@ namespace Coralite.Content.Items.ShieldPlus
             if (alpha < 255)
                 alpha += 8;
 
-            if (Owner.HeldItem.type == ModContent.ItemType<Terranascence>())
-                scale = Owner.GetAdjustedItemScale(Owner.HeldItem);
+            if (Item.type == ModContent.ItemType<Terranascence>())
+                scale = Owner.GetAdjustedItemScale(Item);
             else
                 Projectile.Kill();
 
@@ -775,7 +779,7 @@ namespace Coralite.Content.Items.ShieldPlus
 
         protected override void AfterSlash()
         {
-            if (Main.mouseRight)
+            if (DownRight)
             {
                 Projectile.Kill();
                 Owner.itemAnimation = Owner.itemTime = 0;
@@ -878,7 +882,7 @@ namespace Coralite.Content.Items.ShieldPlus
                 {
                     Effect effect = Filters.Scene["NoHLGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.Split.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
@@ -935,7 +939,7 @@ namespace Coralite.Content.Items.ShieldPlus
             EXTex = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = -1;
@@ -947,9 +951,9 @@ namespace Coralite.Content.Items.ShieldPlus
             Projectile.hide = true;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             startAngle = 0.001f;
@@ -977,14 +981,14 @@ namespace Coralite.Content.Items.ShieldPlus
             }
             else
             {
-                if (Owner.HeldItem.ModItem is Terranascence terranascence && terranascence.SwordLightNormalAttack)
+                if (Item.ModItem is Terranascence terranascence && terranascence.SwordLightNormalAttack)
                     canDrawBaseEffect = true;
 
                 maxTime = 8;
                 delay = 10;
                 SoundEngine.PlaySound(CoraliteSoundID.Swing_Item1, Projectile.Center);
             }
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         public void SpawnCircle()
@@ -1069,7 +1073,7 @@ namespace Coralite.Content.Items.ShieldPlus
                     (proj.ModProjectile as TerranascenceFSProj).SpurtBy(velocity.RotateByRandom(-0.3f, 0.3f));
                     Timer = maxTime + 1;
                     Owner.velocity *= -0.3f;
-                    if (Owner.HeldItem.ModItem is Terranascence terranascence)
+                    if (Item.ModItem is Terranascence terranascence)
                     {
                         terranascence.PowerfulAtt2 = 30;
                         terranascence.PowerfulRight = 30;
@@ -1121,7 +1125,7 @@ namespace Coralite.Content.Items.ShieldPlus
             yScale = 1 - Smoother.Smoother((int)Timer - maxTime, delay);
             alpha = 1 - Smoother.Smoother((int)Timer - maxTime, delay);
             distanceToOwner2 += 7;
-            if (Main.mouseRight)
+            if (DownRight)
             {
                 Projectile.Kill();
                 Owner.itemAnimation = Owner.itemTime = 0;

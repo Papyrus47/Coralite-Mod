@@ -1,20 +1,23 @@
 ﻿using Coralite.Content.Buffs.Debuffs;
 using Coralite.Core;
 using Coralite.Core.Configs;
+using Coralite.Core.Loaders;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.HyacinthSeries
 {
     public class SnowdropHeldProj : BaseGunHeldProj
     {
-        public SnowdropHeldProj() : base(1f, 18, -10, AssetDirectory.HyacinthSeriesItems) { }
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
+
+        public SnowdropHeldProj() : base(0.8f, 24, -10, AssetDirectory.HyacinthSeriesItems) { }
 
         public override float Ease()
         {
@@ -22,9 +25,8 @@ namespace Coralite.Content.Items.HyacinthSeries
             return x * MathF.Sin(x * x * x) / 1.186f;
         }
 
-        public override void Initialize()
+        public override void InitializeGun()
         {
-            base.Initialize();
             float rotation = TargetRot + (DirSign > 0 ? 0 : MathHelper.Pi);
             Vector2 dir = rotation.ToRotationVector2();
             Vector2 center = Projectile.Center + (dir * 32);
@@ -39,9 +41,9 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// <summary>
     /// ai0用于控制存活时间小于多少时产生粒子
     /// </summary>
-    public class SnowBullet : ModProjectile
+    public class SnowBullet : BaseHeldProj
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public override void SetDefaults()
         {
@@ -54,7 +56,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.DamageType = DamageClass.Ranged;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
@@ -112,7 +114,7 @@ namespace Coralite.Content.Items.HyacinthSeries
 
     public class SnowdropBloom : ModProjectile
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public override void SetDefaults()
         {
@@ -134,7 +136,7 @@ namespace Coralite.Content.Items.HyacinthSeries
 
             if (timer == 6 || timer == 26 || timer == 46)
             {
-                if (Main.myPlayer == Projectile.owner && Helper.FindClosestEnemy(Projectile.Center, 600, npc => npc.active && !npc.friendly && npc.CanBeChasedBy()) is not null)
+                if (Projectile.IsOwnedByLocalPlayer() && Helper.FindClosestEnemy(Projectile.Center, 600, npc => npc.active && !npc.friendly && npc.CanBeChasedBy()) is not null)
                 {
                     Vector2 center = Projectile.Top + ((Projectile.rotation + 1.57f).ToRotationVector2() * 40);
                     Vector2 dir = (center - Projectile.Top).SafeNormalize(Vector2.Zero);
@@ -166,9 +168,9 @@ namespace Coralite.Content.Items.HyacinthSeries
         }
     }
 
-    public class SnowdropBud : ModProjectile
+    public class SnowdropBud : BaseHeldProj
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public override void SetDefaults()
         {
@@ -180,7 +182,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
             Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<SnowdropPetal>(), -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.3f, 0.3f)) * Main.rand.NextFloat(0.15f, 0.2f));
@@ -198,7 +200,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             if (target.HasBuff<SnowDebuff>())
             {
                 target.DelBuff(target.FindBuffIndex(ModContent.BuffType<SnowDebuff>()));
-                if (Main.myPlayer == Projectile.owner)
+                if (Projectile.IsOwnedByLocalPlayer())
                 {
                     float vel = Main.rand.NextFloat(2.5f, 3.5f);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + new Vector2(Main.rand.Next(-16, 16), Main.rand.Next(0, 16)), Vector2.UnitY * vel, ModContent.ProjectileType<SnowdropBloom>(), (int)(Projectile.damage * 0.75f), Projectile.knockBack, Projectile.owner);
@@ -236,24 +238,9 @@ namespace Coralite.Content.Items.HyacinthSeries
         }
     }
 
-    public class SnowSpirit : ModProjectile, IDrawPrimitive
+    public class SnowSpirit : BaseHeldProj, IDrawPrimitive
     {
-        BasicEffect effect;
         private Trail trail;
-
-        public SnowSpirit()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override string Texture => AssetDirectory.Blank;
 
@@ -268,11 +255,9 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[24];
-            for (int i = 0; i < 24; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(24);
         }
 
         public override void AI()
@@ -352,7 +337,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             }
 
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, 24, new TriangularTip(4), factor => Helper.Lerp(0, 2, factor), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, 24, new ArrowheadTrailGenerator(4), factor => Helper.Lerp(0, 2, factor), factor =>
             {
                 if (factor.X > 0.7f)
                     return Color.Lerp(new Color(152, 192, 70, 60), Color.White, (factor.X - 0.7f) / 0.3f);
@@ -364,23 +349,20 @@ namespace Coralite.Content.Items.HyacinthSeries
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[23] = Projectile.Center + Projectile.velocity;
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public void DrawPrimitives()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

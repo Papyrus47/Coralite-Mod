@@ -6,9 +6,16 @@ DamageClasses: {
 	CreateHammerDamage.DisplayName: 创意伤害
 	CreatePickaxeDamage.DisplayName: 创意伤害
 	CreateShovelDamage.DisplayName: 创意伤害
+	MagikeDamage.DisplayName: 魔能伤害
+	RangedNoAttackSpeed.DisplayName: 远程伤害
 }
 
-Players.CoralitePlayer.ThunderElectrifiedDeath: 被雷劈死了
+Players: {
+	CoralitePlayer: {
+		ThunderElectrifiedDeath: 被雷劈死了
+		// CoreKeeperDodgeText: Mods.Coralite.Players.CoralitePlayer.CoreKeeperDodgeText
+	}
+}
 
 Conditions: {
 	CoraliteConditions: {
@@ -19,6 +26,18 @@ Conditions: {
 		InDigDigDig: 需要在劳工挖挖挖的世界（DigDigDig）
 		NotInDigDigDig: 需要不在劳工挖挖挖的世界（DigDigDig）
 		UseMultiBlockStructure: 使用多方块结构合成
+		DownedGolemCondition: 需要击败石巨人
+		UnlockDyeTrder: 需要解锁染料商
+		UnlockStylist: 需要解救发型商
+		UnlockMechanic: 需要解救机械师
+		UnlockPartyGirl: 需要解锁排队女孩
+		UnlockTaxCollector: 需要解救税收官
+		UnlockPrincess: 需要解锁公主
+		SpellCraft: 需要使用法术回路制作
+		InMagicCrystalCave: 需要处于魔力水晶洞
+		InCrystallineSkyIsland: 需要处于蕴魔空岛
+		UseShlimmerTranslation: 需要使用微光转化
+		UseRuneParchment: 在快捷栏左键使用符文羊皮纸来合成
 	}
 }
 
@@ -50,5 +69,9 @@ WorldGeneration: {
 		DigTheShimmer: 挖微光挖微光挖微光挖挖挖挖挖挖挖！
 		DigTheIceDragonNest: 挖冰龙巢挖冰龙巢挖冰龙巢挖挖挖挖挖挖挖！
 		DigTheDigDungeon: 挖地牢挖地牢挖地牢挖挖挖挖挖挖挖！
+		CoraliteNoteRoom: 正在安放珊瑚的“遗失物”
+		CrystallineSkyIsland: 正在升起蕴魔空岛
 	}
 }
+
+Important.CoraliteSystem.OnEnterWorld: ""

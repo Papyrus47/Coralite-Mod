@@ -3,6 +3,7 @@ using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -39,17 +40,14 @@ namespace Coralite.Content.Items.RedJades
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (Main.myPlayer == player.whoAmI)
+            if (useCount > 3 && Main.rand.NextBool(useCount, 9))
             {
-                if (useCount > 3 && Main.rand.NextBool(useCount, 9))
-                {
-                    Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, 1);
-                    useCount = 0;
-                    return false;
-                }
-
-                Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI);
+                Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, 1);
+                useCount = 0;
+                return false;
             }
+
+            Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI);
 
             useCount++;
             return false;
@@ -75,7 +73,7 @@ namespace Coralite.Content.Items.RedJades
 
         public ref float Combo => ref Projectile.ai[0];
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
@@ -88,12 +86,25 @@ namespace Coralite.Content.Items.RedJades
             useShadowTrail = true;
         }
 
-        protected override void Initializer()
+        public override void NetHeldReceive(BinaryReader reader)
         {
-            if (Main.myPlayer == Projectile.owner)
-                Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
+            startAngle = reader.ReadSingle();
+        }
 
-            startAngle = Main.rand.NextFloat(-0.2f, 0.2f);
+        public override void NetHeldSend(BinaryWriter writer)
+        {
+            writer.Write(startAngle);
+        }
+
+        protected override void InitializeSwing()
+        {
+            Owner.direction = InMousePos.X > Owner.Center.X ? 1 : -1;
+            if (Projectile.IsOwnedByLocalPlayer())
+            {
+                startAngle = Main.rand.NextFloat(-0.2f, 0.2f);
+                NetUpdate();
+            }
+
             totalAngle = 0.01f;
             Projectile.extraUpdates = 3;
 
@@ -113,7 +124,7 @@ namespace Coralite.Content.Items.RedJades
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void BeforeSlash()
@@ -157,7 +168,7 @@ namespace Coralite.Content.Items.RedJades
             else
                 distanceToOwner = -47 + (70 * Smoother.Smoother((1 - factor) * 2));
 
-            if (Combo == 1)
+            if (Combo == 1 && Projectile.IsOwnedByLocalPlayer())
             {
                 if ((Timer - minTime) % ((maxTime - minTime) / 4) == 0)
                 {
@@ -181,7 +192,7 @@ namespace Coralite.Content.Items.RedJades
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 2;
@@ -210,7 +221,7 @@ namespace Coralite.Content.Items.RedJades
 
         protected override void DrawShadowTrail(Texture2D mainTex, Vector2 origin, Color lightColor, float extraRot)
         {
-            if (Timer < 6)
+            if (Timer < 6 || oldRotate == null || oldLength == null || oldDistanceToOwner == null)
                 return;
 
             SpriteEffects effect = CheckEffect();

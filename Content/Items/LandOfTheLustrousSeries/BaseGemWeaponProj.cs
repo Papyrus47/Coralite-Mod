@@ -1,8 +1,8 @@
-﻿using Coralite.Core.Prefabs.Projectiles;
+﻿using InnoVault.GameContent.BaseEntity;
 
 namespace Coralite.Content.Items.LandOfTheLustrousSeries
 {
-    public class BaseGemWeaponProj<T> : BaseHeldProj where T : ModItem
+    public abstract class BaseGemWeaponProj<T> : BaseHeldProj where T : ModItem
     {
         private bool init = true;
 
@@ -32,12 +32,12 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
         public sealed override void AI()
         {
-            if (Owner.HeldItem.type == ModContent.ItemType<T>())
+            if (Item.type == ModContent.ItemType<T>())
                 Projectile.timeLeft = 2;
 
             if (init)
             {
-                Initialize();
+                InitializeGemWeapon();
                 init = false;
             }
 
@@ -46,9 +46,15 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Attack();
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             TargetPos = Owner.Center;
+            InitializeGemWeapon();
+        }
+
+        public virtual void InitializeGemWeapon()
+        {
+
         }
 
         public virtual void BeforeMove() { }

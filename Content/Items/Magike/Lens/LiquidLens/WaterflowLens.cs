@@ -31,7 +31,6 @@ namespace Coralite.Content.Items.Magike.Lens.LiquidLens
         (Color.Red, DustID.Water)
     {
         public override int DropItemType => ItemType<WaterflowLens>();
-        public override MagikeTP GetEntityInstance() => GetInstance<WaterflowLensTileEntity>();
 
         public override MALevel[] GetAllLevels()
         {
@@ -64,20 +63,20 @@ namespace Coralite.Content.Items.Magike.Lens.LiquidLens
             {
                 default:
                     MagikeMaxBase = 0;
-                    AntiMagikeMaxBase = 0;
+                    //AntiMagikeMaxBase = 0;
                     break;
                 case MALevel.Glistent:
                     MagikeMaxBase = 180;
-                    AntiMagikeMaxBase = MagikeMaxBase * 3;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 3;
                     break;
                 case MALevel.Pelagic:
                     MagikeMaxBase = 1012;
-                    AntiMagikeMaxBase = MagikeMaxBase * 2;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 2;
                     break;
             }
 
             LimitMagikeAmount();
-            LimitAntiMagikeAmount();
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -93,7 +92,7 @@ namespace Coralite.Content.Items.Magike.Lens.LiquidLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.Glistent:

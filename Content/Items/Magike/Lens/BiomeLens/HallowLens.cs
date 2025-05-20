@@ -48,8 +48,6 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             ];
         }
 
-        public override MagikeTP GetEntityInstance() => GetInstance<HallowLensTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return
@@ -58,6 +56,16 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
                 MALevel.Hallow,
                 MALevel.HolyLight,
             ];
+        }
+
+        public override Vector2 GetTexFrameSize(Texture2D tex, MALevel level)
+        {
+            return level switch
+            {
+                MALevel.Hallow => tex.Frame(2, 10).Size(),
+                MALevel.HolyLight => tex.Frame(2, 18).Size(),
+                _ => base.GetTexFrameSize(tex, level),
+            };
         }
 
         public override void DrawTopTex(SpriteBatch spriteBatch, Texture2D tex, Vector2 drawPos, Color lightColor, MALevel level, bool canProduce)
@@ -96,7 +104,6 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
                     }
                     return;
             }
-
         }
     }
 
@@ -120,20 +127,20 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             {
                 default:
                     MagikeMaxBase = 0;
-                    AntiMagikeMaxBase = 0;
+                    //AntiMagikeMaxBase = 0;
                     break;
                 case MALevel.Hallow:
                     MagikeMaxBase = 630;
-                    AntiMagikeMaxBase = MagikeMaxBase * 3;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 3;
                     break;
                 case MALevel.HolyLight:
                     MagikeMaxBase = 932;
-                    AntiMagikeMaxBase = MagikeMaxBase * 2;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 2;
                     break;
             }
 
             LimitMagikeAmount();
-            LimitAntiMagikeAmount();
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -149,7 +156,7 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.Hallow:

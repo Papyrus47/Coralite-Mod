@@ -1,4 +1,7 @@
-﻿using Coralite.Content.Items.MagikeSeries2;
+﻿using Coralite.Content.Dusts;
+using Coralite.Content.Items.LandOfTheLustrousSeries;
+using Coralite.Content.Items.MagikeSeries2;
+using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using System.Collections.Generic;
 using Terraria;
@@ -14,6 +17,8 @@ namespace Coralite.Content.Tiles.MagikeSeries2
         {
             TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
 
+            Main.tileLighted[Type] = true;
+
             Main.tileShine2[Type] = true;
             Main.tileShine[Type] = 1000;
 
@@ -26,27 +31,42 @@ namespace Coralite.Content.Tiles.MagikeSeries2
 
             TileID.Sets.ChecksForMerge[Type] = true;
 
-            DustType = DustID.BorealWood_Small;
-            HitSound = CoraliteSoundID.DigStone_Tink;
-            AddMapEntry(new Color(141, 171, 178));
+            DustType = ModContent.DustType<CrystallineDust>();
+            HitSound = CoraliteSoundID.CrystalHit_DD2_CrystalCartImpact;
+            AddMapEntry(Coralite.CrystallinePurple);
 
-            MinPick = 150;
-            MineResist = 6;
+            MinPick = 110;
+            MineResist = 3;
         }
 
         public override IEnumerable<Item> GetItemDrops(int i, int j)
         {
+            if (Main.rand.NextBool(15, 100))
+                return
+                [
+                    new Item(ModContent.ItemType<CrystallineMagike>()),
+                    new Item(ModContent.ItemType<SeniorRoughGemstone>())
+                ];
+
             return
             [
                 new Item(ModContent.ItemType<CrystallineMagike>())
             ];
         }
 
-        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
-            TileFraming.CustomMergeFrame(i, j, Type, ModContent.TileType<SkarnTile>(), true, true, false);
-            return false;
+            r = 0.08f;
+            g = 0.03f;
+            b = 0.1f;
         }
 
+        public override bool CanExplode(int i, int j) => false;
+
+        //public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+        //{
+        //    TileFraming.CustomMergeFrame(i, j, Type, ModContent.TileType<SkarnTile>(), true, true, false);
+        //    return false;
+        //}
     }
 }

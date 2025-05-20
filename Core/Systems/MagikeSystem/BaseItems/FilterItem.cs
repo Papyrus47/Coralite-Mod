@@ -3,7 +3,6 @@ using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Core.Systems.MagikeSystem.Particles;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,7 +49,7 @@ namespace Coralite.Core.Systems.MagikeSystem.BaseItems
     {
         public override bool CheckHeldItem()
         {
-            return Owner.HeldItem.ModItem is not FilterItem;
+            return Item.ModItem is not FilterItem;
         }
 
         public override void Special()
@@ -65,7 +64,7 @@ namespace Coralite.Core.Systems.MagikeSystem.BaseItems
         internal void Send_PlaceFilter_Data()
         {
             ModPacket modPacket = Coralite.Instance.GetPacket();
-            modPacket.Write((byte)CLNetWorkEnum.PlaceFilter);
+            modPacket.Write((byte)CoraliteNetWorkEnum.PlaceFilter);
             modPacket.Write(Owner.whoAmI);
             modPacket.Write(TargetPoint.X);
             modPacket.Write(TargetPoint.Y);
@@ -86,7 +85,7 @@ namespace Coralite.Core.Systems.MagikeSystem.BaseItems
                 if (Main.dedServ)
                 {
                     ModPacket modPacket = Coralite.Instance.GetPacket();
-                    modPacket.Write((byte)CLNetWorkEnum.PlaceFilter);
+                    modPacket.Write((byte)CoraliteNetWorkEnum.PlaceFilter);
                     modPacket.Write(ownerIndex);
                     modPacket.Write(TargetPoint.X);
                     modPacket.Write(TargetPoint.Y);
@@ -129,7 +128,7 @@ namespace Coralite.Core.Systems.MagikeSystem.BaseItems
                     insertPoint.Add(currentTopLeft.Value);
 
                     //尝试根据左上角获取物块实体
-                    if (!MagikeHelper.TryGetEntity(currentTopLeft.Value, out MagikeTP entity))
+                    if (!MagikeHelper.TryGetEntityWithTopLeft(currentTopLeft.Value, out MagikeTP entity))
                         continue;
 
                     //能插入就插，不能就提供失败原因
@@ -185,7 +184,7 @@ namespace Coralite.Core.Systems.MagikeSystem.BaseItems
 
         public override Color GetDrawColor()
         {
-            return (Owner.HeldItem.ModItem as FilterItem).FilterColor;
+            return (Item.ModItem as FilterItem).FilterColor;
         }
     }
 }

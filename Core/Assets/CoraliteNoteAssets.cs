@@ -1,12 +1,11 @@
 ﻿using static Coralite.Core.AssetDirectory;
-using ATex = ReLogic.Content.Asset<Microsoft.Xna.Framework.Graphics.Texture2D>;
 
 namespace Coralite.Core
 {
     public partial class CoraliteAssets
     {
         [AutoLoadTexture(NoteReadfragment)]
-        public class ReadFragmant 
+        public class ReadFragmant
         {
             public static ATex BookName { get; private set; }
         }
@@ -30,6 +29,45 @@ namespace Coralite.Core
             public static ATex ConnectStaff2 { get; private set; }
             public static ATex Working { get; private set; }
             public static ATex HarvestStone { get; private set; }
+            public static ATex CraftAltarUI { get; private set; }
+            public static ATex PutMainItemIn { get; private set; }
+            public static ATex SelectRecipe { get; private set; }
+            public static ATex ActiveAltar { get; private set; }
+            public static ATex AltarCraftSuccess { get; private set; }
+            public static ATex PolymerizeCraft { get; private set; }
+            public static ATex PlacePedestal { get; private set; }
+            public static ATex ConnectToPedestal { get; private set; }
+            public static ATex CheckAltar { get; private set; }
+            public static ATex AwkwardTime { get; private set; }
+            public static ATex Refractors { get; private set; }
+            public static ATex Columns { get; private set; }
+            public static ATex BigColumn { get; private set; }
+            public static ATex PrismLevels { get; private set; }
+        }
+
+        [AutoLoadTexture(NoteRedJade)]
+        public class RedJade
+        {
+            public static ATex Rediancie { get; private set; }
+        }
+
+        [AutoLoadTexture(NoteIceDragon1)]
+        public class IceDragon1
+        {
+            public static ATex BabyIceDragon { get; private set; }
+        }
+
+        [AutoLoadTexture(NoteSlime1)]
+        public class Slime1
+        {
+            public static ATex SlimeTree { get; private set; }
+            public static ATex SlimeEmperor { get; private set; }
+        }
+
+        [AutoLoadTexture(NoteThunder1)]
+        public class Thunder1
+        {
+            public static ATex ThunderveidDragon { get; private set; }
         }
     }
 }

@@ -171,6 +171,11 @@ namespace Coralite.Content.NPCs.Elemental
                 flag20 = true;
             }
 
+            SetVelocity(flag20, flag21);
+        }
+
+        private void SetVelocity(bool flag20, bool flag21)
+        {
             if (flag20)
             {
                 NPC.velocity.Y += 0.2f;
@@ -287,7 +292,7 @@ namespace Coralite.Content.NPCs.Elemental
             if (spawnInfo.Player.townNPCs > 2f)
                 return 0;
 
-            if (Main.dayTime && spawnInfo.Player.ZonePurity)
+            if (Main.dayTime && spawnInfo.Player.ZonePurity && !spawnInfo.Player.ZoneSkyHeight)
                 return 0.02f;
             return 0f;
         }

@@ -58,7 +58,7 @@ namespace Coralite.Content.Items.Magike.Factorys
         public override string Texture => AssetDirectory.MagikeFactoryTiles + Name;
         public override int DropItemType => ItemType<LaserCollector>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<LaserCollectorTileEntity>();
+        public override CoraliteSetsSystem.MagikeTileType PlaceType => CoraliteSetsSystem.MagikeTileType.FourWayNormal;
 
         public override MALevel[] GetAllLevels()
         {
@@ -66,6 +66,7 @@ namespace Coralite.Content.Items.Magike.Factorys
             [
                 MALevel.None,
                 MALevel.MagicCrystal,
+                MALevel.CrystallineMagike,
             ];
         }
 
@@ -77,6 +78,8 @@ namespace Coralite.Content.Items.Magike.Factorys
     public class LaserCollectorTileEntity() : MagikeTP()
     {
         public sealed override int TargetTileID => TileType<LaserCollectorTile>();
+
+        public override int MainComponentID => MagikeComponentID.MagikeFactory;
 
         public override void InitializeBeginningComponent()
         {
@@ -104,13 +107,14 @@ namespace Coralite.Content.Items.Magike.Factorys
         {
             MagikeMaxBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => 200,
+                MALevel.MagicCrystal => 35 * 10,
+                MALevel.CrystallineMagike => 450 * 10,
                 _ => 0,
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase * 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase * 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -276,7 +280,7 @@ namespace Coralite.Content.Items.Magike.Factorys
             }
         }
 
-        public override void OnWork()
+        public override void OnWorking()
         {
             float factor = Timer / (float)WorkTime;
 
@@ -344,8 +348,9 @@ namespace Coralite.Content.Items.Magike.Factorys
         {
             WorkTimeBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => 8,
-                _ => 10_0000_0000 / 60,
+                MALevel.MagicCrystal => 5,
+                MALevel.CrystallineMagike => 4,
+                _ => 0,
             };
 
             WorkTimeBase *= 60;

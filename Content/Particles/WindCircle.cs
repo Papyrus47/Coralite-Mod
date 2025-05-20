@@ -5,15 +5,17 @@ using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    public class WindCircle : BasePRT
+    public class WindCircle : Particle
     {
         public override string Texture => AssetDirectory.Particles + Name;
         public int frameCounterMax = 1;
         public Vector2 scale = Vector2.One;
+
         public override void SetProperty()
         {
             PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
         }
+
         public override void AI()
         {
             if (++Opacity > frameCounterMax)
@@ -27,9 +29,8 @@ namespace Coralite.Content.Particles
         public static void Spawn(Vector2 center, Vector2 velocity, float rotation, Color newcolor, float alpha, float Basescale, Vector2 exScale)
         {
             if (VaultUtils.isServer)
-            {
                 return;
-            }
+
             newcolor.A = (byte)(255 * alpha);
             WindCircle p = PRTLoader.NewParticle<WindCircle>(center, velocity, newcolor, Basescale);
             if (p != null)

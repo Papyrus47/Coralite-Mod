@@ -1,11 +1,11 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.FlyingShields
@@ -21,7 +21,7 @@ namespace Coralite.Content.Items.FlyingShields
             Item.shoot = ModContent.ProjectileType<SolleonisProj>();
             Item.knockBack = 8;
             Item.shootSpeed = 18;
-            Item.damage = 78;
+            Item.damage = 80;
         }
 
         public override void AddRecipes()
@@ -63,7 +63,7 @@ namespace Coralite.Content.Items.FlyingShields
                 //射流星
                 Projectile.NewProjectileFromThis<SolleonisMeteor>(Projectile.Center
                     , (Projectile.extraUpdates + 1) * Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.25f, 0.25f)) * Main.rand.NextFloat(0.8f, 1.2f),
-                    (int)(Projectile.damage * 0.72f), Projectile.knockBack);
+                    (int)(Projectile.damage * 0.78f), Projectile.knockBack);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Coralite.Content.Items.FlyingShields
         }
     }
 
-    public class SolleonisMeteor : ModProjectile
+    public class SolleonisMeteor : BaseHeldProj
     {
         public override string Texture => AssetDirectory.FlyingShieldItems + Name;
 
@@ -140,17 +140,11 @@ namespace Coralite.Content.Items.FlyingShields
             Projectile.timeLeft = 22;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Target = -1;
-            Projectile.oldPos = new Vector2[trailCachesLength];
-            Projectile.oldRot = new float[trailCachesLength];
-
-            for (int i = 0; i < trailCachesLength; i++)
-            {
-                Projectile.oldPos[i] = Projectile.Center;
-                Projectile.oldRot[i] = Projectile.rotation;
-            }
+            Projectile.InitOldPosCache(trailCachesLength);
+            Projectile.InitOldRotCache(trailCachesLength);
         }
 
         public override void AI()
@@ -259,8 +253,8 @@ namespace Coralite.Content.Items.FlyingShields
         {
             Texture2D Texture = CoraliteAssets.Trail.CircleA.Value;
 
-            List<CustomVertexInfo> bars = new();
-            List<CustomVertexInfo> bars2 = new();
+            List<ColoredVertex> bars = new();
+            List<ColoredVertex> bars2 = new();
             Color c = new Color(255, 174, 33) * 0.9f;
             for (int i = 0; i < trailCachesLength; i++)
             {

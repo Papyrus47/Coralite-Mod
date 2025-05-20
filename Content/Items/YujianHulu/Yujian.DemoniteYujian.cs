@@ -2,10 +2,10 @@
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -140,7 +140,7 @@ namespace Coralite.Content.Items.YujianHulu
 
                 yujianProj.InitTrailCaches();
 
-                if (Main.myPlayer == Projectile.owner)
+                if (Projectile.IsOwnedByLocalPlayer())
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * (Projectile.extraUpdates + 1), ModContent.ProjectileType<DemoniteSpurt>(),
                         Projectile.damage * 2, Projectile.knockBack, Projectile.owner, spurtTime / (Projectile.extraUpdates + 1), 48);
 
@@ -158,7 +158,7 @@ namespace Coralite.Content.Items.YujianHulu
                     Main.dust[index].noGravity = true;
                 }
 
-                if (yujianProj.Timer % 3 == 0 && Main.myPlayer == Projectile.owner)
+                if (yujianProj.Timer % 3 == 0 && Projectile.IsOwnedByLocalPlayer())
                 {
                     Vector2 vel2 = Projectile.velocity.SafeNormalize(Vector2.One).RotatedBy(1.57f + Main.rand.NextFloat(-0.6f, 0.6f)) * Main.rand.Next(60, 110);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel2, ModContent.ProjectileType<DemoniteStrike>(),
@@ -204,7 +204,7 @@ namespace Coralite.Content.Items.YujianHulu
         }
     }
 
-    public class DemoniteSpurt : ModProjectile
+    public class DemoniteSpurt : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -224,7 +224,7 @@ namespace Coralite.Content.Items.YujianHulu
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             center = Projectile.Center;
         }

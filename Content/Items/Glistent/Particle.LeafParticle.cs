@@ -1,12 +1,12 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
+using Coralite.Core.Attributes;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria;
 
 namespace Coralite.Content.Items.Glistent
 {
-    public abstract class LeafParticle : BasePRT, ICLLoader
+    [AutoLoadTexture(Path = AssetDirectory.MagikeProjectiles)]
+    public abstract class LeafParticle : Particle
     {
         public override string Texture => AssetDirectory.Particles + "SmallLeafParticle";
         public int FrameMax { get => LeafType == 0 ? 8 : 5; }
@@ -16,14 +16,12 @@ namespace Coralite.Content.Items.Glistent
         public int LeafType;
         public float alpha;
 
-        public static Asset<Texture2D> BigLeaf;
-
-        void ICLLoader.LoadAsset() => BigLeaf = ModContent.Request<Texture2D>(AssetDirectory.MagikeProjectiles + "LeafShield");
-        void ICLLoader.UnLoadData() => BigLeaf = null;
+        [AutoLoadTexture(Name = "LeafShield")]
+        public static ATex BigLeaf { get; private set; }
 
         public override void SetProperty()
         {
-            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
+            PRTDrawMode = PRTDrawModeEnum.AlphaBlend;
         }
 
         public void UpdateFrame()

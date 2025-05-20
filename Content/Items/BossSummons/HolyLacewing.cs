@@ -44,7 +44,10 @@ namespace Coralite.Content.Items.BossSummons
                 int type = NPCID.HallowBoss;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.SpawnOnPlayer(player.whoAmI, type);
+                {
+                    Vector2 vector = player.Center + new Vector2(0f, -200f) + Main.rand.NextVector2Circular(50f, 50f);
+                    NPC.SpawnBoss((int)vector.X, (int)vector.Y, type, player.whoAmI);
+                }
                 else
                     NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: type);
             }

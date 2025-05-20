@@ -1,6 +1,4 @@
-﻿using Terraria;
-
-namespace Coralite.Core.Systems.FlyingShieldSystem
+﻿namespace Coralite.Core.Systems.FlyingShieldSystem
 {
     public abstract class BaseFlyingShieldPlusGuard : BaseFlyingShieldGuard
     {
@@ -14,10 +12,10 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override void Guarding()
         {
-            LockOwnerItemTime();
+            Owner.itemTime = Owner.itemAnimation = 2;
 
             if (CompletelyHeldUpShield)//玩家左键时取消防御
-                if (Main.mouseLeft || !Main.mouseRight)
+                if (DownLeft || !DownRight)
                 {
                     TurnToDelay();
                     return;

@@ -1,5 +1,4 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -8,7 +7,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Particles
 {
-    public class StarRot : BasePRT
+    public class StarRot : Particle
     {
         public override string Texture => AssetDirectory.Blank;
 

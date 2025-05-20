@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -28,6 +27,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
         public float xVel;
         public float yVel;
+        private bool span;
 
         public override void SetStaticDefaults()
         {
@@ -49,6 +49,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             NPC.noTileCollide = false;
             NPC.HitSound = CoraliteSoundID.Fleshy_NPCHit1;
             NPC.hide = true;
+            NPC.SpawnedFromStatue = true;
         }
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
@@ -62,13 +63,13 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
         public override bool? CanFallThroughPlatforms() => NPC.Center.Y < (Main.player[NPC.target].Center.Y - NPC.height);
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Scale = Vector2.One;
-        }
-
         public override void AI()
         {
+            if (!span)
+            {
+                Scale = Vector2.One;
+                span = true;
+            }
             //跳一跳，之后分裂
             switch ((int)State)
             {

@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Configs;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
@@ -13,6 +14,7 @@ using Terraria.ID;
 namespace Coralite.Content.Items.FlyingShields
 {
     [AutoloadEquip(EquipType.Shield)]
+    [PlayerEffect]
     public class HylianShield : BaseFlyingShieldItem<HylianShieldGuard>, IEquipHeldItem, IDashable
     {
         public HylianShield() : base(Item.sellPrice(0, 20), ItemRarityID.Red, AssetDirectory.FlyingShieldItems)
@@ -44,6 +46,7 @@ namespace Coralite.Content.Items.FlyingShields
                 flyingShieldGuard.DistanceToOwner = flyingShieldGuard.GetWidth();
                 flyingShieldGuard.Projectile.velocity = dashDirection.ToRotationVector2() * 9f;
                 flyingShieldGuard.Projectile.rotation = dashDirection;
+                flyingShieldGuard.dashInit = true;
 
                 Player.GetModPlayer<CoralitePlayer>().DashTimer = 75;
                 Player.GetModPlayer<CoralitePlayer>().DashDelay = 75;
@@ -71,13 +74,20 @@ namespace Coralite.Content.Items.FlyingShields
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 if (player.ItemTimeIsZero && player.ownedProjectileCounts[Item.shoot] == 0)
+                {
                     cp.AddEffect(nameof(HylianShield));
+                    cp.AddDash(this);
+                }
             }
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.statDefense += 25;
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
     }
 
@@ -157,15 +167,13 @@ namespace Coralite.Content.Items.FlyingShields
         public override bool? CanDamage()
         {
             if (canDamage)
-            {
                 return base.CanDamage();
-            }
             return false;
         }
 
         public override void AI()
         {
-            if (Owner.HeldItem.type != ModContent.ItemType<HylianShield>())
+            if (Item.type != ModContent.ItemType<HylianShield>())
             {
                 Projectile.Kill();
                 return;
@@ -201,9 +209,9 @@ namespace Coralite.Content.Items.FlyingShields
                     break;
                 case (int)GuardState.Parry:
                     {
-                        LockOwnerItemTime();
+                        Owner.itemTime = Owner.itemAnimation = 2;
 
-                        if (!Main.mouseRight)
+                        if (!DownRight)
                             TurnToDelay();
 
                         SetPos();
@@ -226,7 +234,7 @@ namespace Coralite.Content.Items.FlyingShields
                     break;
                 case (int)GuardState.ParryDelay:
                     {
-                        LockOwnerItemTime();
+                        Owner.itemTime = Owner.itemAnimation = 2;
 
                         DistanceToOwner = Helper.Lerp(0, GetWidth(), Timer / (parryTime * 2));
                         SetPos();
@@ -243,7 +251,7 @@ namespace Coralite.Content.Items.FlyingShields
                     break;
                 case (int)GuardState.Delay:
                     {
-                        LockOwnerItemTime();
+                        Owner.itemTime = Owner.itemAnimation = 2;
                         DistanceToOwner = Helper.Lerp(0, GetWidth(), Timer / delayTime);
                         SetPos();
                         Timer--;
@@ -357,13 +365,13 @@ namespace Coralite.Content.Items.FlyingShields
 
         public void Sliding()
         {
-            if (!Main.mouseRight)
-            {
-                Owner.velocity = Projectile.velocity;
-                Owner.velocity.Y += 0.0001f;
-                TurnToDelay();
-                return;
-            }
+            //if (!DownRight)
+            //{
+            //    Owner.velocity = Projectile.velocity;
+            //    Owner.velocity.Y += 0.0001f;
+            //    TurnToDelay();
+            //    return;
+            //}
 
             //设置玩家中心
             Projectile.tileCollide = true;
@@ -448,7 +456,7 @@ namespace Coralite.Content.Items.FlyingShields
             {
                 Projectile proj = Main.projectile[i];
                 //检测脚下是否有炸弹
-                if (proj.active && State == 5 && CoraliteSets.ProjectileExplosible[proj.type] && proj.Colliding(proj.getRect(), rect))
+                if (proj.active && State == 5 && ProjectileID.Sets.Explosive[proj.type] && proj.Colliding(proj.getRect(), rect))
                 {
                     proj.timeLeft = 2;
                     index = i;
@@ -555,9 +563,11 @@ namespace Coralite.Content.Items.FlyingShields
         }
     }
 
-    public class LightCiecleParticle : BasePRT
+    public class LightCiecleParticle : Particle
     {
         public override string Texture => AssetDirectory.Halos + "HighlightCircle";
+
+        private Color nextColor;
 
         public override void SetProperty()
         {
@@ -569,7 +579,7 @@ namespace Coralite.Content.Items.FlyingShields
             Opacity++;
             if (Opacity > 15)
             {
-                Color = Color.Lerp(Color, new Color(0, 100, 250, 0), 0.35f);
+                Color = Color.Lerp(Color, nextColor, 0.35f);
                 Scale += 0.07f;
             }
             else
@@ -581,12 +591,17 @@ namespace Coralite.Content.Items.FlyingShields
                 active = false;
         }
 
-        public static BasePRT Spawn(Vector2 center, Color newcolor, float baseScale, float rotation, Vector2 circleScale)
+        public static Particle Spawn(Vector2 center, Color newcolor, float baseScale, float rotation, Vector2 circleScale, Color? nextcolor = null)
         {
-            BasePRT p = PRTLoader.NewParticle<LightCiecleParticle>(center, Vector2.Zero, newcolor, baseScale);
+            if (VaultUtils.isServer)
+                return null;
+
+            LightCiecleParticle p = PRTLoader.NewParticle<LightCiecleParticle>(center, Vector2.Zero, newcolor, baseScale);
 
             p.Rotation = rotation;
             p.oldPositions = [circleScale];
+            p.nextColor = nextcolor ?? new Color(0, 100, 250, 0);
+
             return p;
         }
 
@@ -619,7 +634,7 @@ namespace Coralite.Content.Items.FlyingShields
         }
     }
 
-    public class ScreenLightParticle : BasePRT
+    public class ScreenLightParticle : Particle
     {
         public override string Texture => AssetDirectory.Particles + "LightBall";
 

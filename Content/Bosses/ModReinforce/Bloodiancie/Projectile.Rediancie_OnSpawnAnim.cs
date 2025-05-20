@@ -3,7 +3,6 @@ using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 {
@@ -28,8 +27,8 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
         public override bool? CanHitNPC(NPC target) => false;
         public override bool CanHitPlayer(Player target) => false;
         public override bool CanHitPvp(Player target) => false;
-
-        public override void OnSpawn(IEntitySource source)
+        bool span;
+        public void Initialize()
         {
             drawCharColor = new Color(0, 0, 0, 0);
             drawPicColor = new Color(0, 0, 0, 0);
@@ -37,6 +36,11 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
         public override void AI()
         {
+            if (span)
+            {
+                Initialize();
+                span = true;
+            }
             int timer = 260 - Projectile.timeLeft;
 
             //文字渐出

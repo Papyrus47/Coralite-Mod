@@ -28,7 +28,6 @@ namespace Coralite.Content.Items.MagikeSeries2
             Item.maxStack = 1;
             Item.value = Item.sellPrice(0, 0, 50, 0);
             Item.rare = ModContent.RarityType<CrystallineMagikeRarity>();
-            Item.GetMagikeItem().magikeAmount = 450;
             Item.channel = true;
         }
 
@@ -45,7 +44,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public void AddMagikeCraftRecipe()
         {
-            MagikeCraftRecipe.CreateRecipe<MagikeActivator, BrilliantMagikeActivator>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
+            MagikeRecipe.CreateCraftRecipe<MagikeActivator, BrilliantMagikeActivator>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
                 .AddIngredient<CrystallineMagike>(5)
                 .AddIngredient<Skarn>(20)
                 .AddIngredient<LeohtInABottle>()
@@ -99,7 +98,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                     //激活
                     MagikeFactory factory = entity.GetSingleComponent<MagikeFactory>(MagikeComponentID.MagikeFactory);
 
-                    if (factory.Activation(out string text))
+                    if (!factory.Activation(out string text))
                         PopupText.NewText(new AdvancedPopupRequest()
                         {
                             Color = Coralite.MagicCrystalPink,
@@ -127,6 +126,6 @@ namespace Coralite.Content.Items.MagikeSeries2
             }
         }
 
-        public override Color GetDrawColor() => Coralite.CrystallineMagikePurple;
+        public override Color GetDrawColor() => Coralite.CrystallinePurple;
     }
 }

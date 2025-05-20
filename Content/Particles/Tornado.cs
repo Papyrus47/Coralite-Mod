@@ -4,7 +4,7 @@ using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    public class Tornado : BasePRT
+    public class Tornado : Particle
     {
         public override string Texture => AssetDirectory.Particles + "Tornado2";
         //public override bool ShouldUpdatePosition() => false;
@@ -13,7 +13,7 @@ namespace Coralite.Content.Particles
 
         public override void SetProperty()
         {
-            PRTDrawMode = PRTDrawModeEnum.AdditiveBlend;
+            PRTDrawMode = PRTDrawModeEnum.NonPremultiplied;
             Frame = new Rectangle(0, Main.rand.Next(8) * 64, 128, 64);
         }
 
@@ -32,7 +32,7 @@ namespace Coralite.Content.Particles
                 Scale *= 0.975f;
 
             if (Opacity < 20)
-                Color *= 0.92f;
+                Color.A = (byte)(Color.A * 0.92f);
 
             Opacity--;
             if (Opacity < 0)

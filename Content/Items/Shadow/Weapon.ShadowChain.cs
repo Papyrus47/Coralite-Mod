@@ -40,33 +40,30 @@ namespace Coralite.Content.Items.Shadow
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (Main.myPlayer == player.whoAmI)
+            if (player.altFunctionUse == 2)
             {
-                if (player.altFunctionUse == 2)
+                foreach (var proj in Main.projectile.Where(p => p.active && p.owner == player.whoAmI && p.type == ProjectileType<ShadowChainSpecial>()))
                 {
-                    foreach (var proj in Main.projectile.Where(p => p.active && p.owner == player.whoAmI && p.type == ProjectileType<ShadowChainSpecial>()))
+                    if ((int)proj.ai[2] == (int)BaseSilkKnifeSpecialProj.AIStates.onHit)
                     {
-                        if ((int)proj.ai[2] == (int)BaseSilkKnifeSpecialProj.AIStates.onHit)
-                        {
-                            for (int i = 0; i < proj.localNPCImmunity.Length; i++)
-                                proj.localNPCImmunity[i] = 0;
+                        for (int i = 0; i < proj.localNPCImmunity.Length; i++)
+                            proj.localNPCImmunity[i] = 0;
 
-                            proj.ai[2] = (int)BaseSilkKnifeSpecialProj.AIStates.drag;
-                            proj.netUpdate = true;
-                        }
-                        return false;
+                        proj.ai[2] = (int)BaseSilkKnifeSpecialProj.AIStates.drag;
+                        proj.netUpdate = true;
                     }
-
-                    //生成弹幕
-                    Projectile.NewProjectile(source, player.Center, Vector2.Zero, ProjectileType<ShadowChainSpecial>(), (int)(damage * 1.4f), knockback, player.whoAmI);
                     return false;
                 }
 
-                Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, -1, combo);
-                combo++;
-                if (combo > 3)
-                    combo = 0;
+                //生成弹幕
+                Projectile.NewProjectile(source, player.Center, Vector2.Zero, ProjectileType<ShadowChainSpecial>(), (int)(damage * 1.4f), knockback, player.whoAmI);
+                return false;
             }
+
+            Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI, -1, combo);
+            combo++;
+            if (combo > 3)
+                combo = 0;
 
             return false;
         }
@@ -126,7 +123,7 @@ namespace Coralite.Content.Items.Shadow
             GradientTexture = Request<Texture2D>(AssetDirectory.ShadowItems + "ShadowChainGradient");
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.width = Projectile.height = 48;
             Projectile.DamageType = DamageClass.Melee;
@@ -168,9 +165,9 @@ namespace Coralite.Content.Items.Shadow
             return base.GetStartAngle();
         }
 
-        protected override void Initializer()
+        protected override void InitBasicValues()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 2;
@@ -258,8 +255,14 @@ namespace Coralite.Content.Items.Shadow
                         , Projectile.damage, 0, Projectile.owner, index, 4, vel.ToRotation());
                 }
             }
+            else
+                Projectile.hide = false;
+        }
 
-            base.Initializer();
+        protected override void AIBefore()
+        {
+            if (!Main.projectile.IndexInRange((int)OwnerIndex))
+                base.AIBefore();
         }
 
         protected override void OnSlash()
@@ -455,7 +458,7 @@ namespace Coralite.Content.Items.Shadow
                 {
                     Effect effect = Filters.Scene["StarsTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatBright.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
                     effect.Parameters["worldSize"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight));
@@ -598,6 +601,7 @@ namespace Coralite.Content.Items.Shadow
         public ref float Alpha => ref Projectile.ai[2];
 
         public int maxTime;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -612,7 +616,7 @@ namespace Coralite.Content.Items.Shadow
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             maxTime = Main.player[Projectile.owner].itemTimeMax + 20;
             maxTime /= 3;
@@ -623,6 +627,11 @@ namespace Coralite.Content.Items.Shadow
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             do
             {
                 if (Timer == 0)

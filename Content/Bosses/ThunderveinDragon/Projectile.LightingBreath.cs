@@ -86,7 +86,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                 foreach (var trail in thunderTrails)
                 {
-                    trail.BasePositions = pos.ToArray();
+                    trail.BasePositions = [.. pos];
                     trail.SetExpandWidth(4);
                 }
 

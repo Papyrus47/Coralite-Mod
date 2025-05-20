@@ -21,11 +21,13 @@ namespace Coralite.Content.Items.Thunder
     {
         public override string Texture => AssetDirectory.ThunderItems + Name;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
             Item.SetWeaponValues(64, 7f, 10);
             Item.DefaultToRangedWeapon(ProjectileType<ReverseFlashProj>(), AmmoID.Arrow
-                , 22, 15f, true);
+                , 20, 15f, true);
 
             Item.rare = ItemRarityID.Yellow;
             Item.useStyle = ItemUseStyleID.Rapier;
@@ -35,6 +37,14 @@ namespace Coralite.Content.Items.Thunder
             Item.useTurn = false;
 
             Item.UseSound = CoraliteSoundID.Bow2_Item102;
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -75,9 +85,9 @@ namespace Coralite.Content.Items.Thunder
                     return false;
             }
 
-            Player.GetModPlayer<CoralitePlayer>().DashDelay = 80;
+            Player.GetModPlayer<CoralitePlayer>().DashDelay = 76;
             Player.GetModPlayer<CoralitePlayer>().DashTimer = 4;
-            Player.AddImmuneTime(ImmunityCooldownID.General, 5);
+            Player.AddImmuneTime(ImmunityCooldownID.General, 17);
 
             Player.velocity = newVelocity;
             Player.direction = (int)dashDirection;
@@ -95,14 +105,14 @@ namespace Coralite.Content.Items.Thunder
                 Helper.PlayPitched(CoraliteSoundID.TeslaTurret_Electric_NPCHit53, Player.Center, pitchAdjust: -0.3f);
 
                 //生成手持弹幕
-                int damage = Player.GetWeaponDamage(Player.HeldItem);
+                int damage = Player.GetDamageWithAmmo(Player.HeldItem) * 3;
                 Main.instance.CameraModifiers.Add(new MoveModifyer(3, 15));
 
                 Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
                    damage / 2, Player.HeldItem.knockBack, Player.whoAmI, 5, DashDir > 0 ? 0 : 3.141f, ai2: 5);
 
                 Projectile.NewProjectile(Player.GetSource_ItemUse(Player.HeldItem), Player.Center, Vector2.Zero, ProjectileType<ReverseFlashHeldProj>(),
-                        damage, Player.HeldItem.knockBack, Player.whoAmI, 1.57f + dashDirection * 1, 1, 3);
+                        damage, Player.HeldItem.knockBack, Player.whoAmI, 1.57f + dashDirection * 1, 1, 4);
             }
 
             return true;
@@ -123,12 +133,12 @@ namespace Coralite.Content.Items.Thunder
 
         public override void DashAttackAI()
         {
-            LockOwnerItemTime();
+            Owner.itemTime = Owner.itemAnimation = 2;
 
             if (Timer < DashTime)
                 Owner.velocity.X = Math.Sign(Owner.velocity.X) * 48;
             else if (Timer == DashTime)
-                Owner.velocity.X = Math.Sign(Owner.velocity.X) * 2;
+                Owner.velocity.X = Math.Sign(Owner.velocity.X) * 8;
             else
             {
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
@@ -138,8 +148,8 @@ namespace Coralite.Content.Items.Thunder
             if (Timer == DashTime + 14)
             {
                 SoundEngine.PlaySound(CoraliteSoundID.Bow2_Item102, Projectile.Center);
-                Projectile.NewProjectileFromThis<ReverseFlashProj>(Projectile.Center, Rotation.ToRotationVector2() * 16,
-                    Owner.GetWeaponDamage(Owner.HeldItem), Owner.HeldItem.knockBack, -1);
+                Projectile.NewProjectileFromThis<ReverseFlashProj>(Projectile.Center, UnitToMouseV * 16,
+                    Owner.GetWeaponDamage(Item), Item.knockBack, -1);
             }
             if (Timer > DashTime + 20)
                 Projectile.Kill();
@@ -190,6 +200,8 @@ namespace Coralite.Content.Items.Thunder
             Projectile.penetrate = -1;
             Projectile.tileCollide = true;
             Projectile.timeLeft = 300;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void AI()
@@ -245,8 +257,9 @@ namespace Coralite.Content.Items.Thunder
         {
             if (State == -1)
             {
-                Projectile.NewProjectileFromThis<ReverseFlashThunder>(Projectile.Center, (Main.player[Projectile.owner].Center - Projectile.Center).SafeNormalize(Vector2.Zero) * 16,
-                    Projectile.damage, Projectile.knockBack);
+                for (int i = 0; i < 2; i++)
+                    Projectile.NewProjectileFromThis<ReverseFlashThunder>(Projectile.Center, (Main.player[Projectile.owner].Center - Projectile.Center).SafeNormalize(Vector2.Zero) * 16,
+                        Projectile.damage * 6, Projectile.knockBack);
 
                 return;
             }
@@ -302,7 +315,7 @@ namespace Coralite.Content.Items.Thunder
         public ThunderTrail trail;
 
         LinkedList<Vector2> trailList;
-        public static Asset<Texture2D> HorizontalStar;
+        public static ATex HorizontalStar;
 
         public override void Load()
         {
@@ -420,6 +433,7 @@ namespace Coralite.Content.Items.Thunder
         {
             Timer++;
 
+            TargetPos = Main.player[Projectile.owner].Center;
             Vector2 targetCenter = TargetCenter;
 
             float speed = Projectile.velocity.Length();
@@ -435,11 +449,13 @@ namespace Coralite.Content.Items.Thunder
                 {
                     Vector2 dir2 = TargetPos - Projectile.Center;
                     float length2 = dir2.Length();
+                    float angleRand = 1.57f - Math.Clamp(1 - length2 / 1000, 0, 1) * 0.785f;
+
                     if (length2 > 150)
                         length2 = 150;
                     dir2 = dir2.SafeNormalize(Vector2.Zero);
                     Vector2 center2 = Projectile.Center + (dir2 * length2);
-                    Vector2 pos = center2 + (dir2.RotatedBy(Main.rand.NextFromList(1.57f, -1.57f)) * length2);// Main.rand.NextVector2Circular(length2,length2);
+                    Vector2 pos = center2 + (dir2.RotatedBy(Main.rand.NextFromList(angleRand, -angleRand)) * length2);// Main.rand.NextVector2Circular(length2,length2);
 
                     targetCenter = pos;
                     TargetCenter = pos;
@@ -466,7 +482,8 @@ namespace Coralite.Content.Items.Thunder
                 trail.RandomThunder();
             }
 
-            if (Vector2.Distance(Projectile.Center, TargetPos) < speed * 2)
+            float distanceToOwner = Vector2.Distance(Projectile.Center, TargetPos);
+            if (distanceToOwner < speed * 2 || distanceToOwner > 3500)
                 Fade();
         }
 

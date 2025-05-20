@@ -1,9 +1,11 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Configs;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -18,6 +20,7 @@ using static Terraria.ModLoader.ModContent;
 namespace Coralite.Content.Items.Nightmare
 {
     [AutoloadEquip(EquipType.HandsOn)]
+    [PlayerEffect]
     public class BoneRing : ModItem, INightmareWeapon
     {
         public override string Texture => AssetDirectory.NightmareItems + Name;
@@ -59,7 +62,7 @@ namespace Coralite.Content.Items.Nightmare
     /// <summary>
     /// 主体弹幕
     /// </summary>
-    public class BoneHand : ModProjectile
+    public class BoneHand : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -67,9 +70,6 @@ namespace Coralite.Content.Items.Nightmare
         public ref float State => ref Projectile.ai[2];
         public ref float Timer => ref Projectile.localAI[0];
         public ref float ShootCount => ref Projectile.localAI[1];
-
-        public Player Owner => Main.player[Projectile.owner];
-
         private Vector2 offset;
 
         public override void SetDefaults()
@@ -80,7 +80,7 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.friendly = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.scale = 0.55f;
         }
@@ -159,7 +159,7 @@ namespace Coralite.Content.Items.Nightmare
                         Projectile.rotation = (npc.Center - Projectile.Center).ToRotation();
                         Projectile.Center = npc.Center + offset;
 
-                        if (Main.mouseRight && Main.mouseRightRelease
+                        if (DownRight && Main.mouseRightRelease
                             && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy >= 5)
                         {
                             cp.nightmareEnergy -= 5;
@@ -169,7 +169,7 @@ namespace Coralite.Content.Items.Nightmare
                             Vector2 position = Owner.Center + (dir * 80) + (dir.RotatedBy(MathHelper.PiOver2) * 10 * 15);
                             Vector2 velocity = dir.RotatedBy(-MathHelper.PiOver2) * 10;
 
-                            Projectile.NewProjectile(source, position, velocity, ProjectileType<BoneSilt>(), Owner.GetWeaponDamage(Owner.HeldItem), 0, Projectile.owner);
+                            Projectile.NewProjectile(source, position, velocity, ProjectileType<BoneSilt>(), Owner.GetWeaponDamage(Item), 0, Projectile.owner);
 
                             State = 3;
                         }
@@ -257,7 +257,7 @@ namespace Coralite.Content.Items.Nightmare
     /// 使用ai1传入颜色，为1时可变成红色并可以获得梦魇光能<br></br>
     /// 使用ai2传入攻击方向
     /// </summary>
-    public class BoneClaw : ModProjectile, IDrawPrimitive
+    public class BoneClaw : BaseHeldProj, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.Trails + "ClawSlash4";
 
@@ -309,11 +309,9 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
 
             TrailWidth = Main.rand.Next(26, 32);
             HowManyRot = Main.rand.NextFloat(2f / 18, 3f / 18);
@@ -321,7 +319,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new NoTip(), WidthFunction, ColorFunction);
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
 
             switch (State)
             {
@@ -405,7 +403,7 @@ namespace Coralite.Content.Items.Nightmare
                     break;
             }
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
             Timer++;
         }
 
@@ -454,7 +452,7 @@ namespace Coralite.Content.Items.Nightmare
             effect.Parameters["gradientTexture"].SetValue(colotTex);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
     }
 
@@ -660,7 +658,7 @@ namespace Coralite.Content.Items.Nightmare
     /// <summary>
     /// 裂隙
     /// </summary>
-    public class BoneSilt : ModProjectile
+    public class BoneSilt : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -689,7 +687,7 @@ namespace Coralite.Content.Items.Nightmare
             return false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             originCenter = Projectile.Center;
         }

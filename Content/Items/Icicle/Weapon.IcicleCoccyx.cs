@@ -2,8 +2,8 @@
 using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -23,6 +23,8 @@ namespace Coralite.Content.Items.Icicle
 
         public int useCount;
         public bool canDash;
+
+        public float Priority => IDashable.HeldItemDash;
 
         public override void SetStaticDefaults()
         {
@@ -48,6 +50,14 @@ namespace Coralite.Content.Items.Icicle
             Item.autoReuse = true;
             Item.expert = true;
             CoraliteGlobalItem.SetColdDamage(Item);
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool AltFunctionUse(Player player) => true;
@@ -187,7 +197,7 @@ namespace Coralite.Content.Items.Icicle
                 initialize = false;
             }
 
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 Projectile.velocity = (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.One);
                 Projectile.rotation = Projectile.velocity.ToRotation();
@@ -299,7 +309,7 @@ namespace Coralite.Content.Items.Icicle
         {
             if (initialize)
             {
-                if (Main.myPlayer == Projectile.owner)  //初始化鞭子节点，以及其他信息
+                if (Projectile.IsOwnedByLocalPlayer())  //初始化鞭子节点，以及其他信息
                 {
                     Projectile.velocity = (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.One);
                     Projectile.rotation = Projectile.velocity.ToRotation();
@@ -308,13 +318,9 @@ namespace Coralite.Content.Items.Icicle
                 SoundEngine.PlaySound(CoraliteSoundID.Swing_Item1, Projectile.Center);
                 FinalRotationOffset = SwingAngle * ((int)TimeMax / 2);
                 Projectile.timeLeft = (int)TimeMax;
-                Projectile.oldPos = new Vector2[CACHE_LENGTH];
-                Projectile.oldRot = new float[CACHE_LENGTH];
-                for (int i = 0; i < CACHE_LENGTH; i++)
-                {
-                    Projectile.oldPos[i] = Owner.Center;
-                    Projectile.oldRot[i] = Projectile.rotation;
-                }
+                Projectile.InitOldPosCache(CACHE_LENGTH);
+                Projectile.InitOldRotCache(CACHE_LENGTH);
+
                 PerPartLength = 0.1f;
                 initialize = false;
             }
@@ -476,7 +482,7 @@ namespace Coralite.Content.Items.Icicle
 
         public override void AI()
         {
-            if (onStart && Main.myPlayer == Projectile.owner)
+            if (onStart && Projectile.IsOwnedByLocalPlayer())
             {
                 Vector2 dashDir = Owner.Center.DirectionTo(Main.MouseWorld);
                 switch ((int)DashDir)

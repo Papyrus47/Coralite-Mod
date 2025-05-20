@@ -1,4 +1,5 @@
-﻿using Coralite.Content.Items.Thunder;
+﻿using Coralite.Content.Bosses.ModReinforce.PurpleVolt;
+using Coralite.Content.Items.Thunder;
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Systems.BossSystems;
@@ -350,7 +351,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             }
 
             ThunderveinPurpleAlpha = new Color(135, 94, 255, 0);
-            if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000 || !Target.ZoneSnow)
+            if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000)
             {
                 NPC.TargetClosest();
 
@@ -690,7 +691,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                         {
                             //随机一个招式出来
                             State = Main.rand.NextFromList(moves.ToArray());
-                            State = (int)AIStates.LightningRaid;
+                            //State = (int)AIStates.LightningRaid;
                             NPC.netUpdate = true;
                         }
                     }

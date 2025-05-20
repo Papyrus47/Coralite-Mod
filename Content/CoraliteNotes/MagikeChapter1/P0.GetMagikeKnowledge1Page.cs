@@ -26,7 +26,7 @@ namespace Coralite.Content.CoraliteNotes.MagikeChapter1
         public override void Recalculate()
         {
             RemoveAllChildren();
-            Append(new CheckButton());
+            //Append(new CheckButton());
             base.Recalculate();
         }
 
@@ -35,16 +35,15 @@ namespace Coralite.Content.CoraliteNotes.MagikeChapter1
             Utils.DrawBorderStringBig(spriteBatch, Title.Value, Center + new Vector2(0, -PageWidth / 2), Coralite.MagicCrystalPink, 1, 0.5f, 0.5f);
 
             Vector2 pos = Position + new Vector2(0, 140);
-            Vector2 size = Vector2.Zero;
             Helper.DrawText(spriteBatch, Welcome.Value, PageWidth, pos, Vector2.Zero, Vector2.One
-                , new Color(40, 40, 40), Color.White, out size);
+                , Coralite.TextShadowColor, Color.White, out Vector2 size);
 
-            pos.Y += size.Y + 60;
+            pos.Y += size.Y + 30;
 
-            string text = MagikeSystem.learnedMagikeBase ? ContiuneRead.Value : ClickButton.Value;
+            string text = ContiuneRead.Value;
 
             Helper.DrawText(spriteBatch, text, PageWidth, pos, Vector2.Zero, Vector2.One
-                , new Color(40, 40, 40), Color.White, out size);
+                , Coralite.TextShadowColor, Color.White, out size);
         }
     }
 

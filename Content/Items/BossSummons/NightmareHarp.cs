@@ -2,11 +2,11 @@
 using Coralite.Content.Items.Materials;
 using Coralite.Content.Items.Nightmare;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.BossSystems;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -28,6 +28,8 @@ namespace Coralite.Content.Items.BossSummons
             ItemID.Sets.SortingPriorityBossSpawns[Type] = 12;
 
             NPCID.Sets.MPAllowedEnemies[ModContent.NPCType<NightmarePlantera>()] = true;
+
+            this.GetLocalization("ShouldSleep", () => "在床上设置出生点后才能使用这个物品");
         }
 
         public override void SetDefaults()
@@ -43,7 +45,6 @@ namespace Coralite.Content.Items.BossSummons
 
             Item.shoot = ModContent.ProjectileType<NightmareHarpProj>();
             Item.noUseGraphic = true;
-
         }
 
         public override bool CanUseItem(Player player)
@@ -53,7 +54,7 @@ namespace Coralite.Content.Items.BossSummons
             if (!hasRespawn)
             {
                 CombatText.NewText(new Rectangle((int)player.Top.X, (int)player.Top.Y, 1, 1), Color.White,
-                    this.GetLocalization("ShouldSleep", () => "在床上设置出生点后才能使用这个物品").Value);
+                    this.GetLocalization("ShouldSleep").Value);
             }
             return hasRespawn && !Main.dayTime && !NPC.AnyNPCs(ModContent.NPCType<NightmarePlantera>());
         }
@@ -89,8 +90,8 @@ namespace Coralite.Content.Items.BossSummons
 
         public void AddMagikeCraftRecipe()
         {
-            MagikeCraftRecipe.CreateRecipe(ItemID.Harp, ModContent.ItemType<NightmareHarp>()
-                , MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore, 24, 60 * 10))
+            MagikeRecipe.CreateCraftRecipe(ItemID.Harp, ModContent.ItemType<NightmareHarp>()
+                , MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore, 12, 60 * 5))
                 .AddIngredient(ItemID.SoulofLight, 7)
                 .AddIngredient(ItemID.SoulofNight, 7)
                 .AddIngredient(ItemID.SoulofMight, 7)
@@ -302,7 +303,7 @@ namespace Coralite.Content.Items.BossSummons
             else if (Timer > 10 + (part * 10) + 20)
             {
                 SoundEngine.PlaySound(CoraliteSoundID.IceMagic_Item28);
-                if (Main.myPlayer == Projectile.owner)
+                if (Projectile.IsOwnedByLocalPlayer())
                 {
                     int npcType = ModContent.NPCType<NightmarePlantera>();
 
@@ -379,7 +380,7 @@ namespace Coralite.Content.Items.BossSummons
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
         public override bool? CanDamage() => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             if (Color < 0)
                 drawColor = NightmarePlantera.nightmareSparkleColor;
@@ -447,7 +448,7 @@ namespace Coralite.Content.Items.BossSummons
     /// <summary>
     /// 使用速度的X传入拥有者
     /// </summary>
-    public class NightmareHarpParticle : BasePRT
+    public class NightmareHarpParticle : Particle
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "Flow";
 

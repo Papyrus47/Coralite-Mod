@@ -3,7 +3,6 @@ using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -16,6 +15,7 @@ namespace Coralite.Content.Items.Magike.Towers
 
         //private Trail trail;
         private static VertexStrip _vertexStrip = new();
+        private bool span;
 
         public override void SetStaticDefaults()
         {
@@ -35,7 +35,7 @@ namespace Coralite.Content.Items.Magike.Towers
             Projectile.tileCollide = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             //Projectile.oldPos = new Vector2[12];
             //for (int i = 0; i < 12; i++)
@@ -58,6 +58,11 @@ namespace Coralite.Content.Items.Magike.Towers
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             //trail ??= new Trail(Main.instance.GraphicsDevice, 12, new TriangularTip(16), factor => 16,
             //factor =>
             //{

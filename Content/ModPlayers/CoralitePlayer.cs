@@ -4,10 +4,12 @@ using Coralite.Content.Items.RedJades;
 using Coralite.Content.Items.Steel;
 using Coralite.Content.Items.Thunder;
 using Coralite.Content.Projectiles.Globals;
-using Coralite.Content.UI;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
+using Coralite.Core.Systems.YujianSystem;
 using Coralite.Helpers;
+using InnoVault.PRT;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using static Terraria.ModLoader.ModContent;
 
 namespace Coralite.Content.ModPlayers
@@ -25,28 +28,27 @@ namespace Coralite.Content.ModPlayers
         public string LocalizationCategory => "Players";
 
         public int rightClickReuseDelay = 0;
-        public int parryTime;
 
-        /// <summary>
-        /// 各种效果
-        /// </summary>
-        public HashSet<string> Effects = new();
         public List<IInventoryCraftStation> inventoryCraftStations = new();
+
+        public static LocalizedText CoreKeeperDodgeText { get; private set; }
 
         #region 装备类字段
 
         /// <summary> 花粉火药计时器 </summary>
-        public int PollenGunpowderEffect = 60;
+        public byte PollenGunpowderEffect = 60;
         /// <summary> 玫瑰火药计时器 </summary>
-        public int RoseGunpowderEffect = 90;
+        public byte RoseGunpowderEffect = 90;
+        /// <summary> 迈达斯灰烬火药计时器 </summary>
+        public byte MidasGunpowderEffect = 90;
 
         /// <summary> 海盗王之魂 </summary>
-        public int pirateKingSoul;
+        public byte pirateKingSoul;
         /// <summary> 海盗王之魂的效果CD </summary>
-        public int pirateKingSoulCD;
+        public byte pirateKingSoulCD;
 
         /// <summary> 幸运星 </summary>
-        public int luckyStar;
+        public byte luckyStar;
 
         /// <summary> 美杜莎之魂 </summary>
         public int medusaSoul;
@@ -61,10 +63,11 @@ namespace Coralite.Content.ModPlayers
         public int Concertration;
         #endregion
 
-        public int nightmareCount;
-        /// <summary> 使用梦魇之花的噩梦能量 </summary>
-        public int nightmareEnergy;
-        public int nightmareEnergyMax;
+        /// <summary>
+        /// 距离上次受伤的时间
+        /// </summary>
+        public int HurtTimer;
+        public int CrystallineSkyIslandEffect;
 
         /// <summary> 爆伤加成 </summary>
         public float critDamageBonus;
@@ -97,23 +100,36 @@ namespace Coralite.Content.ModPlayers
         /// <summary> 宝石武器攻速加成 </summary>
         public StatModifier GemWeaponAttSpeedBonus;
 
+        /// <summary> 储存御剑葫芦 </summary>
+        public Item[] TempYujians;
+
         public override void Load()
         {
+            if (Main.dedServ)
+                return;
+
+            CoreKeeperDodgeText = this.GetLocalization(nameof(CoreKeeperDodgeText));
             LoadDeathReasons();
         }
 
         public override void Unload()
         {
+            CoreKeeperDodgeText = null;
             UnloadDeathReasons();
         }
 
         public override void ResetEffects()
         {
-            Effects ??= new HashSet<string>();
-            inventoryCraftStations ??= new List<IInventoryCraftStation>();
+            ResetCoraliteEffects();
 
+            inventoryCraftStations ??= new List<IInventoryCraftStation>();
             inventoryCraftStations.Clear();
-            Effects.Clear();
+
+            CheckBloodPool();
+            UpdateEmerorSlimeBoots();
+
+            if (CrystallineSkyIslandEffect > 0)
+                CrystallineSkyIslandEffect--;
 
             pirateKingSoul = 0;
             if (pirateKingSoulCD > 0)
@@ -135,36 +151,20 @@ namespace Coralite.Content.ModPlayers
             deliciousDamageBonus = new StatModifier();
             GemWeaponAttSpeedBonus = new StatModifier();
 
-            ResetFlyingShieldSets();
-
             coreKeeperDodge = 0;
-
-            nightmareEnergyMax = 7;
-
-            if (parryTime > 0)
-            {
-                parryTime--;
-                if (parryTime <= 0)
-                {
-                    SoundEngine.PlaySound(CoraliteSoundID.MaxMana, Player.Center);
-                    float rot = Main.rand.NextFloat(6.282f);
-                    for (int i = 0; i < 8; i++)
-                    {
-                        Dust dust = Dust.NewDustPerfect(Player.Center, DustID.Clentaminator_Red, (rot + (i * MathHelper.TwoPi / 8)).ToRotationVector2() * 3,
-                            255, Scale: Main.rand.Next(20, 26) * 0.1f);
-                        dust.noLight = true;
-                        dust.noGravity = true;
-                    }
-                }
-            }
-
+            ResetNightmareEnergy();
+            ResetFlyingShieldSets();
+            UpdateParry();
             ResetDahsSets();
         }
 
         public override void OnRespawn()
         {
-            nightmareCount = 0;
-            nightmareEnergy = 0;
+            ResetEmperorBoots();
+            HurtTimer = 0;
+            ResetNightmare_Respawn();
+            bloodPoolCount = 0;
+            TempYujians = new Item[BaseHulu.slotCount];
         }
 
         public override bool CanUseItem(Item item)
@@ -187,17 +187,22 @@ namespace Coralite.Content.ModPlayers
 
         public override void PreUpdate()
         {
-            nianliRegain = BaseNianliRegain;
-            nianliMax = BaseNianliMax;
+            ResetYujianNianli();
         }
 
         public override void PreUpdateMovement()
         {
             SetStartDash();
+            if (HasEffect(nameof(Items.Gels.EmperorSlimeBoots))
+                && !Player.mount.Active && Player.grappling[0] == -1 && !Player.tongued && !Player.shimmering)
+                EmperorSlimeMove();
         }
 
         public override void PreUpdateBuffs()
         {
+            if (HurtTimer < 60 * 60)//更新受击时间
+                HurtTimer++;
+
             if (Player.HeldItem.ModItem is IBuffHeldItem buffHeldItem)
                 buffHeldItem.UpdateBuffHeldItem(Player);
 
@@ -209,50 +214,28 @@ namespace Coralite.Content.ModPlayers
             LifeMaxModifyer = new StatModifier();
         }
 
+        public override void ModifyLuck(ref float luck)
+        {
+            if (luckyStar > 1)//幸运星增加玩家幸运
+                luck += 0.2f;
+            else if (luckyStar > 2)
+                luck += 0.3f;
+        }
+
         public override void PostUpdateEquips()
         {
             if (Player.HeldItem.ModItem is IEquipHeldItem ehi)
                 ehi.UpdateEquipHeldItem(Player);
 
-            if (luckyStar > 1)//幸运星增加玩家幸运
-                Player.luck += 0.2f;
-            else if (luckyStar > 2)
-                Player.luck += 0.3f;
+            UpdateNianli();
 
-            if (ownedYujianProj)
-            {
-                bool justCompleteCharge = nianli < nianliMax;
-                nianli += nianliRegain;
-                nianli = Math.Clamp(nianli, 0f, nianliMax);
-                if (nianli == nianliMax && justCompleteCharge)      //蓄力完成的时刻发出声音
-                    SoundEngine.PlaySound(SoundID.Item4);
-            }
-            else
-                nianli = 0f;
-
-            if (nightmareEnergy > nightmareEnergyMax)
-                nightmareEnergy = nightmareEnergyMax;
+            LimitNightmareEnergy();
         }
+
 
         public override void PostUpdateMiscEffects()
         {
-            //有御剑弹幕那就让透明度增加，没有御剑减小透明度直到为0
-            if (ownedYujianProj)
-            {
-                if (yujianUIAlpha < 1f)
-                {
-                    yujianUIAlpha += 0.035f;
-                    yujianUIAlpha = MathHelper.Clamp(yujianUIAlpha, 0f, 1f);
-                    NianliChargingBar.visible = true;
-                }
-            }
-            else if (yujianUIAlpha > 0f)
-            {
-                yujianUIAlpha -= 0.035f;
-                yujianUIAlpha = MathHelper.Clamp(yujianUIAlpha, 0f, 1f);
-                if (yujianUIAlpha <= 0f)
-                    NianliChargingBar.visible = false;
-            }
+            UpdateNianliUI();
 
             if (HasEffect(nameof(MedalOfLife)) && Player.statLifeMax2 - Player.statLife < 20)
             {
@@ -291,7 +274,7 @@ namespace Coralite.Content.ModPlayers
                 }
             }
 
-            if (HasEffect(nameof(OsirisPillar)) && Player.statLife <= 60)
+            if (HasEffect(nameof(OsirisPillar)) && Player.statLife <= 80)
             {
                 Player.GetDamage(DamageClass.Generic) *= 1.15f;
                 Player.GetCritChance(DamageClass.Generic) += 6f;
@@ -311,15 +294,26 @@ namespace Coralite.Content.ModPlayers
 
         public override void UpdateLifeRegen()
         {
+            if (HasEffect(Items.Gels.EmperorSlimeBoots.DefenceSet) && EmperorDefence > EmperorDefenctMax / 2)
+                Player.lifeRegen += 4;
+
             Player.lifeRegen = (int)(Player.lifeRegen * (1 + lifeReganBonus));
+
+            if (HasEffect(Items.Misc_Equip.BloodmarkTopper.BloodSet))
+                Player.lifeRegenTime += 1f;
+        }
+
+        public override void NaturalLifeRegen(ref float regen)
+        {
+            if (HasEffect(Items.Misc_Equip.BloodmarkTopper.BloodSet))
+                regen *= 1.5f;
         }
 
         public override void UpdateBadLifeRegen()
         {
             if (HasEffect(nameof(ThunderElectrified)))
             {
-                if (Player.lifeRegen > 0)
-                    Player.lifeRegen = 0;
+                ClearGoodLifeRegan();
 
                 Player.lifeRegenTime = 0;
                 int damage = (int)(3 + (Player.velocity.Length() * 1.5f));
@@ -332,26 +326,41 @@ namespace Coralite.Content.ModPlayers
 
             if (HasEffect(nameof(LifePulseDevice)))
             {
-                if (Player.lifeRegen > 0)
-                    Player.lifeRegen = 0;
+                ClearGoodLifeRegan();
 
                 if (Player.statLife > 38)
                 {
-                    Player.lifeRegen -= 10 * 2;
+                    Player.lifeRegen -= 10 * 5;
                     Player.lifeRegenTime = 0;
                 }
             }
 
-            if (HasEffect(nameof(OsirisPillar)) && Player.statMana >= Player.statManaMax2 - 20)
+            if (HasEffect(nameof(OsirisPillar)))
             {
-                if (Player.lifeRegen > 0)
-                    Player.lifeRegen = 0;
+                ClearGoodLifeRegan();
 
-                if (Player.statLife > 50)
+                if (Player.statLife > 80)
                 {
-                    Player.lifeRegen -= 10 * 3;
+                    Player.lifeRegen -= 10 * 8;
                     Player.lifeRegenTime = 0;
                 }
+            }
+        }
+
+        private void ClearGoodLifeRegan()
+        {
+            if (Player.lifeRegen > 0)
+                Player.lifeRegen = 0;
+        }
+
+        public override void PostUpdateRunSpeeds()
+        {
+            if (HasEffect(Items.Misc_Equip.BloodmarkTopper.ShadowSet))
+            {
+                Player.runAcceleration *= 1.75f;
+                Player.maxRunSpeed *= 1.15f;
+                Player.accRunSpeed *= 1.15f;
+                Player.runSlowdown *= 1.75f;
             }
         }
 
@@ -360,7 +369,7 @@ namespace Coralite.Content.ModPlayers
             if (rightClickReuseDelay > 0)
                 rightClickReuseDelay--;
 
-            nianli = Math.Clamp(nianli, 0f, nianliMax);  //只是防止意外发生
+            LimitNianli();
             oldOldVelocity = oldVelocity;
             oldVelocity = Player.velocity;
 
@@ -368,13 +377,10 @@ namespace Coralite.Content.ModPlayers
             oldCenter = Player.Center;
         }
 
+
         public override void UpdateDead()
         {
-            if (yujianUIAlpha > 0f)
-            {
-                yujianUIAlpha -= 0.035f;
-                yujianUIAlpha = MathHelper.Clamp(yujianUIAlpha, 0f, 1f);
-            }
+            NianliUIFade();
 
             rightClickReuseDelay = 0;
         }
@@ -385,6 +391,8 @@ namespace Coralite.Content.ModPlayers
             {
                 if (PollenGunpowderEffect == 0)
                 {
+                    if (damage > 60)
+                        damage = 60;
                     Projectile.NewProjectile(source, position, velocity.RotateByRandom(-0.1f, 0.1f),
                         ProjectileType<Items.HyacinthSeries.PollenGunpowderProj>(), damage, knockback, Player.whoAmI);
                     PollenGunpowderEffect = 60;
@@ -392,9 +400,24 @@ namespace Coralite.Content.ModPlayers
 
                 if (RoseGunpowderEffect == 0)
                 {
+                    damage = (int)(damage * 1.35f);
+                    if (damage > 110)
+                        damage = 110;
+
                     Projectile.NewProjectile(source, position, velocity.RotateByRandom(-0.05f, 0.05f),
-                        ProjectileType<Items.HyacinthSeries.RoseGunpowderProj>(), (int)(damage * 1.35f), knockback, Player.whoAmI);
+                        ProjectileType<Items.HyacinthSeries.RoseGunpowderProj>(), damage, knockback, Player.whoAmI);
                     RoseGunpowderEffect = 90;
+                }
+
+                if (MidasGunpowderEffect == 0)
+                {
+                    damage = (int)(damage * 1.35f);
+                    if (damage > 185)
+                        damage = 185;
+
+                    Projectile.NewProjectile(source, position, velocity*1.2f,
+                        ProjectileType<Items.HyacinthSeries.MidasGunpowderProj>(), damage, knockback, Player.whoAmI);
+                    MidasGunpowderEffect = 90;
                 }
             }
 
@@ -404,6 +427,43 @@ namespace Coralite.Content.ModPlayers
         #endregion
 
         #region 受击与攻击
+
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
+        {
+            FlyingShieldHurt(ref modifiers);
+
+            int tempHurtTime = HurtTimer;
+            HurtTimer = 0;
+
+            EmperorBootsHurt();
+
+            modifiers.ModifyHurtInfo += Post;
+
+            void Post(ref Player.HurtInfo info)
+            {
+                if (HasEffect(nameof(Items.MagikeSeries2.Luminward)))
+                {
+                    //Main.NewText(info.Damage);
+                    if (info.Damage > 30)
+                    {
+                        info.SoundDisabled = true;
+                        info.DustDisabled = true;
+                        info.Damage = (int)(info.Damage * (1 - 0.2f));
+                        //生成音效与粒子
+
+                        Helper.PlayPitched(CoraliteSoundID.WindyBalloon_NPCDeath63, Player.Center);
+                        Helper.PlayPitched(CoraliteSoundID.ShimmerContract, Player.Center);
+
+                        var p = PRTLoader.NewParticle<Items.MagikeSeries2.LuminwardParticleExplosion>(Player.Center, Vector2.Zero, Color.White, 1);
+                        p.player = Player;
+                        p.Rotation = Main.rand.NextFloat(-0.4f, 0.4f);
+                        p.effect = Main.rand.NextFromList(SpriteEffects.None, SpriteEffects.FlipHorizontally);
+                    }
+                    else
+                        HurtTimer = tempHurtTime;
+                }
+            }
+        }
 
         public override void ModifyHitByProjectile(Projectile proj, ref Player.HurtModifiers modifiers)
         {
@@ -455,13 +515,18 @@ namespace Coralite.Content.ModPlayers
             if (HasEffect(nameof(AlloySpringBuff)))
             {
                 int defence = (int)Player.statDefense;
-                modifiers.SourceDamage += 0.01f * Math.Clamp(defence / 5, 0, 10);
+                modifiers.SourceDamage += 0.01f * Math.Clamp(defence / 5, 0, 15);
             }
             else if (HasEffect(nameof(GravitationalCatapultBuff)))
             {
                 int defence = (int)Player.statDefense;
-                modifiers.SourceDamage += 0.01f * Math.Clamp(defence / 5, 0, 20);
+                modifiers.SourceDamage += 0.01f * Math.Clamp(defence / 4, 0, 30);
             }
+
+            EmperorSlimeBootsHitNPC(target);
+
+            if (Player.HasBuff<Items.Gels.EmperorSlimeBuff>())
+                target.AddBuff(BuffID.Slimed, 60 * 5);
 
             #region 海盗王之魂的效果
             void PriateKingSoulEffect(ref NPC.HitModifiers modifiers)
@@ -504,7 +569,7 @@ namespace Coralite.Content.ModPlayers
                         Item.NewItem(new EntitySource_OnHit(Player, target), target.Center, itemtype);
                     }
 
-                    pirateKingSoulCD = CD;
+                    pirateKingSoulCD = (byte)CD;
                 }
             }
 
@@ -586,7 +651,7 @@ namespace Coralite.Content.ModPlayers
                 target.AddBuff(BuffType<ThunderElectrified>(), 6 * 60);
             if (HasEffect(nameof(FlaskOfRedJadeBuff)) && item.DamageType.CountsAsClass(DamageClass.Melee) && Main.rand.NextBool(4))
                 Projectile.NewProjectile(Player.GetSource_FromThis(), target.Center, Vector2.Zero,
-                    ProjectileType<RedJadeBoom>(), (int)(item.damage * 0.75f), 0, Player.whoAmI);
+                    ProjectileType<RedJadeBoom>(), (item.damage * 0.75f) > 80 ? 80 : (int)(item.damage * 0.75f), 0, Player.whoAmI);
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
@@ -595,7 +660,7 @@ namespace Coralite.Content.ModPlayers
                 target.AddBuff(BuffType<ThunderElectrified>(), 6 * 60);
             if (HasEffect(nameof(FlaskOfRedJadeBuff)) && proj.DamageType == DamageClass.Melee && Main.rand.NextBool(4))
                 Projectile.NewProjectile(Player.GetSource_FromThis(), target.Center, Vector2.Zero,
-                    ProjectileType<RedJadeBoom>(), (int)(proj.damage * 0.75f), 0, Player.whoAmI);
+                    ProjectileType<RedJadeBoom>(), (proj.damage * 0.75f) > 80 ? 80 : (int)(proj.damage * 0.75f), 0, Player.whoAmI);
         }
 
         public override bool FreeDodge(Player.HurtInfo info)
@@ -606,7 +671,7 @@ namespace Coralite.Content.ModPlayers
             if (info.Dodgeable && Main.rand.NextBool((int)(coreKeeperDodge * 100), 100))
             {
                 CombatText.NewText(new Rectangle((int)Player.Top.X, (int)Player.Top.Y, 1, 1)
-                    , Color.White, "闪避");
+                    , Color.White, CoreKeeperDodgeText.Value);
                 Player.AddImmuneTime(ImmunityCooldownID.General, 20);
                 Player.immune = true;
                 return true;
@@ -633,6 +698,12 @@ namespace Coralite.Content.ModPlayers
 
         #endregion
 
+        public override void GetHealLife(Item item, bool quickHeal, ref int healValue)
+        {
+            if (HasEffect(Items.Misc_Equip.BloodmarkTopper.BloodSet))
+                healValue += bloodPoolCount;
+        }
+
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genDust, ref PlayerDeathReason damageSource)
         {
             if (damageSource.SourceItem == null
@@ -646,30 +717,6 @@ namespace Coralite.Content.ModPlayers
             return true;
         }
 
-        public void GetNightmareEnergy(int howMany)
-        {
-            if (nightmareEnergy < nightmareEnergyMax)
-            {
-                nightmareEnergy += howMany;
-                if (nightmareEnergy > nightmareEnergyMax)
-                    nightmareEnergy = nightmareEnergyMax;
-            }
-        }
-
-        /// <summary>
-        /// 玩家是否有某个效果，建议使用<see cref="nameof"/>来获取字符串
-        /// </summary>
-        /// <param name="effectName"></param>
-        /// <returns></returns>
-        public bool HasEffect(string effectName) => Effects.Contains(effectName);
-
-        /// <summary>
-        /// 为玩家添加某个效果，建议使用<see cref="nameof"/>来获取字符串
-        /// </summary>
-        /// <param name="effectName"></param>
-        /// <returns></returns>
-        public bool AddEffect(string effectName) => Effects.Add(effectName);
-
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             if (Core.Loaders.KeybindLoader.ArmorBonus.JustPressed && Main.myPlayer == Player.whoAmI)
@@ -677,7 +724,7 @@ namespace Coralite.Content.ModPlayers
                 {
                     if (Player.armor[i].ModItem is null)
                         continue;
-                    if (Player.armor[i].ModItem.IsArmorSet(Player.armor[0], Player.armor[1], Player.armor[2])
+                    if (Player.armor[i].ModItem.IsArmorSet(Player.HeadArmor(), Player.BodyArmor(), Player.LegArmor())
                         && Player.armor[i].ModItem is IControllableArmorBonus conrtolableArmor)
                     {
                         conrtolableArmor.UseArmorBonus(Player);   //使用套装效果
@@ -729,11 +776,26 @@ namespace Coralite.Content.ModPlayers
                 SoundEngine.PlaySound(sItem.UseSound, Player.Center);
         }
 
+        #region 多人同步
+
+        public override void SendClientChanges(ModPlayer clientPlayer)
+        {
+
+        }
+
+        public override void CopyClientState(ModPlayer targetCopy)
+        {
+
+        }
+
+        #endregion
 
         public override void OnEnterWorld()
         {
             if (CoraliteWorld.CoralCatWorld)
                 Player.QuickSpawnItem(Player.GetSource_FromThis(), ItemID.Meowmere);
+
+            //Main.NewText(CoraliteSystem.OnEnterWorld.Value, Color.Coral);
         }
     }
 }

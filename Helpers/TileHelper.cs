@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Drawing;
 using Terraria.ObjectData;
 
 namespace Coralite.Helpers
@@ -18,6 +19,12 @@ namespace Coralite.Helpers
             return true;
         }
 
+        /// <summary>
+        /// 检测物块是否为实心，即 <see cref="Tile.HasUnactuatedTile"/>，<see cref="Main.tileSolid"/> 为 <see langword="true"/><br></br>
+        /// 并且 <see cref="Main.tileSolidTop"/> 为<see langword="false"/>，用于排除桌子平台之类的
+        /// </summary>
+        /// <param name="tile"></param>
+        /// <returns></returns>
         public static bool HasSolidTile(this Tile tile)
         {
             return tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
@@ -28,10 +35,29 @@ namespace Coralite.Helpers
             Tile tile = Main.tile[x, y];
             if (tile == null)
                 return new Vector2(x, y);
+
             TileObjectData data = TileObjectData.GetTileData(tile.TileType, 0);
+            if (data == null)
+                return new Vector2(x, y);
+
             x -= tile.TileFrameX / 18 % data.Width;
             y -= tile.TileFrameY / 18 % data.Height;
             return new Vector2(x, y);
+        }
+
+        public static Point FindTopLeftPoint(int x, int y)
+        {
+            Tile tile = Main.tile[x, y];
+            if (tile == null)
+                return new Point(x, y);
+
+            TileObjectData data = TileObjectData.GetTileData(tile.TileType, 0);
+            if (data == null)
+                return new Point(x, y);
+
+            x -= tile.TileFrameX / 18 % data.Width;
+            y -= tile.TileFrameY / 18 % data.Height;
+            return new Point(x, y);
         }
 
         public static void DrawMultWine(int i, int j, int sizeX, int sizeY, float? windRotOffset = 1f)
@@ -76,7 +102,7 @@ namespace Coralite.Helpers
                 {
                     Tile tile2 = Main.tile[m, n];
                     ushort type2 = tile2.TileType;
-                    if (type2 != type || !CoraliteTileDrawing.IsVisible(tile2))
+                    if (type2 != type || !TileDrawing.IsVisible(tile2))
                         continue;
 
                     short tileFrameX = tile2.TileFrameX;
@@ -117,6 +143,11 @@ namespace Coralite.Helpers
             return GetMagikeTileCenter(new Point16(i, j));
         }
 
+        public static Vector2 GetMagikeTileCenter(Point p)
+        {
+            return GetMagikeTileCenter(new Point16(p));
+        }
+
         /// <summary>
         /// 获取魔能物块的中心点
         /// </summary>
@@ -125,12 +156,16 @@ namespace Coralite.Helpers
         public static Vector2 GetMagikeTileCenter(Point16 position)
         {
             Tile tile = Framing.GetTileSafely(position);
+            if (!tile.HasTile)
+                return position.ToWorldCoordinates();
+
             TileObjectData data = TileObjectData.GetTileData(tile);
 
             if (data == null)
                 return position.ToWorldCoordinates();
 
-            if (!Main.tileSolidTop[tile.TileType])
+            if (CoraliteSetsSystem.MagikeTileTypes.TryGetValue(tile.TileType, out var placeType)
+                && placeType != CoraliteSetsSystem.MagikeTileType.None)
                 MagikeHelper.GetMagikeAlternateData(position.X, position.Y, out data, out _);
 
             int x = data == null ? 8 : data.Width * 16 / 2;
@@ -144,7 +179,7 @@ namespace Coralite.Helpers
             Point16? topleft = MagikeHelper.ToTopLeft(i, j);
 
             if (!topleft.HasValue)
-                return Vector2.Zero;
+                return new Vector2(i * 16 + 8, j * 16 + 8);
 
             Tile tile = Framing.GetTileSafely(topleft.Value);
             TileObjectData data = TileObjectData.GetTileData(tile);
@@ -152,7 +187,8 @@ namespace Coralite.Helpers
             if (data == null)
                 return topleft.Value.ToWorldCoordinates();
 
-            if (!Main.tileSolidTop[tile.TileType])
+            if (CoraliteSetsSystem.MagikeTileTypes.TryGetValue(tile.TileType, out var placeType)
+                && placeType != CoraliteSetsSystem.MagikeTileType.None)
                 MagikeHelper.GetMagikeAlternateData(topleft.Value.X, topleft.Value.Y, out data, out _);
 
             int x = data == null ? 8 : data.Width * 16 / 2;
@@ -161,9 +197,17 @@ namespace Coralite.Helpers
             return topleft.Value.ToWorldCoordinates(x, y);
         }
 
-
-
         public static Vector2 GetTileCenter(Point16 position)
+        {
+            Tile tile = Framing.GetTileSafely(position);
+            TileObjectData data = TileObjectData.GetTileData(tile);
+            int x = data == null ? 8 : data.Width * 16 / 2;
+            int y = data == null ? 8 : data.Height * 16 / 2;
+
+            return position.ToWorldCoordinates(x, y);
+        }
+
+        public static Vector2 GetTileCenter(Point position)
         {
             Tile tile = Framing.GetTileSafely(position);
             TileObjectData data = TileObjectData.GetTileData(tile);

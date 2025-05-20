@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using static Terraria.ModLoader.ModContent;
 
@@ -43,9 +42,9 @@ namespace Coralite.Content.Items.Stars
 
         #region AI
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 _Rotation = (Main.rand.Next(8) * 0.785f) - 1.57f;
                 Projectile.netUpdate = true;
@@ -106,11 +105,9 @@ namespace Coralite.Content.Items.Stars
             {
                 OnChannelComplete(1500, 15);
                 Projectile.Center = Owner.Center;
-                Projectile.oldPos = new Vector2[20];
+                Projectile.InitOldPosCache(20);
                 Projectile.damage = (int)(Projectile.damage * 1.5f);
                 Helper.PlayPitched("Stars/StarsSpawn", 0.3f, 0f, Projectile.Center);
-                for (int i = 0; i < 20; i++)
-                    Projectile.oldPos[i] = Projectile.Center;
                 return;
             }
 
@@ -164,7 +161,7 @@ namespace Coralite.Content.Items.Stars
         public void DrawTrail()
         {
             //RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             Vector2 dir = Vector2.Normalize(Projectile.velocity.RotatedBy(1.57f));
             Vector2 Top = Projectile.oldPos[0] + (dir * 30);
@@ -182,7 +179,7 @@ namespace Coralite.Content.Items.Stars
             bars.Add(new(Bottom - Main.screenPosition, starYellow, new Vector3(0, 0, w)));
 
 
-            List<CustomVertexInfo> triangleList = new()
+            List<ColoredVertex> triangleList = new()
             {
                 bars[0],
                 bars[1],

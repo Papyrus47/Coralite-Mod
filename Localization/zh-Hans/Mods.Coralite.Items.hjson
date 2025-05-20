@@ -47,7 +47,7 @@ CrystallineGel: {
 	DisplayName: 王后的象征
 	Tooltip:
 		'''
-		这史莱姆族群中象征着王后的威严，拥有它就拥有了无上的荣耀
+		这在史莱姆族群中象征着王后的威严，拥有它就拥有了无上的荣耀
 		在神圣地形召唤史莱姆皇后，不消耗
 		'''
 }
@@ -129,7 +129,7 @@ SymbolOfRoyal: {
 	DisplayName: 王权的象征
 	Tooltip:
 		'''
-		这史莱姆族群中象征着王位，拥有它就拥有了无上的荣耀
+		这在史莱姆族群中象征着王位，拥有它就拥有了无上的荣耀
 		召唤史莱姆王，不消耗
 		'''
 }
@@ -280,7 +280,7 @@ IcicleBow: {
 	Tooltip:
 		'''
 		将箭矢转化为冰晶箭
-		双击方向键进行滑步，滑步期间短暂无敌
+		冲刺效果：进行滑步，滑步期间短暂无敌
 		滑步时按住鼠标左键汇聚冰魔法，之后松开左键射出冰光箭
 		'''
 }
@@ -316,18 +316,6 @@ IcicleThornStaff: {
 IcicleYujian: {
 	DisplayName: 霜晶刃
 	Tooltip: ""
-}
-
-CrossBreedMachine_G1Item: {
-	DisplayName: 植物杂交机1型
-	Tooltip:
-		'''
-		放置后右键打开面板
-		左侧和右侧的物品格中放入父植物和母植物，中间物品格可放入催化剂
-		点击按钮并消耗一定的魔能进行杂交
-		杂交消耗父植物和母植物并在下方的物品格中输出子代植物
-		部分植物杂交时概率产生突变
-		'''
 }
 
 IceyPowder: {
@@ -522,15 +510,18 @@ ShadowHead: {
 		最大魔力值 +60
 		魔力消耗 -10%
 		'''
+	ArmorBonus:
+		'''
+		影铠法环守护着你
+		   使用物品时根据使用时间为法环充能
+		   能量充足时，按下套装奖励键根据当前使用武器类型发射不同弹幕攻击
+		   套装奖励键可在模组配置中更改
+		'''
 }
 
 ShadowLegs: {
 	DisplayName: 影子护腿
-	Tooltip:
-		'''
-		攻速 +8%
-		击退 +6%
-		'''
+	Tooltip: 击退 +6%
 }
 
 ShadowPickaxe: {
@@ -570,12 +561,12 @@ MagicalAshes: {
 
 AncientCore: {
 	DisplayName: 远古核心
-	Tooltip: 军火商压箱底的宝贝，来自远古文明的能量核心
+	Tooltip: 来自远古文明的能量核心
 }
 
 Arethusa: {
 	DisplayName: 幽兰
-	Tooltip: 迟来的爱
+	Tooltip: “迟来的爱”
 }
 
 Astrosniper: {
@@ -604,27 +595,22 @@ Dunkleosteus: {
 
 Hyacinth: {
 	DisplayName: 风信子
-	Tooltip: "[c/ff3333:你的爱充满我心中]"
+	Tooltip: “[c/ff3333:你的爱充满我心中]”
 }
 
 Rosemary: {
 	DisplayName: 迷迭香
-	Tooltip: 留住美好的回忆
-}
-
-Rosemary2: {
-	DisplayName: 迷迭香
-	Tooltip: 留住美好的回忆
+	Tooltip: “留住美好的回忆”
 }
 
 Snowdrop: {
 	DisplayName: 雪花莲
-	Tooltip: 怀抱希望
+	Tooltip: “怀抱希望”
 }
 
 StarsBreath: {
 	DisplayName: 满天星
-	Tooltip: 一切美好的祝愿
+	Tooltip: “一切美好的祝愿”
 }
 
 WoodWax: {
@@ -726,7 +712,7 @@ IcicleCoccyx: {
 	Tooltip:
 		'''
 		左键挥动一定次数后获得充能
-		充能完成后双击A/D键冲刺
+		充能完成后可进行冲刺
 		充能完成后右键释放冰晶龙卷风
 		'''
 }
@@ -883,16 +869,6 @@ MagicCrystalBrick: {
 	Tooltip: ""
 }
 
-Page_MagikeBase: {
-	DisplayName: 书页：魔能基础
-	Tooltip:
-		'''
-		左键使用以学习魔能的基础知识
-		在地下的魔力水晶洞中心处可以找到
-		“水晶生命体售卖的魔能辞典会为你解释与魔能相关的事情”
-		'''
-}
-
 HardBasalt: {
 	DisplayName: 硬化玄武岩
 	Tooltip: ""
@@ -961,7 +937,7 @@ CorruptJavelin: {
 }
 
 SoulOfDeveloper: {
-	DisplayName: 开发者之魂
+	DisplayName: 启示之魂
 	Tooltip: “很适合用来冒充开发者！”
 }
 
@@ -1040,6 +1016,7 @@ NightmareHarp: {
 		在夜晚召唤梦魇之花，不消耗
 			可以在视觉效果配置中开启或关闭特殊的天空和特殊血条
 		'''
+	ShouldSleep: 在床上设置出生点后才能使用...
 }
 
 EmpyrosPowder: {
@@ -1306,10 +1283,10 @@ QueensWreath: {
 		每3次射击射出一个锁链花瓣箭，命中后获得1个[c/fa0064:梦魇光能]
 		射箭时右键消耗1个[c/fa0064:梦魇光能]进行二次射击
 
-		双击A或D进行横向冲刺，冲刺途中如果与弹幕或敌怪碰撞则能够射出3个花瓣箭，之后下一次普通射击直接射出锁链花瓣箭
+		横向冲刺：冲刺途中如果与弹幕或敌怪碰撞则能够射出3个花瓣箭，之后下一次普通射击直接射出锁链花瓣箭
 		未发生碰撞则射出1个花瓣箭
-		双击S消耗2个[c/fa0064:梦魇光能]瞄准下方的敌人向下冲刺，冲刺途中与弹幕或敌怪发生碰撞则向上弹起之后射出一些箭矢
-		双击W消耗1个[c/fa0064:梦魇光能]向上冲刺，之射出3个从天上坠落的花瓣箭
+		向下冲刺：消耗2个[c/fa0064:梦魇光能]瞄准下方的敌人，冲刺途中与弹幕或敌怪发生碰撞则向上弹起之后射出一些箭矢
+		向上冲刺：消耗1个[c/fa0064:梦魇光能]，之射出3个从天上坠落的花瓣箭
 		'''
 }
 
@@ -1408,7 +1385,7 @@ SlimeSceptre: {
 		'''
 		使用时射出弹力凝胶球
 		装备后 +4% 伤害，+8% 移动速度
-		手持或装备时双击任意方向键召唤弹力凝胶球将自身弹出
+		冲刺效果：手持或装备时召唤弹力凝胶球将自身弹出
 		'''
 }
 
@@ -1418,8 +1395,12 @@ MagikeMonoclastic: {
 }
 
 Reel_MagikeAdvance: {
-	DisplayName: 卷轴：强化魔能提炼
-	Tooltip: 现在你懂得如何再次强化你的魔能器械了
+	DisplayName: 魔能进阶残卷
+	Tooltip:
+		'''
+		在丛林上方的蕴魔空岛中发现它
+		包含一些进阶的魔能知识
+		'''
 }
 
 PhantomMirror: {
@@ -1464,12 +1445,7 @@ MiniSplendorColumn: {
 
 CrystalSword: {
 	DisplayName: 魔力水晶剑
-	Tooltip: 消耗 5 魔能射出光束
-}
-
-BrilliantCharger: {
-	DisplayName: 璀璨充能站
-	Tooltip: 右键打开UI，放入可容纳魔能的物品后激活为该物品充能
+	Tooltip: 消耗 1 魔能射出光束
 }
 
 CrystalStaff: {
@@ -1559,20 +1535,6 @@ BloodJadeRangesWeapon: {
 	Tooltip: 右键格挡攻击，成功格挡后获得BUFF，拥有BUFF时普通攻击可以产生爆破
 }
 
-MagikeGuideBook: {
-	DisplayName: 魔能辞典
-	Tooltip:
-		'''
-		该物品并未准备就绪...
-		记载着魔能的知识，物品栏内右键使用，使用鼠标滚轮翻页
-		'''
-}
-
-MagikeNote1: {
-	DisplayName: 古代研究员笔记
-	Tooltip: ""
-}
-
 ShadowChain: {
 	DisplayName: 影之链
 	Tooltip:
@@ -1597,7 +1559,6 @@ RuneSong: {
 AncientGemstone: {
 	DisplayName: 上古宝石
 	Tooltip: "[c/8e8e8e:奇怪的蓝色宝石，散发着能量波。]"
-	ShlimmerTranslation: 此为微光转化合成表
 }
 
 BrokenHandle: {
@@ -1634,7 +1595,9 @@ RuneParchment: {
 		[c/8e8e8e:一张上古时代遗留下来的纸，被保存得异常完好。]
 		[c/8e8e8e:你无法解读上面的符文，但从那些小小的符号可以看出，这应该是打造某件奇特武器用的配方。]
 			击败世纪之花后由旅商售卖
+			请放置在快捷栏内使用，无法在鼠标上使用该物品！
 		'''
+	OnCraft: 得到了{0}！
 }
 
 CraftLock: {
@@ -1922,7 +1885,7 @@ ShadowCandelabra: {
 
 GlassShield: {
 	DisplayName: 玻璃盾
-	Tooltip: 一块玻璃制成的盾牌，或许防御时就会碎成碎片
+	Tooltip: 一块玻璃制成的盾牌，或许格挡时就会碎成碎片（并不会）
 }
 
 BisketyHead: {
@@ -1949,7 +1912,7 @@ FlyingShieldMaintenanceGuide: {
 	Tooltip:
 		'''
 		古代人类留在地下金箱子内的指南
-		增加飞盾右键格挡能力
+		使飞盾加速回归
 		'''
 }
 
@@ -1973,8 +1936,8 @@ FlyingShieldToolbox: {
 		'''
 		让飞盾能够在敌人间弹射一次
 		增加飞盾飞行速度
-		增加飞盾右键格挡能力
-		盾冲与格挡变得更加自由
+		使飞盾加速回归
+		飞盾未回归时也能使用盾冲
 		'''
 }
 
@@ -1982,7 +1945,7 @@ HeavyWedges: {
 	DisplayName: 重型楔石
 	Tooltip:
 		'''
-		在地下金箱子中出现
+		在箱子中出现
 		减慢飞盾飞行速度，提升飞盾大小和近战伤害
 		'''
 }
@@ -1992,20 +1955,20 @@ DemonsProtection: {
 	Tooltip:
 		'''
 		[c/8aebff:举起盾牌的瞬间能够进行完美格挡并释放恶魔爪击]
-		+10% 飞盾格挡时减少弹幕穿透数的概率
-		略微增加飞盾格挡能力
+		+20% 飞盾格挡时弹回弹幕
+		略微增加飞盾成功格挡后获得的伤害减免
 		略微增加举盾速度
 		'''
 }
 
 FlyingShieldToolboxProMax: {
-	DisplayName: 飞盾工具箱-豪华版
+	DisplayName: 飞盾工具箱 - 豪华版
 	Tooltip:
 		'''
 		让飞盾能够在敌人间弹射一次
 		增加飞盾飞行速度
-		增加飞盾右键格挡能力
-		盾冲与格挡变得更加自由
+		使飞盾加速回归
+		飞盾未回归时也能使用盾冲
 		'''
 }
 
@@ -2040,7 +2003,7 @@ FloralHarmonyMedallion: {
 
 PearlRay: {
 	DisplayName: 白玉鳐
-	Tooltip: 飞盾命中或成功防御后下一次攻击伤害增加
+	Tooltip: 飞盾命中或成功格挡后下一次攻击伤害增加
 }
 
 FlyingShieldCore: {
@@ -2058,7 +2021,7 @@ TortoiseshellFortress: {
 	Tooltip:
 		'''
 		一块相当重的盾牌，可以很好地保护你
-		双击方向键以成为丛林之王
+		冲刺效果：成为丛林之王
 		'''
 }
 
@@ -2100,8 +2063,8 @@ Terracrest: {
 	Tooltip:
 		'''
 		[c/8aebff:举起盾牌的瞬间能够进行完美格挡并释放泰拉魔刺]
-		+18% 飞盾格挡时减少弹幕穿透数的概率
-		增加飞盾格挡能力
+		+25% 飞盾格挡时弹回弹幕
+		增加飞盾格挡后获得的伤害减免
 		增加举盾速度
 		'''
 }
@@ -2136,21 +2099,21 @@ VampiresFang: {
 
 GlazeBulwark: {
 	DisplayName: 琉璃重盾
-	Tooltip: 在防御时会变成碎片
+	Tooltip: 在格挡时会变成碎片
 }
 
 GemrainAegis: {
 	DisplayName: 七彩宝石盾
-	Tooltip: 防御时变成七彩碎片
+	Tooltip: 格挡时变成七彩碎片
 }
 
 Leonids: {
-	DisplayName: 十二星-狮子座
+	DisplayName: 十二星 - 狮子座
 	Tooltip: 射出流星雨
 }
 
 Solleonis: {
-	DisplayName: 狮煌-破日
+	DisplayName: 狮煌 - 破日
 	Tooltip: “释放吞噬太阳的巨狮”
 }
 
@@ -2182,8 +2145,8 @@ NanoAmplifier: {
 		'''
 		+2 飞盾在敌人间弹射次数
 		大幅增加飞盾飞行速度
-		增加飞盾右键格挡能力
-		盾冲与格挡变得更加自由
+		使飞盾加速回归
+		飞盾未回归时也能使用盾冲
 		'''
 }
 
@@ -2206,7 +2169,7 @@ HorseshoeCrab: {
 	DisplayName: 冥凯鲎
 	Tooltip:
 		'''
-		飞盾命中或成功防御后下一次攻击伤害增加
+		飞盾命中或成功格挡后下一次攻击伤害增加
 		命中敌人时呼唤同伴一同攻击
 		'''
 }
@@ -2654,7 +2617,7 @@ Illureal: {
 
 ThunderveinBlade: {
 	DisplayName: 雷鸣刃
-	Tooltip: 双击方向键使用闪电突袭
+	Tooltip: 冲刺效果：闪电突袭，可操控方向键连续突袭3次
 }
 
 PirateKingCoat: {
@@ -2809,7 +2772,7 @@ ThunderveinSpear: {
 		'''
 		右键丢出长矛，命中敌人后戳在敌人身上
 		之后再次右键将玩家拉向长矛位置并生成落雷
-		“你想把其他的长矛也丢出去？试试《ThrownSpears 投掷长矛》!”
+		“别试图用来代替避雷针”
 		'''
 }
 
@@ -2822,9 +2785,7 @@ FlamingLamps: {
 	DisplayName: 烈焰灯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
-		冲刺过程中无视击退
+		{$Mods.Coralite.Systems.FlyingShieldSystem.DamageReduceDash}
 		冲刺命中第一个敌人时产生火焰爆破
 		'''
 }
@@ -2833,9 +2794,7 @@ LavaLamp: {
 	DisplayName: 狱炎灯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
-		冲刺过程中无视击退
+		{$Mods.Coralite.Systems.FlyingShieldSystem.DamageReduceDash}
 		冲刺命中第一个敌人时产生岩浆喷发
 		'''
 }
@@ -2844,9 +2803,7 @@ PiezoArmorPanel: {
 	DisplayName: 压电装甲板
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
-		冲刺过程中无视击退
+		{$Mods.Coralite.Systems.FlyingShieldSystem.DamageReduceDash}
 		冲刺命中第一个敌人时产生电圈，并提升冲刺速度，延长冲刺时间
 		最多产生两个电圈
 		'''
@@ -2854,15 +2811,15 @@ PiezoArmorPanel: {
 
 AmberAmulet: {
 	DisplayName: 琥珀护盾符
-	Tooltip: +8% 飞盾格挡时减少弹幕穿透数的概率
+	Tooltip: +15% 飞盾格挡时弹回弹幕
 }
 
 JungleTurtleShell: {
 	DisplayName: 丛林龟壳
 	Tooltip:
 		'''
-		将物品状态下的丛林乌龟整只丢入微光液体后变成的龟壳，似乎在丛林地下的宝箱中也会出现
-		略微增加飞盾格挡能力
+		将物品状态下的丛林龟（小动物）整只丢入微光液体后变成的龟壳，似乎在丛林地下的宝箱中也会出现
+		略微增加飞盾成功格挡后获得的伤害减免
 		'''
 }
 
@@ -2884,9 +2841,7 @@ ForbiddenLamp: {
 	DisplayName: 忘却之灯芯
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
-		冲刺过程中无视击退
+		{$Mods.Coralite.Systems.FlyingShieldSystem.DamageReduceDash}
 		冲刺命中敌人时产生灯火爆破和鎏金碎片
 		'''
 }
@@ -2895,9 +2850,7 @@ SolarTwinkle: {
 	DisplayName: 太阳的闪烁
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲过程中会持续给予基于盾牌属性的伤害减免效果]
-		冲刺过程中无视击退
+		{$Mods.Coralite.Systems.FlyingShieldSystem.DamageReduceDash}
 		冲刺命中敌人时产生太阳爆破
 		冲刺时使用日耀能量进行斩击
 		'''
@@ -2907,9 +2860,7 @@ OniMask: {
 	DisplayName: 骸骨面具
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
-		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
+		{$Mods.Coralite.Systems.FlyingShieldSystem.ParryDash}
 		冲刺开始时丢出骨头
 		“或许戴上后能够变为一般系”
 		'''
@@ -2919,9 +2870,7 @@ KamonFlag: {
 	DisplayName: 忍者氏族旗
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
-		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
+		{$Mods.Coralite.Systems.FlyingShieldSystem.ParryDash}
 		冲刺开始时生成灰黑冤魂
 		'''
 }
@@ -2930,9 +2879,7 @@ SolarPanel: {
 	DisplayName: 太阳能护板
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
-		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
+		{$Mods.Coralite.Systems.FlyingShieldSystem.ParryDash}
 		冲刺途中生成带电爆破弹
 		'''
 }
@@ -2946,9 +2893,7 @@ OldClockwork: {
 	DisplayName: 旧发条
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
-		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
+		{$Mods.Coralite.Systems.FlyingShieldSystem.ParryDash}
 		冲刺命中后给予“拧紧发条”BUFF
 		“博士，这个什么时候才能拿掉呢？”
 		'''
@@ -2958,9 +2903,7 @@ ChronoHeart: {
 	DisplayName: 时轮之心
 	Tooltip:
 		'''
-		[c/8aebff:手持飞盾或完全举起盾牌时双击方向键可进行盾冲]
-		[c/8aebff:盾冲命中后会将自身弹回，并触发盾牌防御效果]
-		[c/8aebff:如果佩戴了完美格挡相关饰品能在刚开始盾冲时触发效果]
+		{$Mods.Coralite.Systems.FlyingShieldSystem.ParryDash}
 		冲刺时生成时针
 		“你听得到时间的心跳”
 		'''
@@ -3005,7 +2948,7 @@ ReverseFlash: {
 	Tooltip:
 		'''
 		射击时从远处朝玩家生成一道电光
-		双击方向键进行伏闪，之后生成一道逆闪电
+		冲刺效果：进行伏闪，之后生成一道逆闪电
 		[c/fbf236:电闪雷鸣]
 		'''
 }
@@ -3131,7 +3074,7 @@ CyberwyrmRehab: {
 }
 
 CancerFlail: {
-	DisplayName: 十二星-巨蟹座
+	DisplayName: 十二星 - 巨蟹座
 	Tooltip: 挥动双钳
 }
 
@@ -3165,8 +3108,8 @@ WarpMirror: {
 }
 
 Virgo: {
-	DisplayName: 十二星-处女座
-	Tooltip: 将火枪子弹转化为羽毛弹
+	DisplayName: 十二星 - 处女座
+	Tooltip: 将子弹转化为羽毛弹
 }
 
 GigantesShoes: {
@@ -3208,8 +3151,8 @@ HylianShield: {
 	Tooltip:
 		'''
 		手持时增加25防御
-		举起盾牌后双击方向键使用盾滑
-		举盾瞬间可进行盾反，防御时能够将弹幕弹回去
+		冲刺效果：举起盾牌后使用盾滑
+		举盾瞬间可进行盾反，格挡时能够将弹幕弹回去
 		“伴随着持有它的勇者的传说，自古从海拉鲁王族流传下来的盾。”
 		“以其他盾无法企及的压倒性的防御力和耐久性为傲。”
 		[c/00ff00:盾反时产生的高亮效果可以在模组配置中关闭]
@@ -3329,7 +3272,7 @@ VampireEarl: {
 
 CrystalFins: {
 	DisplayName: 晶鳍鱼
-	Tooltip: 身上长着水晶状的鱼鳍
+	Tooltip: 来到水晶洞后发生变异的鱼，身上长着水晶状的鱼鳍
 }
 
 GalacticVortexBanner: {
@@ -3482,7 +3425,7 @@ ThunderveinDragonMask: {
 
 EtheriaLegacy: {
 	DisplayName: 埃特尼亚之遗
-	Tooltip: 飞盾在完美防御时获得惊人一刻效果
+	Tooltip: 飞盾在完美格挡时获得惊人一刻效果
 }
 
 CrystalEyeBannerItem: {
@@ -3759,7 +3702,7 @@ Zircon: {
 
 FlyingShieldBattleGuide: {
 	DisplayName: 飞盾战斗指南
-	Tooltip: 让盾冲与格挡变得更加自由
+	Tooltip: 飞盾未回归时也能使用盾冲
 }
 
 Terranascence: {
@@ -3776,8 +3719,9 @@ AlloySpring: {
 	DisplayName: 强化合金弹簧
 	Tooltip:
 		'''
-		增加冲刺速度
-		冲刺时根据防御力增加伤害，最多10%
+		增加盾冲的冲刺速度
+		冲刺时根据防御力增加伤害，最多15%
+		冲刺时获得一次性的35点伤害减免
 		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
@@ -3787,7 +3731,8 @@ GravitationalCatapult: {
 	Tooltip:
 		'''
 		大幅增加冲刺速度，增加冲刺时间
-		冲刺时根据防御力增加伤害，最多20%
+		冲刺时根据防御力增加伤害，最多30%
+		冲刺时获得一次性的50点伤害减免
 		{$Mods.Coralite.Items.FlyingShieldBattleGuide.Tooltip}
 		'''
 }
@@ -3806,7 +3751,7 @@ Afterglow: {
 	DisplayName: 晚霞
 	Tooltip:
 		'''
-		双击方向键进行冲刺，期间摩擦地面引燃木箭
+		冲刺效果：冲刺期间摩擦地面引燃木箭
 		冰块能擦出霜火
 		[c/c2370d:"落日余晖"]
 		'''
@@ -3837,7 +3782,7 @@ CrystallineSkarn: {
 
 Skarn: {
 	DisplayName: 矽卡岩
-	Tooltip: 暂时通过玄武岩重塑获得
+	Tooltip: ""
 }
 
 AmberEardrop: {
@@ -3864,7 +3809,7 @@ OsirisPillar: {
 	DisplayName: 奥西里斯魔柱
 	Tooltip:
 		'''
-		魔力充盈时持续减少生命值
+		装备时持续减少生命值
 		生命值小于一定值后获得伤害，暴击率增幅
 		增加魔力上限和魔力再生速度
 		'''
@@ -3879,7 +3824,6 @@ SquirrelSet: {
 		[c/8c8c8c:*带着些许绒毛的小角和温热的红色毛线.]
 		“非常适合用来冒充珊瑚石开发者！”
 		'''
-	ShlimmerTranslation: 此为微光转化合成表
 }
 
 IceAxe: {
@@ -4051,7 +3995,7 @@ BasicRefractor: {
 	DisplayName: 基础广角镜
 	Tooltip:
 		'''
-		连接距离很远
+		用于中距离传输魔能
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
 		'''
 }
@@ -4067,7 +4011,7 @@ MagicCrystalFishingRod: {
 }
 
 MagicCrystalPolarizedFilter: {
-	DisplayName: 偏振滤镜-晶体
+	DisplayName: 偏振滤镜 ◊ 晶体
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4077,57 +4021,57 @@ BasicFilter: {
 }
 
 CorruptionPolarizedFilter: {
-	DisplayName: 偏振滤镜-腐化
+	DisplayName: 偏振滤镜 ◊ 腐化
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 CrimsonPolarizedFilter: {
-	DisplayName: 偏振滤镜-猩红
+	DisplayName: 偏振滤镜 ◊ 猩红
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 CrystallineMagikePolarizedFilter: {
-	DisplayName: 偏振滤镜-蕴魔
+	DisplayName: 偏振滤镜 ◊ 蕴魔
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 FeatherPolarizedFilter: {
-	DisplayName: 偏振滤镜-羽蛇
+	DisplayName: 偏振滤镜 ◊ 羽蛇
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 GlistentPolarizedFilter: {
-	DisplayName: 偏振滤镜-晶莹
+	DisplayName: 偏振滤镜 ◊ 晶莹
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 HallowPolarizedFilter: {
-	DisplayName: 偏振滤镜-神圣
+	DisplayName: 偏振滤镜 ◊ 神圣
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 HolyLightPolarizedFilter: {
-	DisplayName: 偏振滤镜-圣光
+	DisplayName: 偏振滤镜 ◊ 圣光
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 IciclePolarizedFilter: {
-	DisplayName: 偏振滤镜-冰晶
+	DisplayName: 偏振滤镜 ◊ 冰晶
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 ShadowPolarizedFilter: {
-	DisplayName: 偏振滤镜-影子
+	DisplayName: 偏振滤镜 ◊ 影子
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 SoulPolarizedFilter: {
-	DisplayName: 偏振滤镜-灵魂
+	DisplayName: 偏振滤镜 ◊ 灵魂
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 SplendorMagicorePolarizedFilter: {
-	DisplayName: 偏振滤镜-光辉
+	DisplayName: 偏振滤镜 ◊ 光辉
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4247,12 +4191,12 @@ EmperorGel: {
 }
 
 PelagicPolarizedFilter: {
-	DisplayName: 偏振滤镜-远洋
+	DisplayName: 偏振滤镜 ◊ 远洋
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 SeashorePolarizedFilter: {
-	DisplayName: 偏振滤镜-海滨
+	DisplayName: 偏振滤镜 ◊ 海滨
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4266,17 +4210,17 @@ SkyLens: {
 }
 
 EiderdownPolarizedFilter: {
-	DisplayName: 偏振滤镜-羽毛
+	DisplayName: 偏振滤镜 ◊ 羽毛
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 EmperorPolarizedFilter: {
-	DisplayName: 偏振滤镜-帝凝胶
+	DisplayName: 偏振滤镜 ◊ 帝凝胶
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 FlightPolarizedFilter: {
-	DisplayName: 偏振滤镜-飞翔
+	DisplayName: 偏振滤镜 ◊ 飞翔
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4290,27 +4234,27 @@ DesertLens: {
 }
 
 EternalFlamePolarizedFilter: {
-	DisplayName: 偏振滤镜-薪火
+	DisplayName: 偏振滤镜 ◊ 薪火
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 ForbiddenPolarizedFilter: {
-	DisplayName: 偏振滤镜-禁戒
+	DisplayName: 偏振滤镜 ◊ 禁戒
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 FrostPolarizedFilter: {
-	DisplayName: 偏振滤镜-寒霜
+	DisplayName: 偏振滤镜 ◊ 寒霜
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 HellstonePolarizedFilter: {
-	DisplayName: 偏振滤镜-狱石
+	DisplayName: 偏振滤镜 ◊ 狱石
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 QuicksandPolarizedFilter: {
-	DisplayName: 偏振滤镜-流沙
+	DisplayName: 偏振滤镜 ◊ 流沙
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4325,7 +4269,7 @@ InsulationCortex: {
 }
 
 ShroomitePolarizedFilter: {
-	DisplayName: 偏振滤镜-蘑菇矿锭
+	DisplayName: 偏振滤镜 ◊ 蘑菇
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4347,7 +4291,7 @@ Heptachromic: {
 
 BasicPedestal: {
 	DisplayName: 基础置物台
-	Tooltip: 可以在内部放入物品拱展示或魔能合成
+	Tooltip: 可以在内部放入物品
 }
 
 GelFiberBreastplate: {
@@ -4367,11 +4311,11 @@ GelFiberHelmet: {
 }
 
 SymbolOfMagike: {
-	DisplayName: 魔能徽记
+	DisplayName: 魔能
 	Tooltip:
 		'''
 		该合成表仅供查看，该物品无法获得
-		请使用魔能合成坛进行魔能合成
+		请使用魔能仪器合成
 		'''
 	MagikeNeed: "魔能需求量 "
 }
@@ -4398,14 +4342,18 @@ FarAwaySky: {
 	DisplayName: 遥远青空
 	Tooltip:
 		'''
-		双击方向键冲刺，之后射出云箭为自身增加攻击和移动速度
+		冲刺效果：冲刺后射出云箭为自身增加攻击和移动速度
 		[c/61c3e7:“雨过天晴”]
 		'''
 }
 
 MagikeBasePage: {
 	DisplayName: 魔能基础残页
-	Tooltip: 使用以学习魔能基础知识
+	Tooltip:
+		'''
+		左键使用学习魔能的基础知识，同时解锁珊瑚笔记中的“魔能残卷 其一”
+		曾经被遗失在地下的魔力水晶洞中...
+		'''
 }
 
 LeprechaunBait: {
@@ -4441,7 +4389,8 @@ RadiantSun: {
 	DisplayName: 旭日
 	Tooltip:
 		'''
-		双击方向键滑步，之后射出旭日箭对鼠标位置发动流星闪击
+		冲刺效果：冲刺后射出旭日箭对鼠标位置发动流星闪击
+		冲刺期间有短暂无敌
 		[c/ffe021:“银白的巨狮在天空中奔跑，为世间带来阳光”]
 		'''
 }
@@ -4461,12 +4410,12 @@ MoonlightLens: {
 }
 
 BloodJadePolarizedFilter: {
-	DisplayName: 偏振滤镜-赤血玉
+	DisplayName: 偏振滤镜 ◊ 赤血玉
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
 RedJadePolarizedFilter: {
-	DisplayName: 偏振滤镜-赤玉
+	DisplayName: 偏振滤镜 ◊ 赤玉
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4562,7 +4511,7 @@ WaterflowLens: {
 }
 
 BeeswaxPolarizedFilter: {
-	DisplayName: 偏振滤镜-蜂蜡
+	DisplayName: 偏振滤镜 ◊ 蜂蜡
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4571,7 +4520,7 @@ GreenOnionBurritos: {
 	Tooltip:
 		'''
 		左键丢出大葱，大葱在碰到卷饼后会变为大葱卷饼并造成更高伤害
-		飞盾与防御均为卷饼
+		飞盾与格挡均为卷饼
 		'''
 }
 
@@ -4585,7 +4534,7 @@ DungeonLens: {
 }
 
 BonePolarizedFilter: {
-	DisplayName: 偏振滤镜-骨头
+	DisplayName: 偏振滤镜 ◊ 骨头
 	Tooltip: "{$Mods.Coralite.MagikeSystem.MagikeSystem.PolarizedFilterTooltip}"
 }
 
@@ -4661,7 +4610,7 @@ BrilliantMagikeActivator: {
 }
 
 MagicCrystalTRFilter: {
-	DisplayName: 全反射滤镜-晶体
+	DisplayName: 全反射滤镜 ◊ 晶体
 	Tooltip:
 		'''
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.TotalReflectionFilterTooltip}
@@ -4670,7 +4619,7 @@ MagicCrystalTRFilter: {
 }
 
 MagicCrystalDiffractionFilter: {
-	DisplayName: 衍射滤镜-晶体
+	DisplayName: 衍射滤镜 ◊ 晶体
 	Tooltip:
 		'''
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.DiffractionFilterFilterTooltip}
@@ -4679,7 +4628,7 @@ MagicCrystalDiffractionFilter: {
 }
 
 MagicCrystalInterferenceFilter: {
-	DisplayName: 干涉滤镜-晶体
+	DisplayName: 干涉滤镜 ◊ 晶体
 	Tooltip:
 		'''
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.InterferenceFilterTooltip}
@@ -4688,7 +4637,7 @@ MagicCrystalInterferenceFilter: {
 }
 
 MagicCrystalExcitedFilter: {
-	DisplayName: 激发滤镜-晶体
+	DisplayName: 激发滤镜 ◊ 晶体
 	Tooltip:
 		'''
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.ExcitedFilterTooltip}
@@ -4697,7 +4646,7 @@ MagicCrystalExcitedFilter: {
 }
 
 MagicCrystalPulseFilter: {
-	DisplayName: 脉冲滤镜-晶体
+	DisplayName: 脉冲滤镜 ◊ 晶体
 	Tooltip:
 		'''
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.PulseFilterTooltip}
@@ -4718,6 +4667,8 @@ TreasureLens: {
 BrilliantScanner: {
 	DisplayName: 璀璨扫描镜
 	Tooltip: 放在背包内时可以观测到魔能流动以及仪器情况
+	CanShowLines: ○ 显示魔能流动，背包内右键关闭
+	DontShowLines: × 不显示魔能流动，背包内右键开启
 }
 
 SkarnBrick: {
@@ -4904,16 +4855,7 @@ StoneMakerCore: {
 	Tooltip:
 		'''
 		用于制作 [i:Coralite/StoneMaker] {$Mods.Coralite.Items.StoneMaker.DisplayName}
-		通过搭建以下的多方块结构并右键核心进行合成
-
-		[i:Coralite/MagicCrystalBrick]   [i:Coralite/MagicCrystalBrick]
-		[i:Coralite/Basalt][i:Coralite/StoneMakerCore][i:Coralite/Basalt]
-		[i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt]
-
-		物块名：
-		[i:Coralite/Basalt]·{$Mods.Coralite.Items.Basalt.DisplayName}
-		[i:Coralite/HardBasalt]·{$Mods.Coralite.Items.HardBasalt.DisplayName}
-		[i:Coralite/MagicCrystalBrick]·{$Mods.Coralite.Items.MagicCrystalBrick.DisplayName}
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
 		'''
 }
 
@@ -4946,7 +4888,7 @@ LASER: {
 	Tooltip:
 		'''
 		一次性将自身内的所有魔能发送到正对着的仪器中
-		发送距离极远
+		用于远距离传输魔能
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
 		'''
 }
@@ -4956,20 +4898,7 @@ LASERCore: {
 	Tooltip:
 		'''
 		用于制作 [i:Coralite/LASER] {$Mods.Coralite.Items.LASER.DisplayName}
-		通过搭建以下的多方块结构并右键核心进行合成
-
-		[i:Coralite/HardBasalt][i:Coralite/HardBasalt]   [i:Coralite/HardBasalt][i:Coralite/HardBasalt]
-		[i:Coralite/Basalt]   [i:Coralite/MagicCrystalBlock]    [i:Coralite/Basalt]
-		[i:Coralite/Basalt]   [i:Coralite/MagicCrystalBlock]    [i:Coralite/Basalt]
-		[i:2173][i:2173][i:Coralite/LASERCore][i:2173][i:2173]
-		[i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt][i:Coralite/HardBasalt]
-
-		物块名：
-		[i:Coralite/Basalt]·{$Mods.Coralite.Items.Basalt.DisplayName}
-		[i:Coralite/HardBasalt]·{$Mods.Coralite.Items.HardBasalt.DisplayName}
-		[i:Coralite/MagicCrystalBlock]·{$Mods.Coralite.Items.MagicCrystalBlock.DisplayName}
-		[i:2173]·{$ItemName.CopperPlating}
-		.
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
 		'''
 }
 
@@ -4984,10 +4913,1110 @@ CogLens: {
 
 CoraliteNote: {
 	DisplayName: 珊瑚笔记
-	Tooltip: ""
+	Tooltip:
+		'''
+		具有魔力的神奇笔记，使用后打开UI
+		在接触一些事物时能够自动在上面显示相关的知识
+		'''
 }
 
 Phosphophyllite: {
 	DisplayName: 磷叶石
+	Tooltip: ""
+}
+
+GlistentRelic: {
+	DisplayName: 晶莹，闪耀的光彩
+	Tooltip: ""
+}
+
+EightsquareHand: {
+	DisplayName: 八角手
+	Tooltip: 提高宝石武器 “闪耀” 前缀的出现概率
+}
+
+HorizonArc: {
+	DisplayName: 环彩弧
+	Tooltip:
+		'''
+		冲刺效果：射出环彩箭
+		冲刺时穿过敌对目标会使环彩的光辉更加耀眼
+		冲刺过程中有短暂无敌
+		'''
+}
+
+VioletEmblem: {
+	DisplayName: 紫罗兰徽记
+	Tooltip: 增加各类运势，好运会伴随着你！
+}
+
+Turbulence: {
+	DisplayName: 乱流
+	Tooltip:
+		'''
+		冲刺效果：射出乱流箭贯穿敌人
+		右键射出乱流针
+		冲刺过程中有短暂无敌
+		[c/68c7dd:"穿梭于云间"]
+		'''
+}
+
+TurbulenceCore: {
+	DisplayName: 乱流核心
+	Tooltip:
+		'''
+		"似乎是骷髅王的眼睛风化后的产物，放在耳边能听到风声"
+		用于制作 [i:Coralite/Turbulence] {$Mods.Coralite.Items.Turbulence.DisplayName}
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
+		'''
+}
+
+FullMoon: {
+	DisplayName: 暗月
+	Tooltip:
+		'''
+		冲刺效果：冲撞到敌对目标后弹回并释放暗影之光
+		暗影之光能目标无视一定防御力
+		[c/8a43ff:“暗紫的巨蝠在空中飞翔，为世间带来月光”]
+		'''
+}
+
+SeismicWave: {
+	DisplayName: 震波
+	Tooltip:
+		'''
+		冲刺效果：只能向下冲刺，命中敌怪或是地面后产生冲击波
+		下冲命中敌怪后弹起并重置飞行时间
+		[c/bac1ce:来自地下深处的震动]
+		'''
+}
+
+WhiteGardenia: {
+	DisplayName: 白冥栀
+	Tooltip: ""
+}
+
+DigUnloadItem: {
+	ContainsItemText: 包含物品：
+	DisplayName: 临时卸载物品
+	Tooltip: "[c/e88ecb:带它离开这个世界吧，这个世界中没有它的容身之处。]"
+}
+
+Glaciate: {
+	DisplayName: 冰封世界
+	Tooltip:
+		'''
+		冲刺效果：射出冰霜波并强化下一次攻击
+		冰块命中冰霜波会爆出冰刺
+		'''
+}
+
+LeafShield: {
+	DisplayName: 生命大叶子
+	Tooltip: 仅仅是一片巨大的叶子而已
+}
+
+WoodenShield: {
+	DisplayName: 木盾
+	Tooltip: 不太趁手
+}
+
+Aurora: {
+	DisplayName: 极光
+	Tooltip:
+		'''
+		冲刺效果：射出标记箭
+		极光箭命中被标记的敌怪增加标记层数
+		标记箭一段时间后根据标记层数造成伤害
+		'''
+}
+
+BlackPlush: {
+	DisplayName: 黑色毛绒
+	Tooltip: ""
+}
+
+BlackPlushBathtub: {
+	DisplayName: 黑色毛绒浴缸
+	Tooltip: ""
+}
+
+BlackPlushBed: {
+	DisplayName: 黑色毛绒床
+	Tooltip: ""
+}
+
+BlackPlushBigDroplight: {
+	DisplayName: 黑色毛绒大吊灯
+	Tooltip: ""
+}
+
+BlackPlushBlock: {
+	DisplayName: 黑色毛绒球
+	Tooltip: ""
+}
+
+BlackPlushBookcase: {
+	DisplayName: 黑色毛绒猫爬架
+	Tooltip: ""
+}
+
+BlackPlushCandelabra: {
+	DisplayName: 黑色毛绒烛台
+	Tooltip: ""
+}
+
+BlackPlushCandle: {
+	DisplayName: 黑色毛绒蜡烛
+	Tooltip: ""
+}
+
+BlackPlushChair: {
+	DisplayName: 黑色毛绒椅
+	Tooltip: ""
+}
+
+BlackPlushChest: {
+	DisplayName: 黑色毛绒箱
+	Tooltip: ""
+}
+
+BlackPlushClock: {
+	DisplayName: 黑色毛绒钟
+	Tooltip: ""
+}
+
+BlackPlushDoor: {
+	DisplayName: 黑色毛绒门
+	Tooltip: ""
+}
+
+BlackPlushDresser: {
+	DisplayName: 黑色毛绒梳妆台
+	Tooltip: ""
+}
+
+BlackPlushDroplight: {
+	DisplayName: 黑色毛绒吊灯
+	Tooltip: ""
+}
+
+BlackPlushFloorLamp: {
+	DisplayName: 黑色毛绒灯柱
+	Tooltip: ""
+}
+
+BlackPlushPiano: {
+	DisplayName: 黑色毛绒钢琴
+	Tooltip: ""
+}
+
+BlackPlushPlatform: {
+	DisplayName: 黑色毛绒平台
+	Tooltip: ""
+}
+
+BlackPlushSink: {
+	DisplayName: 黑色毛绒水槽
+	Tooltip: ""
+}
+
+BlackPlushSofa: {
+	DisplayName: 黑色毛绒沙发
+	Tooltip: ""
+}
+
+BlackPlushTable: {
+	DisplayName: 黑色毛绒桌
+	Tooltip: ""
+}
+
+BlackPlushToilet: {
+	DisplayName: 黑色毛绒马桶
+	Tooltip: ""
+}
+
+BlackPlushWorkBench: {
+	DisplayName: 黑色毛绒工作台
+	Tooltip: ""
+}
+
+BlackPlushWallItem: {
+	DisplayName: 黑色毛绒墙纸
+	Tooltip: ""
+}
+
+Solunar: {
+	DisplayName: 日月同辉
+	Tooltip: ""
+}
+
+BasicCharger: {
+	DisplayName: 基础充能台
+	Tooltip:
+		'''
+		激活后为内部的物品充能，可以在UI内切换是否给上方的物品或上方玩家身上的物品充能
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+CrystalBomb: {
+	DisplayName: 晶体炸弹
+	Tooltip: 消耗 5 魔能丢出晶体炸弹
+}
+
+PlatinumMagshield: {
+	DisplayName: 铂金魔能盾
+	Tooltip:
+		'''
+		可以进行完美格挡，完美格挡时消耗 3 魔能或80魔力释放魔能冲击
+		[c/ffbeec:铂金矿太多了]
+		'''
+}
+
+ApothecaryTable: {
+	NotHavePotion: 未放入药水！
+	DisplayName: 魔能药剂台
+	Tooltip:
+		'''
+		激活后消耗全部魔能，将内部存储的药水效果给予周围的玩家
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
+}
+
+Aquarius: {
+	DisplayName: 十二星 - 水瓶座
+	Tooltip: 射出水球，部分水球会在飞行中破裂并射出箭矢
+}
+
+IcicleMusicBox: {
+	DisplayName: 八音盒（冰结寒流）
+	Tooltip: ""
+}
+
+RedJadeMusicBox: {
+	DisplayName: 八音盒（赤色激流）
+	Tooltip: ""
+}
+
+WindSpeedArrows: {
+	DisplayName: 风速箭头
+	Tooltip:
+		'''
+		+6% 移动速度
+		根据移速增加箭矢伤害，最高20%
+		'''
+}
+
+Taurus: {
+	DisplayName: 十二星 - 金牛座
+	Tooltip: ""
+}
+
+B94WindbreakingArrowItem: {
+	DisplayName: B9-4 破风箭
+	Tooltip: 锁定附近的敌人后进行追踪
+}
+
+B94WindbreakingCompoundBow: {
+	DisplayName: B9-4 破风式复合弓
+	Tooltip: 将木箭转化为B9-4 破风箭
+}
+
+B9Alloy: {
+	DisplayName: B9合金
+	Tooltip: 具有坚硬，轻质，耐高温等优点的合金，适用于各类远程武器
+}
+
+SkarnChest: {
+	DisplayName: 矽卡砖箱
+	Tooltip: ""
+}
+
+CrystallineBlock: {
+	DisplayName: 蕴魔水晶块
+	Tooltip: ""
+}
+
+WildChalcedonyWallItem: {
+	DisplayName: 狂野玉髓墙
+	Tooltip: ""
+}
+
+CrackedSkarnWallItem: {
+	DisplayName: 破碎矽卡岩墙
+	Tooltip: ""
+}
+
+WindrangerQuiver: {
+	DisplayName: 风行者箭袋
+	Tooltip:
+		'''
+		根据移动速度增加箭矢伤害
+		延长受击无敌时间
+		增加箭的速度
+		'''
+}
+
+CrystallineLemna: {
+	DisplayName: 蕴魔浮萍幼苗
+	Tooltip: 在矽卡岩或平滑矽卡岩上种植蕴魔浮萍
+}
+
+FocusPotion: {
+	DisplayName: 聚焦药剂
+	Tooltip: 让你的鼠标发光！
+}
+
+CrystallineSeaOats: {
+	DisplayName: 蕴魔海燕麦
+	Tooltip: ""
+}
+
+CrystallineSeaOatsSeed: {
+	DisplayName: 蕴魔海燕麦幼苗
+	Tooltip:
+		'''
+		在矽卡系列物块上种植蕴魔海燕麦母体
+		蕴魔海燕麦会在母体附近的水中生长
+		'''
+}
+
+LightSoulCatalyst: {
+	DisplayName: 媒介 ◊ 光之魂
+	Tooltip: ""
+}
+
+SpellCircuitCore: {
+	DisplayName: 法术回路核心
+	Tooltip: ""
+}
+
+LightSoulFilter: {
+	DisplayName: 法术滤镜 ◊ 光之魂
+	Tooltip: ""
+}
+
+ChalcedonySapling: {
+	DisplayName: 玉髓树幼苗
+	Tooltip: 可以种在矽卡岩上
+}
+
+PossessedChest: {
+	DisplayName: 幻影胸甲
+	Tooltip: 冲刺时获得一次性的30点伤害减免
+}
+
+Luminward: {
+	DisplayName: 曲光泡膜
+	Tooltip:
+		'''
+		10秒未受击后获得隐身
+		隐身时 +5% 暴击率并获得一次性的 20% 伤害减免
+		伤害减免对低于30点的伤害不生效
+		'''
+}
+
+B9AlloyBathtub: {
+	DisplayName: B9 合金浴缸
+	Tooltip: ""
+}
+
+B9AlloyBed: {
+	DisplayName: B9 合金床
+	Tooltip: ""
+}
+
+B9AlloyBigDroplight: {
+	DisplayName: B9 合金大吊灯
+	Tooltip: ""
+}
+
+B9AlloyBookcase: {
+	DisplayName: B9 合金书架
+	Tooltip: ""
+}
+
+B9AlloyCandelabra: {
+	DisplayName: B9 合金烛台
+	Tooltip: ""
+}
+
+B9AlloyCandle: {
+	DisplayName: B9 合金蜡烛
+	Tooltip: ""
+}
+
+B9AlloyChair: {
+	DisplayName: B9 合金椅
+	Tooltip: ""
+}
+
+B9AlloyChest: {
+	DisplayName: B9 合金箱
+	Tooltip: ""
+}
+
+B9AlloyClock: {
+	DisplayName: B9 合金钟
+	Tooltip: ""
+}
+
+B9AlloyDoor: {
+	DisplayName: B9 合金门
+	Tooltip: ""
+}
+
+B9AlloyDresser: {
+	DisplayName: B9 合金梳妆台
+	Tooltip: ""
+}
+
+B9AlloyDroplight: {
+	DisplayName: B9 合金吊灯
+	Tooltip: ""
+}
+
+B9AlloyFloorLamp: {
+	DisplayName: B9 合金灯柱
+	Tooltip: ""
+}
+
+B9AlloyPiano: {
+	DisplayName: B9 合金钢琴
+	Tooltip: ""
+}
+
+B9AlloyPlatform: {
+	DisplayName: B9 合金平台
+	Tooltip: ""
+}
+
+B9AlloySink: {
+	DisplayName: B9 合金水槽
+	Tooltip: ""
+}
+
+B9AlloySofa: {
+	DisplayName: B9 合金沙发
+	Tooltip: ""
+}
+
+B9AlloyTable: {
+	DisplayName: B9 合金桌
+	Tooltip: ""
+}
+
+B9AlloyTileItem: {
+	DisplayName: B9 合金块
+	Tooltip: ""
+}
+
+B9AlloyToilet: {
+	DisplayName: B9 合金马桶
+	Tooltip: ""
+}
+
+B9AlloyWallItem: {
+	DisplayName: B9 合金墙
+	Tooltip: ""
+}
+
+B9AlloyWorkBench: {
+	DisplayName: B9 合金工作台
+	Tooltip: ""
+}
+
+CrystallineCrate: {
+	DisplayName: 蕴魔水晶匣
+	Tooltip: 右键点击以打开
+}
+
+SkyshipInABottle: {
+	DisplayName: 瓶中天船
+	Tooltip: 唤出一艘玉髓木船，带你在云海遨游
+}
+
+CrystallineLance: {
+	DisplayName: 锋芒
+	Tooltip:
+		'''
+		创造动力以增加攻击力
+		消耗 40 魔能射出尾刺
+		'''
+}
+
+EmperorSlimeBoots: {
+	DisplayName: 帝王弹弹靴
+	Tooltip:
+		'''
+		获得[c/3298e1:弹弹史莱姆]！
+		    ▶ 落地后弹起，冲刺撞墙弹回，按住下键减少弹起距离
+		免疫摔落伤害，增加跳跃高度
+		'''
+	ExtraTooltip: 装备凝胶纤维套装 [i:Coralite/GelFiberHelmet][i:Coralite/GelFiberBreastplate] 或忍者套装 [i:256][i:257] 触发不同的套装效果
+	ArmorBonusGelFiber:
+		'''
+		+12防御力
+		命中带有史莱姆减益的敌怪时获得一层粘液覆层，该效果有半秒CD
+		以较高速度触发[c/3298e1:弹弹史莱姆]时获得一层粘液覆层
+		一一一一一一
+		每层提供1.5生命值，实际效果向下取整，最多叠加30层
+		拥有超过15层粘液时增加生命再生
+		一一一一一一
+		受击时失去5层粘液
+		将自身的史莱姆减益转换为一层粘液覆层
+		'''
+	ArmorBonusNinja:
+		'''
+		+6防御力，+4%暴击率，+15%移动速度
+		命中带有史莱姆减益的敌怪时生成皇家凝胶球攻击
+		触发[c/3298e1:弹弹史莱姆]时获得史莱姆的祝福，命中敌人附加史莱姆减益
+		该效果有半秒CD
+		'''
+	SpecialNameGelFiber: 至高
+	SpecialNameNinja: 远征
+}
+
+ChalcedonyWing: {
+	DisplayName: 玉髓翼
+	Tooltip:
+		'''
+		可飞行和缓慢坠落
+		获得强力云朵跳跃
+		'''
+}
+
+CrystallineHummingBannerItem: {
+	DisplayName: 蕴魔蜂鸟旗
+	Tooltip: ""
+}
+
+CrystallineVinicColumnBannerItem: {
+	DisplayName: 水晶柱蕴魔仿藤旗
+	Tooltip: ""
+}
+
+CrystallineVinicLaserBannerItem: {
+	DisplayName: 激光器蕴魔仿藤旗
+	Tooltip: ""
+}
+
+LeafStoneBathtub: {
+	DisplayName: 叶石浴缸
+	Tooltip: ""
+}
+
+LeafStoneBed: {
+	DisplayName: 叶石床
+	Tooltip: ""
+}
+
+LeafStoneBigDroplight: {
+	DisplayName: 叶石大吊灯
+	Tooltip: ""
+}
+
+LeafStoneBookcase: {
+	DisplayName: 叶石书架
+	Tooltip: ""
+}
+
+LeafStoneBrick: {
+	DisplayName: 叶石砖
+	Tooltip: ""
+}
+
+LeafStoneCandelabra: {
+	DisplayName: 叶石烛台
+	Tooltip: ""
+}
+
+LeafStoneCandle: {
+	DisplayName: 叶石蜡烛
+	Tooltip: ""
+}
+
+LeafStoneChair: {
+	DisplayName: 叶石椅
+	Tooltip: ""
+}
+
+LeafStoneChest: {
+	DisplayName: 叶石箱
+	Tooltip: ""
+}
+
+LeafStoneClock: {
+	DisplayName: 叶石钟
+	Tooltip: ""
+}
+
+LeafStoneDoor: {
+	DisplayName: 叶石门
+	Tooltip: ""
+}
+
+LeafStoneDresser: {
+	DisplayName: 叶石梳妆台
+	Tooltip: ""
+}
+
+LeafStoneDroplight: {
+	DisplayName: 叶石吊灯
+	Tooltip: ""
+}
+
+LeafStoneFloorLamp: {
+	DisplayName: 叶石灯柱
+	Tooltip: ""
+}
+
+LeafStonePiano: {
+	DisplayName: 叶石钢琴
+	Tooltip: ""
+}
+
+LeafStonePlatform: {
+	DisplayName: 叶石平台
+	Tooltip: ""
+}
+
+LeafStoneSink: {
+	DisplayName: 叶石水槽
+	Tooltip: ""
+}
+
+LeafStoneSofa: {
+	DisplayName: 叶石沙发
+	Tooltip: ""
+}
+
+LeafStoneTable: {
+	DisplayName: 叶石桌
+	Tooltip: ""
+}
+
+LeafStoneToilet: {
+	DisplayName: 叶石马桶
+	Tooltip: ""
+}
+
+LeafStoneWallItem: {
+	DisplayName: 叶石墙
+	Tooltip: ""
+}
+
+LeafStoneWorkBench: {
+	DisplayName: 叶石工作台
+	Tooltip: ""
+}
+
+SkarnBrickBathtub: {
+	DisplayName: 矽卡砖浴缸
+	Tooltip: ""
+}
+
+SkarnBrickBed: {
+	DisplayName: 矽卡砖床
+	Tooltip: ""
+}
+
+SkarnBrickBigDroplight: {
+	DisplayName: 矽卡砖大吊灯
+	Tooltip: ""
+}
+
+SkarnBrickBookcase: {
+	DisplayName: 矽卡砖书架
+	Tooltip: ""
+}
+
+SkarnBrickCandelabra: {
+	DisplayName: 矽卡砖烛台
+	Tooltip: ""
+}
+
+SkarnBrickCandle: {
+	DisplayName: 矽卡砖蜡烛
+	Tooltip: ""
+}
+
+SkarnBrickChair: {
+	DisplayName: 矽卡砖椅
+	Tooltip: ""
+}
+
+SkarnBrickClock: {
+	DisplayName: 矽卡砖钟
+	Tooltip: ""
+}
+
+SkarnBrickDoor: {
+	DisplayName: 矽卡砖门
+	Tooltip: ""
+}
+
+SkarnBrickDresser: {
+	DisplayName: 矽卡砖梳妆台
+	Tooltip: ""
+}
+
+SkarnBrickDroplight: {
+	DisplayName: 矽卡砖吊灯
+	Tooltip: ""
+}
+
+SkarnBrickFloorLamp: {
+	DisplayName: 矽卡砖灯柱
+	Tooltip: ""
+}
+
+SkarnBrickPiano: {
+	DisplayName: 矽卡砖钢琴
+	Tooltip: ""
+}
+
+SkarnBrickSink: {
+	DisplayName: 矽卡砖水槽
+	Tooltip: ""
+}
+
+SkarnBrickSofa: {
+	DisplayName: 矽卡砖沙发
+	Tooltip: ""
+}
+
+SkarnBrickTable: {
+	DisplayName: 矽卡砖桌
+	Tooltip: ""
+}
+
+SkarnBrickToilet: {
+	DisplayName: 矽卡砖马桶
+	Tooltip: ""
+}
+
+SkarnBrickWorkBench: {
+	DisplayName: 矽卡砖工作台
+	Tooltip: ""
+}
+
+SteelBathtub: {
+	DisplayName: 钢浴缸
+	Tooltip: ""
+}
+
+SteelBed: {
+	DisplayName: 钢床
+	Tooltip: ""
+}
+
+SteelBench: {
+	DisplayName: 钢长椅
+	Tooltip: ""
+}
+
+SteelBigDroplight: {
+	DisplayName: 钢大吊灯
+	Tooltip: ""
+}
+
+SteelBookcase: {
+	DisplayName: 钢书架
+	Tooltip: ""
+}
+
+SteelBrick: {
+	DisplayName: 钢砖
+	Tooltip: ""
+}
+
+SteelBrickWallItem: {
+	DisplayName: 钢砖墙
+	Tooltip: ""
+}
+
+SteelCandelabra: {
+	DisplayName: 钢烛台
+	Tooltip: ""
+}
+
+SteelCandle: {
+	DisplayName: 钢蜡烛
+	Tooltip: ""
+}
+
+SteelChair: {
+	DisplayName: 钢椅
+	Tooltip: ""
+}
+
+SteelChest: {
+	DisplayName: 钢箱
+	Tooltip: ""
+}
+
+SteelClock: {
+	DisplayName: 钢钟
+	Tooltip: ""
+}
+
+SteelDoor: {
+	DisplayName: 钢网门
+	Tooltip: “可以阻挡豌豆！”
+}
+
+SteelDresser: {
+	DisplayName: 钢梳妆台
+	Tooltip: ""
+}
+
+SteelDroplight: {
+	DisplayName: 钢吊灯
+	Tooltip: ""
+}
+
+SteelFloorLamp: {
+	DisplayName: 钢灯柱
+	Tooltip: ""
+}
+
+SteelPiano: {
+	DisplayName: 钢钢琴
+	Tooltip: ""
+}
+
+SteelPlatform: {
+	DisplayName: 钢平台
+	Tooltip: ""
+}
+
+SteelSink: {
+	DisplayName: 钢水槽
+	Tooltip: ""
+}
+
+SteelSofa: {
+	DisplayName: 钢沙发
+	Tooltip: ""
+}
+
+SteelTable: {
+	DisplayName: 钢桌
+	Tooltip: ""
+}
+
+SteelToilet: {
+	DisplayName: 钢马桶
+	Tooltip: ""
+}
+
+SteelWorkBench: {
+	DisplayName: 钢工作台
+	Tooltip: ""
+}
+
+SkarnBrickBench: {
+	DisplayName: 矽卡砖长椅
+	Tooltip: ""
+}
+
+LuminDye: {
+	DisplayName: 曲光染料
+	Tooltip: 让你的衣服偶尔变得半透明！
+}
+
+GlassCat: {
+	DisplayName: 玻璃猫
+	Tooltip: 透过半透明的身体能够看到内脏！
+}
+
+CrystallinePylon: {
+	DisplayName: 蕴魔晶塔
+	Tooltip: 当附近有两个村民时，传送至另一个晶塔
+}
+
+CrystallineSentinelBannerItem: {
+	DisplayName: 结晶战斗体旗
+	Tooltip: ""
+}
+
+WildMabirdBannerItem: {
+	DisplayName: 野生魔鸟旗
+	Tooltip: ""
+}
+
+WildMabirdNestBannerItem: {
+	DisplayName: 野生魔鸟巢旗
+	Tooltip: ""
+}
+
+UnsentLetter: {
+	DisplayName: 未寄出的信件
+	Tooltip: 召唤一只信使鸟妖，她会帮你拾取远处的物品
+}
+
+CrystallineFountainItem: {
+	DisplayName: 蕴魔喷泉
+	Tooltip: ""
+}
+
+RainbowPorpoise: {
+	Description: 海豚很可爱，但虹豚更可爱！你能飞到那个空岛上吗？太好了，去给我抓一条虹豚来！不是海豚，是虹豚！现在就给我去！
+	CatchLocation: 捕获位置：蕴魔空岛
+	DisplayName: 虹豚
+	Tooltip: ""
+}
+
+CrystallineHook: {
+	DisplayName: 蕴魔钩爪
+	Tooltip: 牵引玩家到一定距离内松开钩爪
+}
+
+Wisteria: {
+	DisplayName: 紫藤萝
+	Tooltip:
+		'''
+		射出花瓣
+		“沉迷的爱”
+		'''
+}
+
+BasicMabirdNest: {
+	DisplayName: 基础魔鸟巢
+	Tooltip: ""
+}
+
+CrystallineMabird: {
+	DisplayName: 蕴魔鸟
+	Tooltip: ""
+}
+
+StartSkyIsland: {
+	DisplayName: 起始空岛
+	Tooltip: ""
+}
+
+BloodmarkTopper: {
+	ExtraToolTipNone:
+		'''
+		获得[c/ed494e:血礼帽]！
+		    ▶ 生成一个血礼帽，附着在最近的敌怪头上并啃咬
+		'''
+	ExtraToolTipBlood:
+		'''
+		获得[c/ed494e:血礼帽]！
+		    ▶ 生成一个血礼帽，附着在最近的敌怪头上并啃咬
+		'''
+	ExtraToolTipShadow:
+		'''
+		获得[c/f148eb:影礼帽]！
+		    ▶ 生成一个影礼帽，附着在最近的敌怪头上啃咬并生成小影怪
+		    ▶ 小影怪命中后会回归玩家并依次增加攻击，生命上限和防御力
+		      攻击每次增加3%，上限15%，生命上限每次增加5，上限25，防御每次增加1，上限5
+		      每过12秒失去一层效果
+		'''
+	ExtraToolTipPrison:
+		'''
+		获得[c/665cc2:罪孽礼帽]！
+		    ▶ 生成一个罪孽礼帽，使用鞭子攻击时向最近的敌人射出铁刺
+		    ▶ 每5次攻击生成一个鱼剪，命中时降低目标8防御力
+		'''
+	SpecialPreNameBlood: 嗜血
+	SpecialPreNameShadow: 阴影
+	SpecialPreNamePrison: 提刑
+	ArmorSetBlood:
+		'''
+		+10 防御，大大提高生命再生速度
+		获得[c/ed494e:血池]！
+		    ▶ 血礼帽啃咬一定次数后叠加礼帽，礼帽数量到达5个时将礼帽变为血滴
+		    ▶ 血滴命中时为血池积累2点血液并吸血，血池血量上限为50
+		    ▶ 使用治疗药水时消耗血池并增加回复量
+		'''
+	ArmorSetShadow:
+		'''
+		+6 防御，提高移动速度和加速度
+		将 [c/ed494e:血礼帽] 改为 [c/f148eb:影礼帽]
+		'''
+	ArmorSetPrison:
+		'''
+		+6 防御，鞭子范围扩大30%，速度提高15%，+15% 召唤伤害
+		将 [c/ed494e:血礼帽] 改为 [c/665cc2:罪孽礼帽]
+		'''
+	DisplayName: 血印礼帽
+	Tooltip:
+		'''
+		+8% 伤害，+5% 暴击率
+		背包内右键切换作为时装时的外观
+		'''
+	SetTip: 装备猩红套装 [i:793][i:794] 或暗影套装 [i:101][i:100][i:957][i:958] 或黑曜石套装 [i:3267][i:3268] 触发不同的套装效果
+}
+
+MabirdLoupe: {
+	DisplayName: 魔鸟观察镜
+	Tooltip: 放在背包内可以看到魔鸟的路线
+	CanShowBackLines: ○ 显示全部路线，包括物品搬运与出巢归巢路线，背包内右键切换
+	DontShowBackLines: △ 仅显示物品搬运路线，背包内右键启用
+	ShowNothing: × 不显示魔鸟路线，背包内右键切换
+}
+
+SkarnCutter: {
+	DisplayName: 矽卡复合切割机
+	Tooltip: 用于切割矽卡岩与玉髓木
+}
+
+CrystallineMagikeClusters: {
+	DisplayName: 蕴魔水晶簇
+	Tooltip: 可以使用同等级的光束采集器采挖蕴魔水晶
+}
+
+BloodWorm: {
+	DisplayName: 血蛭
+	Tooltip: 在血月时必定钓上敌怪
+}
+
+QueenOfNight: {
+	DisplayName: 夜皇后
+	Tooltip: 诡秘之死
+}
+
+Datura: {
+	DisplayName: 曼陀罗
+	Tooltip: 天生幸运
+}
+
+MidasGunpowder: {
+	DisplayName: 迈达斯灰烬
+	Tooltip:
+		'''
+		枪类伤害增加15%
+		远程击退增加15%
+		枪在射击时额外射出迈达斯火花，该效果有1.5秒CD
+		'''
+}
+
+GhostPipe: {
+	DisplayName: 水晶兰
+	Tooltip: 纯洁之灵
+}
+
+SunflowerGun: {
+	DisplayName: 向阳花
+	Tooltip: 深爱与守望
+}
+
+InfinityMagikePoint: {
+	DisplayName: 无限魔能节点
+	Tooltip: 提供无限的魔能
+}
+
+Aloe: {
+	DisplayName: 芦荟
+	Tooltip: 洁身自爱
+}
+
+CrystallineMusicBox: {
+	DisplayName: 八音盒（蕴魔奇观）
 	Tooltip: ""
 }

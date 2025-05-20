@@ -52,7 +52,6 @@ namespace Coralite.Content.Items.MagikeSeries2
             Item.maxStack = 1;
             Item.value = Item.sellPrice(0, 0, 50);
             Item.rare = ModContent.RarityType<CrystallineMagikeRarity>();
-            Item.GetMagikeItem().magikeAmount = 450;
             Item.channel = true;
         }
 
@@ -112,7 +111,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                     Vector2.Zero, ModContent.ProjectileType<BrilliantConnectStaffProj>(), 0, 0, Main.myPlayer, topLeft.X, topLeft.Y);
             }
 
-            Helper.PlayPitched("Fairy/FairyBottleClick2", 0.4f, 0, player.Center);
+            //Helper.PlayPitched("Fairy/FairyBottleClick2", 0.4f, 0, player.Center);
 
             return true;
         }
@@ -134,7 +133,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public void AddMagikeCraftRecipe()
         {
-            MagikeCraftRecipe.CreateRecipe<MagConnectStaff, BrilliantConnectStaff>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
+            MagikeRecipe.CreateCraftRecipe<MagConnectStaff, BrilliantConnectStaff>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
                 .AddIngredient<CrystallineMagike>(5)
                 .AddIngredient<Skarn>(20)
                 .AddIngredient<TalantosInABottle>()
@@ -188,7 +187,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         internal void Send_Sender_Data()
         {
             ModPacket modPacket = Coralite.Instance.GetPacket();
-            modPacket.Write((byte)CLNetWorkEnum.BrilliantConnectStaff_Sender);
+            modPacket.Write((byte)CoraliteNetWorkEnum.BrilliantConnectStaff_Sender);
             modPacket.Write(Owner.whoAmI);
             modPacket.WritePoint16(TargetPoint);
             modPacket.WritePoint16(BasePosition);
@@ -209,7 +208,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                 if (Main.dedServ)
                 {
                     ModPacket modPacket = Coralite.Instance.GetPacket();
-                    modPacket.Write((byte)CLNetWorkEnum.BrilliantConnectStaff_Sender);
+                    modPacket.Write((byte)CoraliteNetWorkEnum.BrilliantConnectStaff_Sender);
                     modPacket.Write(ownerIndex);
                     modPacket.WritePoint16(TargetPoint);
                     modPacket.WritePoint16(BasePosition);
@@ -222,7 +221,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         internal void Send_Receivers_Data()
         {
             ModPacket modPacket = Coralite.Instance.GetPacket();
-            modPacket.Write((byte)CLNetWorkEnum.BrilliantConnectStaff_Receivers);
+            modPacket.Write((byte)CoraliteNetWorkEnum.BrilliantConnectStaff_Receivers);
             modPacket.Write(Owner.whoAmI);
             modPacket.WritePoint16(TargetPoint);
             modPacket.WritePoint16(BasePosition);
@@ -243,7 +242,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                 if (Main.dedServ)
                 {
                     ModPacket modPacket = Coralite.Instance.GetPacket();
-                    modPacket.Write((byte)CLNetWorkEnum.BrilliantConnectStaff_Receivers);
+                    modPacket.Write((byte)CoraliteNetWorkEnum.BrilliantConnectStaff_Receivers);
                     modPacket.Write(ownerIndex);
                     modPacket.WritePoint16(TargetPoint);
                     modPacket.WritePoint16(BasePosition);
@@ -257,7 +256,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         {
             if (DownLeft)
             {
-                LockOwnerItemTime(5);
+                Owner.itemTime = Owner.itemAnimation = 5;
                 Projectile.timeLeft = 2;
 
                 TargetPoint = InMousePos.ToTileCoordinates16();
@@ -293,7 +292,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public void ChooseReceivers()
         {
-            LockOwnerItemTime(5);
+            Owner.itemTime = Owner.itemAnimation = 5;
 
             if (DownLeft)
             {
@@ -419,7 +418,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                     insertPoint.Add(currentTopLeft.Value);
 
                     //尝试根据左上角获取物块实体
-                    if (!MagikeHelper.TryGetEntity(currentTopLeft.Value, out MagikeTP entity))
+                    if (!MagikeHelper.TryGetEntityWithTopLeft(currentTopLeft.Value, out MagikeTP entity))
                         continue;
 
                     //能连接就连一下，不能就提供失败原因
@@ -497,7 +496,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         public override void DrawNonPremultiplied(SpriteBatch spriteBatch)
         {
             if (CanDrawFrame)
-                MagikeHelper.DrawRectangleFrame(spriteBatch, BasePosition, TargetPoint, Coralite.CrystallineMagikePurple);
+                MagikeHelper.DrawRectangleFrame(spriteBatch, BasePosition, TargetPoint, Coralite.CrystallinePurple);
         }
     }
 
@@ -525,7 +524,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
             if (DownRight)
             {
-                LockOwnerItemTime(5);
+                Owner.itemTime = Owner.itemAnimation = 5;
                 TargetPoint = InMousePos.ToTileCoordinates16();
 
                 //限制范围
@@ -598,7 +597,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public override Color GetDrawColor()
         {
-            return Coralite.CrystallineMagikePurple;
+            return Coralite.CrystallinePurple;
         }
 
     }

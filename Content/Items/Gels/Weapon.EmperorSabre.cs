@@ -1,7 +1,9 @@
-﻿using Coralite.Core;
+﻿using Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor;
+using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -125,7 +127,7 @@ namespace Coralite.Content.Items.Gels
             GradientTexture = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
@@ -144,9 +146,9 @@ namespace Coralite.Content.Items.Gels
             return 65 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -200,7 +202,7 @@ namespace Coralite.Content.Items.Gels
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void AIBefore()
@@ -270,7 +272,7 @@ namespace Coralite.Content.Items.Gels
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 2;
@@ -362,7 +364,7 @@ namespace Coralite.Content.Items.Gels
                 {
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
@@ -393,7 +395,7 @@ namespace Coralite.Content.Items.Gels
 
         public int alpha;
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 36;
@@ -411,9 +413,9 @@ namespace Coralite.Content.Items.Gels
             return 75 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -439,7 +441,7 @@ namespace Coralite.Content.Items.Gels
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void AIBefore()
@@ -490,7 +492,7 @@ namespace Coralite.Content.Items.Gels
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 2;
@@ -582,7 +584,7 @@ namespace Coralite.Content.Items.Gels
                 {
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(EmperorSabreSlash.GradientTexture.Value);
 
@@ -609,7 +611,7 @@ namespace Coralite.Content.Items.Gels
 
         public EmperorSabreSummon() : base(new Vector2(56, 64).ToRotation() - 0.1f) { }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 22;
@@ -626,9 +628,9 @@ namespace Coralite.Content.Items.Gels
             return Owner.direction > 0 ? 0 : MathHelper.Pi;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 2;
@@ -639,7 +641,7 @@ namespace Coralite.Content.Items.Gels
             maxTime = (int)(Owner.itemTimeMax * 0.8f) + 24;
             Smoother = Coralite.Instance.SqrtSmoother;
 
-            base.Initializer();
+            base.InitializeSwing();
             Projectile.rotation = _Rotation + MathHelper.Pi;
         }
 
@@ -728,7 +730,7 @@ namespace Coralite.Content.Items.Gels
     /// <summary>
     /// 使用ai1,ai2传入目标位置
     /// </summary>
-    public class GelChaser : ModProjectile
+    public class GelChaser : BaseHeldProj
     {
         public override string Texture => AssetDirectory.SlimeEmperor + "SmallGelBall";
 
@@ -765,7 +767,17 @@ namespace Coralite.Content.Items.Gels
             Projectile.localNPCHitCooldown = 20;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override bool? CanDamage()
+        {
+            if (State < 1)
+            {
+                return false;
+            }
+
+            return base.CanDamage();
+        }
+
+        public override void Initialize()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -834,23 +846,28 @@ namespace Coralite.Content.Items.Gels
         {
             Texture2D mainTex = Projectile.GetTexture();
             var pos = Projectile.Center - Main.screenPosition;
-            Color color = lightColor * Scale;
-            var frameBox = mainTex.Frame(1, 2, 0, 0);
 
-            //绘制自己
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, Scale, 0, 0);
+            float exRot = Projectile.whoAmI * 0.3f + Main.GlobalTimeWrappedHourly * 2;
+
+            if (Main.zenithWorld)
+                lightColor = SlimeEmperor.BlackSlimeColor;
+
+            Vector2 scale = new Vector2(Scale);
 
             float factor = MathF.Sin(Main.GlobalTimeWrappedHourly);
-            color = new Color(50, 152 + (int)(100 * factor), 225);
-            color *= 0.75f;
+            Color color = new Color(50, 152 + (int)(100 * factor), 225);
+            color *= Scale * 0.75f;
 
             //绘制影子拖尾
-            Projectile.DrawShadowTrails(color, 0.3f, 0.03f, 1, 8, 2, Scale, frameBox, 0);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
-            //绘制发光
-            frameBox = mainTex.Frame(1, 2, 0, 1);
+            for (int i = 1; i < 8; i += 2)
+                GelBall.DrawGelBall(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition
+                    , color * (0.3f - (i * 0.03f)), Projectile.oldRot[i], exRot + i * 1.1f, scale, false);
 
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, Scale, 0, 0);
+            //绘制自己
+            GelBall.DrawGelBall(mainTex, pos, lightColor * Scale
+                , Projectile.rotation, exRot, scale, true, true, color);
 
             return false;
         }

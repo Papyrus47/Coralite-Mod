@@ -1,17 +1,17 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 {
-    public class StickyGel : ModProjectile, IDrawPrimitive, IDrawNonPremultiplied
+    public class StickyGel : BaseHeldProj, IDrawPrimitive, IDrawNonPremultiplied
     {
         public override string Texture => AssetDirectory.SlimeEmperor + Name;
 
@@ -45,11 +45,9 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             Projectile.timeLeft = 80;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[12];
-            for (int i = 0; i < 12; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(12);
         }
 
         public override void AI()
@@ -68,7 +66,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                 Projectile.rotation = Projectile.velocity.ToRotation();
             }
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, 12, new NoTip(), factor => Helper.Lerp(4, 10, factor), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, 12, new EmptyMeshGenerator(), factor => Helper.Lerp(4, 10, factor), factor =>
             {
                 return Color.Lerp(Color.Transparent, new Color(78, 136, 255, 80), factor.X);
             });
@@ -77,7 +75,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[11] = Projectile.Center + Projectile.velocity;
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override void OnKill(int timeLeft)
@@ -124,7 +122,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                             WorldGen.paintCoatTile(i, j, Main.rand.NextFromList(PaintCoatingID.Glow, PaintCoatingID.Echo));
                             WorldGen.paintTile(i, j, (byte)Main.rand.Next(PaintID.Old_IlluminantPaint + 1));
                         }
-                        if (Main.tile[i, j].HasTile && Main.netMode == NetmodeID.Server)
+                        if (Main.tile[i, j].HasTile && VaultUtils.isServer)
                             NetMessage.SendTileSquare(-1, i, j);
                     }
                 }
@@ -146,7 +144,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             effect.View = view;
             effect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

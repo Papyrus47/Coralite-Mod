@@ -319,11 +319,6 @@ IcicleYujian: {
 	Tooltip: ""
 }
 
-CrossBreedMachine_G1Item: {
-	DisplayName: Cross Breed Machine_ G1 Item
-	Tooltip: ""
-}
-
 IceyPowder: {
 	DisplayName: Icy Powder
 	Tooltip: Contains a faint ice magic
@@ -517,6 +512,14 @@ ShadowHead: {
 		Increases maximum mana by 60
 		10% reduced mana usage
 		'''
+	ArmorBonus:
+		'''
+		The Shadow Armor Ring guards you
+		   When using an item, the ring is charged according to the time of use
+		   When you have enough energy, 
+		   press the Set Bonus button to use different attacks based on the type of weapon you use
+		   The set bonus key can be changed in the mod configuration
+		'''
 }
 
 ShadowLegs: {
@@ -603,11 +606,6 @@ Hyacinth: {
 }
 
 Rosemary: {
-	DisplayName: Rosemary
-	Tooltip: Keeping the good memories
-}
-
-Rosemary2: {
 	DisplayName: Rosemary
 	Tooltip: Keeping the good memories
 }
@@ -730,8 +728,8 @@ MagConnectStaff: {
 	DisplayName: Mag Connect Staff
 	Tooltip:
 		'''
-		Left-click to select and left-click again to establish the connection
-		Right-click to open the connection UI and click the button to cancel the connection
+		◇ Left-click to select and left-click again to establish the connection
+		◇ Right-click to open the connection UI and click the button to cancel the connection
 		'''
 }
 
@@ -757,7 +755,7 @@ CondensedCrystalBall: {
 
 MagikeActivator: {
 	DisplayName: Magike Activator
-	Tooltip: Activate the magike machine in the mouse position
+	Tooltip: ◇ Activate the magike machine in the mouse position
 }
 
 IcicleHeart: {
@@ -866,20 +864,6 @@ MagicCrystalBrick: {
 	Tooltip: ""
 }
 
-Page_MagikeBase: {
-	DisplayName: Page: Magike Base
-	Tooltip:
-		'''
-		Left click use to learn the basis of magike
-		"Magike, a mysterious energy, is usually considered to be highly concentrated magic. "
-		"Because of its extremely high concentration, it cannot provide magic power for people like potions."
-		"In order to rationalize the control and use of magike, various kinds of lenses, mirrors, and crystal pillars have been invented"
-		"Through the lens to produce magike, wide angle mirror to transmit magike, crystal pillar to store the magike"
-		"In order to use these devices, a connector is essential, which can connect the device with sending function to the receiving device"
-		"After mastering magike, mankind created various tools that are powered by magike"
-		'''
-}
-
 HardBasalt: {
 	DisplayName: Hard Basalt
 	Tooltip: ""
@@ -948,7 +932,7 @@ CorruptJavelin: {
 }
 
 SoulOfDeveloper: {
-	DisplayName: Soul Of Developer
+	DisplayName: Soul Of Enlight
 	Tooltip: Great for impersonating developers!
 }
 
@@ -1025,8 +1009,9 @@ NightmareHarp: {
 	Tooltip:
 		'''
 		Summon Nightmare Plantera at night, not consumable
-			Special skies and special health bars can be toggled on or off in the visual effects configuration
+		Special skies and special health bars can be toggled on or off in the visual effects configuration
 		'''
+	ShouldSleep: This item can only be used after the birth point is set on the bed
 }
 
 EmpyrosPowder: {
@@ -1453,12 +1438,7 @@ MiniSplendorColumn: {
 
 CrystalSword: {
 	DisplayName: Crystal Sword
-	Tooltip: Consumes 5 magike to shoot a beam
-}
-
-BrilliantCharger: {
-	DisplayName: Brilliant Charger
-	Tooltip: Right click to open the UI, insert an item that can hold magike, and activate to charge that item
+	Tooltip: Consumes 1 magike to shoot a beam
 }
 
 CrystalStaff: {
@@ -1530,16 +1510,6 @@ BloodJadeRangesWeapon: {
 	Tooltip: ""
 }
 
-MagikeGuideBook: {
-	DisplayName: Magike Guide Book
-	Tooltip: ""
-}
-
-MagikeNote1: {
-	DisplayName: Magike Note
-	Tooltip: ""
-}
-
 ShadowChain: {
 	DisplayName: Shadow Chain
 	Tooltip: ""
@@ -1560,7 +1530,6 @@ RuneSong: {
 AncientGemstone: {
 	DisplayName: Ancient Gemstone
 	Tooltip: "[c/8e8e8e:Strange, blue gemstone emitting waves of energy.]"
-	ShlimmerTranslation: This is the shimmer conversion synthesis table
 }
 
 BrokenHandle: {
@@ -1597,7 +1566,10 @@ RuneParchment: {
 		[c/8e8e8e:A unusually well preserved piece of ancient paper.]
 		[c/8e8e8e:The runes are impossible to decipher but small symbols hint at it being the recipe for a strange weapon.]
 			Sold by the Traveling Merchant after defeating Plantera
+			Please place it in the hotbar, you can't use it on the mouse!
+			
 		'''
+	OnCraft: Mods.Coralite.Items.RuneParchment.OnCraft
 }
 
 CraftLock: {
@@ -1917,7 +1889,11 @@ FlyingShieldToolbox: {
 
 HeavyWedges: {
 	DisplayName: Heavy Wedges
-	Tooltip: Reduces the flying speed of the Flying Shield, increases its size and melee damage.
+	Tooltip:
+		'''
+		Appears in chests
+		Reduces the flying speed of the Flying Shield, increases its size and melee damage.
+		'''
 }
 
 DemonsProtection: {
@@ -2724,6 +2700,7 @@ ThunderveinSpear: {
 		'''
 		Right-click to throw a spear, hit an enemy and stab it at them
 		Right-clicking again will pull the player towards the spear and spawn a lightning strike
+		"Don't try to replace a lightning rod"
 		'''
 }
 
@@ -2778,7 +2755,7 @@ JungleTurtleShell: {
 	DisplayName: Jungle Turtle Shell
 	Tooltip:
 		'''
-		The shell of a Jungle Turtle in its item state when dropped into the Shimmer Liquid 
+		The shell of a Jungle Turtle (Critters) in its item state when dropped into the Shimmer Liquid 
 		also appears in chests underneath the Jungle
 		Slightly increased shield blocking ability
 		'''
@@ -3785,7 +3762,7 @@ OsirisPillar: {
 	DisplayName: Osiris Pillar
 	Tooltip:
 		'''
-		Continuously reduces health while full of mana
+		Continuously reduces health while equipped
 		Gain damage when your health is less than a certain amount, and your critical strike chance increases
 		Increased mana cap and mana regeneration rate
 		'''
@@ -3800,7 +3777,6 @@ SquirrelSet: {
 		[c/8c8c8c:*With a little fluffy horn and warm red yarn.]
 		"Perfect for impersonating a Coralite developer!"
 		'''
-	ShlimmerTranslation: This is the shlimmer conversion synthesis table
 }
 
 IceAxe: {
@@ -3972,7 +3948,7 @@ BasicRefractor: {
 	DisplayName: Basic Refractor
 	Tooltip:
 		'''
-		The connection is very far away
+		Used to transmit magike at medium distances
 		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
 		'''
 }
@@ -4276,7 +4252,7 @@ Heptachromic: {
 
 BasicPedestal: {
 	DisplayName: Basic Pedestal
-	Tooltip: It is possible to put an item arch display or magike craft
+	Tooltip: It is possible to put items inside
 }
 
 GelFiberBreastplate: {
@@ -4335,7 +4311,11 @@ FarAwaySky: {
 
 MagikeBasePage: {
 	DisplayName: Magike Base Page
-	Tooltip: Use to learn the basics of magike
+	Tooltip:
+		'''
+		Left-click to learn the basics of magic and unlock the "Magike Fragment Part 1" in the Coralite Notes
+		Once lost in the Magic Crystal Cave underground...
+		'''
 }
 
 LeprechaunBait: {
@@ -4551,12 +4531,12 @@ BrilliantConnectStaff: {
 	DisplayName: Brilliant Connect Staff
 	Tooltip:
 		'''
-		Left-click on the selected area
-		left-click and select the area again to connect the magike apparatus in the two areas
-		Right-click in the inventory to toggle how to disconnect
-		  UI mode: Right-click on the magike sender to open the connection UI, 
+		◇ Left-click on the selected area
+		◇ left-click and select the area again to connect the magike apparatus in the two areas
+		◇ Right-click in the inventory to toggle how to disconnect
+		  ▶ UI mode: Right-click on the magike sender to open the connection UI, 
 		    and click the button to cancel the connection
-		  Marquee mode: Press and hold the right button to select an area, 
+		  ▶ Marquee mode: Press and hold the right button to select an area, 
 		    release the right button to cancel all connections in the area
 		'''
 	CurrentState: Current disconnection mode:
@@ -4588,11 +4568,7 @@ BrilliantCalibrator: {
 
 BrilliantMagikeActivator: {
 	DisplayName: Brilliant Magike Activator
-	Tooltip:
-		'''
-		Left-click to select a region
-		Release it to activate the magike factory in the area
-		'''
+	Tooltip: ◇ Left-click to select an area to activate the magike machine in the area
 }
 
 MagicCrystalTRFilter: {
@@ -4653,6 +4629,8 @@ TreasureLens: {
 BrilliantScanner: {
 	DisplayName: Brilliant Scanner
 	Tooltip: Keeping it in inventory allows you to observe the flow of magike and check the status of the Magike Apparatus
+	CanShowLines: Mods.Coralite.Items.BrilliantScanner.CanShowLines
+	DontShowLines: Mods.Coralite.Items.BrilliantScanner.DontShowLines
 }
 
 SkarnBrick: {
@@ -4777,22 +4755,22 @@ ChalcedonyChest: {
 
 Princesstrawberry: {
 	DisplayName: Princesstrawberry
-	Tooltip: ""
+	Tooltip: "{$CommonItemTooltip.MinorStats}"
 }
 
 Woodbine: {
 	DisplayName: Woodbine
-	Tooltip: ""
+	Tooltip: "{$CommonItemTooltip.MinorStats}"
 }
 
 Buttermilk: {
 	DisplayName: Buttermilk
-	Tooltip: ""
+	Tooltip: "{$CommonItemTooltip.MajorStats}"
 }
 
 RoyalKonjac: {
 	DisplayName: Royal Konjac
-	Tooltip: ""
+	Tooltip: "{$CommonItemTooltip.MajorStats}"
 }
 
 SkarnBrickPlatform: {
@@ -4801,7 +4779,7 @@ SkarnBrickPlatform: {
 }
 
 StoneRelic: {
-	DisplayName: Stone Relic
+	DisplayName: Stones, the movement of geology
 	Tooltip: ""
 }
 
@@ -4817,61 +4795,1083 @@ SmoothSkarnWallItem: {
 
 ConchHat: {
 	DisplayName: Conch Hat
-	Tooltip: ""
-	ArmorBonus: Mods.Coralite.Items.ConchHat.ArmorBonus
+	Tooltip:
+		'''
+		+20 max mana
+		+4% Magic crit chance
+		'''
+	ArmorBonus:
+		'''
+		When half of your mana is consumed, you gain the Bubble Blessing
+		which gives you the ability to run fast and gain +3 Defense
+		The bubble blessing lasts for a while and then disappears
+		'''
 }
 
 ConchRobe: {
 	DisplayName: Conch Robe
-	Tooltip: ""
+	Tooltip: +20 max mana
 }
 
 StoneMakerCore: {
-	DisplayName: Stone Maker Core
-	Tooltip: ""
+	DisplayName: Stones, condensed core
+	Tooltip:
+		'''
+		For crafting [i:Coralite/StoneMaker] {$Mods.Coralite.Items.StoneMaker.DisplayName}
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
+		'''
 }
 
 PremissionAltar: {
-	DisplayName: Premission Altar
-	Tooltip: ""
+	DisplayName: Skarn Altar
+	Tooltip:
+		'''
+		A creation from ancient times.
+		granting access to the Crystalline Sky Island to creatures with souls of light and night
+		Offering the corresponding soul to the Skarn Altar of light and night,
+		and right-clicking on the block again will have an unexpected effect.
+		'''
 }
 
 SkarnBrickWallItem: {
-	DisplayName: Skarn Brick Wall Item
+	DisplayName: Skarn Brick Wall
 	Tooltip: ""
 }
 
 SoulOfLightAltar: {
-	DisplayName: Soul Of Light Altar
-	Tooltip: ""
+	DisplayName: Skarn Light Altar
+	Tooltip: Creatures from ancient times, offer the ancient soul of light to the altar
 }
 
 SoulOfNightAltar: {
-	DisplayName: Soul Of Night Altar
-	Tooltip: ""
+	DisplayName: Skarn Night Altar
+	Tooltip: Creatures from ancient times, offer the ancient soul of night to the altar
 }
 
 LASER: {
-	DisplayName: L A S E R
-	Tooltip: ""
+	DisplayName: LASER
+	Tooltip:
+		'''
+		Sends all the magike in itself to the apparatus directly in front of it at once
+		Used to transmit magike over long distances
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
 }
 
 LASERCore: {
-	DisplayName: L A S E R Core
-	Tooltip: ""
+	DisplayName: LASER Core
+	Tooltip:
+		'''
+		For crafting [i:Coralite/LASER] {$Mods.Coralite.Items.LASER.DisplayName}
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
+		'''
 }
 
 CogLens: {
 	DisplayName: Cog Lens
-	Tooltip: ""
+	Tooltip:
+		'''
+		Automatically produces magike
+		{$Mods.Coralite.MagikeSystem.MagikeSystem.NeedPolarizedFilter}
+		'''
 }
 
 CoraliteNote: {
 	DisplayName: Coralite Note
-	Tooltip: ""
+	Tooltip:
+		'''
+		Magical notes with magical powers, open the UI after use
+		When you touch something, you can automatically display relevant knowledge on it
+		'''
 }
 
 Phosphophyllite: {
 	DisplayName: Phosphophyllite
+	Tooltip: ""
+}
+
+GlistentRelic: {
+	DisplayName: Glistent, sparkling brilliance
+	Tooltip: ""
+}
+
+EightsquareHand: {
+	DisplayName: Eightsquare Hand
+	Tooltip: Increased the chance of the “Vibrant” prefix for gem weapons
+}
+
+HorizonArc: {
+	DisplayName: Horizon Arc
+	Tooltip:
+		'''
+		Double tap a direction to dash and shoot a arc arrow
+		Dashing through hostile targets will make the Horizon Arc shine even more brightly
+		Has a short immunity during the dash
+		'''
+}
+
+VioletEmblem: {
+	DisplayName: Violet Emblem
+	Tooltip: Increase a lot kinds of fortune, good luck will accompany you!
+}
+
+Turbulence: {
+	DisplayName: Turbulence
+	Tooltip:
+		'''
+		Double tap a direction to dash and shoot turbulent arrows through enemies
+		Has a short immunity during the dash
+		[C/68c7dd: "Navigating the Clouds"]
+		'''
+}
+
+TurbulenceCore: {
+	DisplayName: Turbulence Core
+	Tooltip:
+		'''
+		"It seems to be the product of Skeletron's weathered eyes, and you can hear the wind when you put it in your ears"
+		For crafting [i:Coralite/Turbulence] {$Mods.Coralite.Items.Turbulence.DisplayName}
+		{$Mods.Coralite.Systems.MultiblockSystem.PreviewMultiblock}
+		'''
+}
+
+FullMoon: {
+	DisplayName: Full Moon
+	Tooltip:
+		'''
+		Double tap a direction to dash, crash into a hostile target, bounce back and release a Shadow Light
+		Shadow Light can ignore certain defenses
+		[c/8a43ff:"Dark purple giant bats fly in the sky, bringing moonlight to the world"]
+		'''
+}
+
+SeismicWave: {
+	DisplayName: Seismic Wave
+	Tooltip:
+		'''
+		Double tap the down button to dash, creating a shockwave when it hits an enemy or the ground
+		[c/bac1ce:Vibrations from deep underground]
+		'''
+}
+
+WhiteGardenia: {
+	DisplayName: White Gardenia
+	Tooltip: ""
+}
+
+DigUnloadItem: {
+	ContainsItemText: "Contains: "
+	DisplayName: Temporarily unload item
+	Tooltip: "[c/e88ecb:Take it out of this world, there is no place for it in this world.]"
+}
+
+Glaciate: {
+	DisplayName: Glaciate
+	Tooltip:
+		'''
+		Double tap a direction to dash, then shoot a wave of frost and buff your next attack
+		Ice blocks that hit a frost wave will explode ice spikes
+		'''
+}
+
+LeafShield: {
+	DisplayName: Leaf Shield
+	Tooltip: It's just a giant leaf
+}
+
+WoodenShield: {
+	DisplayName: Wooden Shield
+	Tooltip: Not very handy
+}
+
+Aurora: {
+	DisplayName: Aurora
+	Tooltip:
+		'''
+		Double tap a direction to dash, then shoot a marker arrow
+		Aurora Arrows hitting marked enemies increases the number of tagged stacks
+		After a period of time, the marked arrow deals damage based on the number of marked stacks
+		'''
+}
+
+BlackPlush: {
+	DisplayName: Black Plush
+	Tooltip: ""
+}
+
+BlackPlushBathtub: {
+	DisplayName: Black Plush Bathtub
+	Tooltip: ""
+}
+
+BlackPlushBed: {
+	DisplayName: Black Plush Bed
+	Tooltip: ""
+}
+
+BlackPlushBigDroplight: {
+	DisplayName: Black Plush Big Droplight
+	Tooltip: ""
+}
+
+BlackPlushBlock: {
+	DisplayName: Black Plush Block
+	Tooltip: ""
+}
+
+BlackPlushBookcase: {
+	DisplayName: Black Plush Cat Tree
+	Tooltip: ""
+}
+
+BlackPlushCandelabra: {
+	DisplayName: Black Plush Candelabra
+	Tooltip: ""
+}
+
+BlackPlushCandle: {
+	DisplayName: Black Plush Candle
+	Tooltip: ""
+}
+
+BlackPlushChair: {
+	DisplayName: Black Plush Chair
+	Tooltip: ""
+}
+
+BlackPlushChest: {
+	DisplayName: Black Plush Chest
+	Tooltip: ""
+}
+
+BlackPlushClock: {
+	DisplayName: Black Plush Clock
+	Tooltip: ""
+}
+
+BlackPlushDoor: {
+	DisplayName: Black Plush Door
+	Tooltip: ""
+}
+
+BlackPlushDresser: {
+	DisplayName: Black Plush Dresser
+	Tooltip: ""
+}
+
+BlackPlushDroplight: {
+	DisplayName: Black Plush Droplight
+	Tooltip: ""
+}
+
+BlackPlushFloorLamp: {
+	DisplayName: Black Plush Floor Lamp
+	Tooltip: ""
+}
+
+BlackPlushPiano: {
+	DisplayName: Black Plush Piano
+	Tooltip: ""
+}
+
+BlackPlushPlatform: {
+	DisplayName: Black Plush Platform
+	Tooltip: ""
+}
+
+BlackPlushSink: {
+	DisplayName: Black Plush Sink
+	Tooltip: ""
+}
+
+BlackPlushSofa: {
+	DisplayName: Black Plush Sofa
+	Tooltip: ""
+}
+
+BlackPlushTable: {
+	DisplayName: Black Plush Table
+	Tooltip: ""
+}
+
+BlackPlushToilet: {
+	DisplayName: Black Plush Toilet
+	Tooltip: ""
+}
+
+BlackPlushWorkBench: {
+	DisplayName: Black Plush Work Bench
+	Tooltip: ""
+}
+
+BlackPlushWallItem: {
+	DisplayName: Black Plush Wall Paper
+	Tooltip: ""
+}
+
+Solunar: {
+	DisplayName: Solunar
+	Tooltip: ""
+}
+
+BasicCharger: {
+	DisplayName: Basic Charger
+	Tooltip: ""
+}
+
+CrystalBomb: {
+	DisplayName: Crystal Bomb
+	Tooltip: ""
+}
+
+PlatinumMagshield: {
+	DisplayName: Platinum Magshield
+	Tooltip: ""
+}
+
+ApothecaryTable: {
+	NotHavePotion: Mods.Coralite.Items.ApothecaryTable.NotHavePotion
+	DisplayName: Apothecary Table
+	Tooltip: ""
+}
+
+Aquarius: {
+	DisplayName: Aquarius
+	Tooltip: ""
+}
+
+IcicleMusicBox: {
+	DisplayName: Icicle Music Box
+	Tooltip: ""
+}
+
+RedJadeMusicBox: {
+	DisplayName: Red Jade Music Box
+	Tooltip: ""
+}
+
+WindSpeedArrows: {
+	DisplayName: Wind Speed Arrows
+	Tooltip: ""
+}
+
+Taurus: {
+	DisplayName: Taurus
+	Tooltip: ""
+}
+
+B94WindbreakingArrowItem: {
+	DisplayName: B94 Windbreaking Arrow Item
+	Tooltip: ""
+}
+
+B94WindbreakingCompoundBow: {
+	DisplayName: B94 Windbreaking Compound Bow
+	Tooltip: ""
+}
+
+B9Alloy: {
+	DisplayName: B9 Alloy
+	Tooltip: ""
+}
+
+SkarnChest: {
+	DisplayName: Skarn Chest
+	Tooltip: ""
+}
+
+CrystallineBlock: {
+	DisplayName: Crystalline Block
+	Tooltip: ""
+}
+
+WildChalcedonyWallItem: {
+	DisplayName: Wild Chalcedony Wall Item
+	Tooltip: ""
+}
+
+CrackedSkarnWallItem: {
+	DisplayName: Cracked Skarn Wall Item
+	Tooltip: ""
+}
+
+WindrangerQuiver: {
+	DisplayName: Windranger Quiver
+	Tooltip: ""
+}
+
+CrystallineLemna: {
+	DisplayName: Crystalline Lemna
+	Tooltip: ""
+}
+
+FocusPotion: {
+	DisplayName: Focus Potion
+	Tooltip: ""
+}
+
+CrystallineSeaOats: {
+	DisplayName: Crystalline Sea Oats
+	Tooltip: ""
+}
+
+CrystallineSeaOatsSeed: {
+	DisplayName: Crystalline Sea Oats Seed
+	Tooltip: ""
+}
+
+LightSoulCatalyst: {
+	DisplayName: Light Soul Catalyst
+	Tooltip: ""
+}
+
+SpellCircuitCore: {
+	DisplayName: Spell Circuit Core
+	Tooltip: ""
+}
+
+LightSoulFilter: {
+	DisplayName: Light Soul Filter
+	Tooltip: ""
+}
+
+ChalcedonySapling: {
+	DisplayName: Chalcedony Sapling
+	Tooltip: ""
+}
+
+PossessedChest: {
+	DisplayName: Possessed Chest
+	Tooltip: ""
+}
+
+Luminward: {
+	DisplayName: Luminward
+	Tooltip: ""
+}
+
+B9AlloyBathtub: {
+	DisplayName: B9 Alloy Bathtub
+	Tooltip: ""
+}
+
+B9AlloyBed: {
+	DisplayName: B9 Alloy Bed
+	Tooltip: ""
+}
+
+B9AlloyBigDroplight: {
+	DisplayName: B9 Alloy Big Droplight
+	Tooltip: ""
+}
+
+B9AlloyBookcase: {
+	DisplayName: B9 Alloy Bookcase
+	Tooltip: ""
+}
+
+B9AlloyCandelabra: {
+	DisplayName: B9 Alloy Candelabra
+	Tooltip: ""
+}
+
+B9AlloyCandle: {
+	DisplayName: B9 Alloy Candle
+	Tooltip: ""
+}
+
+B9AlloyChair: {
+	DisplayName: B9 Alloy Chair
+	Tooltip: ""
+}
+
+B9AlloyChest: {
+	DisplayName: B9 Alloy Chest
+	Tooltip: ""
+}
+
+B9AlloyClock: {
+	DisplayName: B9 Alloy Clock
+	Tooltip: ""
+}
+
+B9AlloyDoor: {
+	DisplayName: B9 Alloy Door
+	Tooltip: ""
+}
+
+B9AlloyDresser: {
+	DisplayName: B9 Alloy Dresser
+	Tooltip: ""
+}
+
+B9AlloyDroplight: {
+	DisplayName: B9 Alloy Droplight
+	Tooltip: ""
+}
+
+B9AlloyFloorLamp: {
+	DisplayName: B9 Alloy Floor Lamp
+	Tooltip: ""
+}
+
+B9AlloyPiano: {
+	DisplayName: B9 Alloy Piano
+	Tooltip: ""
+}
+
+B9AlloyPlatform: {
+	DisplayName: B9 Alloy Platform
+	Tooltip: ""
+}
+
+B9AlloySink: {
+	DisplayName: B9 Alloy Sink
+	Tooltip: ""
+}
+
+B9AlloySofa: {
+	DisplayName: B9 Alloy Sofa
+	Tooltip: ""
+}
+
+B9AlloyTable: {
+	DisplayName: B9 Alloy Table
+	Tooltip: ""
+}
+
+B9AlloyTileItem: {
+	DisplayName: B9 Alloy Tile Item
+	Tooltip: ""
+}
+
+B9AlloyToilet: {
+	DisplayName: B9 Alloy Toilet
+	Tooltip: ""
+}
+
+B9AlloyWallItem: {
+	DisplayName: B9 Alloy Wall Item
+	Tooltip: ""
+}
+
+B9AlloyWorkBench: {
+	DisplayName: B9 Alloy Work Bench
+	Tooltip: ""
+}
+
+CrystallineCrate: {
+	DisplayName: Crystalline Crate
+	Tooltip: ""
+}
+
+SkyshipInABottle: {
+	DisplayName: Skyship In A Bottle
+	Tooltip: ""
+}
+
+CrystallineLance: {
+	DisplayName: Crystalline Lance
+	Tooltip: ""
+}
+
+EmperorSlimeBoots: {
+	DisplayName: Emperor Slime Boots
+	Tooltip: ""
+	ExtraTooltip: Mods.Coralite.Items.EmperorSlimeBoots.ExtraTooltip
+	ArmorBonusGelFiber: Mods.Coralite.Items.EmperorSlimeBoots.ArmorBonusGelFiber
+	ArmorBonusNinja: Mods.Coralite.Items.EmperorSlimeBoots.ArmorBonusNinja
+	SpecialNameGelFiber: Mods.Coralite.Items.EmperorSlimeBoots.SpecialNameGelFiber
+	SpecialNameNinja: Mods.Coralite.Items.EmperorSlimeBoots.SpecialNameNinja
+}
+
+ChalcedonyWing: {
+	DisplayName: Chalcedony Wing
+	Tooltip: ""
+}
+
+CrystallineHummingBannerItem: {
+	DisplayName: Crystalline Humming Banner Item
+	Tooltip: ""
+}
+
+CrystallineVinicColumnBannerItem: {
+	DisplayName: Crystalline Vinic Column Banner Item
+	Tooltip: ""
+}
+
+CrystallineVinicLaserBannerItem: {
+	DisplayName: Crystalline Vinic Laser Banner Item
+	Tooltip: ""
+}
+
+LeafStoneBathtub: {
+	DisplayName: Leaf Stone Bathtub
+	Tooltip: ""
+}
+
+LeafStoneBed: {
+	DisplayName: Leaf Stone Bed
+	Tooltip: ""
+}
+
+LeafStoneBigDroplight: {
+	DisplayName: Leaf Stone Big Droplight
+	Tooltip: ""
+}
+
+LeafStoneBookcase: {
+	DisplayName: Leaf Stone Bookcase
+	Tooltip: ""
+}
+
+LeafStoneBrick: {
+	DisplayName: Leaf Stone Brick
+	Tooltip: ""
+}
+
+LeafStoneCandelabra: {
+	DisplayName: Leaf Stone Candelabra
+	Tooltip: ""
+}
+
+LeafStoneCandle: {
+	DisplayName: Leaf Stone Candle
+	Tooltip: ""
+}
+
+LeafStoneChair: {
+	DisplayName: Leaf Stone Chair
+	Tooltip: ""
+}
+
+LeafStoneChest: {
+	DisplayName: Leaf Stone Chest
+	Tooltip: ""
+}
+
+LeafStoneClock: {
+	DisplayName: Leaf Stone Clock
+	Tooltip: ""
+}
+
+LeafStoneDoor: {
+	DisplayName: Leaf Stone Door
+	Tooltip: ""
+}
+
+LeafStoneDresser: {
+	DisplayName: Leaf Stone Dresser
+	Tooltip: ""
+}
+
+LeafStoneDroplight: {
+	DisplayName: Leaf Stone Droplight
+	Tooltip: ""
+}
+
+LeafStoneFloorLamp: {
+	DisplayName: Leaf Stone Floor Lamp
+	Tooltip: ""
+}
+
+LeafStonePiano: {
+	DisplayName: Leaf Stone Piano
+	Tooltip: ""
+}
+
+LeafStonePlatform: {
+	DisplayName: Leaf Stone Platform
+	Tooltip: ""
+}
+
+LeafStoneSink: {
+	DisplayName: Leaf Stone Sink
+	Tooltip: ""
+}
+
+LeafStoneSofa: {
+	DisplayName: Leaf Stone Sofa
+	Tooltip: ""
+}
+
+LeafStoneTable: {
+	DisplayName: Leaf Stone Table
+	Tooltip: ""
+}
+
+LeafStoneToilet: {
+	DisplayName: Leaf Stone Toilet
+	Tooltip: ""
+}
+
+LeafStoneWallItem: {
+	DisplayName: Leaf Stone Wall Item
+	Tooltip: ""
+}
+
+LeafStoneWorkBench: {
+	DisplayName: Leaf Stone Work Bench
+	Tooltip: ""
+}
+
+SkarnBrickBathtub: {
+	DisplayName: Skarn Brick Bathtub
+	Tooltip: ""
+}
+
+SkarnBrickBed: {
+	DisplayName: Skarn Brick Bed
+	Tooltip: ""
+}
+
+SkarnBrickBigDroplight: {
+	DisplayName: Skarn Brick Big Droplight
+	Tooltip: ""
+}
+
+SkarnBrickBookcase: {
+	DisplayName: Skarn Brick Bookcase
+	Tooltip: ""
+}
+
+SkarnBrickCandelabra: {
+	DisplayName: Skarn Brick Candelabra
+	Tooltip: ""
+}
+
+SkarnBrickCandle: {
+	DisplayName: Skarn Brick Candle
+	Tooltip: ""
+}
+
+SkarnBrickChair: {
+	DisplayName: Skarn Brick Chair
+	Tooltip: ""
+}
+
+SkarnBrickClock: {
+	DisplayName: Skarn Brick Clock
+	Tooltip: ""
+}
+
+SkarnBrickDoor: {
+	DisplayName: Skarn Brick Door
+	Tooltip: ""
+}
+
+SkarnBrickDresser: {
+	DisplayName: Skarn Brick Dresser
+	Tooltip: ""
+}
+
+SkarnBrickDroplight: {
+	DisplayName: Skarn Brick Droplight
+	Tooltip: ""
+}
+
+SkarnBrickFloorLamp: {
+	DisplayName: Skarn Brick Floor Lamp
+	Tooltip: ""
+}
+
+SkarnBrickPiano: {
+	DisplayName: Skarn Brick Piano
+	Tooltip: ""
+}
+
+SkarnBrickSink: {
+	DisplayName: Skarn Brick Sink
+	Tooltip: ""
+}
+
+SkarnBrickSofa: {
+	DisplayName: Skarn Brick Sofa
+	Tooltip: ""
+}
+
+SkarnBrickTable: {
+	DisplayName: Skarn Brick Table
+	Tooltip: ""
+}
+
+SkarnBrickToilet: {
+	DisplayName: Skarn Brick Toilet
+	Tooltip: ""
+}
+
+SkarnBrickWorkBench: {
+	DisplayName: Skarn Brick Work Bench
+	Tooltip: ""
+}
+
+SteelBathtub: {
+	DisplayName: Steel Bathtub
+	Tooltip: ""
+}
+
+SteelBed: {
+	DisplayName: Steel Bed
+	Tooltip: ""
+}
+
+SteelBench: {
+	DisplayName: Steel Bench
+	Tooltip: ""
+}
+
+SteelBigDroplight: {
+	DisplayName: Steel Big Droplight
+	Tooltip: ""
+}
+
+SteelBookcase: {
+	DisplayName: Steel Bookcase
+	Tooltip: ""
+}
+
+SteelBrick: {
+	DisplayName: Steel Brick
+	Tooltip: ""
+}
+
+SteelBrickWallItem: {
+	DisplayName: Steel Brick Wall Item
+	Tooltip: ""
+}
+
+SteelCandelabra: {
+	DisplayName: Steel Candelabra
+	Tooltip: ""
+}
+
+SteelCandle: {
+	DisplayName: Steel Candle
+	Tooltip: ""
+}
+
+SteelChair: {
+	DisplayName: Steel Chair
+	Tooltip: ""
+}
+
+SteelChest: {
+	DisplayName: Steel Chest
+	Tooltip: ""
+}
+
+SteelClock: {
+	DisplayName: Steel Clock
+	Tooltip: ""
+}
+
+SteelDoor: {
+	DisplayName: Steel Door
+	Tooltip: ""
+}
+
+SteelDresser: {
+	DisplayName: Steel Dresser
+	Tooltip: ""
+}
+
+SteelDroplight: {
+	DisplayName: Steel Droplight
+	Tooltip: ""
+}
+
+SteelFloorLamp: {
+	DisplayName: Steel Floor Lamp
+	Tooltip: ""
+}
+
+SteelPiano: {
+	DisplayName: Steel Piano
+	Tooltip: ""
+}
+
+SteelPlatform: {
+	DisplayName: Steel Platform
+	Tooltip: ""
+}
+
+SteelSink: {
+	DisplayName: Steel Sink
+	Tooltip: ""
+}
+
+SteelSofa: {
+	DisplayName: Steel Sofa
+	Tooltip: ""
+}
+
+SteelTable: {
+	DisplayName: Steel Table
+	Tooltip: ""
+}
+
+SteelToilet: {
+	DisplayName: Steel Toilet
+	Tooltip: ""
+}
+
+SteelWorkBench: {
+	DisplayName: Steel Work Bench
+	Tooltip: ""
+}
+
+SkarnBrickBench: {
+	DisplayName: Skarn Brick Bench
+	Tooltip: ""
+}
+
+LuminDye: {
+	DisplayName: Lumin Dye
+	Tooltip: ""
+}
+
+GlassCat: {
+	DisplayName: Glass Cat
+	Tooltip: ""
+}
+
+CrystallinePylon: {
+	DisplayName: Crystalline Pylon
+	Tooltip: ""
+}
+
+CrystallineSentinelBannerItem: {
+	DisplayName: Crystalline Sentinel Banner Item
+	Tooltip: ""
+}
+
+WildMabirdBannerItem: {
+	DisplayName: Wild Mabird Banner Item
+	Tooltip: ""
+}
+
+WildMabirdNestBannerItem: {
+	DisplayName: Wild Mabird Nest Banner Item
+	Tooltip: ""
+}
+
+UnsentLetter: {
+	DisplayName: Unsent Letter
+	Tooltip: ""
+}
+
+CrystallineFountainItem: {
+	DisplayName: Crystalline Fountain Item
+	Tooltip: ""
+}
+
+RainbowPorpoise: {
+	Description: Mods.Coralite.Items.RainbowPorpoise.Description
+	CatchLocation: Mods.Coralite.Items.RainbowPorpoise.CatchLocation
+	DisplayName: Rainbow Porpoise
+	Tooltip: ""
+}
+
+CrystallineHook: {
+	DisplayName: Crystalline Hook
+	Tooltip: ""
+}
+
+Wisteria: {
+	DisplayName: Wisteria
+	Tooltip: ""
+}
+
+BasicMabirdNest: {
+	DisplayName: Basic Mabird Nest
+	Tooltip: ""
+}
+
+CrystallineMabird: {
+	DisplayName: Crystalline Mabird
+	Tooltip: ""
+}
+
+StartSkyIsland: {
+	DisplayName: Start Sky Island
+	Tooltip: ""
+}
+
+BloodmarkTopper: {
+	ExtraToolTipNone: Mods.Coralite.Items.BloodmarkTopper.ExtraToolTipNone
+	ExtraToolTipBlood: Mods.Coralite.Items.BloodmarkTopper.ExtraToolTipBlood
+	ExtraToolTipShadow: Mods.Coralite.Items.BloodmarkTopper.ExtraToolTipShadow
+	ExtraToolTipPrison: Mods.Coralite.Items.BloodmarkTopper.ExtraToolTipPrison
+	SpecialPreNameBlood: Mods.Coralite.Items.BloodmarkTopper.SpecialPreNameBlood
+	SpecialPreNameShadow: Mods.Coralite.Items.BloodmarkTopper.SpecialPreNameShadow
+	SpecialPreNamePrison: Mods.Coralite.Items.BloodmarkTopper.SpecialPreNamePrison
+	ArmorSetBlood: Mods.Coralite.Items.BloodmarkTopper.ArmorSetBlood
+	ArmorSetShadow: Mods.Coralite.Items.BloodmarkTopper.ArmorSetShadow
+	ArmorSetPrison: Mods.Coralite.Items.BloodmarkTopper.ArmorSetPrison
+	DisplayName: Bloodmark Topper
+	Tooltip: ""
+	SetTip: Mods.Coralite.Items.BloodmarkTopper.SetTip
+}
+
+MabirdLoupe: {
+	DisplayName: Mabird Loupe
+	Tooltip: ""
+	CanShowBackLines: Mods.Coralite.Items.MabirdLoupe.CanShowBackLines
+	DontShowBackLines: Mods.Coralite.Items.MabirdLoupe.DontShowBackLines
+	ShowNothing: Mods.Coralite.Items.MabirdLoupe.ShowNothing
+}
+
+SkarnCutter: {
+	DisplayName: Skarn Cutter
+	Tooltip: ""
+}
+
+CrystallineMagikeClusters: {
+	DisplayName: Crystalline Magike Clusters
+	Tooltip: ""
+}
+
+BloodWorm: {
+	DisplayName: Blood Worm
+	Tooltip: ""
+}
+
+QueenOfNight: {
+	DisplayName: Queen Of Night
+	Tooltip: ""
+}
+
+Datura: {
+	DisplayName: Datura
+	Tooltip: ""
+}
+
+MidasGunpowder: {
+	DisplayName: Midas Gunpowder
+	Tooltip: ""
+}
+
+GhostPipe: {
+	DisplayName: Ghost Pipe
+	Tooltip: ""
+}
+
+SunflowerGun: {
+	DisplayName: Sunflower Gun
+	Tooltip: ""
+}
+
+InfinityMagikePoint: {
+	DisplayName: Infinity Magike Point
+	Tooltip: ""
+}
+
+Aloe: {
+	DisplayName: Aloe
+	Tooltip: ""
+}
+
+CrystallineMusicBox: {
+	DisplayName: Crystalline Music Box
 	Tooltip: ""
 }

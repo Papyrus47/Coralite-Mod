@@ -1,7 +1,9 @@
 ﻿using Coralite.Core;
+using Coralite.Core.Loaders;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -154,7 +156,7 @@ namespace Coralite.Content.Items.Donator
 
         public SurviveHeldProj() : base(0.15f, 18, -8, AssetDirectory.Donator) { }
 
-        public override void Initialize()
+        public override void InitializeGun()
         {
             int time = Owner.itemTimeMax;
             if (time < 6)
@@ -162,7 +164,7 @@ namespace Coralite.Content.Items.Donator
 
             Projectile.timeLeft = time;
             MaxTime = time;
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
                 TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (DirSign > 0 ? 0f : MathHelper.Pi);
@@ -229,7 +231,7 @@ namespace Coralite.Content.Items.Donator
 
         public override void AI()
         {
-            if (Owner.HeldItem.type != ModContent.ItemType<SurviveAndPerish>())
+            if (Item.type != ModContent.ItemType<SurviveAndPerish>())
                 return;
 
             Projectile.timeLeft = 2;
@@ -335,7 +337,7 @@ namespace Coralite.Content.Items.Donator
                 pos -= Vector2.UnitY * 14;
                 pos += dir * 40;
                 pos += Main.rand.NextVector2Circular(16, 16);
-                Projectile.NewProjectileFromThis<PerishMissile>(pos, dir.RotateByRandom(-0.2f, 0.2f) * 4, (int)(Owner.GetWeaponDamage(Owner.HeldItem) * 0.75f),
+                Projectile.NewProjectileFromThis<PerishMissile>(pos, dir.RotateByRandom(-0.2f, 0.2f) * 4, (int)(Owner.GetDamageWithAmmo(Item) * 0.75f),
                     Projectile.knockBack);
 
                 Dust d = Dust.NewDustPerfect(pos + (dir * 30), ModContent.DustType<MissileShootDust>(), Vector2.Zero, Scale: Main.rand.NextFloat(1.5f, 2f));
@@ -407,24 +409,9 @@ namespace Coralite.Content.Items.Donator
         public ref float Target => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.ai[1];
 
-        private static BasicEffect effect;
         public Trail trail;
 
         public int chaseFactor = Main.rand.Next(160, 260);
-
-        public PerishMissile()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override void SetDefaults()
         {
@@ -441,7 +428,7 @@ namespace Coralite.Content.Items.Donator
             if (Projectile.localAI[0] == 0)
             {
                 Projectile.localAI[0] = 1;
-                trail = new Trail(Main.instance.GraphicsDevice, 14, new NoTip()
+                trail = new Trail(Main.instance.GraphicsDevice, 14, new EmptyMeshGenerator()
                     , factor => 2, ColorFunc);
                 Projectile.InitOldPosCache(14);
                 Target = -1;
@@ -459,7 +446,7 @@ namespace Coralite.Content.Items.Donator
 
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.UpdateOldPosCache(addVelocity: true);
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public static Color ColorFunc(Vector2 factor)
@@ -580,11 +567,11 @@ namespace Coralite.Content.Items.Donator
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
@@ -604,6 +591,7 @@ namespace Coralite.Content.Items.Donator
         public ref float State => ref Projectile.ai[1];
 
         public bool canDamage = true;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -618,13 +606,18 @@ namespace Coralite.Content.Items.Donator
             Projectile.extraUpdates = 1;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             switch (State)
             {
                 default:

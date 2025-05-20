@@ -60,9 +60,10 @@ namespace Coralite.Content.Items.BossSummons
 
         public void AddMagikeCraftRecipe()
         {
-            MagikeCraftRecipe.CreateRecipe<SymbolOfRoyal, GelInvitation>(MagikeHelper.CalculateMagikeCost(MALevel.Crimson, 24, 60 * 5))
+            MagikeRecipe.CreateCraftRecipe<SymbolOfRoyal, GelInvitation>(MagikeHelper.CalculateMagikeCost(MALevel.Crimson, 12, 60 * 5))
                 .AddIngredient<GelFiber>(24)
                 .AddIngredient(ItemID.Gel, 99)
+                .AddCondition(Condition.DownedEowOrBoc)
                 .Register();
         }
     }

@@ -4,7 +4,10 @@ using System.Diagnostics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.Creative;
+using Terraria.ID;
+using Terraria.Localization;
 
 namespace Coralite.Helpers
 {
@@ -24,6 +27,51 @@ namespace Coralite.Helpers
         public static Texture2D GetTexture(this NPC npc)
         {
             return TextureAssets.Npc[npc.type].Value;
+        }
+
+        public static Rectangle GetFrameBox(this NPC npc, int xFrame)
+        {
+            Texture2D tex = npc.GetTexture();
+            return tex.Frame(xFrame, Main.npcFrameCount[npc.type], npc.frame.X, npc.frame.Y);
+        }
+
+        /// <summary>
+        /// 获取NPC的图鉴描述信息
+        /// </summary>
+        /// <param name="npc"></param>
+        /// <returns></returns>
+        public static FlavorTextBestiaryInfoElement GetBestiaryDescription(this ModNPC npc)
+            => new FlavorTextBestiaryInfoElement(npc.GetLocalizationKey("BestiaryDescription"));
+
+        /// <summary>
+        /// 在图鉴里隐藏该NPC
+        /// </summary>
+        /// <param name="npc"></param>
+        public static void SetHideInBestiary(this NPC npc)
+        {
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(npc.type, new NPCID.Sets.NPCBestiaryDrawModifiers()
+            {
+                Hide = true
+            });
+        }
+
+        /// <summary>
+        /// 注册NPC的图鉴描述信息
+        /// </summary>
+        /// <param name="npc"></param>
+        /// <returns></returns>
+        public static void RegisterBestiaryDescription(this ModNPC npc)
+        {
+            if (Main.dedServ)
+                return;
+            npc.GetLocalization("BestiaryDescription");
+        }
+
+        public static void QuickDraw(this NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor, Rectangle? frameBox = null, SpriteEffects effect = SpriteEffects.None, float exRot = 0)
+        {
+            Texture2D tex = npc.GetTexture();
+            spriteBatch.Draw(tex, npc.Center - screenPos, frameBox, lightColor
+                , npc.rotation + exRot, frameBox == null ? tex.Size() / 2 : frameBox.Value.Size() / 2, npc.scale, effect, 0);
         }
 
         /// <summary>
@@ -145,6 +193,18 @@ namespace Coralite.Helpers
             npc.directionY = p.Center.Y > npc.Center.Y ? 1 : -1;
         }
 
+        public enum NPCTrailingMode
+        {
+            OnlyPosition = 1,
+            RecordAll = 3,
+        }
+
+        public static void QuickTrailSets(this NPC npc, NPCTrailingMode trailingMode, int trailCacheLength)
+        {
+            NPCID.Sets.TrailingMode[npc.type] = (int)trailingMode;
+            NPCID.Sets.TrailCacheLength[npc.type] = trailCacheLength;
+        }
+
         public static int GetProjDamage(int normalDamage, int expertDamage, int masterDamage)
         {
             return ScaleValueForDiffMode(normalDamage / 2, expertDamage / 4, masterDamage / 6, masterDamage / 6);
@@ -215,6 +275,18 @@ namespace Coralite.Helpers
             npc.oldRot[^1] = npc.rotation;
         }
 
+        public static void LoadGore(this ModNPC modnpc, int count)
+        {
+            for (int i = 0; i < count; i++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(modnpc.Mod, modnpc.Texture + "_Gore" + i);
+        }
 
+        public static void SpawnGore(this ModNPC modnpc, int count, float speed = 1)
+        {
+            for (int i = 0; i < count; i++)
+                Gore.NewGoreDirect(modnpc.NPC.GetSource_Death()
+                    , Main.rand.NextVector2FromRectangle(modnpc.NPC.Hitbox)
+                    , Main.rand.NextVector2Circular(speed, speed), modnpc.Mod.Find<ModGore>(modnpc.Name + "_Gore" + i).Type);
+        }
     }
 }

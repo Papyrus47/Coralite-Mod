@@ -1,9 +1,9 @@
 ﻿using Coralite.Content.CustomHooks;
 using Coralite.Helpers;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader.IO;
@@ -27,12 +27,11 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             return true;
         }
 
-        public override void Update()
+        public override void Update() { }
+
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            Point16 p = Entity.Position;
-            Vector2 size = new Vector2(ConnectLength);
-            if (Helper.IsAreaOnScreen(p.ToWorldCoordinates() - Main.screenPosition - size / 2, new Vector2(ConnectLength)))
-                DrawMagikeDevice.LinerSenders.Add(this);
+            Drawers.AddToLinerSenderDraw(this);
         }
 
         public override void ShowInUI(UIElement parent)
@@ -101,6 +100,6 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         public override void SaveData(string preName, TagCompound tag)
             => SaveLinerSender(preName, tag);
         public override void LoadData(string preName, TagCompound tag)
-            =>LoadLinerSender(preName, tag);
+            => LoadLinerSender(preName, tag);
     }
 }

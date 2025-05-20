@@ -209,7 +209,7 @@ HungryPotionBuff: {
 
 LeafeoShieldCD: {
 	DisplayName: 叶子护盾冷却
-	Description: 正在进行光合作用以生产叶子护盾...
+	Description: 正在进行光合作来生产叶子护盾...
 }
 
 CloudBonus: {
@@ -219,4 +219,38 @@ CloudBonus: {
 		+15% 移动速度
 		+15% 远程伤害
 		'''
+}
+
+HorizonArcBonus: {
+	DisplayName: 环彩
+	Description: 为你的箭矢附上彩虹！
+}
+
+FocusBuff: {
+	DisplayName: 聚焦
+	Description: 你的鼠标在发光！
+}
+
+ChalcedonySkyshipBuff: {
+	DisplayName: 瓶中天船
+	Description: 飞吧！小船！
+}
+
+EmperorSlimeBuff: {
+	DisplayName: 史莱姆的祝福
+	Description: 命中敌怪时施加史莱姆减益
+}
+
+BringerHarpyBuff: {
+	DisplayName: 信使鸟妖
+	Description:
+		'''
+		你好，今天要寄信吗？
+		绝对不会把信弄丢的！
+		'''
+}
+
+PrisonBuff: {
+	// DisplayName: Prison Buff
+	// Description: Mods.Coralite.Buffs.PrisonBuff.Description
 }

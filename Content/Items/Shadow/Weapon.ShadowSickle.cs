@@ -2,7 +2,6 @@ using Coralite.Core;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.Utilities;
 
 namespace Coralite.Content.Items.Shadow
 {
@@ -52,16 +51,16 @@ namespace Coralite.Content.Items.Shadow
             recipe.Register();
         }
 
-        public override int ChoosePrefix(UnifiedRandom rand)
-        {
-            return rand.NextFromList(PrefixID.Keen, PrefixID.Superior, PrefixID.Forceful, PrefixID.Broken,
-                PrefixID.Damaged, PrefixID.Shoddy, PrefixID.Hurtful, PrefixID.Strong, PrefixID.Unpleasant,
-                PrefixID.Weak, PrefixID.Ruthless, PrefixID.Godly, PrefixID.Demonic, PrefixID.Zealous, PrefixID.Quick,
-                PrefixID.Deadly, PrefixID.Agile, PrefixID.Nimble, PrefixID.Murderous, PrefixID.Slow, PrefixID.Sluggish,
-                PrefixID.Lazy, PrefixID.Annoying, PrefixID.Nasty, PrefixID.Dangerous, PrefixID.Savage, PrefixID.Sharp,
-                PrefixID.Pointy, PrefixID.Tiny, PrefixID.Terrible, PrefixID.Dull, PrefixID.Unhappy, PrefixID.Bulky, PrefixID.Shameful,
-                PrefixID.Heavy, PrefixID.Light, PrefixID.Legendary);
-        }
+        //public override int ChoosePrefix(UnifiedRandom rand)
+        //{
+        //    return rand.NextFromList(PrefixID.Keen, PrefixID.Superior, PrefixID.Forceful, PrefixID.Broken,
+        //        PrefixID.Damaged, PrefixID.Shoddy, PrefixID.Hurtful, PrefixID.Strong, PrefixID.Unpleasant,
+        //        PrefixID.Weak, PrefixID.Ruthless, PrefixID.Godly, PrefixID.Demonic, PrefixID.Zealous, PrefixID.Quick,
+        //        PrefixID.Deadly, PrefixID.Agile, PrefixID.Nimble, PrefixID.Murderous, PrefixID.Slow, PrefixID.Sluggish,
+        //        PrefixID.Lazy, PrefixID.Annoying, PrefixID.Nasty, PrefixID.Dangerous, PrefixID.Savage, PrefixID.Sharp,
+        //        PrefixID.Pointy, PrefixID.Tiny, PrefixID.Terrible, PrefixID.Dull, PrefixID.Unhappy, PrefixID.Bulky, PrefixID.Shameful,
+        //        PrefixID.Heavy, PrefixID.Light, PrefixID.Legendary);
+        //}
 
         public override bool AllowPrefix(int pre) => true;
 

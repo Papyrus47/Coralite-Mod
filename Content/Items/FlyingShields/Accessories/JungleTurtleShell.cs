@@ -15,6 +15,12 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             ItemID.Sets.ShimmerTransformToItem[ItemID.TurtleJungle] = Type;
         }
 
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.defense = 2;
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))

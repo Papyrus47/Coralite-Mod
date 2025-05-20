@@ -1,22 +1,23 @@
 ﻿
 namespace Coralite.Content.WorldGeneration.Generators
 {
-    public class TileInfo
+    public record TileInfo
     {
-        public int tileID = -1;
-        public int tileStyle;
-        public int liquidAmt;
+        public readonly Color color;
+        public readonly int tileID = -1;
+        public readonly int tileStyle;
 
-        public TileInfo(int tileID, int style)
+        public TileInfo(Color color, int tileID, int style)
         {
+            this.color = color;
             this.tileID = tileID;
             tileStyle = style;
         }
     }
 
-    public class WallInfo
+    public record WallInfo
     {
-        public int wallID = -1;
+        public readonly int wallID = -1;
 
         public WallInfo(int wallID)
         {
@@ -24,15 +25,13 @@ namespace Coralite.Content.WorldGeneration.Generators
         }
     }
 
-    public class TileObjectInfo
+    public record LiquidInfo
     {
-        public int tileID = -1;
-        public int tileStyle;
+        public readonly int liquidID = -1;
 
-        public TileObjectInfo(int tileID, int style)
+        public LiquidInfo(int liquidID)
         {
-            this.tileID = tileID;
-            tileStyle = style;
+            this.liquidID = liquidID;
         }
     }
 }

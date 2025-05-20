@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
@@ -33,6 +32,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         private bool canDrawWarp = false;
         private float warpScale = 0;
 
+        public override void SetStaticDefaults()
+        {
+            NPC.SetHideInBestiary();
+        }
+
         public override void SetDefaults()
         {
             NPC.lifeMax = 1;
@@ -49,14 +53,19 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => false;
         public override bool CanHitNPC(NPC target) => false;
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
-
-        public override void OnSpawn(IEntitySource source)
+        bool span;
+        public void Initialize()
         {
             Helper.PlayPitched(CoraliteSoundID.EmpressOfLight_Summoned_Item161, NPC.Center, pitch: 0.5f);
         }
 
         public override void AI()
         {
+            if (span)
+            {
+                Initialize();
+                span = true;
+            }
             if (!NightmarePlantera.NightmarePlanteraAlive(out NPC np))
             {
                 NPC.Kill();

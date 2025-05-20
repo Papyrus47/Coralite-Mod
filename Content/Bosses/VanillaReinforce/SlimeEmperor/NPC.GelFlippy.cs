@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -17,6 +16,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
         private Player Target => Main.player[NPC.target];
 
         private ref float Timer => ref NPC.ai[0];
+        private bool span;
 
         public override void SetStaticDefaults()
         {
@@ -31,6 +31,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             NPC.height = 30;
             NPC.noGravity = true;
             NPC.HitSound = CoraliteSoundID.Fleshy_NPCHit1;
+            NPC.SpawnedFromStatue = true;
         }
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
@@ -41,13 +42,19 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
         public override bool CanHitNPC(NPC target) => false;
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             NPC.ai[1] = -300 + Main.rand.Next(-80, 80);
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
+
             if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 2000)
             {
                 NPC.TargetClosest();
@@ -87,7 +94,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                 Timer = 0;
                 //生成弹幕和音效，并掉血
                 SoundEngine.PlaySound(CoraliteSoundID.QueenSlime2_Bubble_Item155, NPC.Center);
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.UnitY * Main.rand.NextFloat(1f, 3f), ModContent.ProjectileType<SmallGelBall>(), 15, 0, NPC.target);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.UnitY * Main.rand.NextFloat(1f, 3f), ModContent.ProjectileType<SmallGelBall>(), 25, 0, NPC.target);
 
                 NPC.life -= NPC.lifeMax / 6;
                 if (NPC.life < 1)

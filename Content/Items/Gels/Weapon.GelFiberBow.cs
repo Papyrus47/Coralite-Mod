@@ -1,5 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -14,7 +15,7 @@ namespace Coralite.Content.Items.Gels
 
         public override void SetDefaults()
         {
-            Item.damage = 11;
+            Item.damage = 20;
             Item.useTime = 23;
             Item.useAnimation = 23;
             Item.knockBack = 4f;
@@ -50,7 +51,7 @@ namespace Coralite.Content.Items.Gels
         }
     }
 
-    public class GelFiberBall : ModProjectile
+    public class GelFiberBall : BaseHeldProj
     {
         public override string Texture => AssetDirectory.GelItems + Name;
 
@@ -74,7 +75,7 @@ namespace Coralite.Content.Items.Gels
             Projectile.DamageType = DamageClass.Ranged;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -133,6 +134,8 @@ namespace Coralite.Content.Items.Gels
 
         public override void OnKill(int timeLeft)
         {
+            Helper.PlayPitched(CoraliteSoundID.NoUse_ToxicBubble2_Item112, Projectile.Center, volumeAdjust: -0.4f);
+
             for (int i = 0; i < 10; i++)
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width, Projectile.height), DustID.t_Slime,
                      Helper.NextVec2Dir(1f, 2.5f), 150, new Color(78, 136, 255, 80), Main.rand.NextFloat(1.2f, 1.6f));

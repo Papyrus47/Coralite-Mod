@@ -25,13 +25,39 @@ namespace Coralite.Helpers
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         }
 
-        public static Matrix GetTransfromMaxrix()
+        /// <summary>
+        /// 快速绘制
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <param name="spriteBatch"></param>
+        /// <param name="pos"></param>
+        /// <param name="selfColor"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scale"></param>
+        public static void QuickCenteredDraw(this Texture2D tex, SpriteBatch spriteBatch, Vector2 pos, Color? selfColor = null, float rotation = 0, float scale = 1)
         {
-            Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
-            Matrix view = Main.GameViewMatrix.TransformationMatrix;
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+            spriteBatch.Draw(tex, pos, null, selfColor ?? Color.White, rotation, tex.Size() / 2, scale, 0, 0);
+        }
 
-            return world * view * projection;
+        /// <summary>
+        /// 快速绘制
+        /// </summary>
+        /// <param name="tex"></param>
+        /// <param name="spriteBatch"></param>
+        /// <param name="pos"></param>
+        /// <param name="selfColor"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scale"></param>
+        public static void QuickCenteredDraw(this Texture2D tex, SpriteBatch spriteBatch, Rectangle frame,Vector2 pos, Color? selfColor = null, float rotation = 0, float scale = 1)
+        {
+            var frameBox = tex.Frame(frame.Width, frame.Height, frame.X, frame.Y);
+            spriteBatch.Draw(tex, pos, frameBox, selfColor ?? Color.White, rotation, frameBox.Size() / 2, scale, 0, 0);
+        }
+
+        public static void QuickCenteredDraw(this Texture2D tex, SpriteBatch spriteBatch, Rectangle frame,Vector2 pos, SpriteEffects effect,Color? selfColor = null, float rotation = 0, float scale = 1)
+        {
+            var frameBox = tex.Frame(frame.Width, frame.Height, frame.X, frame.Y);
+            spriteBatch.Draw(tex, pos, frameBox, selfColor ?? Color.White, rotation, frameBox.Size() / 2, scale, effect, 0);
         }
     }
 }

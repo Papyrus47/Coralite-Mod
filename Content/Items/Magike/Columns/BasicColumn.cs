@@ -31,8 +31,6 @@ namespace Coralite.Content.Items.Magike.Refractors
         public override string Texture => AssetDirectory.MagikeColumnTiles + Name;
         public override int DropItemType => ItemType<BasicColumn>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<BasicColumnTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return [
@@ -51,6 +49,8 @@ namespace Coralite.Content.Items.Magike.Refractors
 
     public class BasicColumnTileEntity : BaseSenderTileEntity<BasicColumnTile>
     {
+        public override int MainComponentID => MagikeComponentID.MagikeContainer;
+
         public override MagikeContainer GetStartContainer()
             => new BasicColumnTileContainer();
 
@@ -64,20 +64,20 @@ namespace Coralite.Content.Items.Magike.Refractors
         {
             MagikeMaxBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => 720,
+                MALevel.MagicCrystal => 1920,
                 MALevel.Crimson
                 or MALevel.Corruption
-                or MALevel.Icicle => 3600,
-                MALevel.CrystallineMagike => 12000,
+                or MALevel.Icicle => 11520,
+                MALevel.CrystallineMagike => 24800,
                 MALevel.Soul
-                or MALevel.Feather => 60000,
-                MALevel.SplendorMagicore => 270000,
+                or MALevel.Feather => 172800,
+                MALevel.SplendorMagicore => 560000,
                 _ => 0,
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase / 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase / 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -87,7 +87,7 @@ namespace Coralite.Content.Items.Magike.Refractors
         {
             MaxConnectBase = 1;
             ConnectLengthBase = 6 * 16;
-            SendDelayBase = 60 * 10;
+            SendDelayBase = 60 * 5;
 
             switch (incomeLevel)
             {
@@ -95,26 +95,26 @@ namespace Coralite.Content.Items.Magike.Refractors
                 case MALevel.None:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.MagicCrystal:
-                    UnitDeliveryBase = 60;
+                    UnitDeliveryBase = 80;
                     break;
                 case MALevel.Crimson:
                 case MALevel.Corruption:
                 case MALevel.Icicle:
-                    UnitDeliveryBase = 300;
+                    UnitDeliveryBase = 360;
                     break;
                 case MALevel.CrystallineMagike:
-                    UnitDeliveryBase = 500;
+                    UnitDeliveryBase = 620;
                     break;
                 case MALevel.Soul:
                 case MALevel.Feather:
-                    UnitDeliveryBase = 2500;
+                    UnitDeliveryBase = 3600;
                     break;
                 case MALevel.SplendorMagicore:
-                    UnitDeliveryBase = 9000;
+                    UnitDeliveryBase = 10000;
                     break;
             }
 

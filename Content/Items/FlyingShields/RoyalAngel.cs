@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.FlyingShields
@@ -175,6 +174,7 @@ namespace Coralite.Content.Items.FlyingShields
         float alpha;
         float selfRotation;
         float angle;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -186,7 +186,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override bool ShouldUpdatePosition() => State == 1;
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             if (!Target.GetNPCOwner(out NPC owner, Projectile.Kill))
                 return;
@@ -230,6 +230,11 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (!Target.GetNPCOwner(out NPC owner, Projectile.Kill))
                 return;
 

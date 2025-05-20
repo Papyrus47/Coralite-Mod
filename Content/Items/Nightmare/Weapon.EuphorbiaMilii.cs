@@ -6,9 +6,10 @@ using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -130,7 +131,7 @@ namespace Coralite.Content.Items.Nightmare
             GradientTexture = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
@@ -148,7 +149,7 @@ namespace Coralite.Content.Items.Nightmare
             return 50 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
             Projectile.extraUpdates = 3;
             alpha = 0;
@@ -256,7 +257,7 @@ namespace Coralite.Content.Items.Nightmare
 
                     if (VisualEffectSystem.HitEffect_ScreenShaking)
                     {
-                        var modifier = new PunchCameraModifier(Owner.Center, (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.Zero), 10, 6, 10, 1000);
+                        var modifier = new PunchCameraModifier(Owner.Center, (InMousePos - Owner.Center).SafeNormalize(Vector2.Zero), 10, 6, 10, 1000);
                         Main.instance.CameraModifiers.Add(modifier);
                     }
 
@@ -305,7 +306,7 @@ namespace Coralite.Content.Items.Nightmare
 
                     if (VisualEffectSystem.HitEffect_ScreenShaking)
                     {
-                        var modifier = new PunchCameraModifier(Owner.Center, (Main.MouseWorld - Owner.Center).SafeNormalize(Vector2.Zero), 10, 6, 10, 1000);
+                        var modifier = new PunchCameraModifier(Owner.Center, (InMousePos - Owner.Center).SafeNormalize(Vector2.Zero), 10, 6, 10, 1000);
                         Main.instance.CameraModifiers.Add(modifier);
                     }
 
@@ -387,7 +388,7 @@ namespace Coralite.Content.Items.Nightmare
                     Helper.PlayPitched("Misc/FlowSwing2", 0.4f, 0.2f, Projectile.Center);
                     ColorState = 1;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Projectile.IsOwnedByLocalPlayer())
                     {
                         float angle = Main.rand.NextFloat(6.282f);
                         for (int i = 0; i < 5; i++)
@@ -411,7 +412,7 @@ namespace Coralite.Content.Items.Nightmare
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
             finalRotation = startAngle + totalAngle;
         }
 
@@ -460,7 +461,7 @@ namespace Coralite.Content.Items.Nightmare
                 case 2 when innerCombo == 0://下挥1 小幅度转圈
                     distanceToOwner = (-Projectile.height / 2) + (Coralite.Instance.SqrtSmoother.Smoother(timer, maxTime - minTime) * 40);
                     Projectile.scale = 1 + (Coralite.Instance.SinSmoother.Smoother(timer, maxTime - minTime) * 0.3f);
-                    if (timer == Owner.itemTimeMax)
+                    if (timer == Owner.itemTimeMax && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * 2.4f);
 
@@ -478,7 +479,7 @@ namespace Coralite.Content.Items.Nightmare
                     distanceToOwner = (-Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 60);
                     //Projectile.scale = 1 + Smoother.Smoother(timer, maxTime - minTime) * 0.3f;
                     Projectile.scale = Helper.EllipticalEase(2.4f - (4.9f * Smoother.Smoother(timer, maxTime - minTime)), 1f, 1.4f);
-                    if (timer == Owner.itemTimeMax / 3)
+                    if (timer == Owner.itemTimeMax / 3 && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * 2.4f);
 
@@ -495,7 +496,7 @@ namespace Coralite.Content.Items.Nightmare
                     break;
                 case 3 when innerCombo == 0://下挥 伸出，更类似于挥砍，不会挥到身体后方
                     distanceToOwner = 10 - (Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 5);
-                    if (timer == Owner.itemTimeMax)
+                    if (timer == Owner.itemTimeMax && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * -2.2f);
 
@@ -513,7 +514,7 @@ namespace Coralite.Content.Items.Nightmare
                 case 3 when innerCombo == 1://上挥，转圈
                     distanceToOwner = 15 - (Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 10);
                     Projectile.scale = Helper.EllipticalEase(1.4f - (4.4f * Smoother.Smoother(timer, maxTime - minTime)), 1.2f, 1.4f);
-                    if (timer == Owner.itemTimeMax)
+                    if (timer == Owner.itemTimeMax && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * -2.2f);
 
@@ -526,7 +527,7 @@ namespace Coralite.Content.Items.Nightmare
                 case 3 when innerCombo == 2://上挑
                     distanceToOwner = 25 - (Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 40);
                     Projectile.scale = Helper.EllipticalEase(2.2f - (4.4f * Smoother.Smoother(timer, maxTime - minTime)), 1.2f, 1.4f);
-                    if (timer == Owner.itemTimeMax / 3)
+                    if (timer == Owner.itemTimeMax / 3 && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * -2.2f);
 
@@ -545,7 +546,7 @@ namespace Coralite.Content.Items.Nightmare
                     break;
                 case 4 when innerCombo == 1://大力刺出
                     distanceToOwner = (-Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 180);
-                    if (timer == Owner.itemTimeMax / 2)
+                    if (timer == Owner.itemTimeMax / 2 && Projectile.IsOwnedByLocalPlayer())
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, startAngle.ToRotationVector2() * 48, ProjectileType<EuphorbiaSpurt>(),
                             (int)(Projectile.damage * 2f), Projectile.knockBack, Projectile.owner, ai1: 28);
@@ -558,7 +559,7 @@ namespace Coralite.Content.Items.Nightmare
                 case 6 when innerCombo == 0://普通上挥1
                     distanceToOwner = 25 - (Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 20);
                     Projectile.scale = Helper.EllipticalEase(2.2f - (4.85f * Smoother.Smoother(timer, maxTime - minTime)), 1f, 1.2f);
-                    if (timer == Owner.itemTimeMax)
+                    if (timer == Owner.itemTimeMax && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * -2.2f);
 
@@ -571,7 +572,7 @@ namespace Coralite.Content.Items.Nightmare
                 case 6 when innerCombo == 1://普通上挥2
                     distanceToOwner = 25 - (Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 20);
                     Projectile.scale = Helper.EllipticalEase(2.2f - (4.85f * Smoother.Smoother(timer, maxTime - minTime)), 1f, 1.2f);
-                    if (timer == Owner.itemTimeMax / 3)
+                    if (timer == Owner.itemTimeMax / 3 && Projectile.IsOwnedByLocalPlayer())
                     {
                         float start = nextStartAngle + (DirSign * -2.2f);
 
@@ -587,7 +588,7 @@ namespace Coralite.Content.Items.Nightmare
                     break;
                 case 6 when innerCombo == 2://普通突刺3
                     distanceToOwner = (-Projectile.height / 2) + (Smoother.Smoother(timer, maxTime - minTime) * 180);
-                    if (timer == Owner.itemTimeMax / 2)
+                    if (timer == Owner.itemTimeMax / 2 && Projectile.IsOwnedByLocalPlayer())
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Owner.Center, startAngle.ToRotationVector2() * 48, ProjectileType<EuphorbiaSpurt>(),
                             (int)(Projectile.damage * 2f), Projectile.knockBack, Projectile.owner, ai1: 28);
@@ -622,13 +623,13 @@ namespace Coralite.Content.Items.Nightmare
                     {
                         innerCombo++;
                         Timer = 0;
-                        Initializer();
+                        InitializeSwing();
                     }
                     break;
                 case 3 when innerCombo == 0:
                     innerCombo++;
                     Timer = 0;
-                    Initializer();
+                    InitializeSwing();
 
                     break;
                 case 6 when innerCombo == 0://普通上挥1
@@ -640,7 +641,7 @@ namespace Coralite.Content.Items.Nightmare
                     {
                         innerCombo++;
                         Timer = 0;
-                        Initializer();
+                        InitializeSwing();
                     }
 
                     break;
@@ -659,7 +660,7 @@ namespace Coralite.Content.Items.Nightmare
                     {
                         innerCombo++;
                         Timer = 0;
-                        Initializer();
+                        InitializeSwing();
                     }
                     break;
                 case 4 when innerCombo == 1:
@@ -682,7 +683,7 @@ namespace Coralite.Content.Items.Nightmare
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 8;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 if (VisualEffectSystem.HitEffect_ScreenShaking)
@@ -748,7 +749,7 @@ namespace Coralite.Content.Items.Nightmare
                 {
                     Effect effect = Filters.Scene["NoHLGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlat.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
@@ -784,7 +785,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public EuphorbiaMiliiRightClick() : base(MathHelper.PiOver4, trailCount: 48) { }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
@@ -798,11 +799,9 @@ namespace Coralite.Content.Items.Nightmare
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
-                Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
-
+            Owner.direction = InMousePos.X > Owner.Center.X ? 1 : -1;
             Projectile.extraUpdates = 1;
             ExtraAlpha = 0;
             ExtraScale = 0.3f;
@@ -837,7 +836,7 @@ namespace Coralite.Content.Items.Nightmare
 
         protected override void BeforeSlash()
         {
-            if (Main.mouseRight)
+            if (DownRight)
             {
                 Timer = 2;
 
@@ -1191,15 +1190,13 @@ namespace Coralite.Content.Items.Nightmare
         }
     }
 
-    public class EuphorbiaSpurt : ModProjectile, IDrawPrimitive, IDrawWarp
+    public class EuphorbiaSpurt : BaseHeldProj, IDrawPrimitive, IDrawWarp
     {
         public override string Texture => AssetDirectory.Trails + "SlashFlatBlurVMirror";
 
         public ref float Alpha => ref Projectile.localAI[0];
         public ref float Timer => ref Projectile.ai[0];
         public ref float TrailWidth => ref Projectile.ai[1];
-
-        public Player Owner => Main.player[Projectile.owner];
 
         private Trail trail;
         private bool hited = true;
@@ -1216,11 +1213,9 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[24];
-            for (int i = 0; i < 24; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(24);
         }
 
         public override bool ShouldUpdatePosition() => Timer >= 0;
@@ -1243,7 +1238,11 @@ namespace Coralite.Content.Items.Nightmare
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 24, new NoTip(), WidthFunction, ColorFunction);
+            if (!Main.dedServ)
+            {
+                trail ??= new Trail(Main.graphics.GraphicsDevice, 24, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
+            }
+
 
             if (Timer > 0)
             {
@@ -1288,7 +1287,8 @@ namespace Coralite.Content.Items.Nightmare
 
                     Projectile.oldPos[23] = Projectile.Center + Projectile.velocity;
                 }
-                trail.Positions = Projectile.oldPos;
+                if (!Main.dedServ)
+                    trail.TrailPositions = Projectile.oldPos;
             }
 
             Timer++;
@@ -1322,7 +1322,7 @@ namespace Coralite.Content.Items.Nightmare
             effect.Parameters["gradientTexture"].SetValue(EuphorbiaMiliiProj.GradientTexture.Value);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -1332,7 +1332,7 @@ namespace Coralite.Content.Items.Nightmare
             if (Timer < 0)
                 return;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             float w = 1f;
             Vector2 up = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2();
@@ -1347,8 +1347,8 @@ namespace Coralite.Content.Items.Nightmare
                 Vector2 Top = Center + (up * width);
                 Vector2 Bottom = Center + (down * width);
 
-                bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
-                bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
+                bars.Add(new ColoredVertex(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
+                bars.Add(new ColoredVertex(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
             }
 
             Main.spriteBatch.End();

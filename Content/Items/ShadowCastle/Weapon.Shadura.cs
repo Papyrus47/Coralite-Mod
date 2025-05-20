@@ -3,6 +3,7 @@ using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.SlashBladeSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -140,7 +141,7 @@ namespace Coralite.Content.Items.ShadowCastle
             GradientTexture = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 64;
@@ -160,9 +161,9 @@ namespace Coralite.Content.Items.ShadowCastle
 
         protected override float GetStartAngle() => Owner.direction > 0 ? 0f : MathHelper.Pi;
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 4;
@@ -324,7 +325,7 @@ namespace Coralite.Content.Items.ShadowCastle
             recordTotalAngle = Math.Abs(totalAngle);
             Projectile.scale = Helper.EllipticalEase(recordStartAngle + extraScaleAngle - (recordTotalAngle * Smoother.Smoother(0, maxTime - minTime)), minScale, maxScale);
 
-            base.Initializer();
+            base.InitializeSwing();
             //extraScaleAngle *= Math.Sign(totalAngle);
         }
 
@@ -368,8 +369,8 @@ namespace Coralite.Content.Items.ShadowCastle
             int timer = (int)Timer - minTime;
             float scale = 1f;
 
-            if (Owner.HeldItem.type == ItemType<Shadura>())
-                scale = Owner.GetAdjustedItemScale(Owner.HeldItem);
+            if (Item.type == ItemType<Shadura>())
+                scale = Owner.GetAdjustedItemScale(Item);
             else
                 Projectile.Kill();
 
@@ -405,7 +406,7 @@ namespace Coralite.Content.Items.ShadowCastle
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 2;
@@ -537,7 +538,7 @@ namespace Coralite.Content.Items.ShadowCastle
         }
     }
 
-    public class ShaduraShoot : ModProjectile
+    public class ShaduraShoot : BaseHeldProj
     {
         public override string Texture => AssetDirectory.ShadowCastleItems + "Shadura";
 
@@ -555,7 +556,7 @@ namespace Coralite.Content.Items.ShadowCastle
             Projectile.extraUpdates = 1;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             for (int i = 0; i < 16; i++)
             {
@@ -566,11 +567,10 @@ namespace Coralite.Content.Items.ShadowCastle
 
         public override void AI()
         {
-            Player owner = Main.player[Projectile.owner];
             if (Projectile.localAI[0] < 30)
             {
                 Projectile.localAI[0]++;
-                Projectile.Center = Vector2.Lerp(Projectile.Center, owner.Center + new Vector2(owner.direction * 16, -32), 0.2f);
+                Projectile.Center = Vector2.Lerp(Projectile.Center, Owner.Center + new Vector2(Owner.direction * 16, -32), 0.2f);
                 Projectile.rotation = (Main.MouseWorld - Projectile.Center).ToRotation();
                 Dust d = Dust.NewDustDirect(Projectile.position, 16, 16, DustID.Shadowflame, 0, 0, Scale: Main.rand.NextFloat(1f, 1.3f));
                 d.noGravity = true;

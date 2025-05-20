@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Bosses.ModReinforce.Bloodiancie;
 using Coralite.Content.Bosses.Rediancie;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using Terraria;
@@ -152,7 +152,7 @@ namespace Coralite.Content.Items.RedJades
         {
             if (SoundEngine.TryGetActiveSound(soundSlot, out ActiveSound sound))
                 sound.Stop();
-            if (Main.myPlayer == Projectile.owner && Timer > 120)
+            if (Projectile.IsOwnedByLocalPlayer() && Timer > 120)
             {
                 var source = Projectile.GetSource_FromAI();
 

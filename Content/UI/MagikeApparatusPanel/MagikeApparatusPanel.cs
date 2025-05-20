@@ -23,7 +23,9 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
         public bool visible;
         public override bool Visible => visible;
 
-        public static bool ComponentButtonsVisible = false;
+        public static List<Action<SpriteBatch>> DrawExtras = new List<Action<SpriteBatch>>(4);
+
+        //public static bool ComponentButtonsVisible = false;
 
         #region 各类记录用字段
 
@@ -45,21 +47,21 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
         private int _currentCount;
 
         /// <summary> 当前显示的组件 </summary>
-        private static bool[] _showComponents;
+        //private static bool[] _showComponents;
         /// <summary> 当前显示的组件 </summary>
-        public static bool[] ShowComponents
-        {
-            get
-            {
-                if (_showComponents == null)
-                {
-                    _showComponents = new bool[MagikeComponentID.Count + 1];
-                    Array.Fill(_showComponents, true);
-                }
+        //public static bool[] ShowComponents
+        //{
+        //    get
+        //    {
+        //        if (_showComponents == null)
+        //        {
+        //            _showComponents = new bool[MagikeComponentID.Count + 1];
+        //            Array.Fill(_showComponents, true);
+        //        }
 
-                return _showComponents;
-            }
-        }
+        //        return _showComponents;
+        //    }
+        //}
 
         #endregion
 
@@ -89,7 +91,7 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
          *  |           |      |
          */
         /// <summary> 切换组件显示方式的按钮 </summary>
-        public ComponentShowTypeButton ComponentShowTypeButton;
+        //public ComponentShowTypeButton ComponentShowTypeButton;
 
         /*
          *  |  ◊◊◊◊◊◊          |
@@ -100,9 +102,9 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
          *  |           |      |
          */
         /// <summary> 组件显示切换方格 </summary>
-        public UIGrid ShowComponentButtons;
+        //public UIGrid ShowComponentButtons;
 
-        public UIPanel ComponentControllerPanel;
+        //public UIPanel ComponentControllerPanel;
 
         /*
          *              👇 就这个
@@ -137,17 +139,20 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
             //初始化基本面板
             InitBasePanel();
             //初始化切换按钮
-            InitComponentController();
+            //InitComponentController();
+            //初始化组件方格和菱形条
+            InitComponentList();
+
             //初始化数直条
             InitVerticalLine();
-            //初始化组件方格和菱形条
-            InitComponentGird();
 
             //初始化特殊显示面板
             InitComponentPanel();
 
             BasePanel.Top.Set(50, 0);
             BasePanel.Left.Set(800, 0);
+            //BasePanel.SetSize(ComponentControllerPanel.Width.Pixels + VerticalLine.Width.Pixels + 460, 350);
+            BasePanel.SetSize(ComponentList.Width.Pixels + VerticalLine.Width.Pixels + 460, 350);
 
             Append(BasePanel);
             base.OnInitialize();
@@ -162,96 +167,99 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
             BasePanel.BorderColor = EdgeColor;
         }
 
-        public void InitComponentController()
-        {
-            ComponentControllerPanel ??= new UIPanel(ModContent.Request<Texture2D>(AssetDirectory.UI + "MagikePanelBackground"),
-                ModContent.Request<Texture2D>(AssetDirectory.UI + "MagikePanelBorder"));
-            ComponentControllerPanel.RemoveAllChildren();
+        //public void InitComponentController()
+        //{
+        //    ComponentControllerPanel ??= new UIPanel(ModContent.Request<Texture2D>(AssetDirectory.UI + "MagikePanelBackground"),
+        //        ModContent.Request<Texture2D>(AssetDirectory.UI + "MagikePanelBorder"));
+        //    ComponentControllerPanel.RemoveAllChildren();
 
-            ComponentShowTypeButton = new ComponentShowTypeButton();
-            //默认在左上角
-            ComponentShowTypeButton.Left.Set(0, 0);
-            ComponentShowTypeButton.VAlign = 0.5f;
-            ComponentControllerPanel.Append(ComponentShowTypeButton);
-            ComponentControllerPanel.OverflowHidden = false;
+        //    ComponentShowTypeButton = new ComponentShowTypeButton();
+        //    //默认在左上角
+        //    ComponentShowTypeButton.Left.Set(0, 0);
+        //    ComponentShowTypeButton.VAlign = 0.5f;
+        //    ComponentControllerPanel.Append(ComponentShowTypeButton);
+        //    ComponentControllerPanel.OverflowHidden = false;
 
-            float fullWidth = ComponentShowTypeButton.OutsideWidth();
-            float fullHeight = ComponentShowTypeButton.Height.Pixels;
+        //    float fullWidth = ComponentShowTypeButton.OutsideWidth();
+        //    float fullHeight = ComponentShowTypeButton.Height.Pixels;
 
-            ShowComponentButtons ??= new UIGrid();
+        //    ShowComponentButtons ??= new UIGrid();
 
-            if (ComponentButtonsVisible)
-            {
-                ShowComponentButtons.Clear();
+        //    if (ComponentButtonsVisible)
+        //    {
+        //        ShowComponentButtons.Clear();
 
-                float recordWidth = 0;
-                float height = 0;
-                for (int i = 0; i < MagikeComponentID.Count + 1; i++)
-                {
-                    ComponentSelectButton button = new(i);
-                    recordWidth += button.Width.Pixels;
-                    height = button.Height.Pixels;
-                    ShowComponentButtons.Add(button);
-                }
+        //        float recordWidth = 0;
+        //        float height = 0;
+        //        for (int i = 0; i < MagikeComponentID.Count + 1; i++)
+        //        {
+        //            ComponentSelectButton button = new(i);
+        //            recordWidth += button.Width.Pixels;
+        //            height = button.Height.Pixels;
+        //            ShowComponentButtons.Add(button);
+        //        }
 
-                ShowComponentButtons.Width.Set(recordWidth + 12, 0);
-                ShowComponentButtons.Height.Set(height + 6, 0);
+        //        ShowComponentButtons.Width.Set(recordWidth + 12, 0);
+        //        ShowComponentButtons.Height.Set(height + 6, 0);
 
-                ShowComponentButtons.Top.Set(0, 0);
-                ShowComponentButtons.Left.Set(ComponentShowTypeButton.OutsideWidth() + ComponentShowTypeButton.Left.Pixels + 10, 0);
-                ShowComponentButtons.OverflowHidden = false;
+        //        ShowComponentButtons.Top.Set(0, 0);
+        //        ShowComponentButtons.Left.Set(ComponentShowTypeButton.OutsideWidth() + ComponentShowTypeButton.Left.Pixels + 10, 0);
+        //        ShowComponentButtons.OverflowHidden = false;
 
-                ComponentControllerPanel.Append(ShowComponentButtons);
+        //        ComponentControllerPanel.Append(ShowComponentButtons);
 
-                fullWidth += ShowComponentButtons.Width.Pixels + 24;
-                fullHeight = ShowComponentButtons.Height.Pixels + 6;
-            }
+        //        fullWidth += ShowComponentButtons.Width.Pixels + 24;
+        //        fullHeight = ShowComponentButtons.Height.Pixels + 6;
+        //    }
 
-            ComponentControllerPanel.Width.Set(fullWidth, 0);
-            ComponentControllerPanel.Height.Set(fullHeight, 0);
-            ComponentControllerPanel.Top.Set(12, 0);
+        //    ComponentControllerPanel.Width.Set(fullWidth, 0);
+        //    ComponentControllerPanel.Height.Set(fullHeight, 0);
+        //    ComponentControllerPanel.Top.Set(12, 0);
 
-            ComponentControllerPanel.BackgroundColor = BackgroundColor2;
-            ComponentControllerPanel.BorderColor = EdgeColor;
+        //    ComponentControllerPanel.BackgroundColor = BackgroundColor2;
+        //    ComponentControllerPanel.BorderColor = EdgeColor;
 
-            BasePanel.Append(ComponentControllerPanel);
-        }
+        //    BasePanel.Append(ComponentControllerPanel);
+        //}
 
         public void InitVerticalLine()
         {
             VerticalLine ??= new UIVerticalLine();
 
-            VerticalLine.Left.Set(ComponentControllerPanel.Width.Pixels, 0);
+            VerticalLine.Left.Set(ComponentList.Width.Pixels, 0);
             //VerticalLine.Width.Set(VerticalLine.Width.Pixels + 24, 0);
 
             BasePanel.Append(VerticalLine);
         }
 
-        public void InitComponentGird()
+        public void InitComponentList()
         {
-            ComponentGrid ??= new UIGrid();
+            //ComponentGrid ??= new UIGrid();
             if (ComponentList == null)
             {
                 ComponentList = new();
                 ComponentList.QuickInvisibleScrollbar();
             }
 
-            ComponentGrid.Top.Set(ComponentControllerPanel.Height.Pixels + ComponentControllerPanel.Top.Pixels + 12, 0);
-            ComponentList.Top.Set(ComponentControllerPanel.Height.Pixels + ComponentControllerPanel.Top.Pixels + 12, 0);
+            //ComponentGrid.Top.Set(ComponentControllerPanel.Height.Pixels + ComponentControllerPanel.Top.Pixels + 12, 0);
+            //ComponentList.Top.Set(ComponentControllerPanel.Height.Pixels + ComponentControllerPanel.Top.Pixels + 12, 0);
+            ComponentList.Top.Set(12, 0);
 
             //宽度和物品按钮相同，高度填满剩余的
-            ComponentGrid.Width.Set(ComponentControllerPanel.Width.Pixels, 0);
-            ComponentGrid.Height.Set(-ComponentControllerPanel.Height.Pixels - ComponentControllerPanel.Top.Pixels - 12, 1);
-            ComponentGrid.OverflowHidden = true;
+            //ComponentGrid.Width.Set(ComponentControllerPanel.Width.Pixels, 0);
+            //ComponentGrid.Height.Set(-ComponentControllerPanel.Height.Pixels - ComponentControllerPanel.Top.Pixels - 12, 1);
+            //ComponentGrid.OverflowHidden = true;
 
-            ComponentList.Width.Set(ComponentControllerPanel.Width.Pixels, 0);
-            ComponentList.Height.Set(-ComponentControllerPanel.Height.Pixels - ComponentControllerPanel.Top.Pixels - 12, 1);
+            //ComponentList.Width.Set(ComponentControllerPanel.Width.Pixels, 0);
+            //ComponentList.Height.Set(-ComponentControllerPanel.Height.Pixels - ComponentControllerPanel.Top.Pixels - 12, 1);
+            ComponentList.Width.Set(56, 0);
+            ComponentList.Height.Set(-12, 1);
             ComponentList.OverflowHidden = true;
 
-            if (ComponentButtonsVisible)
-                BasePanel.Append(ComponentGrid);
-            else
-                BasePanel.Append(ComponentList);
+            //if (ComponentButtonsVisible)
+            //    BasePanel.Append(ComponentGrid);
+            //else
+            BasePanel.Append(ComponentList);
         }
 
         public void InitComponentPanel()
@@ -259,7 +267,7 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
             ComponentPanel ??= new UIPanel(ModContent.Request<Texture2D>(AssetDirectory.UI + "MagikePanelBackground2"),
                 ModContent.Request<Texture2D>(AssetDirectory.Blank));
 
-            ComponentPanel.Left.Set(ComponentControllerPanel.Width.Pixels + VerticalLine.Width.Pixels, 0);
+            ComponentPanel.Left.Set(ComponentList.Width.Pixels + VerticalLine.Width.Pixels, 0);
             ComponentPanel.Width.Set(-VerticalLine.Left.Pixels - VerticalLine.Width.Pixels - 6, 1);
             ComponentPanel.Top.Set(0, 0);
             ComponentPanel.Height.Set(0, 1f);
@@ -277,18 +285,19 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
         {
             if (BasePanel == null || CurrentEntity == null)
                 return;
+            DrawExtras?.Clear();
             InitBasePanel();
 
             BasePanel.RemoveAllChildren();
-            InitComponentController();
+            //InitComponentController();
 
-            InitComponentGird();
+            InitComponentList();
             ResetComponentGrid();
 
             InitVerticalLine();
             InitComponentPanel();
 
-            float min = ComponentControllerPanel.Width.Pixels + VerticalLine.Width.Pixels + 360;
+            float min = ComponentList.Width.Pixels + VerticalLine.Width.Pixels + 360;
 
             BasePanel.MinWidth.Set(min, 0);
             BasePanel.MinHeight.Set(250, 0);
@@ -301,7 +310,9 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
 
             BasePanel.OverflowHidden = true;
 
-            base.Recalculate();
+            int index = CurrentEntity.GetMainComponentIndex();
+            if (index != -1)
+                CurrentShowComponentIndex = index;
 
             ResetComponentPanel();
 
@@ -313,33 +324,45 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
 
         public void ResetComponentGrid()
         {
-            if (ComponentButtonsVisible)
-            {
-                ComponentGrid.Clear();
-                for (int i = 0; i < CurrentEntity.ComponentsCache.Count; i++)
-                {
-                    int id = CurrentEntity.ComponentsCache[i].ID;
-                    if (!ShowComponents[id + 1])
-                        continue;
+            //if (ComponentButtonsVisible)
+            //{
+            //    ComponentGrid.Clear();
+            //    for (int i = 0; i < CurrentEntity.ComponentsCache.Count; i++)
+            //    {
+            //        int id = CurrentEntity.ComponentsCache[i].ID;
+            //        if (!ShowComponents[id + 1])
+            //            continue;
 
-                    var button = new ComponentButton(i);
-                    ComponentGrid.Add(button);
-                }
-            }
-            else
-            {
-                ComponentList.Clear();
-                for (int i = 0; i < CurrentEntity.ComponentsCache.Count; i++)
-                {
-                    int id = CurrentEntity.ComponentsCache[i].ID;
-                    if (!ShowComponents[id + 1])
-                        continue;
+            //        var button = new ComponentButton(i);
+            //        ComponentGrid.Add(button);
+            //    }
+            //}
+            //else
+            //{
+            ComponentList.Clear();
 
-                    var button = new ComponentButton(i);
-                    button.HAlign = 0.3f;
-                    ComponentList.Add(button);
-                }
+            if (CurrentEntity.ExtendFilterCapacity>0)
+            {
+                var filterButton = new ComponentButton(-1);
+                filterButton.HAlign = 0.3f;
+                ComponentList.Add(filterButton);
             }
+
+            for (int i = 0; i < CurrentEntity.ComponentsCache.Count; i++)
+            {
+                int id = CurrentEntity.ComponentsCache[i].ID;
+                //if (!ShowComponents[id + 1])
+                //    continue;
+
+                if (id == MagikeComponentID.MagikeFilter && CurrentEntity.ComponentsCache[i] is not IUIShowable)
+                    continue;
+
+                var button = new ComponentButton(i);
+                button.HAlign = 0.3f;
+                ComponentList.Add(button);
+            }
+
+            //}
         }
 
         public void ResetComponentPanel()
@@ -350,10 +373,20 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
             ComponentPanel.RemoveAllChildren();
 
             if (CurrentEntity.ComponentsCache.Count != 0)
-                CurrentShowComponentIndex = Math.Clamp(CurrentShowComponentIndex, 0, CurrentEntity.ComponentsCache.Count - 1);
+                CurrentShowComponentIndex = Math.Clamp(CurrentShowComponentIndex, -1, CurrentEntity.ComponentsCache.Count - 1);
 
             if (!CurrentEntity.ComponentsCache.IndexInRange(CurrentShowComponentIndex))
+            {
+                if (CurrentShowComponentIndex == -1)
+                {
+                    BaseRecalculate();
+                    BaseRecalculate();
+                    AddFilterController(ComponentPanel);
+                    return;
+                }
+
                 return;
+            }
 
             if (CurrentEntity.ComponentsCache[CurrentShowComponentIndex] is IUIShowable showable)
             {
@@ -363,14 +396,43 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
             }
         }
 
+        /// <summary>
+        /// 添加滤镜控制器
+        /// </summary>
+        /// <param name="parent"></param>
+        public void AddFilterController(UIElement parent)
+        {
+            UIElement title = new ComponentUIElementText(() => MagikeSystem.GetUIText(MagikeSystem.UITextID.FilterController), parent, new Vector2(1.3f));
+            parent.Append(title);
+            UIElement Text1 = new ComponentUIElementText(() => MagikeSystem.GetUIText(MagikeSystem.UITextID.ClickToRemove), parent);
+            Text1.SetTopLeft(title.Height.Pixels + 8, 0);
+            parent.Append(Text1);
+
+            FixedUIGrid grid = new FixedUIGrid();
+            for (int i = 0; i < CurrentEntity.ExtendFilterCapacity; i++)
+                grid.Add(new FilterButton(i));
+
+            grid.SetSize(0, 0, 1, 1);
+            grid.SetTopLeft(Text1.Top.Pixels + title.Height.Pixels + 8, 0);
+
+            grid.QuickInvisibleScrollbar();
+
+            parent.Append(grid);
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
+            if (!Main.playerInventory || CurrentEntity == null)
+            {
+                visible = false;
+                return;
+            }
+
             Vector2 pos = Helper.GetMagikeTileCenter(CurrentEntity.Position);
             //一些情况下的关闭
-            if (!Main.playerInventory || CurrentEntity == null
-                || !VaultUtils.IsPointOnScreen(pos.ToScreenPosition()))
+            if (!VaultUtils.IsPointOnScreen(pos.ToScreenPosition()))
             {
                 visible = false;
                 CurrentEntity = null;
@@ -383,7 +445,7 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
                 Recalculate();
             }
 
-            if (Vector2.Distance(Main.LocalPlayer.Center, pos) > 16 * 6)
+            if (Vector2.Distance(Main.LocalPlayer.Center, pos) > 16 * 30)
             {
                 visible = false;
                 CurrentEntity = null;
@@ -423,6 +485,10 @@ namespace Coralite.Content.UI.MagikeApparatusPanel
 
             if (BasePanel.IsMouseHovering)
                 PlayerInput.LockVanillaMouseScroll("Coralite/MagikePanel");
+
+            foreach (var item in DrawExtras)
+                item.Invoke(spriteBatch);
+            DrawExtras.Clear();
 
             base.Draw(spriteBatch);
         }

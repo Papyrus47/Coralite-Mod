@@ -190,21 +190,63 @@ AmberDebuff: {
 }
 
 FreezePotionBuff: {
-	DisplayName: Freeze Potion Buff
-	Description: Mods.Coralite.Buffs.FreezePotionBuff.Description
+	DisplayName: Freeze Prime
+	Description:
+		'''
+		+10% Frost damage
+		-8 Defense
+		'''
 }
 
 HungryPotionBuff: {
-	DisplayName: Hungry Potion Buff
-	Description: Mods.Coralite.Buffs.HungryPotionBuff.Description
+	DisplayName: Hungry Prime
+	Description:
+		'''
+		+10% Delicious damage
+		-8% movement speed
+		'''
 }
 
 LeafeoShieldCD: {
-	DisplayName: Leafeo Shield C D
-	Description: Mods.Coralite.Buffs.LeafeoShieldCD.Description
+	DisplayName: Leafeo Shield CD
+	Description: Photosynthesis is underway to produce leaf shields...
 }
 
 CloudBonus: {
 	DisplayName: Cloud Bonus
-	Description: Mods.Coralite.Buffs.CloudBonus.Description
+	Description:
+		'''
+		+15% movement speed
+		+15% ranged damage
+		'''
+}
+
+HorizonArcBonus: {
+	DisplayName: Horizon Arc Bonus
+	Description: Attach a rainbow to your arrows!
+}
+
+FocusBuff: {
+	DisplayName: Focus Buff
+	Description: Mods.Coralite.Buffs.FocusBuff.Description
+}
+
+ChalcedonySkyshipBuff: {
+	DisplayName: Chalcedony Skyship Buff
+	Description: Mods.Coralite.Buffs.ChalcedonySkyshipBuff.Description
+}
+
+EmperorSlimeBuff: {
+	DisplayName: Emperor Slime Buff
+	Description: Mods.Coralite.Buffs.EmperorSlimeBuff.Description
+}
+
+BringerHarpyBuff: {
+	DisplayName: Bringer Harpy Buff
+	Description: Mods.Coralite.Buffs.BringerHarpyBuff.Description
+}
+
+PrisonBuff: {
+	DisplayName: Prison Buff
+	Description: Mods.Coralite.Buffs.PrisonBuff.Description
 }

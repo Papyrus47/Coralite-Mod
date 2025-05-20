@@ -1,13 +1,13 @@
 ﻿using Coralite.Core;
 using Coralite.Helpers;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Bosses.Rediancie
 {
     public class Rediancie_BigBoom : ModProjectile
     {
         public override string Texture => AssetDirectory.Blank;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -20,12 +20,16 @@ namespace Coralite.Content.Bosses.Rediancie
             Projectile.hostile = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override bool PreAI()
         {
-            Helper.RedJadeBigBoom(Projectile.Center);
+            if (!span)
+            {
+                Helper.RedJadeBigBoom(Projectile.Center);
+                span = true;
+            }
+            return false;
         }
 
-        public override bool PreAI() => false;
         public override bool PreDraw(ref Color lightColor) => false;
 
         public override bool CanHitPlayer(Player target)

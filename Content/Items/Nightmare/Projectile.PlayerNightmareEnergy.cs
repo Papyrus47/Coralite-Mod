@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -10,12 +11,9 @@ using Terraria.DataStructures;
 
 namespace Coralite.Content.Items.Nightmare
 {
-    public class PlayerNightmareEnergy : ModProjectile, IDrawAdditive
+    public class PlayerNightmareEnergy : BaseHeldProj, IDrawAdditive
     {
         public override string Texture => AssetDirectory.Blank;
-
-        public Player Owner => Main.player[Projectile.owner];
-
         public ref float Timer => ref Projectile.localAI[0];
         public ref float Scale => ref Projectile.localAI[1];
         public ref float Rot => ref Projectile.localAI[2];
@@ -47,7 +45,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Scale = 0.3f;
         }
@@ -62,19 +60,22 @@ namespace Coralite.Content.Items.Nightmare
 
             Projectile.Center = Owner.Center;
 
-            if (Owner.HeldItem.ModItem is INightmareWeapon)
+            if (Item.ModItem is INightmareWeapon)
             {
                 Projectile.timeLeft = 2;
             }
 
             Timer++;
-            Projectile.rotation += 0.05f;
+            Projectile.rotation += 0.03f;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             int howMany = 0;
             bool nightmareHeart = false;
+
+            Texture2D lightTex = BaseNightmareSparkle.MainLight.Value;
+
             if (Owner.TryGetModPlayer(out CoralitePlayer cp))
             {
                 howMany = cp.nightmareEnergy;
@@ -84,17 +85,39 @@ namespace Coralite.Content.Items.Nightmare
             Vector2 pos = Projectile.Center - Main.screenPosition;
             float factor = MathF.Sin(Main.GlobalTimeWrappedHourly);
             float rot = Timer * 0.02f;
+            Vector2 origin = lightTex.Size() / 2;
+
+            Color c1 = NightmarePlantera.nightmareRed * 0.75f;
+            c1.A = 0;
+            Color c2 = NightmarePlantera.nightPurple;
+            c2.A = 0;
+            Color c3 = Color.White * 0.35f;
+            c3.A = 0;
 
             for (int i = 0; i < howMany; i++)
             {
-                Vector2 dir = (Projectile.rotation + (i * MathHelper.TwoPi / howMany)).ToRotationVector2();
-                Vector2 position = pos + (dir * (40 + (factor * 2)));
-                float factor2 = 0.5f + (factor * 0.1f);
-                Helpers.Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, position, Color.White * 0.7f, NightmarePlantera.nightmareRed,
-                   factor2, 0f, 0.5f, 0.5f, 1f, Projectile.rotation + rot, new Vector2(0.9f, 0.9f), Vector2.One * 1.2f);
+                float rot1 = Projectile.rotation + (i * MathHelper.TwoPi / howMany);
+                Vector2 dir = rot1.ToRotationVector2();
+                Vector2 position = pos + (dir * (40 + MathF.Sin(Main.GlobalTimeWrappedHourly * 2 + i * MathHelper.PiOver2) * 6 * factor));
+                float factor2 = 0.15f + (factor * 0.02f);
+                Vector2 scale = new Vector2(1.35f, 1f) * factor2;
+
+                Main.spriteBatch.Draw(lightTex, position, null, c1, rot1 + MathHelper.PiOver2, origin, scale, 0, 0);
+
+                //Helpers.Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, position, Color.White * 0.7f, NightmarePlantera.nightmareRed,
+                //   factor2, 0f, 0.5f, 0.5f, 1f, Projectile.rotation + rot, new Vector2(0.9f, 0.9f), Vector2.One * 1.2f);
                 if (nightmareHeart)
-                    Helpers.Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, position, Color.White * 0.7f, NightmarePlantera.nightPurple,
-                       factor2, 0f, 0.5f, 0.5f, 1f, Projectile.rotation + rot + MathHelper.PiOver4, new Vector2(0.4f, 0.4f), Vector2.One);
+                {
+                    scale = new Vector2(1f, 0.5f) * factor2 * 0.7f;
+                    Main.spriteBatch.Draw(lightTex, position, null, c2, rot1, origin, scale, 0, 0);
+                    c3 = c2;
+                    //Main.spriteBatch.Draw(lightTex, position, null, c3*0.5f, rot1 + MathHelper.PiOver4, origin, factor2, 0, 0);
+                    //Helpers.Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, position, Color.White * 0.7f, NightmarePlantera.nightPurple,
+                    //       factor2, 0f, 0.5f, 0.5f, 1f, Projectile.rotation + rot + MathHelper.PiOver4, new Vector2(0.4f, 0.4f), Vector2.One);
+                }
+
+                Main.spriteBatch.Draw(lightTex, position, null, c3, rot1 + MathHelper.PiOver2, origin, scale, 0, 0);
+
             }
             return false;
         }

@@ -5,7 +5,6 @@ using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -29,6 +28,11 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             }
         }
 
+        public override void SetStaticDefaults()
+        {
+            NPC.SetHideInBestiary();
+        }
+
         public override void SetDefaults()
         {
             NPC.lifeMax = 100;
@@ -38,6 +42,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.HitSound = CoraliteSoundID.DigIce;
+            NPC.SpawnedFromStatue = true;
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
@@ -50,7 +55,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             return State > 2;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             NPC.rotation = Main.rand.NextFloat(6.282f);
             Center = NPC.Center;
@@ -61,25 +66,27 @@ namespace Coralite.Content.Bosses.BabyIceDragon
         {
             if (!spwan)
             {
+                Initialize();
                 if (!VaultUtils.isServer)
                 {
                     NPC boss = null;
                     foreach (var npc in Main.ActiveNPCs)
                     {
-                        if (!npc.active || npc.type != ModContent.NPCType<BabyIceDragon>())
+                        if (npc.active && npc.type == ModContent.NPCType<BabyIceDragon>())
                         {
-                            continue;
+                            boss = npc;
+                            break;
                         }
-                        boss = npc;
                     }
+
                     if (boss != null)
                     {
                         ((BabyIceDragon)boss.ModNPC).GetMouseCenter(out _, out Vector2 mouseCenter);
                         for (int j = 0; j < 2; j++)
                         {
-                            IceStarLight.Spawn(new Vector2(NPC.ai[0], NPC.ai[1]),
+                            IceStarLight.Spawn(mouseCenter,
                                 (boss.Center - NPC.Center).SafeNormalize(Vector2.One).RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * 10,
-                                1f, () => boss.Center, 16);
+                                1f, () => NPC.Center, 16);
                         }
                     }
                 }

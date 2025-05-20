@@ -1,7 +1,7 @@
 ﻿using Coralite.Core.Loaders;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader.IO;
 
 namespace Coralite.Core.Systems.KeySystem
@@ -9,11 +9,17 @@ namespace Coralite.Core.Systems.KeySystem
     /// <summary>
     /// 关键信息
     /// </summary>
-    public abstract class KeyKnowledge : ModTexturedType
+    public abstract class KeyKnowledge : ModTexturedType, ILocalizedModType
     {
         public override string Texture => AssetDirectory.KeyKnowledgeIcon + Name;
 
-        public Asset<Texture2D> Texture2D { get; private set; }
+        public ATex Texture2D { get; private set; }
+
+        public LocalizedText KnowledgeName { get; private set; }
+        public LocalizedText LockTip { get; private set; }
+        public LocalizedText Description { get; private set; }
+
+        public int InnerType { get; private set; }
 
         /// <summary>
         /// 类型
@@ -25,15 +31,29 @@ namespace Coralite.Core.Systems.KeySystem
         /// </summary>
         public bool Unlock { get; set; }
 
+        public string LocalizationCategory => "Systems.KnowledgeSystem";
+
+        /// <summary>
+        /// 获取页数用于在UI内跳转
+        /// </summary>
+        public abstract int FirstPageInCoraliteNote { get; }
+
         protected override void Register()
         {
             ModTypeLookup<KeyKnowledge>.Register(this);
 
+            InnerType = KeyKnowledgeLoader.ReserveKnowledgeID();
+
             KeyKnowledgeLoader.knowledges ??= [];
-            KeyKnowledgeLoader.knowledges.Add(Type, this);
+            KeyKnowledgeLoader.knowledges.Add(InnerType, this);
 
             if (!Main.dedServ)
+            {
                 Texture2D = ModContent.Request<Texture2D>(Texture);
+                KnowledgeName = this.GetLocalization("Name");
+                LockTip = this.GetLocalization("LockTip");
+                Description = this.GetLocalization("Description");
+            }
         }
 
         /// <summary>

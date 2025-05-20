@@ -46,8 +46,6 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             ];
         }
 
-        public override MagikeTP GetEntityInstance() => GetInstance<DesertLensTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return
@@ -79,20 +77,20 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             {
                 default:
                     MagikeMaxBase = 0;
-                    AntiMagikeMaxBase = 0;
+                    //AntiMagikeMaxBase = 0;
                     break;
                 case MALevel.Quicksand:
                     MagikeMaxBase = 230;
-                    AntiMagikeMaxBase = MagikeMaxBase * 3;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 3;
                     break;
                 case MALevel.Forbidden:
                     MagikeMaxBase = 730;
-                    AntiMagikeMaxBase = MagikeMaxBase * 2;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 2;
                     break;
             }
 
             LimitMagikeAmount();
-            LimitAntiMagikeAmount();
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -108,7 +106,7 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.Quicksand:

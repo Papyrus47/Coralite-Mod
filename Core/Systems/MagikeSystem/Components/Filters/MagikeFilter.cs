@@ -141,7 +141,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         public FilterRemoveButton(MagikeTP entity, MagikeFilter filter)
         {
-            Texture2D tex = MagikeSystem.FilterRemoveButton.Value;
+            Texture2D tex = MagikeAssets.FilterRemoveButton.Value;
             var frameBox = tex.Frame(1, 2);
             Width.Set(frameBox.Width + 8, 0);
             Height.Set(frameBox.Height + 8, 0);
@@ -153,7 +153,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         internal void Send_LeftClick_Data(MagikeTP tP)
         {
             ModPacket modPacket = Coralite.Instance.GetPacket();
-            modPacket.Write((byte)CLNetWorkEnum.FilterRemoveButton_LeftClick);
+            modPacket.Write((byte)CoraliteNetWorkEnum.FilterRemoveButton_LeftClick);
             modPacket.Write(tP.ID);
             modPacket.Write(tP.Position.X);
             modPacket.Write(tP.Position.Y);
@@ -184,7 +184,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                     if (Main.dedServ)
                     {
                         ModPacket modPacket = Coralite.Instance.GetPacket();
-                        modPacket.Write((byte)CLNetWorkEnum.FilterRemoveButton_LeftClick);
+                        modPacket.Write((byte)CoraliteNetWorkEnum.FilterRemoveButton_LeftClick);
                         modPacket.Write(id);
                         modPacket.Write(posX);
                         modPacket.Write(posY);
@@ -208,7 +208,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            Texture2D tex = MagikeSystem.FilterRemoveButton.Value;
+            Texture2D tex = MagikeAssets.FilterRemoveButton.Value;
 
             int frame = 0;
 

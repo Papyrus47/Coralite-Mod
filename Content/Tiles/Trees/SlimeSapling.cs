@@ -12,7 +12,7 @@ namespace Coralite.Content.Tiles.Trees
 
         public override void SetStaticDefaults()
         {
-            this.SaplingPrefab(new int[] { TileID.SlimeBlock, TileID.FrozenSlimeBlock, TileID.PinkSlimeBlock }, DustID.Water, Color.LightBlue);
+            this.SaplingPrefab([TileID.SlimeBlock, TileID.FrozenSlimeBlock, TileID.PinkSlimeBlock], DustID.Water, Color.LightBlue);
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num)
@@ -26,7 +26,7 @@ namespace Coralite.Content.Tiles.Trees
             if (!WorldGen.genRand.NextBool(20))
                 return;
 
-            Tile tile = Framing.GetTileSafely(i, j); // 安全获取物块
+            Tile tile = Framing.GetTileSafely(i, j);
             bool growSucess; // 是否成功生长了的变量
 
             // Style 0 is for the ExampleTree sapling, and style 1 is for ExamplePalmTree, so here we check frameX to call the correct method.

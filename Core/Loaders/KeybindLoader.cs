@@ -2,10 +2,11 @@
 
 namespace Coralite.Core.Loaders
 {
-    class KeybindLoader : ModSystem
+    public class KeybindLoader : ModSystem
     {
         public static ModKeybind ArmorBonus;
         public static ModKeybind SpecialAttack;
+        public static ModKeybind Dash;
 
         public override void Load()
         {
@@ -13,15 +14,16 @@ namespace Coralite.Core.Loaders
                 return;
 
             Mod Mod = Coralite.Instance;
-            ArmorBonus = Terraria.ModLoader.KeybindLoader.RegisterKeybind(Mod, "套装效果", "C");
-            SpecialAttack = Terraria.ModLoader.KeybindLoader.RegisterKeybind(Mod, "特殊攻击", "F");
+            ArmorBonus = Terraria.ModLoader.KeybindLoader.RegisterKeybind(Mod, "ArmorBonus", "C");
+            SpecialAttack = Terraria.ModLoader.KeybindLoader.RegisterKeybind(Mod, "SpecialAttack", "F");
+            Dash = Terraria.ModLoader.KeybindLoader.RegisterKeybind(Mod, "Dash", "R");
         }
 
         public override void Unload()
         {
             ArmorBonus = null;
             SpecialAttack = null;
+            Dash = null;
         }
-
     }
 }

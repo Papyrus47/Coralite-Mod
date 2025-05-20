@@ -1,4 +1,5 @@
 ﻿using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,13 +10,38 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.HyacinthSeries
 {
+    [AutoLoadTexture(Path = AssetDirectory.HyacinthSeriesItems)]
     public class EternalBloomHeldProj : BaseGunHeldProj
     {
         public EternalBloomHeldProj() : base(0.2f, 16, -8, AssetDirectory.HyacinthSeriesItems) { }
 
+        public static ATex EternalBloomFire { get; private set; }
+
         public override void ModifyAI(float factor)
         {
             Lighting.AddLight(Projectile.Center, new Vector3(0.1f, 0.6f, 0.1f));
+            if (Projectile.timeLeft != MaxTime && Projectile.timeLeft % 2 == 0)
+            {
+                Projectile.frame++;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            base.PreDraw(ref lightColor);
+
+            if (Projectile.frame > 4)
+                return false;
+
+            Texture2D effect = EternalBloomFire.Value;
+            Rectangle frameBox = effect.Frame(1, 5, 0, Projectile.frame);
+
+            float rot = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
+            float n = rot - DirSign * MathHelper.PiOver2;
+
+            Main.spriteBatch.Draw(effect, Projectile.Center + rot.ToRotationVector2() * 38 + n.ToRotationVector2() * 8 - Main.screenPosition, frameBox, Color.Lerp(lightColor, Color.White, 0.5f)
+                , rot, new Vector2(0, frameBox.Height / 2), Projectile.scale, 0, 0f);
+            return false;
         }
     }
 
@@ -29,7 +55,9 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.aiStyle = -1;
-            Projectile.penetrate = 4;
+            Projectile.penetrate = 2;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void AI()
@@ -51,6 +79,11 @@ namespace Coralite.Content.Items.HyacinthSeries
             {
                 Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, DustID.WoodFurniture);
             }
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Venom, 60 * 3);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -79,15 +112,15 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.hostile = false;
             Projectile.friendly = true;
             Projectile.aiStyle = -1;
-            Projectile.penetrate = 4;
+            Projectile.penetrate = 30;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void AI()
         {
             if (Projectile.velocity.Y < 16)
-            {
                 Projectile.velocity.Y += 0.3f;
-            }
 
             Projectile.rotation += Projectile.velocity.X / 20;
         }
@@ -110,6 +143,11 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.position -= oldVelocity;
             return Projectile.ai[0] > 5;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Venom, 60 * 3);
         }
 
         public override bool PreDraw(ref Color lightColor)

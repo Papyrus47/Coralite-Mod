@@ -31,8 +31,6 @@ namespace Coralite.Content.Items.Magike.Refractors
         public override string Texture => AssetDirectory.MagikeRefractorTiles + Name;
         public override int DropItemType => ItemType<BasicRefractor>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<BasicRefractorTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return [
@@ -64,20 +62,20 @@ namespace Coralite.Content.Items.Magike.Refractors
         {
             MagikeMaxBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => 60,
+                MALevel.MagicCrystal => 64,
                 MALevel.Crimson
                 or MALevel.Corruption
-                or MALevel.Icicle => 300,
-                MALevel.CrystallineMagike => 1800,
+                or MALevel.Icicle => 320,
+                MALevel.CrystallineMagike => 1620,
                 MALevel.Soul
                 or MALevel.Feather => 7500,
-                MALevel.SplendorMagicore => 18000,
+                MALevel.SplendorMagicore => 22500,
                 _ => 0,
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -93,36 +91,36 @@ namespace Coralite.Content.Items.Magike.Refractors
                 case MALevel.None:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.MagicCrystal:
-                    UnitDeliveryBase = 10;
+                    UnitDeliveryBase = 16;
                     SendDelayBase = 60 * 5;
-                    ConnectLengthBase = 10 * 16;
+                    ConnectLengthBase = 15 * 16;
                     break;
                 case MALevel.Crimson:
                 case MALevel.Corruption:
                 case MALevel.Icicle:
-                    UnitDeliveryBase = 50;
+                    UnitDeliveryBase = 64;
                     SendDelayBase = 60 * 5;
-                    ConnectLengthBase = 10 * 16;
+                    ConnectLengthBase = 15 * 16;
                     break;
                 case MALevel.CrystallineMagike:
-                    UnitDeliveryBase = 120;
+                    UnitDeliveryBase = 144;
                     SendDelayBase = 60 * 4;
-                    ConnectLengthBase = 15 * 16;
+                    ConnectLengthBase = 20 * 16;
                     break;
                 case MALevel.Soul:
                 case MALevel.Feather:
                     UnitDeliveryBase = 500;
                     SendDelayBase = 60 * 4;
-                    ConnectLengthBase = 15 * 16;
+                    ConnectLengthBase = 20 * 16;
                     break;
                 case MALevel.SplendorMagicore:
                     UnitDeliveryBase = 900;
                     SendDelayBase = 60 * 4;
-                    ConnectLengthBase = 15 * 16;
+                    ConnectLengthBase = 25 * 16;
                     break;
             }
 

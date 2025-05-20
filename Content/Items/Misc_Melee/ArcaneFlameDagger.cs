@@ -2,15 +2,15 @@
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.UI.Chat;
@@ -163,7 +163,6 @@ namespace Coralite.Content.Items.Misc_Melee
                 vector5 *= num28;
                 Projectile.velocity = -vector5 * 0.9f;
                 Projectile.netUpdate = true;
-
             }
 
             if (hit.Crit)//生成额外斩击弹幕
@@ -196,15 +195,13 @@ namespace Coralite.Content.Items.Misc_Melee
         }
     }
 
-    public class ArcaneFlameDaggerSlash : ModProjectile, IDrawPrimitive, IDrawWarp
+    public class ArcaneFlameDaggerSlash : BaseHeldProj, IDrawPrimitive, IDrawWarp
     {
         public override string Texture => AssetDirectory.Trails + "SlashFlatBlurVMirror";
 
         public ref float Alpha => ref Projectile.localAI[0];
         public ref float Timer => ref Projectile.ai[0];
         public ref float TrailWidth => ref Projectile.ai[1];
-
-        public Player Owner => Main.player[Projectile.owner];
 
         public static Asset<Texture2D> GradientTexture;
 
@@ -240,16 +237,14 @@ namespace Coralite.Content.Items.Misc_Melee
             Projectile.extraUpdates = 1;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[24];
-            for (int i = 0; i < 24; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(24);
         }
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 24, new NoTip(), WidthFunction, ColorFunction);
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 24, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
 
             Lighting.AddLight(Projectile.Center, Color.LimeGreen.ToVector3());
             if (Timer < 10)
@@ -297,7 +292,7 @@ namespace Coralite.Content.Items.Misc_Melee
 
                 Projectile.oldPos[23] = Projectile.Center + Projectile.velocity;
             }
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
 
             Timer++;
         }
@@ -321,12 +316,12 @@ namespace Coralite.Content.Items.Misc_Melee
 
             Effect effect = Filters.Scene["AlphaGradientTrail"].GetShader().Shader;
 
-            effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["sampleTexture"].SetValue(Projectile.GetTexture());
             effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -336,7 +331,7 @@ namespace Coralite.Content.Items.Misc_Melee
             if (Timer < 0)
                 return;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             float w = 1f;
             Vector2 up = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2();
@@ -351,8 +346,8 @@ namespace Coralite.Content.Items.Misc_Melee
                 Vector2 Top = Center + (up * width);
                 Vector2 Bottom = Center + (down * width);
 
-                bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
-                bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
+                bars.Add(new ColoredVertex(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
+                bars.Add(new ColoredVertex(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
             }
 
             Main.spriteBatch.End();

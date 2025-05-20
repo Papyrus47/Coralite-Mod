@@ -31,8 +31,6 @@ namespace Coralite.Content.Items.Magike.Lens.ExtractLens
     {
         public override int DropItemType => ItemType<BasicExtractLens>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<BasicExtractLensTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return [
@@ -85,8 +83,8 @@ namespace Coralite.Content.Items.Magike.Lens.ExtractLens
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase * 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase * 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -101,7 +99,7 @@ namespace Coralite.Content.Items.Magike.Lens.ExtractLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.MagicCrystal:

@@ -1,11 +1,11 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -24,11 +24,14 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         {
         }
 
+        public float Priority => IDashable.AccessoryDashHigh + 5;
+
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.DamageType = DamageClass.Generic;
             Item.damage = 170;
+            Item.defense = 6;
         }
 
         public bool isDashing;
@@ -39,6 +42,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 cp.FlyingShieldAccessories?.Add(this);
+                cp.AddDash(this);
             }
 
             if (isDashing)
@@ -102,7 +106,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 && cp.TryGetFlyingShieldGuardProj(out BaseFlyingShieldGuard flyingShieldGuard)
                 && flyingShieldGuard.CanDash())
             {
-                SoundEngine.PlaySound(CoraliteSoundID.FireBallExplosion_Item74, Player.Center);
+                SoundEngine.PlaySound(CoraliteSoundID.FireShoot_DD2_BetsyFireballShot, Player.Center);
                 int damage = Player.GetWeaponDamage(Item);
                 int combo = Main.rand.Next(4);
                 float startAngle = combo switch
@@ -143,6 +147,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
     /// <summary>
     /// ai0输入初始角度
     /// </summary>
+    [AutoLoadTexture(Path = AssetDirectory.FlyingShieldAccessories)]
     public class SolarTwinkleSlash : BaseSwingProj, IDrawWarp, IDrawAdditive, IDrawNonPremultiplied
     {
         public override string Texture => AssetDirectory.OtherProjectiles + "HorizontalLight";
@@ -152,8 +157,12 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public SolarTwinkleSlash() : base(0f, 16) { }
 
-        public static Asset<Texture2D> WarpTexture;
-        public static Asset<Texture2D> GradientTexture;
+        [AutoLoadTexture(Path = AssetDirectory.OtherProjectiles, Name = "WarpTex")]
+        public static ATex WarpTexture { get; private set; }
+        [AutoLoadTexture(Name = "SolarTwinkleGradient")]
+        public static ATex GradientTexture { get; private set; }
+        [AutoLoadTexture(Name = "SolarTwinkleProj")]
+        public static ATex HeldTex { get; private set; }
 
         public int delay;
         public int alpha;
@@ -161,16 +170,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public Vector2 scale;
         private float scaleOffset = 0.35f;
 
-        public override void Load()
-        {
-            if (Main.dedServ)
-                return;
-
-            WarpTexture = Request<Texture2D>(AssetDirectory.OtherProjectiles + "WarpTex");
-            GradientTexture = Request<Texture2D>(AssetDirectory.FlyingShieldAccessories + "SolarTwinkleGradient");
-        }
-
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.localNPCHitCooldown = 30;
             Projectile.width = 40;
@@ -191,7 +191,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             return base.CanDamage();
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
             scale = new Vector2(1f, 1.75f);
             Projectile.extraUpdates = 2;
@@ -321,7 +321,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 dust2.scale += Main.rand.NextFloat();
             }
 
-            if (Main.netMode == NetmodeID.Server)
+            if (VaultUtils.isServer)
                 return;
 
             Dust dust;
@@ -428,7 +428,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
         {
-            Texture2D mainTex = Request<Texture2D>(AssetDirectory.Accessories + "SolarTwinkleProj").Value;
+            Texture2D mainTex = HeldTex.Value;
             Vector2 origin = new(mainTex.Width / 2, mainTex.Height / 2);
 
             int dir = Math.Sign(totalAngle);

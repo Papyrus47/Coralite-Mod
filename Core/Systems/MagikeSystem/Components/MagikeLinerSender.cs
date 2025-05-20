@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.CustomHooks;
 using Coralite.Content.UI.MagikeApparatusPanel;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,10 +9,12 @@ using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader.IO;
 using Terraria.ModLoader.UI;
 using Terraria.UI;
+using Terraria.UI.Chat;
 
 namespace Coralite.Core.Systems.MagikeSystem.Components
 {
@@ -25,12 +28,12 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         /// <summary> 可连接数量 </summary>
         public int MaxConnect { get => MaxConnectBase + MaxConnectExtra; }
 
-        /// <summary> 基础连接距离 </summary>
+        /// <summary> 基础连接距离，单位：像素 </summary>
         public int ConnectLengthBase { get => LengthBase; protected set => LengthBase = value; }
-        /// <summary> 额外连接距离 </summary>
+        /// <summary> 额外连接距离，单位：像素 </summary>
         public int ConnectLengthExtra { get; set; }
 
-        /// <summary> 连接距离 </summary>
+        /// <summary> 连接距离，单位：像素 </summary>
         public int ConnectLength { get => ConnectLengthBase + ConnectLengthExtra; }
 
         /// <summary> 当前连接者数量 </summary>
@@ -55,10 +58,11 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         public override void Update()
         {
-            Point16 p = Entity.Position;
-            Vector2 size = new Vector2(ConnectLength);
-            if (Helper.IsAreaOnScreen(p.ToWorldCoordinates() - Main.screenPosition - size / 2, new Vector2(ConnectLength)))
-                DrawMagikeDevice.LinerSenders.Add(this);
+            if (SendDelayBase < 0)
+                return;
+
+            if (_receivers.Count < 1)
+                return;
 
             //发送时间限制
             if (!CanSend())
@@ -84,7 +88,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         /// <param name="container"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public bool GetSendAmount(MagikeContainer container, out int amount)
+        public virtual bool GetSendAmount(MagikeContainer container, out int amount)
         {
             amount = 0;
             //没有魔能直接返回
@@ -110,10 +114,10 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         /// <summary>
         /// 发送魔能
         /// </summary>
-        public void Send(MagikeContainer selfMagikeContainer, Point16 position, int amount)
+        public virtual void Send(MagikeContainer selfMagikeContainer, Point16 position, int amount)
         {
             //如果无法获取物块实体就移除
-            if (!MagikeHelper.TryGetEntity(position, out MagikeTP receiverEntity))
+            if (!MagikeHelper.TryGetEntityWithTopLeft(position, out MagikeTP receiverEntity))
                 goto remove;
 
             //如果不是魔能容器那么就丢掉喽
@@ -142,6 +146,11 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             return;
         remove:
             RemoveReceiver(position);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            Drawers.AddToLinerSenderDraw(this);
         }
 
         #endregion
@@ -279,7 +288,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
             for (int i = _receivers.Count - 1; i >= 0; i--)
             {
-                if (i + 1 > MaxConnect || !TileEntity.ByPosition.ContainsKey(_receivers[i]))
+                if (i + 1 > MaxConnect || !MagikeHelper.ByTopLeftnGetTP(_receivers[i], out _))
                 {
                     _receivers.RemoveAt(i);
                     continue;
@@ -303,8 +312,9 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             UIList list =
             [
                 //发送时间
-                this.NewTextBar(c => MagikeSystem.GetUIText(MagikeSystem.UITextID.MagikeSendTime), parent),
-                this.NewTextBar(SendDelayText, parent),
+                //this.NewTextBar(c => MagikeSystem.GetUIText(MagikeSystem.UITextID.MagikeSendTime), parent),
+                //this.NewTextBar(SendDelayText, parent),
+                new SendProgressBar(this),
 
                 //发送量
                 this.NewTextBar(c =>MagikeSystem.GetUIText(MagikeSystem.UITextID.MagikeSendAmount), parent),
@@ -503,9 +513,9 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                 spriteBatch.Draw(tex2, pos, null, Color.White, 0, origin, scale, 0, 0);
             }
 
-            if (ishover)
+            if (ishover && indexInRange)
             {
-                if (indexInRange)
+                MagikeApparatusPanel.DrawExtras.Add((spriteBatch) =>
                 {
                     spriteBatch.End();
                     spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default, null, Main.GameViewMatrix.TransformationMatrix);
@@ -519,9 +529,9 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
                     spriteBatch.End();
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, spriteBatch.GraphicsDevice.RasterizerState, null, Main.UIScaleMatrix);
+                });
 
-                    UICommon.TooltipMouseText(MagikeSystem.GetUIText(MagikeSystem.UITextID.ClickToDisconnect));
-                }
+                UICommon.TooltipMouseText(MagikeSystem.GetUIText(MagikeSystem.UITextID.ClickToDisconnect));
             }
 
             //位置在右侧往左按钮的距离再一半
@@ -534,6 +544,98 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                 temp = $"[c/80d3ff:{temp}]";
 
             Utils.DrawBorderString(spriteBatch, temp, pos, Color.White, 1, 0f, 0.5f);
+        }
+    }
+
+    [AutoLoadTexture(Path = AssetDirectory.MagikeUI)]
+    public class SendProgressBar : UIElement
+    {
+        public static ATex ProgressBar { get; private set; }
+
+        protected MagikeLinerSender sender;
+
+        private const int LeftPaddling = 10;
+
+        public SendProgressBar(MagikeLinerSender sender)
+        {
+            this.sender = sender;
+
+            ResetSize();
+        }
+
+        public void ResetSize()
+        {
+            Vector2 timerSize = GetStringSize(sender.Timer);
+            Vector2 sendDelaySize = GetStringSize(sender.SendDelay);
+
+            float width = timerSize.X + 10;
+            if (sendDelaySize.X + 10 > width)
+                width = sendDelaySize.X + 10;
+            if (ProgressBar.Width() + 10 > width)
+                width = ProgressBar.Width() + 10;
+
+            Width.Set(width + LeftPaddling, 0);
+            Height.Set(timerSize.Y * 3f + ProgressBar.Height() / 2, 0);
+        }
+
+        private static Vector2 GetStringSize(int value)
+        {
+            TextSnippet[] textSnippets = [.. ChatManager.ParseMessage(value.ToString(), Color.White)];
+            ChatManager.ConvertNormalSnippets(textSnippets);
+
+            return ChatManager.GetStringSize(FontAssets.MouseText.Value, textSnippets, Vector2.One * 1.1f);
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            Rectangle size = GetDimensions().ToRectangle();
+
+            float per = (size.Height - ProgressBar.Height() / 2) / 3f;
+            int width = size.Width - LeftPaddling;
+            Vector2 topLeft = size.TopLeft();
+            Vector2 pos = topLeft + new Vector2(30 + width / 2, per / 2);
+
+            //绘制时间
+            Utils.DrawBorderString(spriteBatch, MathF.Round((1 - sender.Timer / (float)sender.SendDelay) * 100).ToString() + " %", pos + new Vector2(0, 4), Color.White
+                , 1.1f, anchorx: 0.5f, anchory: 0.5f);
+
+            //绘制中间的进度条
+            Texture2D barTex = ProgressBar.Value;
+
+            Rectangle box = barTex.Frame(1, 2, 0, 1);
+
+            pos += new Vector2(0, per / 2 + box.Height / 2);
+
+            Vector2 barPos = pos - new Vector2(width / 2 - 4, 0);
+            Vector2 origin = new Vector2(0, box.Height / 2);
+            spriteBatch.Draw(barTex, barPos, box, Color.White, 0, origin
+                , 1, 0, 0);
+
+            int delay = sender.SendDelay;
+            if (sender.SendDelay <= 0)
+            {
+                delay = 0;
+            }
+            else
+            {
+                box = barTex.Frame(1, 2);
+                box.Width = (int)((1 - sender.Timer / (float)sender.SendDelay) * box.Width);
+                spriteBatch.Draw(barTex, barPos, box, Color.White, 0, origin
+                    , 1, 0, 0);
+            }
+
+            pos += new Vector2(0, per / 2 + box.Height / 2);
+
+            //绘制倒计时
+            Color color = MagikeHelper.GetBonusColor(sender.SendDelayBonus, true);
+            Utils.DrawBorderString(spriteBatch, MathF.Round(delay / 60f, 1).ToString() + " " + MagikeSystem.GetUIText(MagikeSystem.UITextID.Second), pos + new Vector2(0, 4), color
+                , 1.1f, anchorx: 0.5f, anchory: 0.5f);
+
+            pos += new Vector2(0, per);
+
+            //绘制倒计时加成
+            Utils.DrawBorderString(spriteBatch, $"< × {sender.SendDelayBonus} >", pos + new Vector2(0, 4), color
+                , 1, anchorx: 0.5f, anchory: 0.5f);
         }
     }
 }

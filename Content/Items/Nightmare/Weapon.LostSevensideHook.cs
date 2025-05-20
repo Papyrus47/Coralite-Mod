@@ -7,9 +7,9 @@ using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Items;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.CameraSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -130,7 +130,7 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.QuickTrailSets(Helper.TrailingMode.RecordAllAndFollowPlayer, 8);
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.width = Projectile.height = 64;
             Projectile.DamageType = DamageClass.Melee;
@@ -149,9 +149,9 @@ namespace Coralite.Content.Items.Nightmare
             return 65 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 2;
@@ -202,7 +202,7 @@ namespace Coralite.Content.Items.Nightmare
                     Smoother = Coralite.Instance.NoSmootherInstance;
                     break;
             }
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void OnSlash()
@@ -364,7 +364,7 @@ namespace Coralite.Content.Items.Nightmare
                 {
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
@@ -524,6 +524,7 @@ namespace Coralite.Content.Items.Nightmare
         public Player Owner => Main.player[Projectile.owner];
 
         private Trail trail;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -537,11 +538,9 @@ namespace Coralite.Content.Items.Nightmare
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
         }
 
         public override bool ShouldUpdatePosition() => Timer >= 0;
@@ -554,7 +553,12 @@ namespace Coralite.Content.Items.Nightmare
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new NoTip(), WidthFunction, ColorFunction);
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
 
             if (Timer > 0)
             {
@@ -619,7 +623,7 @@ namespace Coralite.Content.Items.Nightmare
 
                     Projectile.oldPos[15] = Projectile.Center + Projectile.velocity;
                 }
-                trail.Positions = Projectile.oldPos;
+                trail.TrailPositions = Projectile.oldPos;
             }
 
             Timer++;
@@ -653,7 +657,7 @@ namespace Coralite.Content.Items.Nightmare
             effect.Parameters["gradientTexture"].SetValue(LostSevensideSlash.GradientTexture.Value);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -663,7 +667,7 @@ namespace Coralite.Content.Items.Nightmare
             if (Timer < 0)
                 return;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             float w = 1f;
             Vector2 up = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2();
@@ -678,8 +682,8 @@ namespace Coralite.Content.Items.Nightmare
                 Vector2 Top = Center + (up * width);
                 Vector2 Bottom = Center + (down * width);
 
-                bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
-                bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
+                bars.Add(new ColoredVertex(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
+                bars.Add(new ColoredVertex(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
             }
 
             Main.spriteBatch.End();

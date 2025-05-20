@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.Items.MagikeSeries2;
 using Coralite.Content.Raritys;
+using Coralite.Core;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.BaseItems;
 using Coralite.Core.Systems.MagikeSystem.Components;
@@ -11,7 +12,7 @@ namespace Coralite.Content.Items.Magike.Filters.PolarizedFilters
 {
     public class CrystallineMagikePolarizedFilter : PolarizedFilterItem
     {
-        public override Color FilterColor => Coralite.CrystallineMagikePurple;
+        public override Color FilterColor => Coralite.CrystallinePurple;
 
         public CrystallineMagikePolarizedFilter() : base(Item.sellPrice(0, 0, 50), ModContent.RarityType<CrystallineMagikeRarity>())
         {
@@ -23,54 +24,61 @@ namespace Coralite.Content.Items.Magike.Filters.PolarizedFilters
         {
             CreateRecipe()
                 .AddIngredient<BasicFilter>()
-                .AddIngredient<CrystallineMagike>(5)
-                .AddIngredient<Skarn>(5)
+                .AddIngredient<CrystallineMagike>(3)
+                .AddIngredient<Skarn>(2)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<ShadowPolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(2)
+                .AddIngredient<CrystallineMagike>(1)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<IciclePolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(4)
+                .AddIngredient<CrystallineMagike>(2)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<CorruptionPolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(4)
+                .AddIngredient<CrystallineMagike>(2)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<CrimsonPolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(4)
+                .AddIngredient<CrystallineMagike>(2)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<GlistentPolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(5)
-                .AddIngredient<Skarn>(2)
+                .AddIngredient<CrystallineMagike>(2)
+                .AddIngredient<Skarn>(1)
                 .AddTile(TileID.MythrilAnvil)
                 .DisableDecraft()
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
 
             CreateRecipe()
                 .AddIngredient<MagicCrystalPolarizedFilter>()
-                .AddIngredient<CrystallineMagike>(5)
-                .AddIngredient<Skarn>(3)
+                .AddIngredient<CrystallineMagike>(3)
+                .AddIngredient<Skarn>(1)
                 .DisableDecraft()
                 .AddTile(TileID.MythrilAnvil)
+                .AddCondition(CoraliteConditions.NotInDigDigDig)
                 .Register();
         }
     }

@@ -4,6 +4,7 @@ using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -122,7 +123,7 @@ namespace Coralite.Content.Items.Icicle
         public int delay;
         public int alpha;
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.coldDamage = true;
 
@@ -160,9 +161,9 @@ namespace Coralite.Content.Items.Icicle
             return 85 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -199,7 +200,7 @@ namespace Coralite.Content.Items.Icicle
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void AIBefore()
@@ -265,7 +266,7 @@ namespace Coralite.Content.Items.Icicle
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 1;
@@ -278,7 +279,7 @@ namespace Coralite.Content.Items.Icicle
                 }
 
                 FrostDustsOnHit(Projectile, Top, Bottom, RotateVec2, totalAngle, _Rotation, strength, baseScale);
-                if (Owner.HeldItem.ModItem is FrostySword fs)
+                if (Item.ModItem is FrostySword fs)
                 {
                     if (fs.leftHitCount < FrostySword.LeftHitMax && target.type != NPCID.TargetDummy)
                     {
@@ -389,7 +390,7 @@ namespace Coralite.Content.Items.Icicle
 
             if (VisualEffectSystem.HitEffect_SpecialParticles)
             {
-                BasePRT p = PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<Strike>(), new Color(129, 216, 243), Main.rand.NextFloat(0.75f, 1.2f));
+                Particle p = PRTLoader.NewParticle(pos, Vector2.Zero, CoraliteContent.ParticleType<Strike>(), new Color(129, 216, 243), Main.rand.NextFloat(0.75f, 1.2f));
                 p.Rotation = _Rotation + 2.2f;
             }
         }
@@ -434,7 +435,7 @@ namespace Coralite.Content.Items.Icicle
         public int alpha;
         public int delay;
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.coldDamage = true;
 
@@ -454,9 +455,9 @@ namespace Coralite.Content.Items.Icicle
             return 95 * Projectile.scale;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -485,7 +486,7 @@ namespace Coralite.Content.Items.Icicle
                     break;
             }
 
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         protected override void AIBefore()
@@ -538,7 +539,7 @@ namespace Coralite.Content.Items.Icicle
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 1;
@@ -552,7 +553,7 @@ namespace Coralite.Content.Items.Icicle
 
                 FrostySwordSlash.FrostDustsOnHit(Projectile, Top, Bottom, RotateVec2, totalAngle, _Rotation, strength, baseScale);
 
-                if (Owner.HeldItem.ModItem is FrostySword fs)
+                if (Item.ModItem is FrostySword fs)
                 {
                     if (fs.leftHitCount < FrostySword.LeftHitMax && target.type != NPCID.TargetDummy)
                     {
@@ -607,7 +608,7 @@ namespace Coralite.Content.Items.Icicle
 
         public FrostySwordRightSlash() : base(MathHelper.PiOver4, trailCount: 48) { }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.coldDamage = true;
 
@@ -622,9 +623,9 @@ namespace Coralite.Content.Items.Icicle
             useSlashTrail = true;
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 3;
@@ -717,7 +718,7 @@ namespace Coralite.Content.Items.Icicle
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 FrostySwordSlash.FrostDustsOnHit(Projectile, Top, Bottom, RotateVec2, totalAngle, _Rotation, 2, 5);
@@ -800,7 +801,7 @@ namespace Coralite.Content.Items.Icicle
             Projectile.usesIDStaticNPCImmunity = true;
         }
 
-        //public override void OnSpawn(IEntitySource source)
+        //public override void Initialize()
         //{
         //    Projectile.oldPos = new Vector2[18];
         //    for (int i = 0; i < 18; i++)
@@ -811,7 +812,7 @@ namespace Coralite.Content.Items.Icicle
         {
             float rot = Main.rand.NextFloat(MathHelper.TwoPi);
 
-            if (Main.myPlayer == Projectile.owner && Count > FrostySword.LeftHitMax - 1)
+            if (Projectile.IsOwnedByLocalPlayer() && Count > FrostySword.LeftHitMax - 1)
             {
                 for (int i = 0; i < 6; i++)
                 {
@@ -899,7 +900,7 @@ namespace Coralite.Content.Items.Icicle
         //}
     }
 
-    public class FrostySwordBurst : ModProjectile
+    public class FrostySwordBurst : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -935,7 +936,7 @@ namespace Coralite.Content.Items.Icicle
         //    return false;
         //}
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.alpha = 255;

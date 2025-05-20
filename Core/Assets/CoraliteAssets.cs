@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Reflection;
 using Terraria;
 using static Coralite.Core.AssetDirectory;
 using static Terraria.ModLoader.ModContent;
-using ATex = ReLogic.Content.Asset<Microsoft.Xna.Framework.Graphics.Texture2D>;
 
 namespace Coralite.Core
 {
@@ -14,7 +12,7 @@ namespace Coralite.Core
         public float Priority => 1;
 
         [AttributeUsage(AttributeTargets.Class)]
-        public class AutoLoadTextureAttribute(string texturePath) : Attribute
+        private class AutoLoadTextureAttribute(string texturePath) : Attribute
         {
             public string TexturePath => texturePath;
         }
@@ -198,6 +196,42 @@ namespace Coralite.Core
             /// </summary>
             public static ATex Split { get; private set; }
 
+            /// <summary> 
+            /// 类似推进器尾焰，高亮的柔和渐变
+            /// </summary>
+            public static ATex Booster { get; private set; }
+
+            /// <summary> 
+            /// 类似推进器尾焰，高亮的柔和渐变<br></br>
+            /// 特殊透明底，能够使用<see cref="BlendState.AlphaBlend"/>
+            /// </summary>
+            public static ATex BoosterASP { get; private set; }
+
+            /// <summary> 
+            /// 类似推进器尾焰，高亮的柔和渐变
+            /// </summary>
+            public static ATex Strike { get; private set; }
+
+            /// <summary> 
+            /// 箭
+            /// </summary>
+            public static ATex Arrow { get; private set; }
+
+            /// <summary> 
+            /// 箭
+            /// </summary>
+            public static ATex ArrowSPA { get; private set; }
+
+            /// <summary> 
+            /// 一束光，竖过来看是一个水滴
+            /// </summary>
+            public static ATex LightShot { get; private set; }
+
+            /// <summary> 
+            /// 一束光，竖过来看是一个水滴
+            /// </summary>
+            public static ATex LightShotSPA { get; private set; }
+
             #endregion
         }
 
@@ -228,6 +262,46 @@ namespace Coralite.Core
             /// 原版使用，透明底
             /// </summary>
             public static ATex VanillaFlowA { get; private set; }
+
+            /// <summary> 
+            /// 能量流
+            /// </summary>
+            public static ATex EnergyFlow { get; private set; }
+
+            /// <summary> 
+            /// 气流一样的流动图
+            /// </summary>
+            public static ATex Airflow { get; private set; }
+
+            /// <summary> 
+            /// 气流一样的流动图
+            /// </summary>
+            public static ATex AirflowA { get; private set; }
+
+            /// <summary> 
+            /// 气流一样的流动图
+            /// </summary>
+            public static ATex AirFlow2 { get; private set; }
+
+            /// <summary> 
+            /// 主要用于溶解的贴图，类似时空隧道的样子
+            /// </summary>
+            public static ATex Tunnel { get; private set; }
+
+            /// <summary> 
+            /// 闪电激光
+            /// </summary>
+            public static ATex LightingBody { get; private set; }
+
+            /// <summary> 
+            /// 更加闪电的闪电激光
+            /// </summary>
+            public static ATex LightingBody2 { get; private set; }
+
+            /// <summary> 
+            /// 闪电
+            /// </summary>
+            public static ATex ThunderTrail { get; private set; }
         }
 
         /// <summary>
@@ -243,6 +317,13 @@ namespace Coralite.Core
             public static ATex Cross { get; private set; }
 
             /// <summary> 
+            /// 标准十字闪光<br></br>
+            /// 横竖纵向<br></br>
+            /// 特殊透明度
+            /// </summary>
+            public static ATex CrossSPA { get; private set; }
+
+            /// <summary> 
             /// 横向光外加一些散光束<br></br>
             /// 透明底
             /// </summary>
@@ -253,6 +334,22 @@ namespace Coralite.Core
             /// 透明底
             /// </summary>
             public static ATex HShotBallA { get; private set; }
+
+            /// <summary> 
+            /// 横向光条<br></br>
+            /// 透明底
+            /// </summary>
+            public static ATex ShotLineSPA { get; private set; }
+
+            /// <summary> 
+            /// 三条光线<br></br>
+            /// </summary>
+            public static ATex ThreeShot { get; private set; }
+            /// <summary> 
+            /// 三条光线<br></br>
+            /// 透明底
+            /// </summary>
+            public static ATex ThreeShotSPA { get; private set; }
         }
 
         /// <summary>
@@ -265,6 +362,10 @@ namespace Coralite.Core
             /// 看上去像是一圈符文
             /// </summary>
             public static ATex Rune { get; private set; }
+            /// <summary> 
+            /// 看上去像是一圈符文
+            /// </summary>
+            public static ATex RuneSPA { get; private set; }
 
             /// <summary> 
             /// 看上去像是一圈符文<br></br>
@@ -276,6 +377,10 @@ namespace Coralite.Core
             /// 一圈亮到暗，外加外发光
             /// </summary>
             public static ATex Circle { get; private set; }
+            /// <summary> 
+            /// 一圈亮到暗，外加外发光
+            /// </summary>
+            public static ATex CircleSPA { get; private set; }
 
             /// <summary> 
             /// 若隐若现的一圈
@@ -314,6 +419,20 @@ namespace Coralite.Core
             /// 透明底
             /// </summary>
             public static ATex EnergyA { get; private set; }
+
+            /// <summary> 
+            /// 受击扩散效果
+            /// </summary>
+            public static ATex Impact { get; private set; }
+            /// <summary> 
+            /// 受击扩散效果
+            /// </summary>
+            public static ATex ImpactA { get; private set; }
+
+            /// <summary> 
+            /// 扩散2
+            /// </summary>
+            public static ATex LightFog { get; private set; }
         }
 
         /// <summary>
@@ -389,6 +508,6 @@ namespace Coralite.Core
         }
 
         private static ATex Get(string path)
-            => Request<Texture2D>(path, AssetRequestMode.ImmediateLoad);
+            => Request<Texture2D>(path);
     }
 }

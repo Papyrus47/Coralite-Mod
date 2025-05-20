@@ -8,7 +8,6 @@ using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -16,6 +15,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
 using static Coralite.Helpers.MagikeHelper;
 
@@ -23,9 +23,10 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
 {
     public abstract class BaseMagikeTile(int width, int height, Color mapColor, int dustType, int minPick = 0, bool topSoild = false) : ModTile
     {
-        public Dictionary<MALevel, Asset<Texture2D>> ExtraAssets { get; private set; }
+        public Dictionary<MALevel, ATex> ExtraAssets { get; private set; }
 
         public abstract int DropItemType { get; }
+        public abstract CoraliteSetsSystem.MagikeTileType PlaceType { get; }
 
         public override void Load()
         {
@@ -75,12 +76,12 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
             TileObjectData.newTile.Height = height;
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.Table | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.StyleHorizontal = false;
-            TileObjectData.newTile.WaterPlacement = LiquidPlacement.Allowed;
-            TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
             TileObjectData.newTile.UsesCustomCanPlace = true;
             TileObjectData.newTile.Origin = new Point16(width / 2, height - 1);
             //TileObjectData.newTile.StyleWrapLimit = 100;
             TileObjectData.newTile.CoordinateHeights = new int[height];
+
+            CoraliteSetsSystem.MagikeTileTypes.Add(Type, PlaceType);
 
             int[] tiles = GetAnchorValidTiles();
             if (tiles != null)
@@ -95,13 +96,16 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
             //TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(GetEntityInstance().Hook_AfterPlacement, -1, 0, true);
 
             //顶部是平台那么不需要下沉，并且最下面额外扩展一格
-            if (topSoild)
+            if (PlaceType == CoraliteSetsSystem.MagikeTileType.None)
             {
                 TileObjectData.newTile.CoordinateHeights[^1] = 18;
-                Main.tileSolidTop[Type] = true;
-                //Main.tileSolid[Type] = true;
+                if (topSoild)
+                {
+                    Main.tileSolidTop[Type] = true;
+                    Main.tileTable[Type] = true;
+                }
+
                 Main.tileNoAttach[Type] = true;
-                Main.tileTable[Type] = true;
             }
             else
             {
@@ -128,26 +132,44 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
                 TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
                 TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
                 TileObjectData.newAlternate.DrawYOffset = 0;
-                TileObjectData.newAlternate.Width = height;
-                TileObjectData.newAlternate.Height = width;
                 TileObjectData.newAlternate.AnchorLeft = new AnchorData(AnchorType.SolidTile | AnchorType.SolidBottom | AnchorType.SolidSide, TileObjectData.newAlternate.Height, 0);
-                TileObjectData.newAlternate.Origin = new Point16(0, width / 2);
 
-                TileObjectData.newAlternate.CoordinateHeights = new int[width];
-                Array.Fill(TileObjectData.newAlternate.CoordinateHeights, 16);
-                TileObjectData.addAlternate(height * 2 / width);
+                if (PlaceType == CoraliteSetsSystem.MagikeTileType.FourWayNormal)
+                {
+                    TileObjectData.newAlternate.Width = height;
+                    TileObjectData.newAlternate.Height = width;
+                    TileObjectData.newAlternate.CoordinateHeights = new int[width];
+                    Array.Fill(TileObjectData.newAlternate.CoordinateHeights, 16);
+                    TileObjectData.newAlternate.Origin = new Point16(0, width / 2);
+
+                    TileObjectData.addAlternate(height * 2 / width);
+                }
+                else
+                {
+                    TileObjectData.newAlternate.Origin = new Point16(0, height / 2);
+                    TileObjectData.addAlternate(2);
+                }
 
                 //放置在右边
                 TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
                 TileObjectData.newAlternate.AnchorBottom = AnchorData.Empty;
                 TileObjectData.newAlternate.DrawYOffset = 0;
-                TileObjectData.newAlternate.Width = height;
-                TileObjectData.newAlternate.Height = width;
                 TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidBottom | AnchorType.SolidSide, TileObjectData.newAlternate.Height, 0);
-                TileObjectData.newAlternate.Origin = new Point16(height - 1, width / 2);
-                TileObjectData.newAlternate.CoordinateHeights = new int[width];
-                Array.Fill(TileObjectData.newAlternate.CoordinateHeights, 16);
-                TileObjectData.addAlternate((height * 2 / width) + 1);
+                if (PlaceType == CoraliteSetsSystem.MagikeTileType.FourWayNormal)
+                {
+                    TileObjectData.newAlternate.Width = height;
+                    TileObjectData.newAlternate.Height = width;
+                    TileObjectData.newAlternate.CoordinateHeights = new int[width];
+                    Array.Fill(TileObjectData.newAlternate.CoordinateHeights, 16);
+                    TileObjectData.newAlternate.Origin = new Point16(height - 1, width / 2);
+
+                    TileObjectData.addAlternate((height * 2 / width) + 1);
+                }
+                else
+                {
+                    TileObjectData.newAlternate.Origin = new Point16(width - 1, height / 2);
+                    TileObjectData.addAlternate(3);
+                }
             }
 
             TileObjectData.addTile(Type);
@@ -171,7 +193,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {
             Tile t = Framing.GetTileSafely(i, j);
-            if (Main.tileSolidTop[t.TileType])
+            if (PlaceType == CoraliteSetsSystem.MagikeTileType.None)
                 return;
 
             GetMagikeAlternateData(i, j, out _, out MagikeAlternateStyle alternate);
@@ -193,7 +215,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
             OnTileKilled(i, j);
-            if (TryGetEntity(new Point16(i, j), out MagikeTP entity))
+            if (TryGetEntityWithTopLeft(new Point16(i, j), out MagikeTP entity))
                 entity.Kill();
         }
 
@@ -212,6 +234,17 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
             SoundEngine.PlaySound(CoraliteSoundID.GlassBroken_Shatter, new Vector2(i, j) * 16);
         }
 
+        /// <summary>
+        /// 获取左上角位置，默认返回null即启用默认的逻辑
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="j"></param>
+        /// <returns></returns>
+        public virtual Point16? ToTopLeft(int i, int j)
+        {
+            return null;
+        }
+
         public override IEnumerable<Item> GetItemDrops(int i, int j)
         {
             return [new Item(DropItemType)];
@@ -219,20 +252,99 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
 
         public override bool RightClick(int i, int j)
         {
-            if (Main.LocalPlayer.HeldItem.ModItem != null &&
-                Main.LocalPlayer.HeldItem.ModItem.AltFunctionUse(Main.LocalPlayer))
-                return false;
+            //if (Main.LocalPlayer.HeldItem.ModItem != null &&
+            //    Main.LocalPlayer.HeldItem.ModItem.AltFunctionUse(Main.LocalPlayer))
+            //    return false;
 
             if (!TryGetEntity(i, j, out MagikeTP entity))
                 return false;
 
+            bool itemTimeIsZero = Main.LocalPlayer.ItemTimeIsZero;
+            if (itemTimeIsZero && entity.HasComponent(MagikeComponentID.ItemGetOnlyContainer))
+            {
+                GetOnlyItemContainer container = entity.GetSingleComponent<GetOnlyItemContainer>(MagikeComponentID.ItemGetOnlyContainer);
+
+                if (Main.keyState.PressingShift())//按shift加右键取出物品
+                    if (container.DropItem())
+                    {
+                        Helper.PlayPitched(CoraliteSoundID.Dig, new Vector2(i, j) * 16);
+                        return true;
+                    }
+            }
+
+            if (itemTimeIsZero && entity.HasComponent(MagikeComponentID.ItemContainer))
+            {
+                ItemContainer container = entity.GetSingleComponent<ItemContainer>(MagikeComponentID.ItemContainer);
+
+                if (Main.keyState.PressingShift())//按shift加右键取出物品
+                    if (container.DropItem())
+                    {
+                        Helper.PlayPitched(CoraliteSoundID.Dig, new Vector2(i, j) * 16);
+                        return true;
+                    }
+
+                //放入物品
+                //有物品容器，同时可以放入物品，就直接塞进去
+                Player localPlayer = Main.LocalPlayer;
+                Item item = localPlayer.inventory[localPlayer.selectedItem];
+                if (!item.IsAir && !item.favorited
+                    && container.CanAddItem(item.type, item.stack))
+                {
+                    localPlayer.GamepadEnableGrappleCooldown();
+                    PlaceItemInFrame(localPlayer, entity.Position.X, entity.Position.Y, container);
+                    Recipe.FindRecipes();
+                    return true;
+                }
+            }
+
+            OpenMagikeUI(entity);
+
+            return true;
+        }
+
+        private static void OpenMagikeUI(MagikeTP entity)
+        {
             Main.playerInventory = true;
             Helper.PlayPitched("Fairy/CursorExpand", 0.5f, 0);
             UILoader.GetUIState<MagikeApparatusPanel>().visible = true;
             MagikeApparatusPanel.CurrentEntity = entity;
             UILoader.GetUIState<MagikeApparatusPanel>().Recalculate();
+        }
 
-            return true;
+        public static void PlaceItemInFrame(Player player, int i, int j, ItemContainer container)
+        {
+            if (!player.ItemTimeIsZero)
+                return;
+
+            if (VaultUtils.isClient)
+            {
+                NetMessage.SendData(MessageID.ItemFrameTryPlacing, -1, -1, null, i, j, player.selectedItem, player.whoAmI, 1);
+
+                Item item = player.inventory[player.selectedItem].Clone();
+                player.inventory[player.selectedItem].TurnToAir();
+                container.AddItem(item);
+
+                ModPacket modPacket = Coralite.Instance.GetPacket();
+                modPacket.Write((byte)CoraliteNetWorkEnum.ItemContainer_SpecificIndex);
+                modPacket.Write(Main.myPlayer);
+                modPacket.WritePoint16(container.Entity.Position);
+                ItemIO.Send(item, modPacket, true);
+
+                modPacket.Send();
+            }
+            else if (VaultUtils.isSinglePlayer)
+            {
+                Item item = player.inventory[player.selectedItem].Clone();
+                player.inventory[player.selectedItem].TurnToAir();
+                container.AddItem(item);
+            }
+
+            if (player.selectedItem == 58)
+                Main.mouseItem = player.inventory[player.selectedItem].Clone();
+
+            player.releaseUseItem = false;
+            player.mouseInterface = true;
+            player.PlayDroppedItemAnimation(20);
         }
 
         public override void MouseOver(int i, int j)
@@ -246,15 +358,12 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
                 return;
 
             //鼠标移上去时显示魔能仪器的各种信息
+            Main.LocalPlayer.noThrow = 2;
             string text = "";
 
             //  魔能量 / 魔能上限
             //  对于上限，如果大于基础魔能上限显示为绿色，否则显示为红色
-            if (entity.HasComponent(MagikeComponentID.MagikeContainer))
-            {
-                string amountText = MagikeAmountText((MagikeContainer)entity.GetSingleComponent(MagikeComponentID.MagikeContainer));
-                text = amountText;
-            }
+            text = MagikeAmountText(entity);
 
             //连接显示
             if (entity.HasComponent(MagikeComponentID.MagikeSender)
@@ -300,12 +409,18 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        public virtual string MagikeAmountText(MagikeContainer container)
+        public virtual string MagikeAmountText(MagikeTP entity)
         {
-            string colorCode = GetBonusColorCode(container.MagikeMaxBonus);
+            if (entity.HasComponent(MagikeComponentID.MagikeContainer))
+            {
+                var container = entity.GetMagikeContainer();
+                string colorCode = GetBonusColorCode(container.MagikeMaxBonus);
 
-            return string.Concat(MagikeSystem.GetApparatusDescriptionText(MagikeSystem.ApparatusDescriptionID.MagikeAmount)
+                return string.Concat(MagikeSystem.GetApparatusDescriptionText(MagikeSystem.ApparatusDescriptionID.MagikeAmount)
                 , $"{container.Magike} / [c/{colorCode}:{container.MagikeMax}]");
+            }
+
+            return "";
         }
 
         public virtual string LinerConnectText(MagikeLinerSender sender)
@@ -359,7 +474,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)
         {
-            Point16? topLeft = ToTopLeft(i, j);
+            Point16? topLeft = MagikeHelper.ToTopLeft(i, j);
 
             if (!topLeft.HasValue)
                 return;
@@ -390,7 +505,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
             Vector2 offset = offScreen - Main.screenPosition;
             Color lightColor = Lighting.GetColor(p.X, p.Y);
 
-            if (!TryGetEntity(p, out MagikeTP entity))
+            if (!TryGetEntityWithTopLeft(p, out MagikeTP entity))
                 return;
 
             DrawExtra(spriteBatch, tileRect, offScreen, lightColor, rotation, entity);
@@ -400,7 +515,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
                 return;
 
             //获取初始绘制参数
-            if (!ExtraAssets.TryGetValue(level.Value, out Asset<Texture2D> asset))
+            if (!ExtraAssets.TryGetValue(level.Value, out ATex asset))
                 return;
 
             Texture2D texture = asset.Value;

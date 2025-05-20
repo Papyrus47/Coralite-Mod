@@ -2,6 +2,7 @@
 using Coralite.Content.Items.Materials;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Terraria;
@@ -12,6 +13,7 @@ using Terraria.ModLoader.IO;
 namespace Coralite.Content.Items.Vanity
 {
     [AutoloadEquip(EquipType.Head, EquipType.Body, EquipType.Legs, EquipType.Neck, EquipType.Back)]
+    [PlayerEffect(ExtraEffectNames = [nameof(SquirrelSet) + "Special"])]
     public class SquirrelSet : ModItem, ISpecialDrawBackpacks, IMagikeCraftable
     {
         public override string Texture => AssetDirectory.Vanity + Name;
@@ -81,7 +83,7 @@ namespace Coralite.Content.Items.Vanity
         public override void AddRecipes()
         {
             CreateRecipe()
-                .AddCondition(this.GetLocalization("ShlimmerTranslation", () => "此为微光转化合成表"), () => false)
+                .AddCondition(CoraliteConditions.UseShlimmerTranslation)
                 .AddCustomShimmerResult(ItemID.Squirrel)
                 .AddCustomShimmerResult(ItemID.Chest, 2)
                 .AddCustomShimmerResult(ItemID.RedDye)

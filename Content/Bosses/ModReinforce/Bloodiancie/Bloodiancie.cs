@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -67,6 +66,8 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.boss = true;
+
+            NPC.HitSound = CoraliteSoundID.CrystalHit_DD2_CrystalCartImpact;
 
             NPC.BossBar = GetInstance<RediancieBossBar>();
             GetInstance<RediancieBossBar>().Reset(NPC);
@@ -167,11 +168,6 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
             //for (int i = 0; i < 5; i++)
             //    GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, AssetDirectory.BossGores + "Rediancie_Gore" + i);
-        }
-
-        public override void HitEffect(NPC.HitInfo hit)
-        {
-            SoundEngine.PlaySound(SoundID.Tink, NPC.Center);
         }
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)

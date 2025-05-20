@@ -110,8 +110,6 @@ namespace Coralite.Content.Items.Thunder
 
         public ref float Timer => ref Projectile.localAI[0];
 
-        public Player Owner => Main.player[Projectile.owner];
-
         const int DelayTime = 30;
 
         protected ThunderTrail[] thunderTrails;
@@ -288,6 +286,11 @@ namespace Coralite.Content.Items.Thunder
                 else
                     Dust.NewDustPerfect(pos, DustType<LightningShineBall>(), Vector2.Zero, newColor: ThunderveinDragon.ThunderveinYellowAlpha, Scale: Main.rand.NextFloat(0.1f, 0.2f));
             }
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.HitDirectionOverride = target.Center.X > Owner.Center.X ? 1 : -1;
         }
 
         public override bool PreDraw(ref Color lightColor)

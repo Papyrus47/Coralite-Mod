@@ -1,9 +1,10 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
+using Coralite.Core.Loaders;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
@@ -54,8 +55,8 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
                 if (CheckCanCraft != null && CheckCanCraft(Owner))
                 {
                     OnCraft?.Invoke(Owner);
-                    particles.NewParticle<OnCraftLightShot>(Owner.Bottom, Vector2.Zero);
-                    particles.NewParticle<OnCraftLightExpand>(Owner.Center, Vector2.Zero);
+                    PRTLoader.NewParticle<OnCraftLightShot>(Owner.Bottom, Vector2.Zero);
+                    PRTLoader.NewParticle<OnCraftLightExpand>(Owner.Center, Vector2.Zero);
                 }
 
                 if (SoundEngine.TryGetActiveSound(slotID, out ActiveSound result))
@@ -141,21 +142,6 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
     {
         public override string Texture => AssetDirectory.Blank;
 
-        static BasicEffect effect;
-
-        public SpecialCraftParticle()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
-
         public override void SetProperty()
         {
             Color = Main.rand.Next(2) switch
@@ -163,7 +149,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
                 0 => new Color(148, 247, 221),
                 _ => new Color(24, 133, 216)
             };
-            trail = new Trail(Main.instance.GraphicsDevice, 16, new NoTip(), factor => 1 * Scale, factor =>
+            trail = new Trail(Main.instance.GraphicsDevice, 16, new EmptyMeshGenerator(), factor => 1 * Scale, factor =>
             {
                 if (factor.X < 0.7f)
                     return Color.Lerp(new Color(0, 0, 0, 0), Color, factor.X / 0.7f);
@@ -203,11 +189,14 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
             }
 
             Opacity++;
-            trail.Positions = oldPositions;
+            trail.TrailPositions = oldPositions;
         }
 
         public static SpecialCraftParticle Spawn(Vector2 center, float r, float time, float startRot)
         {
+            if (VaultUtils.isServer)
+                return null;
+
             SpecialCraftParticle p = PRTLoader.PRT_IDToInstances[CoraliteContent.ParticleType<SpecialCraftParticle>()].Clone() as SpecialCraftParticle;
             p.Position = center;
             p.Velocity = new Vector2(r, time);
@@ -223,23 +212,20 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
 
         public override void DrawPrimitive()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
             //effect.Texture = Texture2D.Value;
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
     }
 
-    public class OnCraftLightShot : BasePRT
+    public class OnCraftLightShot : Particle
     {
         public override string Texture => AssetDirectory.CoreKeeperItems + "LightPillar";
 
@@ -276,7 +262,7 @@ namespace Coralite.Content.Items.CoreKeeper.Bases
         }
     }
 
-    public class OnCraftLightExpand : BasePRT
+    public class OnCraftLightExpand : Particle
     {
         public override string Texture => AssetDirectory.CoreKeeperItems + "CircleLight";
 

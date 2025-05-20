@@ -1,9 +1,9 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -95,7 +95,7 @@ namespace Coralite.Content.Items.YujianHulu
                     Slash(Projectile, time);
                     int index = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Platinum);
                     Main.dust[index].noGravity = true;
-                    if (time == SlashTime / 7 && Main.myPlayer == Projectile.owner)
+                    if (time == SlashTime / 7 && Projectile.IsOwnedByLocalPlayer())
                     {
                         Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, targetRotation.ToRotationVector2() * 10,
                             ModContent.ProjectileType<PlatinumSplash>(), (int)(Projectile.damage * 1.5f), Projectile.knockBack, Projectile.owner, 1, 30);
@@ -120,7 +120,7 @@ namespace Coralite.Content.Items.YujianHulu
                 canDamage = true;
                 StartSlash(Projectile, targetAngle);
                 yujianProj.InitTrailCaches();
-                trail?.SetVertical(StartAngle < 0);      //开始角度为正时设为false
+                trail?.SetFlipState(StartAngle < 0);      //开始角度为正时设为false
                 SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
             }
         }
@@ -145,13 +145,13 @@ namespace Coralite.Content.Items.YujianHulu
 
         protected override bool UpdateTime(BaseYujianProj yujianProj)
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, yujianProj.Projectile.oldPos.Length, new NoTip(), factor => yujianProj.Projectile.height / 2,
+            trail ??= new Trail(Main.instance.GraphicsDevice, yujianProj.Projectile.oldPos.Length, new EmptyMeshGenerator(), factor => yujianProj.Projectile.height / 2,
             factor =>
             {
                 return Color.Lerp(yujianProj.color1, yujianProj.color2, factor.X) * 0.8f;
             }, flipVertical: StartAngle < 0);
 
-            trail.Positions = yujianProj.Projectile.oldPos;
+            trail.TrailPositions = yujianProj.Projectile.oldPos;
             return canSlash;
         }
 
@@ -170,7 +170,7 @@ namespace Coralite.Content.Items.YujianHulu
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(yujianProj.SlashTexture).Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
     }
 

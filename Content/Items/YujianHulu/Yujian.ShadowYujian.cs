@@ -1,15 +1,14 @@
 ﻿using Coralite.Content.Items.Shadow;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 
@@ -126,7 +125,7 @@ namespace Coralite.Content.Items.YujianHulu
                         Projectile.rotation += 1.57f;
 
                         yujianProj.InitTrailCaches();
-                        trail?.SetVertical(StartAngle < 0);      //开始角度为正时设为false
+                        trail?.SetFlipState(StartAngle < 0);      //开始角度为正时设为false
 
                         return;
                     }
@@ -160,7 +159,7 @@ namespace Coralite.Content.Items.YujianHulu
                 SpawnShadowDust(Projectile);
 
                 yujianProj.InitTrailCaches();
-                trail?.SetVertical(StartAngle < 0);      //开始角度为正时设为false
+                trail?.SetFlipState(StartAngle < 0);      //开始角度为正时设为false
             }
 
         }
@@ -190,13 +189,13 @@ namespace Coralite.Content.Items.YujianHulu
 
         protected override bool UpdateTime(BaseYujianProj yujianProj)
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, yujianProj.Projectile.oldPos.Length, new NoTip(), factor => yujianProj.Projectile.height / 2,
+            trail ??= new Trail(Main.instance.GraphicsDevice, yujianProj.Projectile.oldPos.Length, new EmptyMeshGenerator(), factor => yujianProj.Projectile.height / 2,
             factor =>
             {
                 return Color.Lerp(yujianProj.color1, yujianProj.color2, factor.X) * 0.8f;
             }, flipVertical: StartAngle < 0);
 
-            trail.Positions = yujianProj.Projectile.oldPos;
+            trail.TrailPositions = yujianProj.Projectile.oldPos;
             return canSlash;
         }
 
@@ -215,7 +214,7 @@ namespace Coralite.Content.Items.YujianHulu
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(yujianProj.SlashTexture).Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
     }
@@ -280,6 +279,7 @@ namespace Coralite.Content.Items.YujianHulu
         public override string Texture => AssetDirectory.YujianHulu + "ShadowYujian";
 
         public ref float Timer => ref Projectile.localAI[0];
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -287,7 +287,7 @@ namespace Coralite.Content.Items.YujianHulu
             Projectile.friendly = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             for (int i = 0; i < 16; i++)
             {
@@ -298,6 +298,11 @@ namespace Coralite.Content.Items.YujianHulu
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             Vector2 targetCenter = new(Projectile.ai[0], Projectile.ai[1]);
             if (Timer == 0)
                 Projectile.velocity = -(targetCenter - Projectile.Center).SafeNormalize(Vector2.One) * 1.5f;

@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Remove="Effects\AlphaGradientTrail.fx" />
     <None Remove="Effects\AlphaNoHLGradientTrail.fx" />
+    <None Remove="effects\ArcRainbow.fx" />
     <None Remove="effects\Crystal.fx" />
     <None Remove="Effects\CrystalTrail.fx" />
     <None Remove="effects\Fire.fx" />
@@ -25,12 +26,17 @@
     <None Remove="effects\KEx2.fx" />
     <None Remove="Effects\LaserAlpha.fx" />
     <None Remove="Effects\LaserReplaceAlpha.fx" />
+    <None Remove="Effects\LuminDye.fx" />
     <None Remove="Effects\NoHLGradientTrail.fx" />
     <None Remove="effects\ShadowLaser.fx" />
     <None Remove="effects\ShadowStars.fx" />
     <None Remove="Effects\SimpleTrailNoHL.fx" />
     <None Remove="effects\StarsTrail.fx" />
+    <None Remove="effects\TurbulenceArrow.fx" />
+    <None Remove="effects\TurbulenceWarp.fx" />
+    <None Remove="effects\VerticalLine.fx" />
     <None Remove="localization\en-us\Mods.Coralite.Knowledges.hjson" />
+    <None Remove="mysterytools\old\OldMagikeGuideBook.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Bosses\SlimeEmperor\" />

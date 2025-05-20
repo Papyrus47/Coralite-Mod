@@ -1,13 +1,13 @@
 ﻿using Coralite.Content.Items.Icicle;
 using Coralite.Content.Particles;
 using Coralite.Core;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Bosses.BabyIceDragon
 {
-    public class IceBurst : ModProjectile
+    public class IceBurst : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -28,13 +28,13 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             Projectile.coldDamage = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             PRTLoader.NewParticle(Projectile.Center, Vector2.Zero, CoraliteContent.ParticleType<IceBurstParticle>(), Scale: 1.5f);
             float rotation = Main.rand.NextFloat(6.282f);
             for (int i = 0; i < 3; i++)
             {
-                BasePRT particle = PRTLoader.NewParticle(Projectile.Center + (rotation.ToRotationVector2() * 64), Vector2.Zero, CoraliteContent.ParticleType<Strike_Reverse>(), Scale: 1f);
+                Particle particle = PRTLoader.NewParticle(Projectile.Center + (rotation.ToRotationVector2() * 64), Vector2.Zero, CoraliteContent.ParticleType<Strike_Reverse>(), Scale: 1f);
                 particle.Rotation = rotation + 2.2f;
                 rotation += 2.094f;   //2/3 Pi
             }
@@ -55,9 +55,9 @@ namespace Coralite.Content.Bosses.BabyIceDragon
                     float rotation = Main.rand.NextFloat(6.282f);
                     for (int i = 0; i < 3; i++)
                     {
-                        BasePRT particle2 = PRTLoader.NewParticle(Projectile.Center + ((rotation + 0.2f).ToRotationVector2() * 96), Vector2.Zero, CoraliteContent.ParticleType<Strike_Reverse>(), Scale: 1.4f);
+                        Particle particle2 = PRTLoader.NewParticle(Projectile.Center + ((rotation + 0.2f).ToRotationVector2() * 96), Vector2.Zero, CoraliteContent.ParticleType<Strike_Reverse>(), Scale: 1.4f);
                         particle2.Rotation = rotation + 2.2f;
-                        BasePRT particle = PRTLoader.NewParticle(Projectile.Center + (rotation.ToRotationVector2() * 96), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), Coralite.IcicleCyan, 1.8f);
+                        Particle particle = PRTLoader.NewParticle(Projectile.Center + (rotation.ToRotationVector2() * 96), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), Coralite.IcicleCyan, 1.8f);
                         particle.Rotation = rotation + 2.2f;
                         rotation += 2.094f;   //2/3 Pi
                     }

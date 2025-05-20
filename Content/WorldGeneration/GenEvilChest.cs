@@ -1,11 +1,8 @@
 ﻿using Coralite.Content.Items.Corruption;
 using Coralite.Content.Items.Crimson;
 using Coralite.Core;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -130,12 +127,6 @@ namespace Coralite.Content.WorldGeneration
                 //if (itemCount > heartCount)
                 //    itemCount = heartCount;
 
-                Dictionary<Color, int> clearDic = new()
-                {
-                    [Color.White] = -2,
-                    [Color.Black] = -1
-                };
-
                 int[] arr = new int[100];
                 for (int i = 0; i < 100; i++)
                     arr[i] = i;
@@ -155,7 +146,6 @@ namespace Coralite.Content.WorldGeneration
                         [new Color(236, 74, 79)] = TileID.CrimtaneBrick,
                         [new Color(95, 96, 110)] = TileID.Shadewood,
                         [new Color(219, 15, 6)] = TileID.FleshBlock,
-                        [Color.Black] = -1
                     };
                     Dictionary<Color, int> wallDic = new()
                     {
@@ -166,8 +156,6 @@ namespace Coralite.Content.WorldGeneration
                         [new Color(212, 109, 24)] = WallID.CrimsonUnsafe4,
                         [new Color(144, 146, 167)] = WallID.Shadewood,
                         [new Color(255, 0, 255)] = WallID.ArcaneRunes,
-
-                        [Color.Black] = -1
                     };
 
                     for (int i = 0; i < 100; i++)
@@ -187,18 +175,14 @@ namespace Coralite.Content.WorldGeneration
                             continue; //如果不是，则返回false，这将导致调用方法尝试一个不同的origin。
 
                         int whichOne = WorldGen.genRand.Next(7);
-                        Texture2D shrineTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CrimsonChestShrine" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-                        Texture2D clearTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CrimsonChestClear" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-                        Texture2D wallTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CrimsonChestWall" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
+
+                        TextureGenerator generator = new TextureGenerator("CrimsonChest", whichOne, path: AssetDirectory.Shrines + "EvilChest/");
 
                         position += new Point(-10, -7);
                         if (!WorldGen.InWorld(position.X, position.Y))
                             continue;
 
-                        Task.Run(async () =>
-                        {
-                            await GenShrine(clearTex, shrineTex, wallTex, clearDic, mainDic, wallDic, position.X, position.Y);
-                        }).Wait();
+                        generator.GenerateByTopLeft(position, mainDic, wallDic);
 
                         //放置板条箱
                         Point createLeftPos = position + CrimsonLeft[whichOne];
@@ -260,8 +244,6 @@ namespace Coralite.Content.WorldGeneration
                         [new Color(155, 144, 179)] = TileID.Ebonwood,
                         [new Color(150, 0, 106)] = TileID.Ebonstone,
                         [new Color(160, 29, 203)] = TileID.DemoniteBrick,
-
-                        [Color.Black] = -1
                     };
                     Dictionary<Color, int> wallDic = new()
                     {
@@ -270,8 +252,6 @@ namespace Coralite.Content.WorldGeneration
                         [new Color(211, 189, 224)] = WallID.Ebonwood,
                         [new Color(149, 0, 255)] = WallID.CorruptionUnsafe4,
                         [new Color(255, 0, 255)] = WallID.ArcaneRunes,
-
-                        [Color.Black] = -1
                     };
 
                     for (int i = 0; i < 100; i++)
@@ -291,18 +271,14 @@ namespace Coralite.Content.WorldGeneration
                             continue; //如果不是，则返回false，这将导致调用方法尝试一个不同的origin。
 
                         int whichOne = WorldGen.genRand.Next(6);
-                        Texture2D shrineTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CorruptionChestShrine" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-                        Texture2D clearTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CorruptionChestClear" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-                        Texture2D wallTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "CorruptionChestWall" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
+
+                        TextureGenerator generator = new TextureGenerator("CorruptionChest", whichOne, path: AssetDirectory.Shrines + "EvilChest/");
 
                         position += new Point(-10, -7);
                         if (!WorldGen.InWorld(position.X, position.Y))
                             continue;
 
-                        Task.Run(async () =>
-                        {
-                            await GenShrine(clearTex, shrineTex, wallTex, clearDic, mainDic, wallDic, position.X, position.Y);
-                        }).Wait();
+                        generator.GenerateByTopLeft(position, mainDic, wallDic);
 
                         //放置板条箱
                         Point createLeftPos = position + CorruptionLeft[whichOne];

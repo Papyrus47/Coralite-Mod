@@ -1,14 +1,14 @@
 ﻿using Coralite.Core;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 {
-    public class GelBall : ModProjectile
+    public class GelBall : BaseHeldProj
     {
         public override string Texture => AssetDirectory.SlimeEmperor + Name;
 
@@ -41,7 +41,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -134,36 +134,70 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             }
 
             //FTW中才会有分裂弹幕
-            if (Main.getGoodWorld && Main.myPlayer == Projectile.owner)
+            if (Main.getGoodWorld && Projectile.IsOwnedByLocalPlayer())
                 for (int i = 0; i < 2; i++)
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Helper.NextVec2Dir() * 10, ModContent.ProjectileType<SmallGelBall>(), Projectile.damage * 2 / 3, 0, Projectile.owner);
+        }
+
+        public static void DrawGelBall(Texture2D tex, Vector2 pos, Color drawColor, float ballRotation, float extraMiddleRotation, Vector2 scale
+            , bool hasHighlight = true, bool hasOutline = false, Color? outlineColor = null, bool highlightUseRot = false)
+        {
+            //绘制底层
+            Rectangle frameBox = tex.Frame(1, 4, 0, 2);
+            Vector2 origin = frameBox.Size() / 2;
+            Color c = drawColor * 0.45f;
+
+            Main.spriteBatch.Draw(tex, pos, frameBox, c, ballRotation, origin, scale, 0, 0);
+
+            //绘制中层，自转
+            frameBox = tex.Frame(1, 4, 0, 1);
+            c = drawColor * 0.75f;
+
+            Main.spriteBatch.Draw(tex, pos, frameBox, c, extraMiddleRotation, origin, scale, 0, 0);
+
+            //绘制高光
+            if (hasHighlight)
+            {
+                frameBox = tex.Frame(1, 4, 0, 0);
+
+                Main.spriteBatch.Draw(tex, pos, frameBox, c, highlightUseRot ? ballRotation : 0, origin, scale, 0, 0);
+            }
+
+            //绘制外边缘
+            if (hasOutline && outlineColor != null)
+            {
+                frameBox = tex.Frame(1, 4, 0, 3);
+
+                Main.spriteBatch.Draw(tex, pos, frameBox, outlineColor.Value, ballRotation, origin, scale, 0, 0);
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D mainTex = Projectile.GetTexture();
             var pos = Projectile.Center - Main.screenPosition;
+
+            float exRot = Projectile.whoAmI * 0.3f + Main.GlobalTimeWrappedHourly * 2;
+
             if (Main.zenithWorld)
                 lightColor = SlimeEmperor.BlackSlimeColor;
 
-            Color color = lightColor * Projectile.localAI[0];
-            var frameBox = mainTex.Frame(1, 2, 0, 0);
             Vector2 scale = Scale;
 
-            //绘制自己
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
-
             float factor = MathF.Sin(Main.GlobalTimeWrappedHourly);
-            color = new Color(50, 152 + (int)(100 * factor), 225);
+            Color color = new Color(50, 152 + (int)(100 * factor), 225);
             color *= Projectile.localAI[0] * 0.75f;
 
             //绘制影子拖尾
-            Projectile.DrawShadowTrails(color, 0.3f, 0.03f, 1, 8, 2, scale, frameBox);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
-            //绘制发光
-            frameBox = mainTex.Frame(1, 2, 0, 1);
+            for (int i = 1; i < 8; i += 2)
+                DrawGelBall(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition
+                    , color * (0.3f - (i * 0.03f)), Projectile.oldRot[i], exRot + i * 1.1f, scale, false);
 
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
+            //绘制自己
+            DrawGelBall(mainTex, pos, lightColor * Projectile.localAI[0]
+                , Projectile.rotation, exRot, scale, true, true, color);
 
             return false;
         }

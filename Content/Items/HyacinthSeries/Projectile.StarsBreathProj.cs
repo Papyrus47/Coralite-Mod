@@ -1,30 +1,29 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Items.HyacinthSeries
 {
+    [AutoLoadTexture(Path = AssetDirectory.HyacinthSeriesItems)]
     public class StarsBreathHeldProj : BaseGunHeldProj
     {
-        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
+        public StarsBreathHeldProj() : base(0.1f, 22, -6, AssetDirectory.HyacinthSeriesItems) { }
 
-        public StarsBreathHeldProj() : base(0.3f, 22, -6, AssetDirectory.HyacinthSeriesItems) { }
+        public static ATex StarsBreathEffect { get; private set; }
 
-        public override void OnSpawn(IEntitySource source)
+        protected override float HeldPositionY => -2;
+
+        public override void InitializeGun()
         {
             Projectile.scale = 0.8f;
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
             float rotation = TargetRot + (DirSign > 0 ? 0 : MathHelper.Pi);
             Vector2 dir = rotation.ToRotationVector2();
             Vector2 center = Projectile.Center + (dir * 54);
@@ -39,12 +38,39 @@ namespace Coralite.Content.Items.HyacinthSeries
                 PRTLoader.NewParticle(center + Main.rand.NextVector2Circular(6, 6), dir.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(1.2f, 2.3f), CoraliteContent.ParticleType<HorizontalStar>(), color, Main.rand.NextFloat(0.05f, 0.15f));
             }
         }
+
+        public override void ModifyAI(float factor)
+        {
+            if (Projectile.timeLeft != MaxTime && Projectile.timeLeft % 2 == 0)
+            {
+                Projectile.frame++;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            base.PreDraw(ref lightColor);
+
+            if (Projectile.frame > 4)
+                return false;
+
+            Texture2D effect = StarsBreathEffect.Value;
+            Rectangle frameBox = effect.Frame(1, 5, 0, Projectile.frame);
+            SpriteEffects effects = DirSign > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            float rot = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
+            float n = rot - DirSign * MathHelper.PiOver2;
+
+            Main.spriteBatch.Draw(effect, Projectile.Center + rot.ToRotationVector2() * 55 + n.ToRotationVector2() * 4 - Main.screenPosition, frameBox, Color.White
+                , rot, new Vector2(0, frameBox.Height / 2), Projectile.scale * 2, 0, 0f);
+            return false;
+        }
     }
 
     /// <summary>
     /// ai0用于控制弹幕颜色
     /// </summary>
-    public class StarsBreathBullet : ModProjectile
+    public class StarsBreathBullet : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -62,7 +88,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
@@ -71,13 +97,13 @@ namespace Coralite.Content.Items.HyacinthSeries
         {
             if (Projectile.timeLeft < 31 && Projectile.timeLeft > 5)
             {
-                if (Projectile.timeLeft % 10 == 0 && Main.myPlayer == Projectile.owner)
+                if (Projectile.timeLeft % 10 == 0 && Projectile.IsOwnedByLocalPlayer())
                 {
                     float factor = (30 - Projectile.timeLeft) / 10;
                     float scale = 0.4f + (0.1f * factor);
                     Vector2 center = Projectile.Center + Main.rand.NextVector2CircularEdge(8, 8);
 
-                    Projectile.NewProjectileFromThis<StarsBreathExplosion>(center, Vector2.Zero, (int)(Projectile.damage * 0.45f), Projectile.knockBack, Projectile.owner, scale);
+                    Projectile.NewProjectileFromThis<StarsBreathExplosion>(center, Vector2.Zero, (int)(Projectile.damage * 0.45f), Projectile.knockBack, scale);
                     PRTLoader.NewParticle(center, Vector2.Zero, CoraliteContent.ParticleType<RainbowHalo>(), Color.White, scale + 0.1f);
                     if (factor == 0)
                         PlaySound();
@@ -109,11 +135,11 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 Vector2 center = Projectile.Center + Main.rand.NextVector2CircularEdge(8, 8);
 
-                Projectile.NewProjectileFromThis<StarsBreathExplosion>(center, Vector2.Zero, (int)(Projectile.damage * 0.45f), Projectile.knockBack, Projectile.owner, 0.6f);
+                Projectile.NewProjectileFromThis<StarsBreathExplosion>(center, Vector2.Zero, (int)(Projectile.damage * 0.45f), Projectile.knockBack, 0.6f);
                 if (VisualEffectSystem.HitEffect_SpecialParticles)
                     PRTLoader.NewParticle(center, Vector2.Zero, CoraliteContent.ParticleType<RainbowHalo>(), Color.White, 0.6f);
                 if (Projectile.timeLeft > 31)
@@ -155,7 +181,7 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// </summary>
     public class StarsBreathExplosion : ModProjectile, IDrawAdditive
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public ref float frameX => ref Projectile.localAI[0];
 
@@ -173,15 +199,12 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Projectile.rotation = Main.rand.NextFloat(6.282f);
-        }
-
         public override void AI()
         {
             if (Projectile.localAI[1] == 0)
             {
+                Projectile.rotation = Main.rand.NextFloat(6.282f);
+
                 Vector2 center = Projectile.Center;
                 Projectile.scale = Projectile.ai[0];
                 Projectile.width = Projectile.height = (int)(Projectile.scale * 132);
@@ -236,7 +259,8 @@ namespace Coralite.Content.Items.HyacinthSeries
             }
             Texture2D mainTex = Projectile.GetTexture();
 
-            spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, mainTex.Frame(4, 4, (int)frameX, Projectile.frame), Color.White * 0.8f, Projectile.rotation, new Vector2(64, 64), Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(mainTex, Projectile.Center - Main.screenPosition, mainTex.Frame(4, 4, (int)frameX, Projectile.frame)
+                , Color.White * 0.8f, Projectile.rotation, new Vector2(64, 64), Projectile.scale, SpriteEffects.None, 0f);
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    public class Sparkle_Big : BasePRT
+    public class Sparkle_Big : Particle
     {
         public override string Texture => AssetDirectory.Particles + Name;
         public override void SetProperty()

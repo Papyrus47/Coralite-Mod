@@ -3,12 +3,12 @@ using Coralite.Content.Items.Materials;
 using Coralite.Content.Raritys;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,6 @@ namespace Coralite.Content.Items.MagikeSeries2
             Item.maxStack = 1;
             Item.value = Item.sellPrice(0, 0, 50, 0);
             Item.rare = ModContent.RarityType<CrystallineMagikeRarity>();
-            Item.GetMagikeItem().magikeAmount = 450;
             Item.channel = true;
         }
 
@@ -47,7 +46,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public void AddMagikeCraftRecipe()
         {
-            MagikeCraftRecipe.CreateRecipe<OpticalPathCalibrator, BrilliantCalibrator>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
+            MagikeRecipe.CreateCraftRecipe<OpticalPathCalibrator, BrilliantCalibrator>(MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 12, 60 * 2))
                 .AddIngredient<CrystallineMagike>(5)
                 .AddIngredient<Skarn>(20)
                 .AddIngredient<MutatusInABottle>()
@@ -77,7 +76,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         public override bool? CanDamage() => false;
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             TargetPoint = BasePosition;
         }
@@ -86,7 +85,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         {
             Projectile.Center = Owner.Center;
 
-            if (Owner.HeldItem.ModItem is not BrilliantCalibrator)
+            if (Item.ModItem is not BrilliantCalibrator)
             {
                 Projectile.Kill();
                 return;
@@ -94,7 +93,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
             if (Owner.channel)
             {
-                LockOwnerItemTime(5);
+                Owner.itemTime = Owner.itemAnimation = 5;
                 TargetPoint = Main.MouseWorld.ToTileCoordinates16();
 
                 //限制范围
@@ -111,7 +110,7 @@ namespace Coralite.Content.Items.MagikeSeries2
             }
 
             //右键直接停止使用
-            if (Main.mouseRight)
+            if (DownRight)
             {
                 Projectile.Kill();
                 return;
@@ -148,7 +147,7 @@ namespace Coralite.Content.Items.MagikeSeries2
                     insertPoint.Add(currentTopLeft.Value);
 
                     //尝试根据左上角获取物块实体
-                    if (!MagikeHelper.TryGetEntity(currentTopLeft.Value, out MagikeTP entity))
+                    if (!MagikeHelper.TryGetEntityWithTopLeft(currentTopLeft.Value, out MagikeTP entity))
                         continue;
 
                     //能插入就插，不能就提供失败原因
@@ -189,7 +188,7 @@ namespace Coralite.Content.Items.MagikeSeries2
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)
         {
-            MagikeHelper.DrawRectangleFrame(spriteBatch, BasePosition, TargetPoint, Coralite.CrystallineMagikePurple);
+            MagikeHelper.DrawRectangleFrame(spriteBatch, BasePosition, TargetPoint, Coralite.CrystallinePurple);
         }
     }
 }

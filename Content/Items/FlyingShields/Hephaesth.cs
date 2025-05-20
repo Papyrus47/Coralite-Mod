@@ -5,8 +5,9 @@ using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -60,6 +61,7 @@ namespace Coralite.Content.Items.FlyingShields
 
         public override void HoldItem(Player player)
         {
+            base.HoldItem(player);
             if (BurstTime > 0)
             {
                 BurstTime--;
@@ -267,13 +269,13 @@ namespace Coralite.Content.Items.FlyingShields
         {
             damageReduce = 0.4f;
             distanceAdder = 2.6f;
-            strongGuard = 0.3f;
+            strongGuard = 0.2f;
             scalePercent = 1.4f;
         }
 
         public override void OnHoldShield()
         {
-            if (Burning && turnToBuring == 0 && Owner.HeldItem.ModItem is Hephaesth hephaesth)
+            if (Burning && turnToBuring == 0 && Item.ModItem is Hephaesth hephaesth)
             {
                 if (hephaesth.BurstTime == 0)
                 {
@@ -318,7 +320,7 @@ namespace Coralite.Content.Items.FlyingShields
         public override void OnGuard()
         {
             base.OnGuard();
-            if (Owner.HeldItem.ModItem is Hephaesth hephaesth)
+            if (Item.ModItem is Hephaesth hephaesth)
             {
                 if (!Burning && hephaesth.GetFuel(30 * 2))
                 {
@@ -355,7 +357,7 @@ namespace Coralite.Content.Items.FlyingShields
         public override void OnStrongGuard()
         {
             Helper.PlayPitched(CoraliteSoundID.NoUse_SuperMagicShoot_Item68, Projectile.Center, pitch: -0.5f);
-            if (Owner.HeldItem.ModItem is Hephaesth hephaesth)
+            if (Item.ModItem is Hephaesth hephaesth)
             {
                 if (!Burning && hephaesth.GetFuel(30 * 8))
                 {
@@ -436,7 +438,7 @@ namespace Coralite.Content.Items.FlyingShields
         }
     }
 
-    public class HephaesthFire : ModProjectile, IDrawAdditive, IDrawPrimitive
+    public class HephaesthFire : BaseHeldProj, IDrawAdditive, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -488,7 +490,7 @@ namespace Coralite.Content.Items.FlyingShields
             }
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.InitOldPosCache(trailPoint);
             Projectile.localAI[1] = Main.rand.NextFloat(-0.01f, 0.01f);
@@ -501,7 +503,7 @@ namespace Coralite.Content.Items.FlyingShields
         public override void AI()
         {
             fireParticles ??= new PrimitivePRTGroup();
-            trail ??= new Trail(Main.instance.GraphicsDevice, trailPoint, new NoTip(), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, trailPoint, new EmptyMeshGenerator(), factor =>
             {
                 if (factor < 0.8f)
                     return Helper.Lerp(6, 12, factor / 0.8f);
@@ -564,7 +566,7 @@ namespace Coralite.Content.Items.FlyingShields
             }
 
             Projectile.UpdateOldPosCache();
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
             fireParticles.Update();
         }
 
@@ -652,7 +654,7 @@ namespace Coralite.Content.Items.FlyingShields
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
@@ -698,7 +700,7 @@ namespace Coralite.Content.Items.FlyingShields
             }
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             trailWidth = 24 / 2;
             shootSpeed = Projectile.velocity.Length();
@@ -716,14 +718,9 @@ namespace Coralite.Content.Items.FlyingShields
             Timer = flyingTime;
 
             Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero) * shootSpeed;
-            Projectile.oldPos = new Vector2[trailCachesLength];
-            Projectile.oldRot = new float[trailCachesLength];
             Projectile.rotation = Projectile.velocity.ToRotation();
-            for (int i = 0; i < trailCachesLength; i++)
-            {
-                Projectile.oldPos[i] = Projectile.Center;
-                Projectile.oldRot[i] = Projectile.rotation;
-            }
+            Projectile.InitOldPosCache(trailCachesLength);
+            Projectile.InitOldRotCache(trailCachesLength);
             State = (int)FlyingShieldStates.Shooting;
         }
 
@@ -867,8 +864,8 @@ namespace Coralite.Content.Items.FlyingShields
         {
             Texture2D Texture = GetTrailTex().Value;
 
-            List<CustomVertexInfo> bars = new();
-            List<CustomVertexInfo> bars2 = new();
+            List<ColoredVertex> bars = new();
+            List<ColoredVertex> bars2 = new();
             for (int i = 0; i < trailCachesLength; i++)
             {
                 float factor = (float)i / trailCachesLength;
@@ -1084,7 +1081,7 @@ namespace Coralite.Content.Items.FlyingShields
     //    }
     //}
 
-    public class HephaesthBurst : ModProjectile, IDrawAdditive
+    public class HephaesthBurst : BaseHeldProj, IDrawAdditive
     {
         public override string Texture => AssetDirectory.Sparkles + "Cross";
 
@@ -1116,7 +1113,7 @@ namespace Coralite.Content.Items.FlyingShields
             return null;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             targetRotation = (Main.rand.Next(3) * MathHelper.PiOver2) + MathHelper.PiOver4;
 

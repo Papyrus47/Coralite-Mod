@@ -1,9 +1,8 @@
 using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Projectiles.Projectiles_Magic
 {
@@ -12,6 +11,7 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
         BasicEffect effect;
         private Trail trail;
         public bool canDamage = true;
+        private bool span;
 
         public ref float Alpha => ref Projectile.localAI[0];
 
@@ -29,7 +29,7 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
             });
         }
 
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public override void SetDefaults()
         {
@@ -46,19 +46,22 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             Alpha = 1;
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.oldPos = new Vector2[14];
-            for (int i = 0; i < 14; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(14);
         }
 
         public override bool? CanDamage() => canDamage;
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (!canDamage)
             {
                 Alpha -= 0.08f;
@@ -66,7 +69,7 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
                     Projectile.Kill();
             }
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, 14, new NoTip(), factor => Helper.Lerp(1, 4, factor), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, 14, new EmptyMeshGenerator(), factor => Helper.Lerp(1, 4, factor), factor =>
             {
                 if (factor.X > 0.8f)
                     return Color.Lerp(new Color(100, 100, 100, 100) * Alpha, Color.White * Alpha, (factor.X - 0.8f) / 0.2f);
@@ -78,7 +81,7 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[13] = Projectile.Center + Projectile.velocity;
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -111,7 +114,7 @@ namespace Coralite.Content.Projectiles.Projectiles_Magic
             effect.View = view;
             effect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;

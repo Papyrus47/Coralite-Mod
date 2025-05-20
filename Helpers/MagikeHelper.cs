@@ -1,4 +1,5 @@
 ﻿using Coralite.Content.UI.MagikeApparatusPanel;
+using Coralite.Core;
 using Coralite.Core.Systems.CoraliteActorComponent;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.Components;
@@ -20,11 +21,6 @@ namespace Coralite.Helpers
 {
     public static class MagikeHelper
     {
-        public static MagikeItem GetMagikeItem(this Item item)
-        {
-            return item.GetGlobalItem<MagikeItem>();
-        }
-
         /// <summary>
         /// 从实体上获取魔能容器，请使用<see cref="IsMagikeContainer(IEntity)"/>来检测是否为魔能容器
         /// </summary>
@@ -43,6 +39,7 @@ namespace Coralite.Helpers
 
         /// <summary>
         /// 尝试从<see cref="TileEntity"/>种获取<see cref="IEntity"/><br></br>
+        /// 传入的点可以不是左上角
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
@@ -56,7 +53,7 @@ namespace Coralite.Helpers
             if (!topLeft.HasValue)
                 return false;
 
-            if (!TryGetEntity(topLeft.Value, out MagikeTP tempEntity))
+            if (!TryGetEntityWithTopLeft(topLeft.Value, out MagikeTP tempEntity))
                 return false;
 
             entity = tempEntity;
@@ -70,7 +67,7 @@ namespace Coralite.Helpers
         /// <param name="position"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public static bool TryGetEntity(Point16 position, out MagikeTP entity)
+        public static bool TryGetEntityWithTopLeft(Point16 position, out MagikeTP entity)
         {
             entity = null;
             //if (!TileEntity.ByPosition.TryGetValue(position, out TileEntity tileEntity))
@@ -159,25 +156,31 @@ namespace Coralite.Helpers
             if (data == null)
                 return new Point16(i, j);
 
-            if (!Main.tileSolidTop[tile.TileType])
+            if (CoraliteSetsSystem.MagikeTileTypes.TryGetValue(tile.TileType, out var placeType)
+                && placeType != CoraliteSetsSystem.MagikeTileType.None)
                 GetMagikeAlternateData(i, j, out data, out _);
 
             int frameX = tile.TileFrameX;
             int frameY = tile.TileFrameY;
+
+            int v = data.CoordinateWidth + data.CoordinatePadding;
+            if (v == 0)
+                v = 18;
+
             if (data != null)
             {
-                frameX %= data.Width * (data.CoordinateWidth + data.CoordinatePadding);
+                frameX %= data.Width * v;
                 frameY %= data.Height * 18;
             }
 
-            int x = frameX / (data.CoordinateWidth + data.CoordinatePadding);
+            int x = frameX / v;
             int y = frameY / 18;
             return new Point16(i - x, j - y);
         }
 
         /// <summary>
         /// 获取魔能仪器的<see cref="TileObjectData"/>，对于没有这个的会返回默认值<br></br>
-        /// 使用<see cref="Main.tileSolidTop"/>来判断是否有特殊的摆放形式
+        /// 使用<see cref="CoraliteSets.NotFourWayPlaceMagike"/>来判断是否有特殊的摆放形式
         /// </summary>
         /// <param name="i"></param>
         /// <param name="j"></param>
@@ -188,14 +191,14 @@ namespace Coralite.Helpers
             Tile t = Main.tile[i, j];
             TileObjectData tileData = TileObjectData.GetTileData(t.TileType, 0, 0);
 
-            if (tileData == null)
+            if (tileData == null || !CoraliteSetsSystem.MagikeTileTypes.TryGetValue(t.TileType, out var placeType))
             {
                 alternateData = null;
                 alternate = 0;
                 return;
             }
 
-            if (Main.tileSolidTop[t.TileType])
+            if (placeType == CoraliteSetsSystem.MagikeTileType.None)
             {
                 alternateData = tileData;
                 alternate = MagikeAlternateStyle.None;
@@ -206,6 +209,11 @@ namespace Coralite.Helpers
             int height = tileData.Height;
             int y1 = t.TileFrameY / (tileData.CoordinateWidth + tileData.CoordinatePadding);
 
+            int leftHeight = placeType switch
+            {
+                CoraliteSetsSystem.MagikeTileType.FourWayNormal => (height * 2) + width,
+                _ => height * 3
+            };
 
             if (y1 < height)
             {
@@ -217,7 +225,7 @@ namespace Coralite.Helpers
                 alternate = MagikeAlternateStyle.Top;
                 alternateData = TileObjectData.GetTileData(t.TileType, 0, (int)alternate + 1);
             }
-            else if (y1 < (height * 2) + width)
+            else if (y1 < leftHeight)
             {
                 alternate = MagikeAlternateStyle.Left;
                 alternateData = TileObjectData.GetTileData(t.TileType, 0, (int)alternate + 1);
@@ -353,7 +361,7 @@ namespace Coralite.Helpers
                     if (!GetFrame(i, j, width, height, out Point framePoint))
                         continue;
 
-                    Texture2D mainTex = MagikeSystem.SelectFrame.Value;
+                    Texture2D mainTex = MagikeAssets.SelectFrame.Value;
                     Rectangle frame = mainTex.Frame(4, 4, framePoint.X, framePoint.Y);
 
                     Vector2 pos = (new Vector2(rect.X + i, rect.Y + j) * 16) - Main.screenPosition;
@@ -521,8 +529,31 @@ namespace Coralite.Helpers
                 return "ffffff";
         }
 
+        public static Color GetBonusColor(float bonus, bool reverse = false)
+        {
+            if (reverse)
+            {
+                if (bonus < 1)
+                    return new Color(128, 211, 255);//蓝色
+                else if (bonus > 1)
+                    return new Color(255, 25, 25);//红色
+                else
+                    return Color.White;
+            }
+
+            if (bonus > 1)
+                return new Color(128, 211, 255);//蓝色
+            else if (bonus < 1)
+                return new Color(255, 25, 25);//红色
+            else
+                return Color.White;
+        }
+
         public static string BonusColoredText(string text, float bonus, bool reverse = false)
             => $"[c/{GetBonusColorCode(bonus, reverse)}:{text}]";
+
+        public static string BonusColoredText(float bonus, bool reverse = false)
+            => $"[c/{GetBonusColorCode(bonus, reverse)}:{bonus}]";
 
         public static string BonusColoredText2(string text, int bonus, bool reverse = false)
             => $"[c/{GetBonusColorCode2(bonus, reverse)}:{text}]";
@@ -630,7 +661,7 @@ namespace Coralite.Helpers
                 MALevel.HolyLight => 20,
 
                 MALevel.SplendorMagicore => 50,
-                _ => 1,
+                _ => 0,
             };
 
             return (int)(produceCountPerSecond * ProducerCount * workTime);
@@ -644,19 +675,10 @@ namespace Coralite.Helpers
         /// <returns></returns>
         public static bool ByTopLeftnGetTP(Point16 topLeft, out TileProcessor tileProcessor)
         {
-            tileProcessor = null;
-            // 遍历世界中的所有模块，查找与指定ID和坐标匹配的模块
-            foreach (var inds in TileProcessorLoader.TP_InWorld)
-            {
-                if (inds.Position.X == topLeft.X && inds.Position.Y == topLeft.Y)
-                {
-                    tileProcessor = inds;
-                    return true;
-                }
-            }
+            if (TileProcessorLoader.ByPositionGetTP(topLeft.X, topLeft.Y, out tileProcessor))
+                return true;
             return false;
         }
-
 
         //public static void SpawnDustOnSend(int selfWidth, int selfHeight, Point16 Position, IMagikeContainer container, Color dustColor, int dustType = DustID.Teleporter)
         //{
@@ -712,7 +734,7 @@ namespace Coralite.Helpers
                 return;
             for (int i = 0; i < 16; i++)
             {
-                Dust dust = Dust.NewDustPerfect(position, dustType, (i * MathHelper.TwoPi / 16).ToRotationVector2() * Main.rand.NextFloat(2, 3), newColor: dustColor,Scale:Main.rand.NextFloat(1.5f,2f));
+                Dust dust = Dust.NewDustPerfect(position, dustType, (i * MathHelper.TwoPi / 16).ToRotationVector2() * Main.rand.NextFloat(2, 3), newColor: dustColor, Scale: Main.rand.NextFloat(1.5f, 2f));
                 dust.noGravity = true;
             }
         }
@@ -784,13 +806,20 @@ namespace Coralite.Helpers
         /// <returns></returns>
         public static bool TryCosumeMagike(this Player player, int howMany)
         {
-            for (int i = 0; i < 58; i++)
+            foreach (var item in player.inventory)
             {
-                Item item = player.inventory[i];
-                if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable && mi.magike >= howMany)
+                if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable)
                 {
-                    mi.magike -= howMany;
-                    return true;
+                    if (mi.Magike >= howMany)//这个物品里的魔能足够，就直接消耗掉然后返回
+                    {
+                        mi.ReduceMagike(howMany);
+                        return true;
+                    }
+                    else//不够，直接消耗全部的然后继续遍历
+                    {
+                        howMany -= mi.Magike;
+                        mi.ClearMagike();
+                    }
                 }
             }
 
@@ -798,10 +827,53 @@ namespace Coralite.Helpers
                 for (int i = 0; i < player.bank4.item.Length; i++)
                 {
                     Item item = player.bank4.item[i];
-                    if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable && mi.magike >= howMany)
+                    if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable)
                     {
-                        mi.magike -= howMany;
+                        if (mi.Magike >= howMany)//这个物品里的魔能足够，就直接消耗掉然后返回
+                        {
+                            mi.ReduceMagike(howMany);
+                            return true;
+                        }
+                        else//不够，直接消耗全部的然后继续遍历
+                        {
+                            howMany -= mi.Magike;
+                            mi.ClearMagike();
+                        }
+                    }
+                }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 检测玩家身上是否有足够的魔能
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="howMany"></param>
+        /// <returns></returns>
+        public static bool CheckMagike(this Player player, int howMany)
+        {
+            foreach (var item in player.inventory)
+            {
+                if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable)
+                {
+                    if (mi.Magike >= howMany)//这个物品里的魔能足够，就直接消耗掉然后返回
                         return true;
+                    else//不够，直接消耗全部的然后继续遍历
+                        howMany -= mi.Magike;
+                }
+            }
+
+            if (player.useVoidBag())
+                for (int i = 0; i < player.bank4.item.Length; i++)
+                {
+                    Item item = player.bank4.item[i];
+                    if (!item.IsAir && item.TryGetGlobalItem(out MagikeItem mi) && mi.magikeSendable)
+                    {
+                        if (mi.Magike >= howMany)//这个物品里的魔能足够，就直接消耗掉然后返回
+                            return true;
+                        else//不够，直接消耗全部的然后继续遍历
+                            howMany -= mi.Magike;
                     }
                 }
 
@@ -816,11 +888,39 @@ namespace Coralite.Helpers
         /// <returns></returns>
         public static bool TryCosumeMagike(this Item item, int howMany)
         {
-            if (item.TryGetGlobalItem(out MagikeItem mi) && mi.magike >= howMany)
+            if (item.TryGetGlobalItem(out MagikeItem mi) && mi.Magike >= howMany)
             {
-                mi.magike -= howMany;
+                mi.Magike -= howMany;
                 return true;
             }
+
+            return false;
+        }
+
+        public static bool CheckMagike(this Item item, int howMany)
+        {
+            if (item.TryGetGlobalItem(out MagikeItem mi) && mi.Magike >= howMany)
+                return true;
+
+            return false;
+        }
+
+        public static bool TryCosumeMagike(int count, Item item, Player player)
+        {
+            if (item.TryCosumeMagike(count))
+                return true;
+            if (player.TryCosumeMagike(count))
+                return true;
+
+            return false;
+        }
+
+        public static bool CheckMagike(int count, Item item, Player player)
+        {
+            if (item.CheckMagike(count))
+                return true;
+            if (player.CheckMagike(count))
+                return true;
 
             return false;
         }
@@ -830,5 +930,26 @@ namespace Coralite.Helpers
         //    Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.MagikeGuideBook + "Fragment").Value;
         //    spriteBatch.Draw(mainTex, center, null, Color.White, 0, mainTex.Size() / 2, 1, 0, 0);
         //}
+
+        public static MagikeItem GetMagikeItem(this Item item)
+        {
+            return item.GetGlobalItem<MagikeItem>();
+        }
+
+        /// <summary>
+        /// 这个物品是否为可充能的物品
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public static bool IsMagikeChargable(this Item item)
+        {
+            if (item.TryGetGlobalItem(out MagikeItem mi))
+                return mi.MagikeMax > 0;
+
+            return false;
+        }
+
+        public static int IndexOfSelf(this MagikeComponent component)
+            => component.Entity.IndexOf(component);
     }
 }

@@ -14,21 +14,15 @@ namespace Coralite.Content.Items.Misc_Shoot
 
         public override void SetDefaults()
         {
-            Item.damage = 50;
-            Item.useTime = Item.useAnimation = 27;
-            Item.knockBack = 6;
-            Item.shootSpeed = 12.5f;
+            Item.SetWeaponValues(50, 6f);
+            Item.DefaultToRangedWeapon(ProjectileType<VirgoHeldProj>(), AmmoID.Bullet, 28, 12.5f);
 
             Item.useStyle = ItemUseStyleID.Rapier;
-            Item.DamageType = DamageClass.Ranged;
             Item.value = Item.sellPrice(0, 1);
             Item.rare = ItemRarityID.LightRed;
-            Item.shoot = ProjectileType<VirgoHeldProj>();
-            Item.useAmmo = AmmoID.Bullet;
             Item.UseSound = CoraliteSoundID.Bow2_Item102;
 
             Item.useTurn = false;
-            Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.autoReuse = true;
         }
@@ -40,17 +34,9 @@ namespace Coralite.Content.Items.Misc_Shoot
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (Main.myPlayer == player.whoAmI)
-            {
-                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ProjectileType<VirgoHeldProj>(), damage, knockback, player.whoAmI);
-                if (type == ProjectileID.Bullet)
-                {
-                    Projectile.NewProjectile(source, position, velocity, ProjectileType<VirgoFeather>(), damage, knockback, player.whoAmI);
-                    return false;
-                }
-            }
-
-            return true;
+            Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ProjectileType<VirgoHeldProj>(), damage, knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity, ProjectileType<VirgoFeather>(), damage, knockback, player.whoAmI);
+            return false;
         }
 
         public override void AddRecipes()
@@ -96,13 +82,13 @@ namespace Coralite.Content.Items.Misc_Shoot
             Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.extraUpdates = 1;
+            Projectile.ignoreWater = true;
         }
 
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.ai[0]++;
-            if (Projectile.ai[0] < 80 && (Projectile.ai[0] % 10 == 0))
+            if (Projectile.ai[0] < 28 && (Projectile.ai[0] % 4 == 0))
             {
                 float range = Main.rand.NextFloat(0, 1);
 
@@ -117,9 +103,11 @@ namespace Coralite.Content.Items.Misc_Shoot
                     }
                 }
 
-                Projectile.NewProjectileFromThis<VirgoBullet>(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.Zero) * 4.5f,
-                    (int)(Projectile.damage * 0.35f), Projectile.knockBack / 5);
+                Projectile.NewProjectileFromThis<VirgoBullet>(Projectile.Center, Projectile.velocity.SafeNormalize(Vector2.Zero) * (2.5f + Projectile.ai[0] / 4 * (2.5f / 7)),
+                    (int)(Projectile.damage * 0.36f), Projectile.knockBack / 5);
             }
+
+            Projectile.ai[0]++;
         }
 
         public override void OnKill(int timeLeft)
@@ -156,6 +144,7 @@ namespace Coralite.Content.Items.Misc_Shoot
             Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.extraUpdates = 2;
+            Projectile.ignoreWater = true;
         }
 
         public override void OnKill(int timeLeft)

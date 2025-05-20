@@ -1,12 +1,12 @@
 ﻿using Coralite.Content.ModPlayers;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
+using Terraria.ID;
 
 namespace Coralite.Core.Systems.FlyingShieldSystem
 {
@@ -14,7 +14,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
     {
         public ref float State => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.ai[1];
-
+        public override bool CanFire => true;
         #region 设置类字段
 
         /// <summary> 完美防御时间 </summary>
@@ -24,7 +24,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         /// <summary> 后摇时间 </summary>
         public int delayTime = 15;
 
-        /// <summary> 削减弹幕的穿透数的概率 </summary>
+        /// <summary> 弹回弹幕的概率 </summary>
         public float strongGuard;
         /// <summary> 决定了举盾时每帧的距离增加量，这个数越大举盾速度越快 </summary>
         public float distanceAdder = 1.5f;
@@ -43,6 +43,8 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public float extraRotation;
         public float DistanceToOwner = 0;
+
+        public bool dashInit = false;
 
         public int[] localProjectileImmunity = new int[Main.maxProjectiles];
 
@@ -98,9 +100,9 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         #region AI
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.scale *= Owner.GetAdjustedItemScale(Owner.HeldItem);
+            Projectile.scale *= Owner.GetAdjustedItemScale(Item);
             Projectile.Resize((int)(Projectile.width * Projectile.scale), (int)(Projectile.height * Projectile.scale));
             Projectile.originalDamage = Projectile.damage;//记录原本伤害，因为会受到额外加成影响
 
@@ -108,17 +110,21 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
             UpdateShieldAccessory(accessory => accessory.OnGuardInitialize(this));
             LimitFields();
 
-            Timer = parryTime;
             Projectile.rotation = Projectile.velocity.ToRotation();
-            InitState();
+
+            if (!dashInit)
+            {
+                Timer = parryTime;
+                InitState();
+            }
         }
 
         public virtual void LimitFields()
         {
             if (damageReduce > 0.8f)
                 damageReduce = 0.8f;
-            if (strongGuard > 0.75f)
-                strongGuard = 0.75f;
+            if (strongGuard > 0.8f)
+                strongGuard = 0.8f;
         }
 
         public virtual void InitState()
@@ -136,7 +142,9 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override void AI()
         {
-            Projectile.velocity.X = Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
+            if (Math.Abs(InMousePos.X - Owner.Center.X) > 6)//防止边界问题
+                Projectile.velocity.X = Owner.direction = InMousePos.X > Owner.Center.X ? 1 : -1;
+
             Projectile.timeLeft = 4;
 
             if (Owner.TryGetModPlayer(out CoralitePlayer cp))
@@ -164,9 +172,9 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
                     break;
                 case (int)GuardState.Parry:
                     {
-                        LockOwnerItemTime();
+                        Owner.itemTime = Owner.itemAnimation = 2;
 
-                        if (!Main.mouseRight)
+                        if (!DownRight)
                             TurnToDelay();
 
                         SetPos();
@@ -191,7 +199,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
                     break;
                 case (int)GuardState.ParryDelay:
                     {
-                        LockOwnerItemTime();
+                        Owner.itemTime = Owner.itemAnimation = 2;
                         DistanceToOwner = Helper.Lerp(0, GetWidth(), Timer / (parryTime * 2));
                         SetPos();
 
@@ -230,9 +238,9 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public virtual void Guarding()
         {
-            LockOwnerItemTime();
+            Owner.itemTime = Owner.itemAnimation = 2;
 
-            if (!Main.mouseRight)
+            if (!DownRight)
                 TurnToDelay();
 
             SetPos();
@@ -263,7 +271,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         public virtual void SetPos()
         {
             float baseAngle = Owner.direction > 0 ? 0 : MathHelper.Pi;
-            Projectile.rotation = baseAngle.AngleLerp((Main.MouseWorld - Owner.Center).ToRotation(), 0.4f);
+            Projectile.rotation = baseAngle.AngleLerp(ToMouseA, 0.4f);
 
             Projectile.Center = Owner.Center + (Projectile.rotation.ToRotationVector2() * DistanceToOwner);
         }
@@ -293,17 +301,20 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
                 if (proj.Colliding(proj.getRect(), rect))
                 {
                     float damageR = damageReduce;
-                    if (proj.penetrate < 0)//对于无限穿透的弹幕额外减伤
+                    bool canReflect = CanProjBeReflect(proj);
+
+                    if (canReflect)//对于不可弹回弹幕
                         damageR += Main.rand.NextFloat(0, strongGuard / 3);
 
                     OnGuard_DamageReduce(damageR);
 
                     float percent = MathHelper.Clamp(strongGuard, 0, 1);
-                    if (Main.rand.NextBool((int)(percent * 100), 100) && proj.penetrate > 0)//削减穿透数
+                    if (Main.rand.NextBool((int)(percent * 100), 100) && canReflect)//弹回
                     {
-                        proj.penetrate--;
-                        if (proj.penetrate < 1)
-                            proj.Kill();
+                        proj.velocity *= -1;
+                        float angle = proj.velocity.ToRotation();
+                        proj.velocity = angle.AngleLerp(Projectile.rotation, 0.5f).ToRotationVector2() * proj.velocity.Length();
+                        proj.friendly = true;
                         OnStrongGuard();
                     }
                     localProjectileImmunity[i] = Projectile.localNPCHitCooldown;
@@ -334,6 +345,21 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
             index = -1;
             return (int)GuardType.notGuard;
+        }
+
+        private bool CanProjBeReflect(Projectile proj)
+        {
+            if (proj.aiStyle == 4 || proj.aiStyle == 38 || proj.aiStyle == 84 || proj.aiStyle == 148 ||
+                (proj.aiStyle == 7 && proj.ai[0] == 2f) || ((proj.type == 440 || proj.type == 449 ||
+                proj.type == 606) && proj.ai[1] == 1f) || (proj.aiStyle == 93 && proj.ai[0] < 0f) ||
+                proj.type == 540 || proj.type == 756 || proj.type == 818 || proj.type == 856 ||
+                proj.type == 961 || proj.type == 933 || ProjectileID.Sets.IsAGolfBall[proj.type])
+                return false;
+
+            if (!ProjectileLoader.ShouldUpdatePosition(proj))
+                return false;
+
+            return true;
         }
 
         #region 特定时期触发类方法
@@ -394,6 +420,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         /// <param name="dashFunction"></param>
         public virtual void TurnToDashing(IFlyingShieldAccessory dashFunction, int dashTime, float dashDir, float dashSpeed)
         {
+            dashInit = true;
             this.dashFunction = dashFunction;
             State = (int)GuardState.Dashing;
             DistanceToOwner = GetWidth();

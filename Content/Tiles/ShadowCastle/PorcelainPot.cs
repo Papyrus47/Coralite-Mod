@@ -62,7 +62,7 @@ namespace Coralite.Content.Tiles.ShadowCastle
                 return;
             }
 
-            if (WorldGen.genRand.NextBool(35) && CoraliteSets.WallShadowCastle[Main.tile[i, j].WallType] && j > Main.worldSurface)
+            if (WorldGen.genRand.NextBool(35) && CoraliteSets.Walls.ShadowCastle[Main.tile[i, j].WallType] && j > Main.worldSurface)
             {
                 Item.NewItem(GetItemSource_FromTileBreak(i, j), i * 16, j * 16, 16, 16, ModContent.ItemType<ShadowMagneticCard>());
                 return;
@@ -230,7 +230,7 @@ namespace Coralite.Content.Tiles.ShadowCastle
                 return;
             }
 
-            if (Main.netMode == NetmodeID.Server && Main.rand.NextBool(30))
+            if (VaultUtils.isServer && Main.rand.NextBool(30))
             {
                 Item.NewItem(GetItemSource_FromTileBreak(i, j), i * 16, j * 16, 16, 16, 2997);
                 return;

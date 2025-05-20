@@ -7,7 +7,6 @@ using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
@@ -143,8 +142,8 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
             Projectile.friendly = false;
             Projectile.hostile = true;
         }
-
-        public override void OnSpawn(IEntitySource source)
+        bool span;
+        public void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
             for (int i = 0; i < 8; i++)
@@ -155,6 +154,11 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
 
         public override void AI()
         {
+            if (span)
+            {
+                Initialize();
+                span = true;
+            }
             for (int i = 0; i < 3; i++)
                 Projectile.SpawnTrailDust(DustID.GemRuby, 0.4f);
         }
@@ -179,7 +183,7 @@ namespace Coralite.Content.Bosses.ModReinforce.Bloodiancie
         }
     }
 
-    public class RedArrow : BasePRT
+    public class RedArrow : Particle
     {
         public override string Texture => AssetDirectory.Bloodiancie + Name;
 

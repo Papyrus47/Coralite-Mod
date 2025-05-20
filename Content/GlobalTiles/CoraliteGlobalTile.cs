@@ -164,6 +164,9 @@ namespace Coralite.Content.GlobalTiles
 
         public override bool CanDrop(int i, int j, int type)/* tModPorter Suggestion: Use CanDrop to decide if items can drop, use this method to drop additional items. See documentation. */
         {
+            if (!GemTreeSPdrop(i, j, type))
+                return false;
+
             #region 天空层
             if (j < Main.worldSurface * 0.35f)
             {
@@ -187,18 +190,6 @@ namespace Coralite.Content.GlobalTiles
                 //    }
                 //}
                 //#endregion
-                #region 各种宝石树
-                if (type == TileID.TreeTopaz || type == TileID.TreeAmethyst || type == TileID.TreeSapphire || type == TileID.TreeEmerald || type == TileID.TreeRuby || type == TileID.TreeDiamond || type == TileID.TreeAmber)
-                {
-                    //赤色果实
-                    if (Main.rand.NextBool(20))
-                    {
-                        Vector2 worldPosition = new Vector2(i, j).ToWorldCoordinates();
-                        Item.NewItem(new EntitySource_TileBreak(i, j), worldPosition, ItemType<RedBerry>());
-                        return false;
-                    }
-                }
-                #endregion
                 //#region 丛林植物
                 //if (type == TileID.JunglePlants || type == TileID.JunglePlants2)
                 //{
@@ -219,18 +210,6 @@ namespace Coralite.Content.GlobalTiles
             #region 泥土层
             if (j < Main.rockLayer)
             {
-                #region 各种宝石树
-                if (type == TileID.TreeTopaz || type == TileID.TreeAmethyst || type == TileID.TreeSapphire || type == TileID.TreeEmerald || type == TileID.TreeRuby || type == TileID.TreeDiamond || type == TileID.TreeAmber)
-                {
-                    //赤色果实
-                    if (Main.rand.NextBool(20))
-                    {
-                        Vector2 worldPosition = new Vector2(i, j).ToWorldCoordinates();
-                        Item.NewItem(new EntitySource_TileBreak(i, j), worldPosition, ItemType<RedBerry>());
-                        return false;
-                    }
-                }
-                #endregion
                 return true;
             }
             #endregion
@@ -250,24 +229,26 @@ namespace Coralite.Content.GlobalTiles
                 //    }
                 //}
                 //#endregion
-                #region 各种宝石树
-                if (type == TileID.TreeTopaz || type == TileID.TreeAmethyst || type == TileID.TreeSapphire || type == TileID.TreeEmerald || type == TileID.TreeRuby || type == TileID.TreeDiamond || type == TileID.TreeAmber)
-                {
-                    //赤色果实
-                    if (Main.rand.NextBool(20))
-                    {
-                        Vector2 worldPosition = new Vector2(i, j).ToWorldCoordinates();
-                        Item.NewItem(new EntitySource_TileBreak(i, j), worldPosition, ItemType<RedBerry>());
-                        return false;
-                    }
-                }
-                #endregion
                 return true;
             }
             #endregion
 
             #region 地狱层
             #endregion
+
+            return true;
+        }
+
+        private static bool GemTreeSPdrop(int i, int j, int type)
+        {
+            if (type is TileID.TreeTopaz or TileID.TreeAmethyst or TileID.TreeSapphire or TileID.TreeEmerald or TileID.TreeRuby or TileID.TreeDiamond or TileID.TreeAmber)
+                //赤色果实
+                if (Main.rand.NextBool(20))
+                {
+                    Vector2 worldPosition = new Vector2(i, j).ToWorldCoordinates();
+                    Item.NewItem(new EntitySource_TileBreak(i, j), worldPosition, ItemType<RedBerry>());
+                    return false;
+                }
 
             return true;
         }
@@ -280,43 +261,46 @@ namespace Coralite.Content.GlobalTiles
             {
                 default:
                     break;
-                case TileID.Trees:
-                    WorldGen.GetTreeBottom(i, j, out int x, out int y);
-                    Tile bottomTile = Framing.GetTileSafely(x, y);
-                    TreeTypes tree = WorldGen.GetTreeType(bottomTile.TileType);
+                //case TileID.Trees:
+                //WorldGen.GetTreeBottom(i, j, out int x, out int y);
+                //Tile bottomTile = Framing.GetTileSafely(x, y);
+                //TreeTypes tree = WorldGen.GetTreeType(bottomTile.TileType);
 
-                    switch (tree)
-                    {
-                        case TreeTypes.None:
-                            break;
-                        case TreeTypes.Forest:
-                            break;
-                        case TreeTypes.Corrupt:
-                            break;
-                        case TreeTypes.Mushroom:
-                            break;
-                        case TreeTypes.Crimson:
-                            break;
-                        case TreeTypes.Jungle:
-                            break;
-                        case TreeTypes.Snow:
-                            break;
-                        case TreeTypes.Hallowed:
-                            break;
-                        case TreeTypes.Palm:
-                            break;
-                        case TreeTypes.PalmCrimson:
-                            break;
-                        case TreeTypes.PalmCorrupt:
-                            break;
-                        case TreeTypes.PalmHallowed:
-                            break;
-                        case TreeTypes.Ash:
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
+                //if (Main.hardMode && Main.rand.NextBool(1, 250))
+                //    Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, ItemType<CrystalBlossomShards>());
+
+                //switch (tree)
+                //{
+                //    case TreeTypes.None:
+                //        break;
+                //    case TreeTypes.Forest:
+                //        break;
+                //    case TreeTypes.Corrupt:
+                //        break;
+                //    case TreeTypes.Mushroom:
+                //        break;
+                //    case TreeTypes.Crimson:
+                //        break;
+                //    case TreeTypes.Jungle:
+                //        break;
+                //    case TreeTypes.Snow:
+                //        break;
+                //    case TreeTypes.Hallowed:
+                //        break;
+                //    case TreeTypes.Palm:
+                //        break;
+                //    case TreeTypes.PalmCrimson:
+                //        break;
+                //    case TreeTypes.PalmCorrupt:
+                //        break;
+                //    case TreeTypes.PalmHallowed:
+                //        break;
+                //    case TreeTypes.Ash:
+                //        break;
+                //    default:
+                //        break;
+                //}
+                //break;
                 case TileID.PalmTree:
                     {
                         if (CoraliteWorld.CoralCatWorld)
@@ -329,7 +313,7 @@ namespace Coralite.Content.GlobalTiles
                     }
                     break;
                 case TileID.VanityTreeSakura:
-                    if (Main.hardMode && Main.rand.NextBool(1, 400))
+                    if (Main.rand.NextBool(1, 200))
                         Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, ItemType<CrystalBlossomShards>());
                     break;
                 case TileID.Heart:
@@ -347,10 +331,10 @@ namespace Coralite.Content.GlobalTiles
                     if (Main.rand.NextBool(12, 100))
                         Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, ItemType<PrimaryRoughGemstone>());
                     break;
-                case TileID.Crystals:
-                    if (Main.rand.NextBool(15, 100))
-                        Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, ItemType<SeniorRoughGemstone>());
-                    break;
+                    //case TileID.Crystals:
+                    //    if (Main.rand.NextBool(15, 100))
+                    //        Item.NewItem(new EntitySource_TileBreak(i, j), new Vector2(i, j) * 16, ItemType<SeniorRoughGemstone>());
+                    //    break;
             }
         }
 
@@ -364,6 +348,33 @@ namespace Coralite.Content.GlobalTiles
                     return false;
 
             return true;
+        }
+
+        public override bool ShakeTree(int x, int y, TreeTypes treeType)
+        {
+            switch (treeType)
+            {
+                case TreeTypes.None:
+                    return false;
+                case TreeTypes.Forest:
+                case TreeTypes.Corrupt:
+                case TreeTypes.Crimson:
+                case TreeTypes.Jungle:
+                case TreeTypes.Snow:
+                case TreeTypes.Hallowed:
+                    if (Main.hardMode && Main.rand.NextBool(1, 200))
+                    {
+                        Item.NewItem(new EntitySource_ShakeTree(x, y), new Vector2(x, y) * 16, ItemType<CrystalBlossomShards>());
+                        return true;
+                    }
+                    break;
+                case TreeTypes.Custom:
+                    break;
+                default:
+                    break;
+            }
+
+            return base.ShakeTree(x, y, treeType);
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Configs;
+using Coralite.Core.Loaders;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.HyacinthSeries
@@ -16,25 +17,11 @@ namespace Coralite.Content.Items.HyacinthSeries
         public ArethusaHeldProj() : base(0.4f, 6, -6, AssetDirectory.HyacinthSeriesItems) { }
     }
 
-    public class ArethusaBullet : ModProjectile, IDrawPrimitive, IDrawNonPremultiplied
+    public class ArethusaBullet : BaseHeldProj, IDrawPrimitive, IDrawNonPremultiplied
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         private Trail trail;
-        BasicEffect effect;
-
-        public ArethusaBullet()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override void SetDefaults()
         {
@@ -46,11 +33,9 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[12];
-            for (int i = 0; i < 12; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(12);
 
             for (int j = 0; j < 8; j++)
                 Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<ArethusaPetal>(), -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.NextFloat(0.05f, 0.15f));
@@ -79,7 +64,7 @@ namespace Coralite.Content.Items.HyacinthSeries
 
             Projectile.oldPos[11] = Projectile.Center + Projectile.velocity;
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, Projectile.oldPos.Length, new NoTip(), factor => 2,
+            trail ??= new Trail(Main.instance.GraphicsDevice, Projectile.oldPos.Length, new EmptyMeshGenerator(), factor => 2,
                 factor =>
                 {
                     if (factor.X > 0.7f)
@@ -88,7 +73,7 @@ namespace Coralite.Content.Items.HyacinthSeries
                     return Color.Lerp(new Color(0, 0, 0, 0), new Color(95, 120, 233, 60), factor.X / 0.7f);//new Color(99, 83, 142, 0)
                 });
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override void OnKill(int timeLeft)
@@ -104,18 +89,15 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public void DrawPrimitives()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -131,9 +113,9 @@ namespace Coralite.Content.Items.HyacinthSeries
         }
     }
 
-    public class ArethusaExplosion : ModProjectile
+    public class ArethusaExplosion : BaseHeldProj
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public ref float Scale => ref Projectile.ai[0];
         public ref float Alpha => ref Projectile.ai[1];
@@ -149,7 +131,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.friendly = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Main.rand.NextFloat(6.282f);
         }

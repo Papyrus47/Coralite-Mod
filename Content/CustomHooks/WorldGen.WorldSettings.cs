@@ -80,10 +80,11 @@ namespace Coralite.Content.CustomHooks
             CoraliteWorld.CoralCatWorld = false;
             CoraliteWorld.DigDigDigWorld = false;
 
-            if (processedSeed.ToLower() == "the chaos" || processedSeed.ToLower() == "thechaos")
+            string seed = processedSeed.ToLower();
+            if (seed == "the chaos" || seed == "thechaos")
                 CoraliteWorld.chaosWorld = true;
 
-            if (processedSeed.ToLower() == "coral cat" || processedSeed.ToLower() == "coralcat")
+            if (seed == "coral cat" || seed == "coralcat")
             {
                 CoraliteWorld.CoralCatWorld = true;
 
@@ -93,9 +94,9 @@ namespace Coralite.Content.CustomHooks
                 //    info?.SetValue(worldCreation, Main.rand.Next().ToString());
                 //}
             }
-            if (processedSeed.ToLower() == "digdigdig" || processedSeed.ToLower() == "dig dig dig"
-                || processedSeed.ToLower() == "digdig dig" || processedSeed.ToLower() == "dig digdig")
-                CoraliteWorld.DigDigDigWorld = true;
+            //if (processedSeed.ToLower() == "digdigdig" || processedSeed.ToLower() == "dig dig dig"
+            //    || processedSeed.ToLower() == "digdig dig" || processedSeed.ToLower() == "dig digdig")
+            //    CoraliteWorld.DigDigDigWorld = true;
         }
 
         private void On_UIWorldCreation_ProcessSeed(On_UIWorldCreation.orig_ProcessSeed orig, UIWorldCreation self, out string processedSeed)

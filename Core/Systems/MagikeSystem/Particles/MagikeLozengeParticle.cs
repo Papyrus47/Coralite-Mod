@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 
 namespace Coralite.Core.Systems.MagikeSystem.Particles
 {
-    public class MagikeLozengeParticle : BasePRT
+    public class MagikeLozengeParticle : Particle
     {
         public override string Texture => AssetDirectory.Particles + "LozengeParticle";
 
@@ -53,14 +53,15 @@ namespace Coralite.Core.Systems.MagikeSystem.Particles
             spriteBatch.Draw(mainTex, Position - Main.screenPosition, frame, Color, Rotation, origin, Scale, SpriteEffects.None, 0f);
 
             frame = mainTex.Frame(1, 15, 0, 0);
-            Color c2 = new(255, 255, 255, Color.A / 2);
+            Color c2 = Color;
+            c2.A /= 2;
             spriteBatch.Draw(mainTex, Position - Main.screenPosition, frame, c2, Rotation, origin, Scale, SpriteEffects.None, 0f);
 
             return false;
         }
     }
 
-    public class MagikeLozengeParticle2 : BasePRT
+    public class MagikeLozengeParticle2 : Particle
     {
         public override string Texture => AssetDirectory.Particles + "LozengeParticle2";
 
@@ -87,7 +88,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Particles
 
         public static MagikeLozengeParticle2 Spawn(Vector2 center, Point16 size, Color color)
         {
-            float scale = Math.Max(size.X, size.Y) / 2f;
+            float scale = Math.Max(size.X, size.Y) / 2.2f;
             MagikeLozengeParticle2 particle = PRTLoader.NewParticle<MagikeLozengeParticle2>(center, Vector2.Zero, color, 0.25f);
             particle.recordScale = scale;
             return particle;

@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Items.Steel;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Terraria;
 using Terraria.ID;
@@ -11,6 +12,12 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
     {
         public AlloySpring() : base(ItemRarityID.Pink, Item.sellPrice(0, 2))
         {
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.defense = 4;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -36,6 +43,10 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
             projectile.dashSpeed += speedAdder;
             projectile.Owner.AddBuff(ModContent.BuffType<AlloySpringBuff>(), (int)(projectile.dashTime * 2f));
+            if (projectile.Owner.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.FlyingShieldDashDamageReduce = 35;
+            }
         }
 
         public override void AddRecipes()
@@ -45,11 +56,13 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 .AddIngredient<ShieldSpring>()
                 .AddIngredient<HeavyWedges>()
                 .AddIngredient<FlyingShieldBattleGuide>()
+                .AddIngredient<PossessedChest>()
                 .AddTile(TileID.TinkerersWorkbench)
                 .Register();
         }
     }
 
+    [PlayerEffect]
     public class AlloySpringBuff : ModBuff
     {
         public override string Texture => AssetDirectory.FlyingShieldAccessories + Name;

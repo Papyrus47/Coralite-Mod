@@ -32,8 +32,6 @@ namespace Coralite.Content.Items.Magike.Altars
         public override string Texture => AssetDirectory.MagikeAltarTiles + Name;
         public override int DropItemType => ItemType<BasicAltar>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<BasicAltarTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return
@@ -113,19 +111,20 @@ namespace Coralite.Content.Items.Magike.Altars
         {
             MagikeMaxBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => MagikeHelper.CalculateMagikeCost(MALevel.MagicCrystal, 32, 60 * 10),
-                MALevel.Glistent => MagikeHelper.CalculateMagikeCost(MALevel.Glistent, 32, 60 * 10),
-                MALevel.Shadow => MagikeHelper.CalculateMagikeCost(MALevel.Shadow, 32, 60 * 10),
-                MALevel.CrystallineMagike => MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 32, 60 * 10),
-                MALevel.Hallow => MagikeHelper.CalculateMagikeCost(MALevel.Hallow, 32, 60 * 10),
-                MALevel.HolyLight => 1000_0000,
-                MALevel.SplendorMagicore => 35000,
+                MALevel.MagicCrystal => MagikeHelper.CalculateMagikeCost(MALevel.MagicCrystal, 8, 60 * 2),
+                MALevel.Glistent => MagikeHelper.CalculateMagikeCost(MALevel.Glistent, 8, 60 * 2),
+                MALevel.Shadow => MagikeHelper.CalculateMagikeCost(MALevel.Shadow, 8, 60 * 2),
+                MALevel.CrystallineMagike => MagikeHelper.CalculateMagikeCost(MALevel.CrystallineMagike, 8, 60 * 2),
+                MALevel.Hallow => MagikeHelper.CalculateMagikeCost(MALevel.Hallow, 8, 60 * 2),
+                MALevel.HolyLight => MagikeHelper.CalculateMagikeCost(MALevel.HolyLight, 8, 60 * 2),
+                MALevel.SplendorMagicore => MagikeHelper.CalculateMagikeCost(MALevel.SplendorMagicore, 8, 60 * 2),
                 _ => 0,
             };
+
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase * 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase * 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -142,15 +141,37 @@ namespace Coralite.Content.Items.Magike.Altars
     {
         public override void Upgrade(MALevel incomeLevel)
         {
-            var second = incomeLevel switch
+            float second = incomeLevel switch
             {
-                MALevel.MagicCrystal => 15,
-                MALevel.Glistent => 13,
-                MALevel.Shadow => 11,
-                MALevel.CrystallineMagike => 9,
-                MALevel.Hallow => 7,
-                MALevel.HolyLight => 5,
-                _ => (float)(10_0000_0000 / 60),
+                MALevel.MagicCrystal => 0.5f,
+                MALevel.Glistent => 0.45f,
+                MALevel.Shadow => 0.4f,
+                MALevel.CrystallineMagike => 0.35f,
+                MALevel.Hallow => 0.3f,
+                MALevel.HolyLight => 0.25f,
+                _ => 10_0000_0000 / 60,
+            };
+
+            CostPercent = incomeLevel switch
+            {
+                MALevel.MagicCrystal => 0.05f,
+                MALevel.Glistent => 0.05f,
+                MALevel.Shadow => 0.07f,
+                MALevel.CrystallineMagike => 0.1f,
+                MALevel.Hallow => 0.1f,
+                MALevel.HolyLight => 0.13f,
+                _ => 0,
+            };
+
+            MinCost = incomeLevel switch
+            {
+                MALevel.MagicCrystal => 1,
+                MALevel.Glistent => 3,
+                MALevel.Shadow => 8,
+                MALevel.CrystallineMagike => 15,
+                MALevel.Hallow => 30,
+                MALevel.HolyLight => 50,
+                _ => 1,
             };
 
             WorkTimeBase = (int)(second * 60);

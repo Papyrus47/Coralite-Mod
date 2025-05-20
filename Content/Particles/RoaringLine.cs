@@ -1,10 +1,9 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
 using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    internal class RoaringLine : BasePRT
+    internal class RoaringLine : Particle
     {
         public override bool ShouldUpdatePosition() => false;
 

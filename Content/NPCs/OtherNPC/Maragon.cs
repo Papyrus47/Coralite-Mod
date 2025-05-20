@@ -1,6 +1,8 @@
-﻿using Coralite.Content.Items.Materials;
+﻿using Coralite.Content.Biomes;
+using Coralite.Content.Items.Materials;
 using Coralite.Core;
 using Coralite.Core.Prefabs.NPCs;
+using Coralite.Helpers;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -82,7 +84,8 @@ namespace Coralite.Content.NPCs.OtherNPC
             if (spawnInfo.Player.townNPCs > 2f)
                 return 0;
 
-            if (spawnInfo.Player.statLifeMax2 > 150 && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight)
+            if (spawnInfo.Player.statLifeMax2 > 150 && !Main.dayTime && spawnInfo.Player.ZoneOverworldHeight
+                && !spawnInfo.Player.InModBiome<CrystallineSkyIsland>())
                 return 0.04f;
             return 0f;
         }
@@ -91,6 +94,11 @@ namespace Coralite.Content.NPCs.OtherNPC
     public class MaragonBody : Maragon
     {
         public override string Texture => AssetDirectory.OtherNPC + Name;
+
+        public override void SetStaticDefaults()
+        {
+            NPC.SetHideInBestiary();
+        }
 
         public override void SetDefaults()
         {
@@ -108,12 +116,16 @@ namespace Coralite.Content.NPCs.OtherNPC
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
         }
-
     }
 
     public class MaragonTrail : Maragon
     {
         public override string Texture => AssetDirectory.OtherNPC + Name;
+
+        public override void SetStaticDefaults()
+        {
+            NPC.SetHideInBestiary();
+        }
 
         public override void SetDefaults()
         {

@@ -1,4 +1,5 @@
-﻿using Coralite.Content.ModPlayers;
+﻿using Coralite.Content.Items.LandOfTheLustrousSeries.Accessories;
+using Coralite.Content.ModPlayers;
 using Coralite.Content.Prefixes.GemWeaponPrefixes;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
@@ -86,7 +87,11 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             if (PrefixLegacy.ItemSets.ItemsThatCanHaveLegendary2[Item.type]) // Fix #3688, Rather than mess with the PrefixCategory enum and Item.GetPrefixCategory at this time and risk compatibility issues, manually support this until a redesign.
                 wr.Add(PrefixID.Legendary2, 1);
 
-            wr.Add(ModContent.PrefixType<Vibrant>(), 0.1f);
+            float w = 0.1f;
+            if (Main.LocalPlayer.GetModPlayer<CoralitePlayer>().HasEffect(nameof(EightsquareHand)))
+                w = 0.3f;
+
+            wr.Add(ModContent.PrefixType<Vibrant>(), w);
 
             for (int i = 0; i < 50; i++)
             {
@@ -112,13 +117,13 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             }
         }
 
-        public static void DrawGemNameNormally(DrawableTooltipLine line, Action<Effect> setEffect, float flowXadder = 0.2f, Action<Effect> setBackEffect=null,Texture2D backTex=null,Point? extraSize=null)
+        public static void DrawGemNameNormally(DrawableTooltipLine line, Action<Effect> setEffect, float flowXadder = 0.2f, Action<Effect> setBackEffect = null, Texture2D backTex = null, Point? extraSize = null)
         {
             SpriteBatch sb = Main.spriteBatch;
             Effect effect = Filters.Scene["Crystal"].GetShader().Shader;
 
-            rand.X += flowXadder* Main.GameZoomTarget;
-            rand.Y += 0.01f* Main.GameZoomTarget;
+            rand.X += flowXadder * Main.GameZoomTarget;
+            rand.Y += 0.01f * Main.GameZoomTarget;
             if (rand.X > 100000)
                 rand.X = 10;
 
@@ -140,8 +145,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 Vector2 textSize = ChatManager.GetStringSize(line.Font, line.Text, line.BaseScale);
                 Texture2D mainTex = backTex ?? CoraliteAssets.LightBall.BallA.Value;
 
-                int xExpand = extraSize==null?30:extraSize.Value.X;
-                int yExpand = extraSize==null?6:extraSize.Value.Y;
+                int xExpand = extraSize == null ? 30 : extraSize.Value.X;
+                int yExpand = extraSize == null ? 6 : extraSize.Value.Y;
 
                 sb.Draw(mainTex, new Rectangle(line.X - xExpand, line.Y - 4 - yExpand, (int)textSize.X + xExpand * 2, (int)textSize.Y + yExpand * 2), null, Color.White * 0.8f);
             }
@@ -154,7 +159,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullNone, effect, Main.UIScaleMatrix);
 
             Main.graphics.GraphicsDevice.Textures[1] = noiseTex;
-            
+
             ChatManager.DrawColorCodedStringWithShadow(Main.spriteBatch, line.Font, line.Text, new Vector2(line.X, line.Y)
                 , Color.White, line.Rotation, line.Origin, line.BaseScale, line.MaxWidth, line.Spread);
 

@@ -2,6 +2,7 @@
 using Coralite.Core.Systems.YujianSystem.HuluEffects;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
@@ -14,7 +15,7 @@ namespace Coralite.Core.Systems.YujianSystem
     /// <summary>
     /// 御剑弹幕基类，请确保所有的御剑弹幕都继承自这个基类
     /// </summary>
-    public class BaseYujianProj : ModProjectile, IDrawNonPremultiplied, IDrawAdditive, IDrawPrimitive
+    public abstract class BaseYujianProj : BaseHeldProj, IDrawNonPremultiplied, IDrawAdditive, IDrawPrimitive
     {
         public readonly Color color1;
         public readonly Color color2;
@@ -56,7 +57,6 @@ namespace Coralite.Core.Systems.YujianSystem
         public int AttackLength { get => attackLength; set => attackLength = value; }
         public ref float State => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.ai[1];
-        public Player Owner => Main.player[Projectile.owner];
 
         public virtual string SlashTexture => AssetDirectory.Trails + "Slash";
 
@@ -123,22 +123,27 @@ namespace Coralite.Core.Systems.YujianSystem
         #endregion
 
         #region AI
-
+        IEntitySource source;
         public override void OnSpawn(IEntitySource source)
+        {
+            this.source = source;
+        }
+
+        public override void Initialize()
         {
             if (source is YujianSource yujianSource)
             {
                 SourceYujian = yujianSource.Yujian;
             }
-            Projectile.oldPos = new Vector2[trailCacheLength];
-            Projectile.oldRot = new float[trailCacheLength];
+            Projectile.InitOldPosCache(trailCacheLength);
+            Projectile.InitOldRotCache(trailCacheLength);
 
             InitTrailCaches();
         }
 
         public sealed override void AI()
         {
-            if (Owner.HeldItem.ModItem is not BaseHulu && !SourceYujian.MainYujian) // 如果手上不是葫芦并且不是主御剑，则清除自己
+            if (Item.ModItem is not BaseHulu && !SourceYujian.MainYujian) // 如果手上不是葫芦并且不是主御剑，则清除自己
             {
                 Projectile.Kill();
                 return;
@@ -168,7 +173,7 @@ namespace Coralite.Core.Systems.YujianSystem
                 cp.ownedYujianProj = false;
 
             Projectile.timeLeft = 2;
-            if (Owner.HeldItem.ModItem is BaseHulu && Owner.controlUseItem)
+            if (Item.ModItem is BaseHulu && Owner.controlUseItem)
             {
                 Owner.itemTime = Owner.itemAnimation = 6;
                 Vector2 vector2 = Main.MouseWorld - Owner.Center;
@@ -221,13 +226,13 @@ namespace Coralite.Core.Systems.YujianSystem
                     Projectile.rotation = idleRotation2;
                     Projectile.tileCollide = false;
 
-                    if (Owner.HeldItem.ModItem is BaseHulu && Owner.controlUseItem) // 手持葫芦则左键攻击,否则自动攻击
+                    if (Item.ModItem is BaseHulu && Owner.controlUseItem) // 手持葫芦则左键攻击,否则自动攻击
                     {
                         State = 0;
                         //State = Main.rand.Next(1, yujianAIs.Length);
                         //yujianAIs[(int)State - 1].OnStart(this);
                     }
-                    else if (Owner.HeldItem.ModItem is not BaseHulu && Main.rand.NextBool(20))
+                    else if (Item.ModItem is not BaseHulu && Main.rand.NextBool(20))
                     {
                         int targetNPCIndex = TryAttackingNPCs(Projectile);
                         if (targetNPCIndex != -1)
@@ -245,7 +250,7 @@ namespace Coralite.Core.Systems.YujianSystem
                     if (Timer++ > 60)   //30帧后切换AI，否则处于拔刀AI
                     {
                         Timer = 0;  //重置计时器
-                        if (Owner.HeldItem.ModItem is not BaseHulu)
+                        if (Item.ModItem is not BaseHulu)
                         {
                             int targetNPCIndex1 = TryAttackingNPCs(Projectile);
                             if (targetNPCIndex1 == -1)
@@ -283,11 +288,13 @@ namespace Coralite.Core.Systems.YujianSystem
                 GetYujianRandomState();
                 //State = Main.rand.Next(1, yujianAIs.Length + 1);
                 //yujianAIs[(int)State - 1].OnStart(this);
+                Projectile.tileCollide = false;
             }
             else
             {
                 State = -1f;
                 Timer = 0f;
+                Projectile.tileCollide = true;
                 Projectile.netUpdate = true;
             }
         }
@@ -295,7 +302,7 @@ namespace Coralite.Core.Systems.YujianSystem
         private bool ChangeState(CoralitePlayer cp)
         {
             bool CanAttack = Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength;
-            AimMouse = Owner.HeldItem.ModItem is BaseHulu; // 如果手持葫芦则瞄准鼠标，不是则瞄准敌人
+            AimMouse = Item.ModItem is BaseHulu; // 如果手持葫芦则瞄准鼠标，不是则瞄准敌人
             if (AimMouse)
             {
                 CanAttack = CanAttack && Owner.controlUseItem;
@@ -326,7 +333,18 @@ namespace Coralite.Core.Systems.YujianSystem
             {
                 if (Projectile.owner == Main.myPlayer)
                 {
-                    aimCenter = Main.MouseWorld;
+                    Vector2 mousePos = Main.MouseWorld;
+                    if (Collision.CanHitLine(Main.player[Projectile.owner].Center, 1, 1, mousePos, 1, 1))
+                    {
+                        aimCenter = mousePos;
+                        Projectile.netUpdate = true;
+                    }
+                    else
+                    {
+                        // If the mouse target is behind a wall, cancel the attack
+                        aimCenter = Vector2.Zero;
+                        State = -1f;
+                    }
                     Projectile.netUpdate = true;
                 }
 
@@ -334,12 +352,12 @@ namespace Coralite.Core.Systems.YujianSystem
             }
             if (targetIndex == -1)
             {
-                State = -2;
+                State = -2f;
                 return Owner.Center;
             }
             else if (!Main.npc[targetIndex].active || Main.npc[targetIndex].life < 0 || !Main.npc[targetIndex].CanBeChasedBy())
             {
-                State = -2;
+                State = -2f;
                 targetIndex = -1;
                 return Owner.Center;
             }
@@ -404,15 +422,14 @@ namespace Coralite.Core.Systems.YujianSystem
             int result = -1;
             float num = -1f;
 
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC nPC = Main.npc[i];
                 if (nPC.CanBeChasedBy(Projectile))
                 {
                     float npcDistance2Owner = Vector2.Distance(ownerCenter, nPC.Center);
-                    if (npcDistance2Owner <= AttackLength &&
-                            (npcDistance2Owner <= num || num == -1f) &&
-                            Collision.CanHitLine(Projectile.Center, 1, 1, nPC.Center, 1, 1))
+                    bool hasLineOfSight = Collision.CanHitLine(ownerCenter, 1, 1, nPC.Center, 1, 1);
+                    if (npcDistance2Owner <= AttackLength && (npcDistance2Owner <= num || num == -1f) && hasLineOfSight)
                     {
                         num = npcDistance2Owner;
                         result = i;
@@ -500,7 +517,7 @@ namespace Coralite.Core.Systems.YujianSystem
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (Owner.HeldItem.ModItem is not BaseHulu)
+            if (Item.ModItem is not BaseHulu)
                 modifiers.SourceDamage *= 0.5f;
         }
         public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -612,13 +629,13 @@ namespace Coralite.Core.Systems.YujianSystem
 
         #region NetWork
 
-        public override void SendExtraAI(BinaryWriter writer)
+        public override void NetHeldSend(BinaryWriter writer)
         {
             writer.Write(targetIndex);
             writer.WriteVector2(aimCenter);
         }
 
-        public override void ReceiveExtraAI(BinaryReader reader)
+        public override void NetHeldReceive(BinaryReader reader)
         {
             targetIndex = reader.ReadInt32();
             aimCenter = reader.ReadVector2();

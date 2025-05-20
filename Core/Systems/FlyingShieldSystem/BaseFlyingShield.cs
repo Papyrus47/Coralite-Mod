@@ -1,11 +1,10 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Core.Systems.FlyingShieldSystem
 {
@@ -14,10 +13,8 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
     /// ai0记录状态<br></br>
     /// ai1记录时间
     /// </summary>
-    public abstract class BaseFlyingShield : ModProjectile
+    public abstract class BaseFlyingShield : BaseHeldProj
     {
-        public Player Owner => Main.player[Projectile.owner];
-
         public ref float State => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.ai[1];
 
@@ -61,6 +58,8 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         public bool firstShoot = true;
         public bool recordTileCollide;
 
+        private bool init = true;
+
         public enum FlyingShieldStates
         {
             Shooting,
@@ -86,28 +85,6 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
             Projectile.localNPCHitCooldown = 24;
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            trailWidth = Projectile.width / 2;
-            shootSpeed = Projectile.velocity.Length();
-            SetOtherValues();
-            UpdateShieldAccessory(accessory => accessory.OnInitialize(this));
-            UpdateShieldAccessory(accessory => accessory.PostInitialize(this));
-            Timer = flyingTime;
-
-            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero) * shootSpeed;
-            Projectile.oldPos = new Vector2[trailCachesLength];
-            Projectile.oldRot = new float[trailCachesLength];
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            for (int i = 0; i < trailCachesLength; i++)
-            {
-                Projectile.oldPos[i] = Projectile.Center;
-                Projectile.oldRot[i] = Projectile.rotation;
-            }
-            State = (int)FlyingShieldStates.Shooting;
-            recordTileCollide = Projectile.tileCollide;
-        }
-
         /// <summary>
         /// 在这里设置其他属性
         /// 射击时间 <see cref="flyingTime"/><br></br>
@@ -120,6 +97,24 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override void AI()
         {
+            if (init)
+            {
+                init = false;
+                trailWidth = Projectile.width / 2;
+                shootSpeed = Projectile.velocity.Length();
+                SetOtherValues();
+                UpdateShieldAccessory(accessory => accessory.OnInitialize(this));
+                UpdateShieldAccessory(accessory => accessory.PostInitialize(this));
+                Timer = flyingTime;
+
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.Zero) * shootSpeed;
+                Projectile.rotation = Projectile.velocity.ToRotation();
+                Projectile.InitOldPosCache(trailCachesLength);
+                Projectile.InitOldRotCache(trailCachesLength);
+                State = (int)FlyingShieldStates.Shooting;
+                recordTileCollide = Projectile.tileCollide;
+            }
+
             switch (State)
             {
                 default:
@@ -221,7 +216,12 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
                 Projectile.velocity = angle.AngleLerp(targetAngle, factor).ToRotationVector2() * backSpeed;
             }
             else
+            {
+                if (Owner.GetModPlayer<CoralitePlayer>().FlyingShieldAccBack && Timer > backTime + 14)
+                    backSpeed *= 1.03f;
+
                 Projectile.velocity = (Owner.Center - Projectile.Center).SafeNormalize(Vector2.Zero) * backSpeed;
+            }
 
             Projectile.rotation = Projectile.velocity.ToRotation();
 
@@ -307,7 +307,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         /// 获取拖尾贴图
         /// </summary>
         /// <returns></returns>
-        public virtual Asset<Texture2D> GetTrailTex()
+        public virtual ATex GetTrailTex()
         {
             return CoraliteAssets.Trail.EdgeA;
         }
@@ -316,17 +316,18 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         {
             Texture2D Texture = GetTrailTex().Value;
 
-            List<CustomVertexInfo> bars = [];
+            List<ColoredVertex> bars = [];
+            float r = 0.2989f * lightColor.R / 255 + 0.5870f * lightColor.G / 255 + 0.1140f * lightColor.B / 255;
 
             for (int i = 0; i < trailCachesLength; i++)
             {
                 float factor = (float)i / trailCachesLength;
-                Vector2 Center = Projectile.oldPos[i];
+                Vector2 Center = Projectile.oldPos[i] - Main.screenPosition;
                 Vector2 normal = (Projectile.oldRot[i] + MathHelper.PiOver2).ToRotationVector2();
-                Vector2 Top = Center - Main.screenPosition + (normal * trailWidth);
-                Vector2 Bottom = Center - Main.screenPosition - (normal * trailWidth);
+                Vector2 Top = Center + (normal * trailWidth);
+                Vector2 Bottom = Center - (normal * trailWidth);
 
-                var Color = GetColor(factor);//.MultiplyRGB(lightColor);
+                var Color = GetColor(factor) * r;
                 bars.Add(new(Top, Color, new Vector3(factor, 0, 1)));
                 bars.Add(new(Bottom, Color, new Vector3(factor, 1, 1)));
             }

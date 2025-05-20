@@ -1,15 +1,15 @@
 ﻿using Coralite.Content.Items.Donator;
+using Coralite.Content.Items.Magike;
 using Coralite.Content.Items.MagikeSeries1;
 using Coralite.Content.Items.MagikeSeries2;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Coralite.Core.Configs;
 using Coralite.Core.SmoothFunctions;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -124,7 +124,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
         public int itemType;
 
-        public static Asset<Texture2D> HaloTex;
+        public static ATex HaloTex;
         public ref float Scale => ref Projectile.localAI[2];
         public SecondOrderDynamics_Vec2 positionSmoother;
         public SecondOrderDynamics_Float rotationSmoother;
@@ -300,7 +300,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                         for (int i = 0; i < 10; i++)
                         {
                             itemType = CoraliteWorld.chaosWorld ? itemType = Main.rand.Next(1, ItemLoader.ItemCount)
-                               : -Main.rand.Next(1, (int)LustrousProj.GemType.CrystallineMagike + 1);
+                               : -Main.rand.Next(1, (int)LustrousProj.GemType.SplendorMagicore + 1);
                             if (itemType != recordItemType)
                                 break;
                         }
@@ -316,10 +316,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
                             speed -= time * 0.1f;
 
-                            if (Projectile.IsOwnedByLocalPlayer())
-                                Projectile.NewProjectileFromThis<LustrousProj>(Projectile.Center
-                                    , angle.ToRotationVector2() * speed, Owner.GetWeaponDamage(Owner.HeldItem), Projectile.knockBack
-                                    , itemType, i == 0 ? 1 : 0, Projectile.whoAmI);
+                            Projectile.NewProjectileFromThis<LustrousProj>(Projectile.Center
+                                , angle.ToRotationVector2() * speed, Owner.GetWeaponDamage(Item), Projectile.knockBack
+                                , itemType, i == 0 ? 1 : 0, Projectile.whoAmI);
 
                             angle += 0.3f;
                         }
@@ -412,8 +411,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
         private Trail trail;
 
-        public static Asset<Texture2D> SmallPinkDiamond;
-        public static Asset<Texture2D> LaserTex;
+        public static ATex SmallPinkDiamond;
+        public static ATex LaserTex;
 
         public int FlyTime;
         public float alpha;
@@ -470,6 +469,8 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             MagicCrystal,
             /// <summary> 蕴魔水晶 </summary>
             CrystallineMagike,
+            /// <summary> 辉界晶核 </summary>
+            SplendorMagicore,
         }
 
         public override void Load()
@@ -640,7 +641,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Projectile.UpdateOldPosCache(addVelocity: false);
             Projectile.UpdateOldRotCache();
             if (trail != null)
-                trail.Positions = Projectile.oldPos;
+                trail.TrailPositions = Projectile.oldPos;
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
             Projectile.UpdateFrameNormally(8, 19);
         }
@@ -658,7 +659,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     Projectile.InitOldPosCache(maxPoint);
                     Projectile.InitOldRotCache(maxPoint);
                     if (trail == null && Shiny)
-                        trail ??= new Trail(Main.graphics.GraphicsDevice, maxPoint, new TriangularTip(20)
+                        trail ??= new Trail(Main.graphics.GraphicsDevice, maxPoint, new ArrowheadTrailGenerator(20)
                             , TrailWidth, TrailColor);
                 }
 
@@ -836,7 +837,10 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                         , Color.White, Coralite.MagicCrystalPink, Color.DarkMagenta);
                 case GemType.CrystallineMagike:
                     return new GemDrawData(TextureAssets.Item[ModContent.ItemType<CrystallineMagike>()].Value
-                        , Color.White, Coralite.CrystallineMagikePurple, Color.DarkBlue);
+                        , Color.White, Coralite.CrystallinePurple, Color.DarkBlue);
+                case GemType.SplendorMagicore:
+                    return new GemDrawData(TextureAssets.Item[ModContent.ItemType<SplendorMagicore>()].Value
+                        , Color.White, Coralite.SplendorMagicoreLightBlue, Color.DarkCyan);
                 default:
                     return new GemDrawData(Projectile.GetTexture()
                         , Color.White, Color.Gray, Color.DarkGray);
@@ -923,7 +927,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             effect.Parameters["noiseTexture"].SetValue(noiseTex);
             effect.Parameters["TrailTexture"].SetValue(LaserTex.Value);
-            effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["basePos"].SetValue((Projectile.Center - Main.screenPosition + rand) * Main.GameZoomTarget);
             effect.Parameters["scale"].SetValue(data.scale / Main.GameZoomTarget);
             effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.02f);
@@ -934,7 +938,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             effect.Parameters["brightC"].SetValue(data.brightC.ToVector4());
             effect.Parameters["darkC"].SetValue(data.darkC.ToVector4());
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

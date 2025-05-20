@@ -104,9 +104,25 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             RandomlyPositions[^1] = BasePositions[^1];
         }
 
+        public void UpdateThunderToNewPosition(Vector2[] newPosition)
+        {
+            if (RandomlyPositions != null && newPosition.Length == RandomlyPositions.Length)
+            {
+                for (int i = 0; i < RandomlyPositions.Length; i++)
+                    RandomlyPositions[i] = newPosition[i] + (RandomlyPositions[i] - BasePositions[i]);
+
+                BasePositions = newPosition;
+            }
+            else
+            {
+                BasePositions = newPosition;
+                RandomThunder();
+            }
+        }
+
         public void DrawThunder(GraphicsDevice graphicsDevice)
         {
-            if (!CanDraw || RandomlyPositions == null)
+            if (!CanDraw || RandomlyPositions == null|| RandomlyPositions.Length<2)
                 return;
 
             Texture2D Texture = ThunderTex.Value;
@@ -114,10 +130,10 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             int texWidth = Texture.Width;
             float length = 0;
 
-            List<CustomVertexInfo> barsTop = new();
-            List<CustomVertexInfo> barsBottom = new();
-            List<CustomVertexInfo> bars2Top = new();
-            List<CustomVertexInfo> bars2Bottom = new();
+            List<ColoredVertex> barsTop = new();
+            List<ColoredVertex> barsBottom = new();
+            List<ColoredVertex> bars2Top = new();
+            List<ColoredVertex> bars2Bottom = new();
 
             int trailCachesLength = RandomlyPositions.Length;
 
@@ -162,7 +178,6 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
                     / (RandomlyPositions[i + 1].X - RandomlyPositions[i - 1].X)
                     * (RandomlyPositions[i + 1].Y - RandomlyPositions[i - 1].Y))
                     + RandomlyPositions[i - 1].Y;
-
 
                 float angle = MathF.Acos(Vector2.Dot(dirToBack, dirToTront) / (dirToTront.Length() * dirToBack.Length()));//Helpers.Helper.AngleRad(dirToBack, dirToTront);
 
@@ -310,6 +325,9 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
             graphicsDevice.Textures[0] = Texture;
             BlendState state = graphicsDevice.BlendState;
+            //修改采样模式，这样才能正确的循环贴图
+            SamplerState sp = graphicsDevice.SamplerStates[0];
+            graphicsDevice.SamplerStates[0] = SamplerState.PointWrap;
 
             if (UseNonOrAdd)
                 graphicsDevice.BlendState = BlendState.NonPremultiplied;
@@ -322,6 +340,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleStrip, bars2Bottom.ToArray(), 0, bars2Top.Count - 2);
 
             graphicsDevice.BlendState = state;
+            graphicsDevice.SamplerStates[0] = sp;
 
             if (drawInTip)
             {
@@ -354,7 +373,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             }
         }
 
-        public void AddVertexInfo(List<CustomVertexInfo> topList, List<CustomVertexInfo> bottomList, Vector2 top, Vector2 bottom, Color color, float factor)
+        public void AddVertexInfo(List<ColoredVertex> topList, List<ColoredVertex> bottomList, Vector2 top, Vector2 bottom, Color color, float factor)
         {
             Vector2 center = (top + bottom) / 2;
 
@@ -365,7 +384,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
             bottomList.Add(new(bottom, color, new Vector3(factor, 1, 0)));
         }
 
-        public void AddVertexInfo2(List<CustomVertexInfo> topList, List<CustomVertexInfo> bottomList, Vector2 center, Vector2 dir, Color color, float factor)
+        public void AddVertexInfo2(List<ColoredVertex> topList, List<ColoredVertex> bottomList, Vector2 center, Vector2 dir, Color color, float factor)
         {
             topList.Add(new(center + dir, color, new Vector3(factor, 0, 0)));
             topList.Add(new(center, color, new Vector3(factor, 0.5f, 0)));

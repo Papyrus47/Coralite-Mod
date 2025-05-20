@@ -1,9 +1,8 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
 
 namespace Coralite.Content.Bosses.BabyIceDragon
 {
-    public class IceBurstParticle : BasePRT
+    public class IceBurstParticle : Particle
     {
         public override string Texture => AssetDirectory.BabyIceDragon + "IceBurst";
 

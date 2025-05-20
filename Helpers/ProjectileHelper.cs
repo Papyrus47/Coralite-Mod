@@ -263,8 +263,32 @@ namespace Coralite.Helpers
         /// <param name="proj"></param>
         /// <param name="frameCountMax"></param>
         /// <param name="frameMax"></param>
-        public static void UpdateFrameNormally(this Projectile proj, int frameCountMax, int frameMax)
+        public static void UpdateFrameNormally(this Projectile proj, int frameCountMax, int frameMax, bool pingpong = false)
         {
+            if (pingpong)
+            {
+                if (proj.frameCounter > 0)
+                {
+                    if (++proj.frameCounter > frameCountMax + 1)
+                    {
+                        proj.frameCounter = 1;
+                        if (++proj.frame > frameMax)
+                            proj.frameCounter = -1;
+                    }
+                }
+                else
+                {
+                    if (--proj.frameCounter < -(frameCountMax + 1))
+                    {
+                        proj.frameCounter = -1;
+                        if (--proj.frame < 1)
+                            proj.frameCounter = 1;
+                    }
+                }
+
+                return;
+            }
+
             if (++proj.frameCounter > frameCountMax)
             {
                 proj.frameCounter = 0;
@@ -419,15 +443,48 @@ namespace Coralite.Helpers
 
         public static bool IsActiveAndHostile(this Projectile projectile) => projectile.active && projectile.hostile;
 
+        /// <summary>
+        /// 直接生成弹幕，默认仅在弹幕拥有者端生成弹幕
+        /// </summary>
+        /// <param name="projectile"></param>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        /// <param name="type"></param>
+        /// <param name="damage"></param>
+        /// <param name="knockback"></param>
+        /// <param name="ai0"></param>
+        /// <param name="ai1"></param>
+        /// <param name="ai2"></param>
+        /// <returns></returns>
         public static int NewProjectileFromThis(this Projectile projectile, Vector2 position, Vector2 velocity
             , int type, int damage, float knockback, float ai0 = 0, float ai1 = 0, float ai2 = 0)
         {
-            return Projectile.NewProjectile(projectile.GetSource_FromAI(), position, velocity, type, damage, knockback, projectile.owner, ai0, ai1, ai2);
+            if (projectile.IsOwnedByLocalPlayer())
+                return Projectile.NewProjectile(projectile.GetSource_FromAI(), position, velocity, type, damage, knockback, projectile.owner, ai0, ai1, ai2);
+
+            return -1;
         }
+
+        /// <summary>
+        /// 直接生成弹幕，默认仅在弹幕拥有者端生成弹幕
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="projectile"></param>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        /// <param name="damage"></param>
+        /// <param name="knockback"></param>
+        /// <param name="ai0"></param>
+        /// <param name="ai1"></param>
+        /// <param name="ai2"></param>
+        /// <returns></returns>
         public static int NewProjectileFromThis<T>(this Projectile projectile, Vector2 position, Vector2 velocity
             , int damage, float knockback, float ai0 = 0, float ai1 = 0, float ai2 = 0) where T : ModProjectile
         {
-            return Projectile.NewProjectile(projectile.GetSource_FromAI(), position, velocity, ModContent.ProjectileType<T>(), damage, knockback, projectile.owner, ai0, ai1, ai2);
+            if (projectile.IsOwnedByLocalPlayer())
+                return Projectile.NewProjectile(projectile.GetSource_FromAI(), position, velocity, ModContent.ProjectileType<T>(), damage, knockback, projectile.owner, ai0, ai1, ai2);
+
+            return -1;
         }
 
         /// <summary>
@@ -578,6 +635,17 @@ namespace Coralite.Helpers
                     drawColor * (maxAlpha - (i * alphaStep)), projectile.oldRot[i] + extraRot, frameBox.Size() / 2, (scale == -1 ? projectile.scale : scale) * (1 - (i * scaleStep)), 0, 0);
         }
 
+        public static void DrawShadowTrailsSacleStep(this Projectile projectile, Color drawColor, float maxAlpha, float alphaStep, int start, int howMany, int step, float scaleStep, Rectangle? frameBox, SpriteEffects effect, float extraRot = 0, float scale = -1)
+        {
+            Texture2D mainTex = TextureAssets.Projectile[projectile.type].Value;
+            Vector2 toCenter = new(projectile.width / 2, projectile.height / 2);
+            Vector2 origin = frameBox.HasValue ? frameBox.Value.Size() / 2 : mainTex.Size() / 2;
+
+            for (int i = start; i < howMany; i += step)
+                Main.spriteBatch.Draw(mainTex, projectile.oldPos[i] + toCenter - Main.screenPosition, frameBox,
+                    drawColor * (maxAlpha - (i * alphaStep)), projectile.oldRot[i] + extraRot, origin, (scale == -1 ? projectile.scale : scale) * (1 - (i * scaleStep)), effect, 0);
+        }
+
 
         public static void DrawShadowTrails(this Projectile projectile, Color drawColor, float maxAlpha, float alphaStep, int start, int howMany, int step, Vector2 scale, Rectangle frameBox, float extraRot = 0)
         {
@@ -633,6 +701,22 @@ namespace Coralite.Helpers
 
             Main.spriteBatch.Draw(mainTex, projectile.Center - Main.screenPosition, frameBox, lightColor, projectile.rotation + exRot,
                 frameBox.Size() / 2, projectile.scale, 0, 0);
+        }
+
+        public static void QuickDraw(this Projectile projectile, Rectangle frameBox, Color lightColor, float exRot,float scaleMult)
+        {
+            Texture2D mainTex = projectile.GetTexture();
+
+            Main.spriteBatch.Draw(mainTex, projectile.Center - Main.screenPosition, frameBox, lightColor, projectile.rotation + exRot,
+                frameBox.Size() / 2, projectile.scale*scaleMult, 0, 0);
+        }
+
+        public static void QuickDraw(this Projectile projectile, Rectangle frameBox, SpriteEffects effect, Color lightColor, float exRot)
+        {
+            Texture2D mainTex = projectile.GetTexture();
+
+            Main.spriteBatch.Draw(mainTex, projectile.Center - Main.screenPosition, frameBox, lightColor, projectile.rotation + exRot,
+                frameBox.Size() / 2, projectile.scale, effect, 0);
         }
 
         public static void QuickDraw(this Projectile projectile, Vector2 overrideCenter, Color lightColor, float exRot)
@@ -704,7 +788,13 @@ namespace Coralite.Helpers
 
         public static void InitOldPosCache(this Projectile projectile, int trailCount, bool useCenter = true)
         {
-            projectile.oldPos = new Vector2[trailCount];
+            //必须保证这三个数组长度相等
+            if (projectile.oldPos.Length != trailCount)
+                Array.Resize(ref projectile.oldPos, trailCount);
+            if (projectile.oldRot.Length != trailCount)
+                Array.Resize(ref projectile.oldRot, trailCount);
+            if (projectile.oldSpriteDirection.Length != trailCount)
+                Array.Resize(ref projectile.oldSpriteDirection, trailCount);
 
             for (int i = 0; i < trailCount; i++)
             {
@@ -717,12 +807,15 @@ namespace Coralite.Helpers
 
         public static void InitOldRotCache(this Projectile projectile, int trailCount)
         {
-            projectile.oldRot = new float[trailCount];
+            if (projectile.oldPos.Length != trailCount)
+                Array.Resize(ref projectile.oldPos, trailCount);
+            if (projectile.oldRot.Length != trailCount)
+                Array.Resize(ref projectile.oldRot, trailCount);
+            if (projectile.oldSpriteDirection.Length != trailCount)
+                Array.Resize(ref projectile.oldSpriteDirection, trailCount);
 
             for (int i = 0; i < trailCount; i++)
-            {
                 projectile.oldRot[i] = projectile.rotation;
-            }
         }
 
         public static void UpdateOldPosCache(this Projectile projectile, bool useCenter = true, bool addVelocity = true)

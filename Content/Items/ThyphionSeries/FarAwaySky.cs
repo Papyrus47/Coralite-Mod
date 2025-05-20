@@ -1,11 +1,11 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
@@ -19,18 +19,29 @@ namespace Coralite.Content.Items.ThyphionSeries
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + Name;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
-            Item.SetWeaponValues(18, 1f);
-            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 27, 8f);
+            Item.SetWeaponValues(22, 1f);
+            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 26, 8f);
 
             Item.rare = ItemRarityID.Green;
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.value = Item.sellPrice(0, 0, 80);
 
+            Item.autoReuse = true;
             Item.noUseGraphic = true;
 
             Item.UseSound = CoraliteSoundID.Bow_Item5;
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -102,32 +113,22 @@ namespace Coralite.Content.Items.ThyphionSeries
         }
     }
 
+    [AutoLoadTexture(Path = AssetDirectory.ThyphionSeriesItems)]
     public class FarAwaySkyHeldProj : BaseDashBow
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + "FarAwaySky";
 
         private Vector2 arrowPos;
 
-        private static Asset<Texture2D> ArrowTex;
+        [AutoLoadTexture(Name = "FarAwaySkyArrow")]
+        public static ATex ArrowTex { get; private set; }
 
         public ref float ArrowLength => ref Projectile.localAI[0];
         public ref float Timer => ref Projectile.localAI[1];
         public ref float RecordAngle => ref Projectile.localAI[2];
 
         public int State;
-
-        public override void Load()
-        {
-            if (Main.dedServ)
-                return;
-
-            ArrowTex = Request<Texture2D>(AssetDirectory.ThyphionSeriesItems + "FarAwaySkyArrow");
-        }
-
-        public override void Unload()
-        {
-            ArrowTex = null;
-        }
+        public float handOffset = 0;
 
         public override int GetItemType()
             => ItemType<FarAwaySky>();
@@ -156,31 +157,23 @@ namespace Coralite.Content.Items.ThyphionSeries
         {
             if (Timer < DashTime + 2)
             {
-                LockOwnerItemTime();
+                Owner.itemTime = Owner.itemAnimation = 2;
 
                 Rotation = Helper.Lerp(RecordAngle, DirSign > 0 ? -1f : (3.141f + 1f), Coralite.Instance.HeavySmootherInstance.Smoother(Timer / DashTime));
                 return;
             }
 
-            if (Owner.controlUseItem)
-            {
-                Projectile.timeLeft = 2;
-                Owner.itemTime = Owner.itemAnimation = 2;
-            }
-            else
-            {
-                SoundEngine.PlaySound(CoraliteSoundID.Bow2_Item102, Owner.Center);
+            SoundEngine.PlaySound(CoraliteSoundID.Bow2_Item102, Owner.Center);
 
-                if (Main.myPlayer == Projectile.owner)
-                {
-                    State = 1;
-                    Timer = 0;
-                    Projectile.timeLeft = 100;
-                    Owner.AddBuff(BuffType<CloudBonus>(), 60 * 8);
-                    Vector2 dir = Rotation.ToRotationVector2();
-                    WindCircle.Spawn(Projectile.Center + (dir * 30), -dir, Rotation, Color.White, 0.75f, 0.95f, new Vector2(1.5f, 0.8f));
-                    WindCircle.Spawn(Projectile.Center + (dir * 20), -dir, Rotation, Color.SkyBlue, 0.55f, 1.55f, new Vector2(1.5f, 0.8f));
-                }
+            if (Projectile.IsOwnedByLocalPlayer())
+            {
+                State = 1;
+                Timer = 0;
+                Projectile.timeLeft = 100;
+                Owner.AddBuff(BuffType<CloudBonus>(), 60 * 8);
+                Vector2 dir = Rotation.ToRotationVector2();
+                WindCircle.Spawn(Projectile.Center + (dir * 30), -dir, Rotation, Color.White, 0.75f, 0.95f, new Vector2(1.5f, 0.8f));
+                WindCircle.Spawn(Projectile.Center + (dir * 20), -dir, Rotation, Color.SkyBlue, 0.55f, 1.55f, new Vector2(1.5f, 0.8f));
             }
         }
 
@@ -216,6 +209,11 @@ namespace Coralite.Content.Items.ThyphionSeries
                    c, Scale: Main.rand.NextFloat(0.6f, 1f));
             }
 
+            if (Timer < 4)
+                handOffset -= 4;
+            else
+                handOffset += 4;
+
             if (Timer > 7)
                 Projectile.Kill();
         }
@@ -235,7 +233,7 @@ namespace Coralite.Content.Items.ThyphionSeries
             }
         }
 
-        public override void Initialize()
+        public override void InitializeDashBow()
         {
             RecordAngle = Rotation;
         }
@@ -244,14 +242,14 @@ namespace Coralite.Content.Items.ThyphionSeries
         {
             Texture2D mainTex = Projectile.GetTexture();
             Vector2 center = Projectile.Center - Main.screenPosition;
+            Vector2 dir = Rotation.ToRotationVector2();
 
-            Main.spriteBatch.Draw(mainTex, center, null, lightColor, Projectile.rotation, mainTex.Size() / 2, 1, DirSign > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
+            Main.spriteBatch.Draw(mainTex, center + dir * handOffset, null, lightColor, Projectile.rotation, mainTex.Size() / 2, 1, DirSign > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
 
             if (Special == 0)
                 return false;
 
             Texture2D arrowTex = ArrowTex.Value;
-            Vector2 dir = Rotation.ToRotationVector2();
             Main.spriteBatch.Draw(arrowTex, arrowPos - Main.screenPosition, null, lightColor, Projectile.rotation + 1.57f
                 , new Vector2(arrowTex.Width / 2, arrowTex.Height * 5 / 6), 1, 0, 0f);
 
@@ -265,9 +263,6 @@ namespace Coralite.Content.Items.ThyphionSeries
 
         public override void Update(Player player, ref int buffIndex)
         {
-            if (player.TryGetModPlayer(out CoralitePlayer cp))
-                cp.AddEffect(nameof(CloudBonus));
-
             player.moveSpeed += 0.15f;
             player.GetDamage(DamageClass.Ranged) += 0.15f;
 

@@ -68,7 +68,7 @@ FairySystem: {
 BossBarSystem.DontTakeDamage: 不可攻击！
 
 FlyingShieldSystem: {
-	FSDescriptionShort: 飞盾（按shift查看更多）
+	FSDescriptionShort: "[c/808080:飞盾（按shift查看更多）]"
 	FSDescriptionLong:
 		'''
 		左键以丢出盾牌，右键进行防御
@@ -83,7 +83,120 @@ FlyingShieldSystem: {
 		可以格挡敌怪或敌对弹幕
 		可以通过举盾来取消部分左键攻击的后摇
 		'''
+	DamageReduceDash:
+		'''
+		[c/8aebff:未举盾或完全举起盾牌时可进行盾冲]
+		[c/8aebff:盾冲过程中会给予基于盾牌属性的伤害减免效果]
+		[c/8aebff:冲刺过程中无视击退]
+		'''
+	ParryDash:
+		'''
+		[c/8aebff:未举盾或完全举起盾牌时双击方向键可进行盾冲]
+		[c/8aebff:盾冲命中后弹回，并触发盾牌格挡效果]
+		[c/8aebff:开始盾冲时能触发完美格挡类饰品的效果]
+		'''
 }
 
 WoodenBowGroup.Name: 任意 木弓
-MTBStructureSystem.FailText: 多方快结构触发失败！请查看红框处的物块
+
+MultiblockSystem: {
+	FailText: 多方快结构触发失败！请查看红框处的物块
+	PreviewMultiblock:
+		'''
+		- 放置后右键显示放置预览
+		- 完成多方块结构后右键核心进行合成
+		'''
+}
+
+BisketyController: {
+	ShowTotalDamage: 显示总伤害
+	ShowProjectileDamage: 显示弹幕伤害
+	ShowMeleeDamage: 显示玩家近战伤害
+	ShowOtherDamage: 显示其他伤害
+	ShowLongTimeDPS: 显示长期DPS
+	ChangeDefence: 设置Biskety防御力
+}
+
+KnowledgeSystem: {
+	MagikeS1Knowledge: {
+		Name: "[c/ffbeec:魔能残卷 其一]"
+		LockTip: 去地下的魔力水晶洞寻找“魔能基础残页”吧！
+		Description:
+			'''
+			记载着魔能的基础使用方法
+			其上会教你如何搭建一条魔能生产线
+			'''
+	}
+
+	RedJadeKnowledge: {
+		Name: "[c/d33232:赤玉残卷-上半]"
+		LockTip: 获得 “隐藏的赤色” 或 “赤色果实” 后解锁
+		Description:
+			'''
+			记载着赤玉与赤玉灵的相关信息
+			凭空产生的红色能量是什么？
+			'''
+	}
+
+	NewKnowledgeUnlock: 珊瑚笔记中解锁了新的章节！
+
+	IceDragon1Knowledge: {
+		Name: "[c/2bffc6:冰龙残卷-上半]"
+		LockTip:
+			'''
+			在冰雪地下宝箱中发现 “冰雪的新生”
+			或在冰雪地表的冰龙巢发现冰龙蛋后解锁
+			'''
+		Description:
+			'''
+			记载着有关冰龙的部分信息
+			冰龙巢中的蛋带有不寻常的冰魔力
+			'''
+	}
+
+	Slime1Knowledge: {
+		Name: "[c/639bff:粘液残卷-上半]"
+		LockTip:
+			'''
+			在史莱姆身上偶尔携带史莱姆树苗
+			获得 “史莱姆树苗” ，并且解锁 “魔能残卷-其一” 后解锁
+			'''
+		Description:
+			'''
+			记载着一位帝王的信息
+			来自史莱姆之国
+			'''
+	}
+
+	Thunder1Knowldege: {
+		Name: "[c/639bff:雷龙残卷-上半]"
+		LockTip: 在困难模式中击败 “双子魔眼” ，“机械骷髅王” 和 “毁灭者” 后解锁
+		Description:
+			'''
+			记载着有关雷龙的部分信息
+			居住在云端的电之双足翼龙
+			'''
+	}
+
+	MagikeInterstitial1Knowledge: {
+		Name: 魔能残卷 间章 蕴魔空岛
+		LockTip: 右键矽卡祭坛后解锁
+		Description:
+			'''
+			记载着有关矽卡祭坛的部分信息
+			启动祭坛并解锁蕴魔空岛的封印吧
+			'''
+	}
+
+	MagikeS2Knowledge: {
+		Name: "[c/dc96ff:魔能残卷 其二]"
+		LockTip: 去丛林上方的蕴魔空岛寻找“魔能进阶残卷”吧！
+		Description:
+			'''
+			记载着魔能的进阶使用方法
+			其上会教你如何制造更多仪器
+			'''
+	}
+}
+
+CoraliteBeatiaryDatabase.CrystallineSkyIsland: 蕴魔空岛

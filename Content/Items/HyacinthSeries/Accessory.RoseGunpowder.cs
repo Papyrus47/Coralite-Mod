@@ -14,14 +14,14 @@ namespace Coralite.Content.Items.HyacinthSeries
     {
         public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
-        public RoseGunpowder() : base(ItemRarityID.Blue, Item.sellPrice(0, 6))
+        public RoseGunpowder() : base(ItemRarityID.LightRed, Item.sellPrice(0, 6))
         {
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetKnockback(DamageClass.Ranged) += 0.1f;
-            player.bulletDamage *= 1.08f;
+            player.bulletDamage *= 1.1f;
 
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {

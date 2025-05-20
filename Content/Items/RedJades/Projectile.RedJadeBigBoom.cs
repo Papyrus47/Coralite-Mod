@@ -1,13 +1,14 @@
 using Coralite.Core;
 using Coralite.Helpers;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Items.RedJades
 {
     public class RedJadeBigBoom : ModProjectile
     {
         public override string Texture => AssetDirectory.Blank;
+
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -23,12 +24,20 @@ namespace Coralite.Content.Items.RedJades
 
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             Helper.RedJadeBigBoom(Projectile.Center);
         }
 
-        public override bool PreAI() => false;
+        public override bool PreAI()
+        {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
+            return false;
+        }
         public override bool PreDraw(ref Color lightColor) => false;
 
         public override bool? CanHitNPC(NPC target)

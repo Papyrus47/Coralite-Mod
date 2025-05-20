@@ -6,7 +6,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.LandOfTheLustrousSeries.Accessories
 {
-    public class SilkAgate() : BaseAccessory(ItemRarityID.LightRed, Item.sellPrice(0, 0, 5))
+    public class SilkAgate() : BaseAccessory(ItemRarityID.LightRed, Item.sellPrice(0, 2))
     {
         public override string Texture => AssetDirectory.LandOfTheLustrousSeriesItems + Name;
 

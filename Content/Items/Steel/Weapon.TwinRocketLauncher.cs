@@ -106,14 +106,8 @@ namespace Coralite.Content.Items.Steel
             if (Projectile.localAI[1] == 0)
             {
                 Projectile.localAI[1] = 1;
-                Projectile.oldPos = new Vector2[trailCachesLength];
-                Projectile.oldRot = new float[trailCachesLength];
-
-                for (int i = 0; i < trailCachesLength; i++)
-                {
-                    Projectile.oldPos[i] = Projectile.Center;
-                    Projectile.oldRot[i] = Projectile.rotation;
-                }
+                Projectile.InitOldPosCache(trailCachesLength);
+                Projectile.InitOldRotCache(trailCachesLength);
             }
 
             if (Math.Abs(Projectile.velocity.X) >= 8f || Math.Abs(Projectile.velocity.Y) >= 8f)
@@ -245,7 +239,7 @@ namespace Coralite.Content.Items.Steel
         {
             Texture2D Texture = CoraliteAssets.Trail.CircleA.Value;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             for (int i = 0; i < trailCachesLength; i++)
             {
@@ -287,14 +281,8 @@ namespace Coralite.Content.Items.Steel
             if (Projectile.localAI[1] == 0)
             {
                 Projectile.localAI[1] = 1;
-                Projectile.oldPos = new Vector2[trailCachesLength];
-                Projectile.oldRot = new float[trailCachesLength];
-
-                for (int i = 0; i < trailCachesLength; i++)
-                {
-                    Projectile.oldPos[i] = Projectile.Center;
-                    Projectile.oldRot[i] = Projectile.rotation;
-                }
+                Projectile.InitOldPosCache(trailCachesLength);
+                Projectile.InitOldRotCache(trailCachesLength);
             }
 
             if (Projectile.ai[2] < 25)
@@ -428,7 +416,7 @@ namespace Coralite.Content.Items.Steel
         {
             Texture2D Texture = CoraliteAssets.Trail.CircleA.Value;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             for (int i = 0; i < trailCachesLength; i++)
             {

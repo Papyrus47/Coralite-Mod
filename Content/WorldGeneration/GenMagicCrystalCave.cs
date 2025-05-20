@@ -1,11 +1,7 @@
 ﻿using Coralite.Content.CoraliteNotes.MagikeChapter1;
 using Coralite.Content.Tiles.MagikeSeries1;
-using Coralite.Content.WorldGeneration.Generators;
 using Coralite.Core;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -25,19 +21,9 @@ namespace Coralite.Content.WorldGeneration
 
         public void GenMagicCrystalCave(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = MagicCrystalCaveText.Value;// "正在生成魔力水晶洞";
+            progress.Message = MagicCrystalCaveText.Value;
 
-            int howManyToGen = 2;
-            if (Main.maxTilesX > 8000)
-            {
-                howManyToGen += 2;
-            }
-
-            if (Main.maxTilesX > 6000)
-            {
-                howManyToGen += 2;
-            }
-
+            int howManyToGen = ValueByWorldSize(2, 4, 6);
             int howManyGened = 0;
 
             //最小X和最大X，这里是在X坐标在1/4 - 3/4内才能生成
@@ -68,8 +54,6 @@ namespace Coralite.Content.WorldGeneration
         {
             //物块类型，提前声明出来变量方便后面使用
             ushort basalt = (ushort)ModContent.TileType<BasaltTile>();
-            ushort crystalBasalt = (ushort)ModContent.TileType<CrystalBasaltTile>();
-            ushort crystalBlock = (ushort)ModContent.TileType<MagicCrystalBlockTile>();
 
             //半径最小和最大值以及一半的墙壁厚度
             int radiusMin = 50;
@@ -224,7 +208,7 @@ namespace Coralite.Content.WorldGeneration
             //    WorldGen.PlaceTile(circleCenter.X - 1 + i, circleCenter.Y + 2, crystalBrick);
             #endregion
 
-            GenCrystaClusters(origin, width, height);
+            GenCrystalClusters(origin, width, height);
             MagicCrystalCaveChest(origin);
 
             #region 废弃内容
@@ -362,7 +346,7 @@ namespace Coralite.Content.WorldGeneration
         /// <param name="origin"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        private static void GenCrystaClusters(Point origin, int width, int height)
+        private static void GenCrystalClusters(Point origin, int width, int height)
         {
             ushort basalt = (ushort)ModContent.TileType<BasaltTile>();
 
@@ -387,7 +371,7 @@ namespace Coralite.Content.WorldGeneration
                             for (int n = -1; n > -5; n--)
                                 Main.tile[x1 + m, y1 + n].ClearTile();
 
-                        WorldGen.PlaceObject(x1, y1 - 1, clustersType);
+                        WorldGen.PlaceObject(x1+1, y1 - 1, clustersType);
                     }
 
                     int x = clustersX + WorldGen.genRand.Next(0, width * 5 / 6);
@@ -422,7 +406,7 @@ namespace Coralite.Content.WorldGeneration
                     if (!canGenerate)
                         continue;
 
-                    WorldGen.PlaceObject(x, y - 1, clustersType);
+                    WorldGen.PlaceObject(x+1, y - 1, clustersType);
                     break;
                 }
         }
@@ -587,7 +571,7 @@ namespace Coralite.Content.WorldGeneration
         /// <param name="basalt"></param>
         /// <param name="crystalBlock"></param>
         /// <param name="crystalBrick"></param>
-        private Point MagicCrystalCaveChest(Point origin)
+        private static Point MagicCrystalCaveChest(Point origin)
         {
             int whichOne = WorldGen.genRand.Next(5);
 
@@ -595,41 +579,29 @@ namespace Coralite.Content.WorldGeneration
             ushort crystalBlock = (ushort)ModContent.TileType<MagicCrystalBlockTile>();
             ushort crystalBrick = (ushort)ModContent.TileType<MagicCrystalBrickTile>();
 
-            Texture2D shrineTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "MagicCrystalShrine" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-            Texture2D clearTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "MagicCrystalShrineClear" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
-            Texture2D wallTex = ModContent.Request<Texture2D>(AssetDirectory.Shrines + "MagicCrystalWall" + whichOne.ToString(), AssetRequestMode.ImmediateLoad).Value;
+            TextureGenerator generator = new TextureGenerator("MagicCrystalShrine", whichOne, AssetDirectory.Shrines + "MagicCrystalCave/");
 
-            int genOrigin_x = origin.X - (clearTex.Width / 2);
-            int genOrigin_y = origin.Y - (clearTex.Height / 2);
+            int genOrigin_x = origin.X - (generator.Width / 2);
+            int genOrigin_y = origin.Y - (generator.Height / 2);
 
             Point chestPos = new(genOrigin_x + 13, genOrigin_y + 13);
             Point lightPoint1 = new(genOrigin_x + 7, genOrigin_y + 14);
             Point lightPoint2 = new(genOrigin_x + 17, genOrigin_y + 14);
 
-            Dictionary<Color, int> clearDic = new()
-            {
-                [Color.White] = -2,
-                [Color.Black] = -1
-            };
             Dictionary<Color, int> mainDic = new()
             {
                 [new Color(255, 112, 210)] = crystalBlock,
                 [new Color(255, 177, 230)] = crystalBrick,
                 [new Color(142, 43, 170)] = ModContent.TileType<HardBasaltTile>(),
                 [new Color(183, 12, 232)] = basalt,
-                [new Color(90, 100, 80)] = TileID.Chain,
-                [Color.Black] = -1
+                [new Color(90, 100, 80)] = TileID.Chain,//5a6450
             };
             Dictionary<Color, int> wallDic = new()
             {
                 [new Color(255, 255, 0)] = ModContent.WallType<Walls.Magike.HardBasaltWall>(),
-                [Color.Black] = -1
             };
 
-            Task.Run(async () =>
-            {
-                await GenShrine(clearTex, shrineTex, wallTex, clearDic, mainDic, wallDic, genOrigin_x, genOrigin_y);
-            }).Wait();
+            generator.GenerateByTopLeft(new Point(genOrigin_x, genOrigin_y), mainDic, wallDic);
 
             //放置灯
             int brokenLensType = ModContent.TileType<BrokenLens>();
@@ -646,40 +618,7 @@ namespace Coralite.Content.WorldGeneration
             return chestPos;
         }
 
-        public Task GenShrine(Texture2D clearTex, Texture2D shrineTex, Texture2D wallTex,
-             Dictionary<Color, int> clearDic, Dictionary<Color, int> shrineDic, Dictionary<Color, int> wallDic,
-             int genOrigin_x, int genOrigin_y)
-        {
-            bool genned = false;
-            bool placed = false;
-            while (!genned)
-            {
-                if (placed)
-                    continue;
-
-                Main.QueueMainThreadAction(() =>
-                {
-                    //清理范围
-                    Texture2TileGenerator clearGenerator = TextureGeneratorDatas.GetTex2TileGenerator(clearTex, clearDic);
-                    clearGenerator.Generate(genOrigin_x, genOrigin_y, true);
-
-                    //生成主体地形
-                    Texture2TileGenerator shrineGenerator = TextureGeneratorDatas.GetTex2TileGenerator(shrineTex, shrineDic);
-                    shrineGenerator.Generate(genOrigin_x, genOrigin_y, true);
-
-                    //生成墙壁
-                    Texture2WallGenerator wallGenerator = TextureGeneratorDatas.GetTex2WallGenerator(wallTex, wallDic);
-                    wallGenerator.Generate(genOrigin_x, genOrigin_y, true);
-
-                    genned = true;
-                });
-                placed = true;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public void LoadCrystalCave(TagCompound tag)
+        public static void LoadCrystalCave(TagCompound tag)
         {
             MagicCrystalCaveCenters.Clear();
 
@@ -691,7 +630,7 @@ namespace Coralite.Content.WorldGeneration
             }
         }
 
-        public void SaveCrystalCave(TagCompound tag)
+        public static void SaveCrystalCave(TagCompound tag)
         {
             int i = 0;
             foreach (var pos in MagicCrystalCaveCenters)

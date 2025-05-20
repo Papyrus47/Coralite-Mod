@@ -1,4 +1,5 @@
-﻿using Coralite.Core;
+﻿using Coralite.Content.Dusts;
+using Coralite.Core;
 using Terraria;
 using Terraria.ID;
 
@@ -10,7 +11,7 @@ namespace Coralite.Content.Tiles.MagikeSeries2
 
         public override void SetStaticDefaults()
         {
-            Main.tileMergeDirt[Type] = true;
+            //Main.tileMergeDirt[Type] = true;
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
             //Main.tileMerge[Type][ModContent.TileType<MagikeCrystalBlockTile>()] = true;
@@ -21,18 +22,22 @@ namespace Coralite.Content.Tiles.MagikeSeries2
             Main.tileMerge[ModContent.TileType<CrystallineSkarnTile>()][Type] = true;
 
             TileID.Sets.ChecksForMerge[Type] = true;
+            TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
+            TileID.Sets.CanBeClearedDuringOreRunner[Type] = false;
 
-            DustType = DustID.BorealWood_Small;
+            DustType = ModContent.DustType<SkarnDust>();
             HitSound = CoraliteSoundID.DigStone_Tink;
-            AddMapEntry(new Color(141, 171, 178));
+            AddMapEntry(new Color(122, 144, 151));
 
-            MinPick = 150;
-            MineResist = 6;
+            MinPick = 110;
+            MineResist = 3;
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
             num = fail ? 2 : 4;
         }
+
+        public override bool CanExplode(int i, int j) => false;
     }
 }

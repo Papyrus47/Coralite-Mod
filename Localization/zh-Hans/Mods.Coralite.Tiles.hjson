@@ -51,8 +51,8 @@ GlowTulipDoorOpen.MapEntry: 远古郁金香门
 BlackHoleChestTile.MapEntry: 地心黑曜石
 
 MercuryChestTile: {
-	// MapEntry0: Mods.Coralite.Tiles.MercuryChestTile.MapEntry0
-	// MapEntry1: Mods.Coralite.Tiles.MercuryChestTile.MapEntry1
+	MapEntry0: Mods.Coralite.Tiles.MercuryChestTile.MapEntry0
+	MapEntry1: Mods.Coralite.Tiles.MercuryChestTile.MapEntry1
 }
 
 RedJadeFountain.MapEntry: 赤玉喷泉
@@ -169,3 +169,101 @@ SoulOfNightAltarTile: {
 	NeedSouls: 献上古老的黑暗之魂吧...
 	MapEntry: 矽卡黑暗之祭坛
 }
+
+BlackPlushBathtubTile.MapEntry: 黑色毛绒浴缸
+BlackPlushBedTile.MapEntry: 黑色毛绒床
+BlackPlushBigDroplightTile.MapEntry: 黑色毛绒大吊灯
+BlackPlushBookcaseTile.MapEntry: 黑色毛绒猫爬架
+BlackPlushCandelabraTile.MapEntry: 黑色毛绒烛台
+BlackPlushCandleTile.MapEntry: 黑色毛绒蜡烛
+BlackPlushChestTile.MapEntry: 黑色毛绒箱
+BlackPlushDoorClosedTile.MapEntry: 黑色毛绒门
+BlackPlushDoorOpenTile.MapEntry: 黑色毛绒门
+BlackPlushDresserTile.MapEntry: 黑色毛绒梳妆台
+BlackPlushDroplightTile.MapEntry: 黑色毛绒吊灯
+BlackPlushFloorLampTile.MapEntry: 黑色毛绒灯柱
+BlackPlushPianoTile.MapEntry: 黑色毛绒钢琴
+BlackPlushSofaTile.MapEntry: 黑色毛绒沙发
+BlackPlushTableTile.MapEntry: 黑色毛绒桌
+BlackPlushWorkBenchTile.MapEntry: 黑色毛绒工作台
+CoraliteNoteTile.MapEntry: 珊瑚笔记
+IcicleMusicBoxTile.MapEntry: 八音盒（冰结寒流）
+RedJadeMusicBoxTile.MapEntry: 八音盒（赤色激流）
+
+SkarnChestTile: {
+	MapEntry0: 矽卡箱
+	MapEntry1: 上锁的矽卡箱
+}
+
+CrystallineSeaOatsMother.MapEntry: 蕴魔海燕麦母体
+B9AlloyBathtubTile.MapEntry: B9 合金浴缸
+B9AlloyBedTile.MapEntry: B9 合金床
+B9AlloyBigDroplightTile.MapEntry: B9 合金大吊灯
+B9AlloyBookcaseTile.MapEntry: B9 合金书架
+B9AlloyCandelabraTile.MapEntry: B9 合金烛台
+B9AlloyCandleTile.MapEntry: B9 合金蜡烛
+B9AlloyChestTile.MapEntry: B9 合金箱
+B9AlloyDoorClosedTile.MapEntry: B9 合金门
+B9AlloyDoorOpenTile.MapEntry: B9 合金门
+B9AlloyDresserTile.MapEntry: B9 合金梳妆台
+B9AlloyDroplightTile.MapEntry: B9 合金吊灯
+B9AlloyFloorLampTile.MapEntry: B9 合金灯柱
+B9AlloyPianoTile.MapEntry: B9 合金钢琴
+B9AlloySofaTile.MapEntry: B9 合金沙发
+B9AlloyTableTile.MapEntry: B9 合金桌
+B9AlloyWorkBenchTile.MapEntry: B9 合金工作台
+CrystallineCrateTile.MapEntry: 蕴魔匣
+LeafStoneBathtubTile.MapEntry: 叶石浴缸
+LeafStoneBedTile.MapEntry: 叶石床
+LeafStoneBigDroplightTile.MapEntry: 叶石大吊灯
+LeafStoneBookcaseTile.MapEntry: 叶石书架
+LeafStoneCandelabraTile.MapEntry: 叶石烛台
+LeafStoneCandleTile.MapEntry: 叶石蜡烛
+LeafStoneChestTile.MapEntry: 叶石箱
+LeafStoneDoorClosedTile.MapEntry: 叶石门
+LeafStoneDoorOpenTile.MapEntry: 叶石门
+LeafStoneDresserTile.MapEntry: 叶石梳妆台
+LeafStoneDroplightTile.MapEntry: 叶石吊灯
+LeafStoneFloorLampTile.MapEntry: 叶石灯柱
+LeafStonePianoTile.MapEntry: 叶石钢琴
+LeafStoneSofaTile.MapEntry: 叶石沙发
+LeafStoneTableTile.MapEntry: 叶石桌
+LeafStoneWorkBenchTile.MapEntry: 叶石工作台
+SkarnBrickBathtubTile.MapEntry: 矽卡砖浴缸
+SkarnBrickBedTile.MapEntry: 矽卡砖床
+SkarnBrickBigDroplightTile.MapEntry: 矽卡砖大吊灯
+SkarnBrickBookcaseTile.MapEntry: 矽卡砖书架
+SkarnBrickCandelabraTile.MapEntry: 矽卡砖烛台
+SkarnBrickCandleTile.MapEntry: 矽卡砖蜡烛
+SkarnBrickDoorClosedTile.MapEntry: 矽卡砖门
+SkarnBrickDoorOpenTile.MapEntry: 矽卡砖门
+SkarnBrickDresserTile.MapEntry: 矽卡砖梳妆台
+SkarnBrickDroplightTile.MapEntry: 矽卡砖吊灯
+SkarnBrickFloorLampTile.MapEntry: 矽卡砖灯柱
+SkarnBrickPianoTile.MapEntry: 矽卡砖钢琴
+SkarnBrickSofaTile.MapEntry: 矽卡砖沙发
+SkarnBrickTableTile.MapEntry: 矽卡砖桌
+SkarnBrickWorkBenchTile.MapEntry: 矽卡砖工作台
+SteelBathtubTile.MapEntry: 钢浴缸
+SteelBedTile.MapEntry: 钢床
+SteelBenchTile.MapEntry: 钢长椅
+SteelBigDroplightTile.MapEntry: 钢大吊灯
+SteelBookcaseTile.MapEntry: 钢书架
+SteelCandelabraTile.MapEntry: 钢烛台
+SteelCandleTile.MapEntry: 钢蜡烛
+SteelChestTile.MapEntry: 钢箱
+SteelDoorClosedTile.MapEntry: 钢门
+SteelDoorOpenTile.MapEntry: 钢门
+SteelDresserTile.MapEntry: 钢梳妆台
+SteelDroplightTile.MapEntry: 钢吊灯
+SteelFloorLampTile.MapEntry: 钢灯柱
+SteelPianoTile.MapEntry: 钢钢琴
+SteelSofaTile.MapEntry: 钢沙发
+SteelTableTile.MapEntry: 钢桌
+SteelWorkBenchTile.MapEntry: 钢工作台
+SkarnBrickBenchTile.MapEntry: 矽卡砖长椅
+CrystallinePylonTile.MapEntry: 蕴魔晶塔
+CrystallineFountain.MapEntry: 蕴魔喷泉
+SkarnCutterTile.MapEntry: 矽卡复合切割机
+CrystallineMagikeClustersTile.MapEntry: 蕴魔水晶簇
+// CrystallineMusicBoxTile.MapEntry: Crystalline Music Box Tile

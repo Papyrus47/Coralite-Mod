@@ -2,7 +2,6 @@
 using Coralite.Core.Configs;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.RedJades
@@ -10,6 +9,8 @@ namespace Coralite.Content.Items.RedJades
     public class RedJadeStrike : ModProjectile
     {
         public override string Texture => AssetDirectory.RedJadeProjectiles + Name;
+
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -25,7 +26,7 @@ namespace Coralite.Content.Items.RedJades
             Projectile.ignoreWater = false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -38,6 +39,11 @@ namespace Coralite.Content.Items.RedJades
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (Projectile.velocity.Y < 14)
                 Projectile.velocity.Y += 0.04f;
 
@@ -53,7 +59,7 @@ namespace Coralite.Content.Items.RedJades
 
         public override void OnKill(int timeLeft)
         {
-            if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner)
+            if (Projectile.ai[0] == 0 && Projectile.IsOwnedByLocalPlayer())
             {
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RedJadeBoom>(), (int)(Projectile.damage * 0.8f), Projectile.knockBack, Projectile.owner);
                 return;

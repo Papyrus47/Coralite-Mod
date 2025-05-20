@@ -1,8 +1,9 @@
 using Coralite.Core;
+using Coralite.Core.Loaders;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -17,23 +18,8 @@ namespace Coralite.Content.Particles
     {
         public override string Texture => AssetDirectory.DefaultItem;
 
-        private static BasicEffect effect;
         private GetCenter centerFunc;
         private float length;
-
-        public DizzyStar()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override bool ShouldUpdatePosition() => false;
 
@@ -43,7 +29,7 @@ namespace Coralite.Content.Particles
             Frame = new Rectangle(0, 0, 22, 26);
             Scale = 1f;
             InitializeCaches(12);
-            trail = new Trail(Main.instance.GraphicsDevice, 12, new NoTip(), factor => 2, factor => Color.Lerp(new Color(0, 0, 0, 0), Color.Yellow, factor.X));
+            trail = new Trail(Main.instance.GraphicsDevice, 12, new EmptyMeshGenerator(), factor => 2, factor => Color.Lerp(new Color(0, 0, 0, 0), Color.Yellow, factor.X));
         }
 
         public override void AI()
@@ -62,7 +48,7 @@ namespace Coralite.Content.Particles
                 oldRotations[11] = Rotation;
                 for (int i = 0; i < 12; i++)
                     oldPositions[i] = center + (oldRotations[i].ToRotationVector2() * length * Helper.EllipticalEase(oldRotations[i], 1, 2.4f));
-                trail.Positions = oldPositions;
+                trail.TrailPositions = oldPositions;
 
                 //使用oldRot充当改变帧图的 frameCounter
                 Velocity.X += 1f;
@@ -96,18 +82,15 @@ namespace Coralite.Content.Particles
 
         public override void DrawPrimitive()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public static void Spawn(Vector2 center, float rotation, float dizzyTime, float length, GetCenter function)

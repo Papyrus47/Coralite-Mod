@@ -14,11 +14,14 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         {
         }
 
+        public float Priority => IDashable.AccessoryDashHigh + 50;
+
         public override void SetDefaults()
         {
             base.SetDefaults();
             Item.DamageType = DamageClass.Generic;
             Item.damage = 80;
+            Item.defense = 3;
         }
 
         public bool isDashing;
@@ -29,6 +32,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 cp.FlyingShieldAccessories?.Add(this);
+                cp.AddDash(this);
             }
 
             if (isDashing)

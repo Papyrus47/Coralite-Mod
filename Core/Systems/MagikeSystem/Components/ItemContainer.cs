@@ -5,19 +5,19 @@ using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.ID;
 using Terraria.ModLoader.IO;
 using Terraria.ModLoader.UI.Elements;
 using Terraria.UI;
 
 namespace Coralite.Core.Systems.MagikeSystem.Components
 {
-    public class ItemContainer : MagikeComponent, IUIShowable
+    public class ItemContainer : MagikeComponent, IUIShowable, IEnumerable<Item>
     {
         public override int ID => MagikeComponentID.ItemContainer;
 
@@ -74,6 +74,8 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             }
         }
 
+        #region 网络同步部分
+
         public override void SendData(ModPacket data)
         {
             //$"SendData-CapacityBase:{CapacityBase}".LoggerDomp();
@@ -88,9 +90,16 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             for (int i = 0; i < Items.Length; i++)
             {
                 //$"SendData-Items.type:{Items[i].type}".LoggerDomp();
-                data.Write(Items[i].type);
-                data.Write(Items[i].stack);
-                data.Write(Items[i].prefix);
+                //data.Write(Items[i].type);
+                //data.Write(Items[i].stack);
+                //data.Write(Items[i].prefix);
+                if (Items[i].IsAir)
+                    data.Write(false);
+                else
+                {
+                    data.Write(true);
+                    ItemIO.Send(Items[i], data, true);
+                }
             }
         }
 
@@ -105,33 +114,153 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             int length = reader.ReadInt32();
             //$"ReceiveData-Items[].Length:{length}".LoggerDomp();
 
-            List<Item> itemList = [];
-            if (length > 999)
-            {
+            //List<Item> itemList = [];
+
+            if (length > 999)//限制最大长度，放置一些可能的BUG导致游戏爆炸
                 length = 999;
-            }
+
+            _items = new Item[length];
+
             for (int i = 0; i < length; i++)
             {
-                int type = reader.ReadInt32();
-                int stack = reader.ReadInt32();
-                int prefix = reader.ReadInt32();
+                bool isAir = reader.ReadBoolean();
+                if (!isAir)
+                    Items[i] = new Item();
+                else
+                    Items[i] = ItemIO.Receive(reader, true);
+
+                //int type = reader.ReadInt32();
+                //int stack = reader.ReadInt32();
+                //int prefix = reader.ReadInt32();
                 //$"ReceiveData-Items.type:{type}".LoggerDomp();
                 //$"ReceiveData-Items.stack:{stack}".LoggerDomp();
                 //$"ReceiveData-Items.prefix:{prefix}".LoggerDomp();
-                if (type < 0 || type >= ItemLoader.ItemCount)
-                {
-                    type = ItemID.None;
-                }
-                Item item = new Item(type);
-                if (type > 0)
-                {
-                    item.stack = stack;
-                    item.prefix = prefix;
-                }
-                itemList.Add(item);
+                //if (type < 0 || type >= ItemLoader.ItemCount)
+                //    type = ItemID.None;
+
+                //Item item=new Item();
+
+                //if (type > 0)
+                //{
+                //    item.stack = stack;
+                //    item.prefix = prefix;
+                //}
+                //itemList.Add(item);
             }
-            _items = [.. itemList];
+
+            //_items = [.. itemList];
         }
+
+        /// <summary>
+        /// 发送指定索引的物品
+        /// </summary>
+        public void SendIndexedItem(int index)
+        {
+            if (!Items.IndexInRange(index))
+            {
+                $"物品容器索引越界！在{Entity.Position.X} {Entity.Position.Y}".DumpInConsole();
+                $"发生致命错误！".Dump();
+                return;
+            }
+
+            this.AddToPackList(MagikeNetPackType.ItemContainer_IndexedItem, packet =>
+            {
+                packet.Write(index);
+                ItemIO.Send(Items[index], packet, true);
+            });
+        }
+
+        /// <summary>
+        /// 接受指定索引的物品
+        /// </summary>
+        /// <param name="reader"></param>
+        public void ReceiveIndexedItem(BinaryReader reader)
+        {
+            int index = reader.ReadInt32();
+
+            Item item = ItemIO.Receive(reader, true);
+
+            if (!Items.IndexInRange(index))
+            {
+                $"物品容器索引越界！在{Entity.Position.X} {Entity.Position.Y}".DumpInConsole();
+                $"发生致命错误！".Dump();
+                return;
+            }
+
+            Items[index] = item;
+        }
+
+        /// <summary>
+        /// 客户端向其他端发送信息，只同步一个物品
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="whoAmI"></param>
+        public static void ReceiveSpecificItem(BinaryReader reader, int whoAmI)
+        {
+            int ownerIndex = reader.ReadInt32();
+            Point16 position = reader.ReadPoint16();
+            int index = reader.ReadInt32();
+
+            if (!Main.player.IndexInRange(ownerIndex))
+                return;
+
+            if (MagikeHelper.TryGetEntityWithTopLeft(position, out var tp)
+                && tp.TryGetComponent(MagikeComponentID.ItemContainer, out ItemContainer container))
+            {
+                container[index] = ItemIO.Receive(reader, true);//接收
+
+                if (Main.dedServ)//服务器端再次向其他客户端同步一下
+                {
+                    ModPacket modPacket = Coralite.Instance.GetPacket();
+                    modPacket.Write((byte)CoraliteNetWorkEnum.ItemContainer_SpecificIndex);
+                    modPacket.Write(Main.myPlayer);
+                    modPacket.WritePoint16(container.Entity.Position);
+                    modPacket.Write(index);
+                    ItemIO.Send(container[index], modPacket, true);
+                    modPacket.Send(-1, whoAmI);
+                }
+                else
+                {
+                    //刷新魔能UI
+                    if (MagikeSystem.UIActive())
+                        MagikeSystem.RecalculateComponentPanel();
+                }
+            }
+        }
+
+        public static void ReceiveItem(BinaryReader reader, int whoAmI)
+        {
+            int ownerIndex = reader.ReadInt32();
+            Point16 position = reader.ReadPoint16();
+
+            if (!Main.player.IndexInRange(ownerIndex))
+                return;
+
+            if (MagikeHelper.TryGetEntityWithTopLeft(position, out var tp)
+                && tp.TryGetComponent(MagikeComponentID.ItemContainer, out ItemContainer container))
+            {
+                Item item = ItemIO.Receive(reader, true);
+                container.AddItem(item);//接收
+
+                if (Main.dedServ)//服务器端再次向其他客户端同步一下
+                {
+                    ModPacket modPacket = Coralite.Instance.GetPacket();
+                    modPacket.Write((byte)CoraliteNetWorkEnum.ItemContainer);
+                    modPacket.Write(Main.myPlayer);
+                    modPacket.WritePoint16(container.Entity.Position);
+                    ItemIO.Send(item, modPacket, true);
+                    modPacket.Send(-1, whoAmI);
+                }
+                else
+                {
+                    //刷新魔能UI
+                    if (MagikeSystem.UIActive())
+                        MagikeSystem.RecalculateComponentPanel();
+                }
+            }
+        }
+
+        #endregion
 
         public override void Update() { }
 
@@ -183,14 +312,13 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         public virtual void AddItem(Item item)
         {
             int type = item.type;
-            int stack = item.stack;
 
             foreach (var i in Items.Where(i => !i.IsAir && i.type == type && i.stack < i.maxStack))
             {
-                int maxCanInsert = Math.Min(i.maxStack - i.stack, stack);
+                int maxCanInsert = Math.Min(i.maxStack - i.stack, item.stack);
                 i.stack += maxCanInsert;
-                stack -= maxCanInsert;
-                if (stack < 1)
+                item.stack -= maxCanInsert;
+                if (item.stack < 1)
                 {
                     item.TurnToAir();
                     return;
@@ -206,6 +334,24 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                 }
 
             Item.NewItem(item.GetSource_DropAsItem(), Helper.GetMagikeTileCenter(Entity.Position), item.Clone());
+            item.TurnToAir();
+        }
+
+        /// <summary>
+        /// 向容器内加入物品，并指定索引<br></br>
+        /// 成功加入后会将传入的物品重置为空物品
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="index"></param>
+        public virtual void AddItemByIndex(Item item, int index)
+        {
+            if (!Items.IndexInRange(index))
+                return;
+
+            if (!Items[index].IsAir)
+                return;
+
+            Items[index] = item.Clone();
             item.TurnToAir();
         }
 
@@ -232,6 +378,88 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                 }
 
             Item.NewItem(new EntitySource_DropAsItem(Main.LocalPlayer), Helper.GetMagikeTileCenter(Entity.Position), itemType, stack);
+        }
+
+        /// <summary>
+        /// 能否放入一个物品
+        /// </summary>
+        /// <param name="itemType"></param>
+        /// <param name="stack"></param>
+        public virtual bool CanAddItem(int itemType, int stack)
+        {
+            for (int i = 0; i < Items.Length; i++)
+            {
+                Item item = Items[i];//有空物品或者容量足够就放入
+                if (item.IsAir || item.type == itemType && item.stack < item.maxStack - stack)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 取出一个物品
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public virtual bool DropItem()
+        {
+            for (int i = 0; i < Items.Length; i++)
+                if (!Items[i].IsAir)
+                {
+                    Item.NewItem(new EntitySource_DropAsItem(Main.LocalPlayer), Helper.GetMagikeTileCenter(Entity.Position), Items[i].Clone());
+                    Items[i].TurnToAir();
+                    return true;
+                }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 获得一个物品，需要指定数量，还可以指定类型<br></br>
+        /// 如果数量不足则会只拿出该拿的
+        /// </summary>
+        /// <param name="stack"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public virtual Item GetItem(int stack, int? type = null)
+        {
+            for (int i = 0; i < Items.Length; i++)
+            {
+                Item item = Items[i];
+                if (item.IsAir)
+                    continue;
+
+                if (type != null)//有指定的类型
+                {
+                    if (item.type == type.Value)//正好对上了
+                        return NewItem(stack, item);
+
+                    continue;
+                }
+
+                return NewItem(stack, item);
+            }
+
+            return null;
+
+            static Item NewItem(int stack, Item item)
+            {
+                if (item.stack > stack)//数量多，直接减少
+                {
+                    item.stack -= stack;
+
+                    Item item1 = item.Clone();
+                    item1.stack = stack;
+                    return item1;
+                }
+                else//数量不够，全部返回，自身重置
+                {
+                    Item item1 = item.Clone();
+                    item.TurnToAir();
+                    return item1;
+                }
+            }
         }
 
         #region UI部分
@@ -295,6 +523,21 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
                     _items[i] = new Item();
             }
         }
+
+        #endregion
+
+        #region 迭代相关
+
+        public IEnumerator<Item> GetEnumerator()
+        {
+            return ((IEnumerable<Item>)Items).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
+
         #endregion
     }
 
@@ -332,13 +575,18 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         public void SendData()
         {
             if (!VaultUtils.isClient)
-            {
                 return;
-            }
-            if (_container.Entity is MagikeTP magikeTP)
-            {
-                magikeTP.SendData();
-            }
+
+            //_container.Entity.SendData();
+
+            ModPacket modPacket = Coralite.Instance.GetPacket();
+            modPacket.Write((byte)CoraliteNetWorkEnum.ItemContainer_SpecificIndex);
+            modPacket.Write(Main.myPlayer);
+            modPacket.WritePoint16(_container.Entity.Position);
+            modPacket.Write(_index);
+            ItemIO.Send(_container[_index], modPacket, true);
+
+            modPacket.Send();
         }
 
         //public void GrabSound()

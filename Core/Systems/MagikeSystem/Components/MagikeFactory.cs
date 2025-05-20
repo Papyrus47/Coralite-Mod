@@ -1,6 +1,7 @@
 ﻿using Coralite.Core.Systems.CoraliteActorComponent;
 using Coralite.Helpers;
 using System;
+using System.IO;
 using Terraria.ModLoader.IO;
 
 namespace Coralite.Core.Systems.MagikeSystem.Components
@@ -26,7 +27,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         public bool TimeResetable => false;
 
-        public bool UpdateTime()
+        public virtual bool UpdateTime()
         {
             Timer--;
 
@@ -41,16 +42,16 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
 
         public override void Update()
         {
-            if (!IsWorking || DuringWork())
+            if (WorkTimeBase < 1 || !IsWorking || DuringWork())
                 return;
 
             IsWorking = false;
             Work();
         }
 
-        public bool DuringWork()
+        public virtual bool DuringWork()
         {
-            OnWork();
+            OnWorking();
 
             return !UpdateTime();
         }
@@ -58,7 +59,7 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
         /// <summary>
         /// 在工作时触发
         /// </summary>
-        public virtual void OnWork() { }
+        public virtual void OnWorking() { }
 
         /// <summary>
         /// 特定的工作
@@ -107,17 +108,44 @@ namespace Coralite.Core.Systems.MagikeSystem.Components
             return $"  ▶ {timer} / {MagikeHelper.BonusColoredText(delay.ToString(), DelayBonus, true)} ({delayBase} * {MagikeHelper.BonusColoredText(DelayBonus.ToString(), DelayBonus, true)})";
         }
 
+        public override void SendData(ModPacket data)
+        {
+            data.Write(WorkTimeBase);
+            data.Write(WorkTimeBonus);
+
+            data.Write(IsWorking);
+            data.Write(Timer);
+        }
+
+        public override void ReceiveData(BinaryReader reader, int whoAmI)
+        {
+            WorkTimeBase = reader.ReadInt32();
+            WorkTimeBonus = reader.ReadSingle();
+
+            IsWorking = reader.ReadBoolean();
+            Timer = reader.ReadInt32();
+        }
+
         public override void SaveData(string preName, TagCompound tag)
         {
-            //无需存储工作时间以及是否在工作中
             tag.Add(preName + nameof(WorkTimeBase), WorkTimeBase);
             tag.Add(preName + nameof(WorkTimeBonus), WorkTimeBonus);
+
+            if (IsWorking)
+            {
+                tag.Add(preName + nameof(IsWorking), true);
+                tag.Add(preName + nameof(Timer), Timer);
+            }
         }
 
         public override void LoadData(string preName, TagCompound tag)
         {
             WorkTimeBase = tag.GetInt(preName + nameof(WorkTimeBase));
             WorkTimeBonus = tag.GetFloat(preName + nameof(WorkTimeBonus));
+
+            IsWorking = tag.ContainsKey(preName + nameof(IsWorking));
+            if (IsWorking)
+                Timer = tag.GetInt(preName + nameof(Timer));
         }
     }
 }

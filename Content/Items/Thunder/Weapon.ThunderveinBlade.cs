@@ -27,6 +27,8 @@ namespace Coralite.Content.Items.Thunder
 
         public int useCount;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
@@ -45,6 +47,14 @@ namespace Coralite.Content.Items.Thunder
             Item.noUseGraphic = true;
             Item.noMelee = true;
             Item.autoReuse = true;
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -169,7 +179,7 @@ namespace Coralite.Content.Items.Thunder
             GradientTexture = null;
         }
 
-        public override void SetDefs()
+        public override void SetSwingProperty()
         {
             Projectile.DamageType = DamageClass.Melee;
             Projectile.localNPCHitCooldown = 48;
@@ -195,9 +205,9 @@ namespace Coralite.Content.Items.Thunder
             return base.GetStartAngle();
         }
 
-        protected override void Initializer()
+        protected override void InitializeSwing()
         {
-            if (Main.myPlayer == Projectile.owner && Combo < 3)
+            if (Projectile.IsOwnedByLocalPlayer() && Combo < 3)
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
 
             Projectile.extraUpdates = 5;
@@ -242,7 +252,7 @@ namespace Coralite.Content.Items.Thunder
             }
 
             ExtraInit();
-            base.Initializer();
+            base.InitializeSwing();
         }
 
         private void ExtraInit()
@@ -287,8 +297,8 @@ namespace Coralite.Content.Items.Thunder
             int timer = (int)Timer - minTime;
             float scale = 1f;
 
-            if (Owner.HeldItem.type == ItemType<ThunderveinBlade>())
-                scale = Owner.GetAdjustedItemScale(Owner.HeldItem);
+            if (Item.type == ItemType<ThunderveinBlade>())
+                scale = Owner.GetAdjustedItemScale(Item);
 
             if (timer % 7 == 0 && timer < maxTime * 0.5f)
             {
@@ -343,7 +353,7 @@ namespace Coralite.Content.Items.Thunder
             {
                 onHitTimer = 1;
                 Owner.immuneTime += 10;
-                if (Main.netMode == NetmodeID.Server)
+                if (VaultUtils.isServer)
                     return;
 
                 float strength = 2;
@@ -422,7 +432,7 @@ namespace Coralite.Content.Items.Thunder
                 {
                     Effect effect = Filters.Scene["SimpleGradientTrail"].GetShader().Shader;
 
-                    effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+                    effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
                     effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.SlashFlatFade.Value);
                     effect.Parameters["gradientTexture"].SetValue(GradientTexture.Value);
 
@@ -458,8 +468,6 @@ namespace Coralite.Content.Items.Thunder
 
         public float fade = 0;
 
-        public Player Owner => Main.player[Projectile.owner];
-
         private bool ExtraDash = true;
 
         const int DelayTime = 30;
@@ -490,7 +498,7 @@ namespace Coralite.Content.Items.Thunder
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.velocity, Projectile.Center, Projectile.width, ref a);
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             if (VisualEffectSystem.HitEffect_ScreenShaking)
                 Main.instance.CameraModifiers.Add(new PunchCameraModifier(Projectile.Center, Helper.NextVec2Dir(), 12, 8, 5, 1000));
@@ -548,9 +556,9 @@ namespace Coralite.Content.Items.Thunder
                             Owner.velocity = new Vector2(-30, Owner.velocity.Y);
                             Main.instance.CameraModifiers.Add(new MoveModifyer(5, 50));
 
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 3);
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 10, -1, count);
                             ExtraDash = false;
                         }
@@ -560,9 +568,9 @@ namespace Coralite.Content.Items.Thunder
                             Owner.velocity = new Vector2(30, Owner.velocity.Y);
                             Main.instance.CameraModifiers.Add(new MoveModifyer(5, 50));
 
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 3);
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 10, 1, count);
                             ExtraDash = false;
                         }
@@ -575,9 +583,9 @@ namespace Coralite.Content.Items.Thunder
                             Owner.velocity = new Vector2(-30, Owner.velocity.Y);
                             Main.instance.CameraModifiers.Add(new MoveModifyer(5, 50));
 
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 3);
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 10, -1, count);
                             ExtraDash = false;
                         }
@@ -587,9 +595,9 @@ namespace Coralite.Content.Items.Thunder
                             Owner.velocity = new Vector2(30, Owner.velocity.Y);
                             Main.instance.CameraModifiers.Add(new MoveModifyer(5, 50));
 
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeSlash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 3);
-                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
+                            Projectile.NewProjectile(Owner.GetSource_ItemUse(Item), Owner.Center, Vector2.Zero, ProjectileType<ThunderveinBladeDash>(),
                                 Projectile.damage, Projectile.knockBack, Owner.whoAmI, 10, 1, count);
                             ExtraDash = false;
                         }

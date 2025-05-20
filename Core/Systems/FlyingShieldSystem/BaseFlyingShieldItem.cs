@@ -17,6 +17,8 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
 
         public override string Texture => (TexturePath ?? base.Texture) + (PathHasName ? "" : Name);
 
+        public virtual float Priority => IDashable.HeldItemDash;
+
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Type] = true;
@@ -49,6 +51,14 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
         public override bool AltFunctionUse(Player player) => true;
         public override bool AllowPrefix(int pre) => true;
         public override bool MeleePrefix() => true;
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
+        }
 
         public override bool CanUseItem(Player player)
         {
@@ -128,7 +138,7 @@ namespace Coralite.Core.Systems.FlyingShieldSystem
             if (Player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 if ((Player.ownedProjectileCounts[Item.shoot] > 0 || !Player.ItemTimeIsZero) && !cp.FlyingShieldLRMeantime)
-                    return true;
+                    return false;
 
                 foreach (var acc in cp.FlyingShieldAccessories)
                 {

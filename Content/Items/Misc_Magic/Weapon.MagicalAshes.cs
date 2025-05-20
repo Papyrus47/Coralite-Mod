@@ -12,7 +12,7 @@ namespace Coralite.Content.Items.Misc_Magic
         public override void SetDefaults()
         {
             Item.width = Item.height = 40;
-            Item.damage = 7;
+            Item.damage = 9;
             Item.useTime = 16;
             Item.useAnimation = 16;
             Item.reuseDelay = 10;
@@ -37,7 +37,7 @@ namespace Coralite.Content.Items.Misc_Magic
         {
             CreateRecipe()
                 .AddIngredient(ItemID.BambooBlock, 20)
-                .AddIngredient(TileID.Bottles)
+                .AddTile(TileID.Bottles)
                 .Register();
         }
     }

@@ -1,4 +1,3 @@
-using Coralite.Content.Items.FlyingShields;
 using Coralite.Content.Items.Materials;
 using Coralite.Content.Items.Misc_Melee;
 using Coralite.Content.ModPlayers;
@@ -8,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Items;
 using Terraria.ID;
 using Terraria.Localization;
@@ -22,10 +20,25 @@ namespace Coralite.Content.GlobalItems
         public static LocalizedText TerraCoralCat;
         public static LocalizedText RainBowCoralCat;
 
+        public static LocalizedText DashPriority;
+        public static LocalizedText Dashable;
+        public static LocalizedText[] DashPriorityLevel;
+
+        /// <summary>
+        /// 0：特殊使用<br></br>
+        /// 1：寒冷伤害<br></br>
+        /// 2：美味伤害
+        /// </summary>
+        private BitsByte bit1;
+
         /// <summary>
         /// 是否能通过特殊攻击键来使用武器
         /// </summary>
-        public bool SpecialUse;
+        public bool SpecialUse
+        {
+            get => bit1[0];
+            set => bit1[0] = value;
+        }
 
         public override bool InstancePerEntity => true;
 
@@ -33,12 +46,21 @@ namespace Coralite.Content.GlobalItems
 
         public override void Load()
         {
+            if (Main.dedServ)
+                return;
+
             CopperCoralCat = this.GetLocalization("CopperCoralCat", () => "铜质猫猫币");
             RubyCoralCat = this.GetLocalization("RubyCoralCat", () => "红玉猫猫币");
             TerraCoralCat = this.GetLocalization("TerraCoralCat", () => "泰拉猫猫币");
             RainBowCoralCat = this.GetLocalization("RainBowCoralCat", () => "彩虹猫猫币");
             Cold = this.GetLocalization("Cold", () => "[c/5cd7f9:寒冷]");
             Edible = this.GetLocalization("Edible", () => "[c/f0d0b7:可食用]");
+
+            DashPriority = this.GetLocalization("DashPriority");
+            Dashable = this.GetLocalization("Dashable");
+            DashPriorityLevel = new LocalizedText[5];
+            for (int i = 0; i < 5; i++)
+                DashPriorityLevel[i] = this.GetLocalization("DashPriorityLevel" + i);
         }
 
         public override void Unload()
@@ -49,12 +71,15 @@ namespace Coralite.Content.GlobalItems
             RainBowCoralCat = null;
             Cold = null;
             Edible = null;
+            DashPriority = null;
+            DashPriorityLevel = null;
+            Dashable = null;
         }
 
         public override void SetDefaults(Item item)
         {
             if (item.ModItem != null && item.ModItem.Mod is Coralite)
-                item.width = item.height = 40;
+                item.width = item.height = 28;
 
             switch (item.type)
             {
@@ -123,18 +148,6 @@ namespace Coralite.Content.GlobalItems
 
             RegisterColdDamageWeapon(item.type);
             RegisterEdibleDamageWeapon(item.type);
-        }
-
-        public override void ModifyItemLoot(Item item, ItemLoot itemLoot)
-        {
-            switch (item.type)
-            {
-                default:
-                    break;
-                case ItemID.MoonLordBossBag:
-                    itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<ConquerorOfTheSeas>(), 6, 1, 1));
-                    break;
-            }
         }
 
         public override bool PreDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
@@ -216,8 +229,7 @@ namespace Coralite.Content.GlobalItems
 
         public override void PickAmmo(Item weapon, Item ammo, Player player, ref int type, ref float speed, ref StatModifier damage, ref float knockback)
         {
-
-            base.PickAmmo(weapon, ammo, player, ref type, ref speed, ref damage, ref knockback);
+            ApplySpecialDamage(player, ref damage);
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
@@ -271,21 +283,34 @@ namespace Coralite.Content.GlobalItems
 
                     newText.Add(text[1]);
                     damage.Text = string.Concat([.. newText]);
-
                 }
+            }
+
+            ModifyFairyTooltips(item,tooltips);
+
+            if (item.ModItem is IDashable dash)
+            {
+                TooltipLine line2 = new TooltipLine(Mod, "Dashable", Dashable.Value);
+                tooltips.Add(line2);
+
+                float priority = dash.Priority;
+
+                string level = priority switch
+                {
+                    >= IDashable.AccessoryDashLow => DashPriorityLevel[4].Value,//最低
+                    >= 70 and < IDashable.AccessoryDashLow => DashPriorityLevel[3].Value,//较低
+                    >= 40 and < 70 => DashPriorityLevel[2].Value,//中
+                    >= IDashable.AccessoryDashHigh and < 40 => DashPriorityLevel[1].Value,//较高
+                    _ => DashPriorityLevel[0].Value,//最高
+                };
+                TooltipLine line = new TooltipLine(Mod, "DashPriority", DashPriority.Value + level);
+                tooltips.Add(line);
             }
         }
 
         public override void ModifyWeaponDamage(Item item, Player player, ref StatModifier damage)
         {
-
-            if (player.TryGetModPlayer(out CoralitePlayer cp))
-            {
-                if (ColdDamage)
-                    damage = damage.CombineWith(cp.coldDamageBonus);
-                if (EdibleDamage)
-                    damage = damage.CombineWith(cp.deliciousDamageBonus);
-            }
+            ApplySpecialDamage(player, ref damage);
         }
 
         public override void UpdateInventory(Item item, Player player)
@@ -366,6 +391,17 @@ namespace Coralite.Content.GlobalItems
             }
 
             SoundEngine.PlaySound(CoraliteSoundID.Meowmere);
+        }
+
+        public void ApplySpecialDamage(Player player, ref StatModifier damage)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                if (ColdDamage)
+                    damage = damage.CombineWith(cp.coldDamageBonus);
+                if (EdibleDamage)
+                    damage = damage.CombineWith(cp.deliciousDamageBonus);
+            }
         }
 
         public void AddVarient()

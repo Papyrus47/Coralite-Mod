@@ -1,10 +1,12 @@
 ﻿using Coralite.Core.Systems.FairyCatcherSystem;
 using ReLogic.Utilities;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Utilities;
 
 namespace Coralite.Helpers
 {
@@ -303,7 +305,7 @@ namespace Coralite.Helpers
 
         public static SlotId PlayPitched(string path, float volume, float pitch, Vector2? position = null)
         {
-            if (Main.netMode == NetmodeID.Server)
+            if (VaultUtils.isServer)
                 return SlotId.Invalid;
 
             var style = new SoundStyle($"{nameof(Coralite)}/Sounds/{path}")
@@ -318,7 +320,7 @@ namespace Coralite.Helpers
 
         public static SlotId PlayPitched(SoundStyle style, Vector2? position = null, float? volume = null, float? pitch = null, float volumeAdjust = 0, float pitchAdjust = 0)
         {
-            if (Main.netMode == NetmodeID.Server)
+            if (VaultUtils.isServer)
                 return SlotId.Invalid;
 
             if (volume.HasValue)
@@ -366,10 +368,129 @@ namespace Coralite.Helpers
             return value;
         }
 
+        public static Point NextInRectangleEdge(this UnifiedRandom rand, Point topLeft, Point size)
+        {
+            return rand.Next(4) switch
+            {
+                0 => new Point(topLeft.X + rand.Next(size.X), topLeft.Y),//顶部一条
+                1 => new Point(topLeft.X, topLeft.Y + rand.Next(size.Y)),//左边一条
+                2 => new Point(topLeft.X + size.X, topLeft.Y + rand.Next(size.Y)),//右边一条
+                _ => new Point(topLeft.X + rand.Next(size.X), topLeft.Y + size.Y),//底部一条
+            };
+        }
+
 
         public static EntitySource_FairyCatch GetSource_FairyCatch(this Player player, Fairy catchedFairy)
         {
             return new EntitySource_FairyCatch() { player = player, fairy = catchedFairy };
         }
+
+        /// <summary>
+        /// 获得一个物品，需要指定数量，还可以指定类型<br></br>
+        /// 如果数量不足则会只拿出该拿的
+        /// </summary>
+        /// <param name="stack"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Item GetItem(this Chest chest, int stack, int? type = null)
+        {
+            Item[] items = chest.item;
+            for (int i = 0; i < items.Length; i++)
+            {
+                Item item = items[i];
+                if (item == null || item.IsAir)
+                    continue;
+
+                if (type != null)//有指定的类型
+                {
+                    if (item.type == type.Value)//正好对上了
+                        return NewItem(stack, item);
+
+                    continue;
+                }
+
+                return NewItem(stack, item);
+            }
+
+            return null;
+
+            static Item NewItem(int stack, Item item)
+            {
+                if (item.stack > stack)//数量多，直接减少
+                {
+                    item.stack -= stack;
+
+                    Item item1 = item.Clone();
+                    item1.stack = stack;
+                    return item1;
+                }
+                else//数量不够，全部返回，自身重置
+                {
+                    Item item1 = item.Clone();
+                    item.TurnToAir();
+                    return item1;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 能否放入一个物品
+        /// </summary>
+        /// <param name="chest"></param>
+        /// <param name="itemType"></param>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public static bool CanAddItem(this Chest chest, int itemType, int stack)
+        {
+            for (int i = 0; i < chest.item.Length; i++)
+            {
+                Item item = chest.item[i];//有空物品或者容量足够就放入
+                if (item == null)
+                    continue;
+
+                if (item.IsAir || item.type == itemType && item.stack < item.maxStack - stack)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 向箱子内加入一个物品，会按顺序遍历箱子之后添加在最后一个，如果箱子满了就会掉落出来
+        /// </summary>
+        /// <param name="chest"></param>
+        /// <param name="itemtype"></param>
+        public static void AddItem(this Chest chest, Item itemIn)
+        {
+            int type = itemIn.type;
+            int stack = itemIn.stack;
+
+            foreach (var i in chest.item.Where(i => !i.IsAir && i.type == type && i.stack < i.maxStack))
+            {
+                int maxCanInsert = Math.Min(i.maxStack - i.stack, stack);
+                i.stack += maxCanInsert;
+                stack -= maxCanInsert;
+                if (stack < 1)
+                {
+                    itemIn.TurnToAir();
+                    return;
+                }
+            }
+
+            for (int i = 0; i < chest.item.Length; i++)
+                if (chest.item[i].IsAir)
+                {
+                    chest.item[i] = itemIn.Clone();
+                    itemIn.TurnToAir();
+                    return;
+                }
+
+            Item.NewItem(itemIn.GetSource_DropAsItem(), GetTileCenter(new Point(chest.x, chest.y))
+                , itemIn.Clone());
+            itemIn.TurnToAir();
+        }
+
+        public static SetFactory.NamedSetKey CreateCoraliteSet(this SetFactory f, string name)
+            => f.CreateNamedSet(nameof(Coralite), name);
     }
 }

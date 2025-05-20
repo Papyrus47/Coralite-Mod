@@ -1,13 +1,13 @@
 ﻿using Coralite.Core;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.Rediancie
 {
-    public class Rediancie_Strike : ModProjectile
+    public class Rediancie_Strike : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -27,7 +27,7 @@ namespace Coralite.Content.Bosses.Rediancie
             Projectile.ignoreWater = false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.ai[0] = Main.rand.Next(2);
 
@@ -52,7 +52,7 @@ namespace Coralite.Content.Bosses.Rediancie
 
         public override void OnKill(int timeLeft)
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<Rediancie_Explosion>(), (int)(Projectile.damage * 0.8f), Projectile.knockBack, Projectile.owner);
         }
 

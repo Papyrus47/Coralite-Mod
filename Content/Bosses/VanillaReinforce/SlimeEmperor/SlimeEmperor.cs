@@ -1,9 +1,9 @@
 ﻿using Coralite.Content.Items.Gels;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.BossSystems;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
@@ -41,6 +41,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
     ///                            ---————————————----
     /// </summary>
     [AutoloadBossHead]
+    [AutoLoadTexture(Path = AssetDirectory.SlimeEmperor)]
     public partial class SlimeEmperor : ModNPC
     {
         public override string Texture => AssetDirectory.SlimeEmperor + Name;
@@ -71,8 +72,10 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
         /// <summary> 纯属视觉效果的缩放 </summary>
         internal Vector2 Scale;
         private CrownDatas crown;
+        private bool span;
 
-        private static Asset<Texture2D> CrownTex;
+        [AutoLoadTexture(Name = "SlimeEmperorCrown")]
+        public static ATex CrownTex { get; private set; }
         private const int WidthMax = 158;
         private const int HeightMax = 100;
 
@@ -117,20 +120,29 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
+            int expertBaseLife = 6400;
+            int MasterBaseLife = 7600;
+
+            int expertMultLife = 2060;
+            int masterMultLife = 3030;
+
+            int expertDefence = 14;
+            int masterDefence = 20;
+
             if (Helper.GetJourneyModeStrangth(out float journeyScale, out NPCStrengthHelper nPCStrengthHelper))
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((5600 + (numPlayers * 1460)) / journeyScale);
+                    NPC.lifeMax = (int)((expertBaseLife + (numPlayers * expertMultLife)) / journeyScale);
                     NPC.damage = 75;
-                    NPC.defense = 10;
+                    NPC.defense = expertDefence;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((6200 + (numPlayers * 3030)) / journeyScale);
+                    NPC.lifeMax = (int)((MasterBaseLife + (numPlayers * masterMultLife)) / journeyScale);
                     NPC.scale *= 1.25f;
-                    NPC.defense = 14;
+                    NPC.defense = masterDefence;
                     NPC.damage = 100;
                 }
 
@@ -138,30 +150,30 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
                 {
                     NPC.damage = 120;
                     NPC.scale *= 1.25f;
-                    NPC.defense = 16;
+                    NPC.defense = 24;
                 }
 
                 return;
             }
 
-            NPC.lifeMax = 5600 + (numPlayers * 1460);
+            NPC.lifeMax = expertBaseLife + (numPlayers * expertMultLife);
             NPC.damage = 75;
-            NPC.defense = 10;
+            NPC.defense = expertDefence;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 6200 + (numPlayers * 3030);
+                NPC.lifeMax = MasterBaseLife + (numPlayers * masterMultLife);
                 NPC.scale *= 1.25f;
-                NPC.defense = 14;
+                NPC.defense = masterDefence;
                 NPC.damage = 100;
             }
 
             if (Main.getGoodWorld)
             {
-                NPC.lifeMax = 6800 + (numPlayers * 4060);
+                NPC.lifeMax = 8800 + (numPlayers * 4060);
                 NPC.damage = 140;
                 NPC.scale *= 1.25f;
-                NPC.defense = 16;
+                NPC.defense = 24;
             }
         }
 
@@ -201,14 +213,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
             if (Main.dedServ)
                 return;
 
-            CrownTex = Request<Texture2D>(AssetDirectory.SlimeEmperor + "SlimeEmperorCrown");
             //王冠gore
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, AssetDirectory.SlimeEmperor + "SlimeEmperorCrown");
-        }
-
-        public override void Unload()
-        {
-            CrownTex = null;
         }
 
         public override void OnKill()
@@ -249,8 +255,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
         #endregion
 
         #region AI
-
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             //CanUseHealGelBall = true;
             PolymerizeTime = Helper.ScaleValueForDiffMode(240, 240, 150, 60);
@@ -268,6 +273,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000)
             {
                 NPC.TargetClosest();

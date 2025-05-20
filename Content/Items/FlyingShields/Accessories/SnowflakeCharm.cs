@@ -2,12 +2,12 @@
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 
@@ -56,8 +56,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             {
                 if (cp.parryTime < 100)
                 {
-                    Owner.immuneTime = 20;
-                    Owner.immune = true;
+                    Owner.AddImmuneTime(ImmunityCooldownID.General, 20);
                 }
 
                 int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.1f - (0.15f * cp.parryTime / 280f)));
@@ -173,7 +172,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         }
     }
 
-    public class SnowflakeSpike : ModProjectile, IDrawPrimitive
+    public class SnowflakeSpike : BaseHeldProj, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.Trails + "SlashFlatBlurHVMirror";
 
@@ -182,8 +181,6 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public ref float Alpha => ref Projectile.localAI[0];
         public ref float Length => ref Projectile.localAI[1];
-
-        public Player Owner => Main.player[Projectile.owner];
 
         private Trail trail;
 
@@ -202,11 +199,9 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             Projectile.idStaticNPCHitCooldown = 35;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
 
             Alpha = 1;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -222,7 +217,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new NoTip(), WidthFunction, ColorFunction);
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
 
             Lighting.AddLight(Projectile.Center, Color.CadetBlue.ToVector3());
 
@@ -257,7 +252,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             }
 
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
 
             Timer++;
             if (Timer > DelayTime)
@@ -294,7 +289,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             effect.Parameters["gradientTexture"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.FlyingShieldAccessories + "SnowflakeSpikeGradient").Value);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor)

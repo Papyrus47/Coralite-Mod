@@ -1,10 +1,9 @@
 ﻿using Coralite.Core;
-using InnoVault.PRT;
 using Terraria;
 
 namespace Coralite.Content.Particles
 {
-    public class BigFog : BasePRT
+    public class BigFog : Particle
     {
         public override string Texture => AssetDirectory.Particles + Name;
 

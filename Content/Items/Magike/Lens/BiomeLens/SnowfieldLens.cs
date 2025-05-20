@@ -45,8 +45,6 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             ];
         }
 
-        public override MagikeTP GetEntityInstance() => GetInstance<SnowfieldLensTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return
@@ -78,20 +76,20 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             {
                 default:
                     MagikeMaxBase = 0;
-                    AntiMagikeMaxBase = 0;
+                    //AntiMagikeMaxBase = 0;
                     break;
                 case MALevel.Icicle:
                     MagikeMaxBase = 140;
-                    AntiMagikeMaxBase = MagikeMaxBase * 3;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 3;
                     break;
                 case MALevel.Frost:
                     MagikeMaxBase = 675;
-                    AntiMagikeMaxBase = MagikeMaxBase * 2;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 2;
                     break;
             }
 
             LimitMagikeAmount();
-            LimitAntiMagikeAmount();
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -107,7 +105,7 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.Icicle:
@@ -137,7 +135,8 @@ namespace Coralite.Content.Items.Magike.Lens.BiomeLens
             => tile.TileType is TileID.SnowBlock or TileID.SnowBrick or TileID.IceBrick or TileID.IceBlock;
 
         public override bool CheckWall(Tile tile)
-            => tile.WallType is WallID.SnowBrick or WallID.SnowWallEcho or WallID.SnowWallUnsafe;
+            => tile.WallType is WallID.SnowBrick or WallID.SnowWallEcho or WallID.SnowWallUnsafe
+                             or WallID.IceBrick or WallID.IceEcho or WallID.IceUnsafe;
 
         public override void Upgrade(MALevel incomeLevel)
         {

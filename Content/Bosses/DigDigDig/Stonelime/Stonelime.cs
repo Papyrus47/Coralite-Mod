@@ -25,6 +25,7 @@ namespace Coralite.Content.Bosses.DigDigDig.Stonelime
         {
             NPCID.Sets.MPAllowedEnemies[Type] = true;
             NPCID.Sets.BossBestiaryPriority.Add(Type);
+            NPC.SetHideInBestiary();
         }
 
         public override void SetDefaults()
@@ -321,7 +322,7 @@ namespace Coralite.Content.Bosses.DigDigDig.Stonelime
                 Main.npc[npcIndex].velocity.Y = Main.rand.Next(-30, 1) * 0.1f;
                 Main.npc[npcIndex].ai[0] = -1000 * Main.rand.Next(3);
                 Main.npc[npcIndex].ai[1] = 0f;
-                if (Main.netMode == NetmodeID.Server && npcIndex < 200)
+                if (VaultUtils.isServer && npcIndex < 200)
                     NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
             }
         }
@@ -376,7 +377,7 @@ namespace Coralite.Content.Bosses.DigDigDig.Stonelime
                 });
             }
             NPC.SetEventFlagCleared(ref NPC.downedSlimeKing, 11);
-            if (Main.netMode == NetmodeID.Server)
+            if (VaultUtils.isServer)
                 NetMessage.SendData(MessageID.WorldData);
         }
 
@@ -547,5 +548,4 @@ namespace Coralite.Content.Bosses.DigDigDig.Stonelime
             }
         }
     }
-
 }

@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 
@@ -15,6 +14,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public override string Texture => AssetDirectory.Blank;
 
         public Vector2 originCenter;
+        private bool span;
 
         public ref float State => ref Projectile.ai[0];
         public ref float Timer => ref Projectile.localAI[0];
@@ -40,13 +40,13 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, originCenter);
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            originCenter = Projectile.Center;
-        }
-
         public override void AI()
         {
+            if (!span)
+            {
+                originCenter = Projectile.Center;
+                span = true;
+            }
             if (!NightmarePlantera.NightmarePlanteraAlive(out NPC np))
             {
                 Projectile.Kill();

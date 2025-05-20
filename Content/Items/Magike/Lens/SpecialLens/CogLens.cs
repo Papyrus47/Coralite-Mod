@@ -19,11 +19,6 @@ namespace Coralite.Content.Items.Magike.SpecialLens
     public class CogLens() : MagikeApparatusItem(TileType<CogLensTile>(), Item.sellPrice(silver: 5)
         , RarityType<MagicCrystalRarity>(), AssetDirectory.MagikeLens)
     {
-        public override bool CanUseItem(Player player)
-        {
-            return player.ZoneDesert;
-        }
-
         public override void AddRecipes()
         {
             CreateRecipe()
@@ -39,8 +34,6 @@ namespace Coralite.Content.Items.Magike.SpecialLens
         (Color.RosyBrown, DustID.SandstormInABottle)
     {
         public override int DropItemType => ItemType<CogLens>();
-
-        public override MagikeTP GetEntityInstance() => GetInstance<CogLensTileEntity>();
 
         public override MALevel[] GetAllLevels()
         {
@@ -72,16 +65,16 @@ namespace Coralite.Content.Items.Magike.SpecialLens
             {
                 default:
                     MagikeMaxBase = 0;
-                    AntiMagikeMaxBase = 0;
+                    //AntiMagikeMaxBase = 0;
                     break;
                 case MALevel.Hallow:
                     MagikeMaxBase = 787;
-                    AntiMagikeMaxBase = MagikeMaxBase * 3;
+                    //AntiMagikeMaxBase = MagikeMaxBase * 3;
                     break;
             }
 
             LimitMagikeAmount();
-            LimitAntiMagikeAmount();
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -97,7 +90,7 @@ namespace Coralite.Content.Items.Magike.SpecialLens
                 default:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000 / 60;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.Hallow:

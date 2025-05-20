@@ -2,7 +2,6 @@
 using Coralite.Core;
 using Coralite.Helpers;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.BabyIceDragon
@@ -33,7 +32,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             Projectile.coldDamage = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -46,6 +45,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
         {
             if (!spwan)
             {
+                Initialize();
                 if (!VaultUtils.isServer)
                 {
                     NPC boss = null;

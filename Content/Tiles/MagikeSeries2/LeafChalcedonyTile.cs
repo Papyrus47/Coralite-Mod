@@ -12,6 +12,8 @@ namespace Coralite.Content.Tiles.MagikeSeries2
         {
             Main.tileSolid[Type] = true;
             Main.tileBlockLight[Type] = true;
+            TileID.Sets.CanBeClearedDuringGeneration[Type] = false;
+            TileID.Sets.CanBeClearedDuringOreRunner[Type] = false;
 
             TileID.Sets.ChecksForMerge[Type] = true;
 
@@ -19,7 +21,5 @@ namespace Coralite.Content.Tiles.MagikeSeries2
 
             AddMapEntry(new Color(217, 216, 185));
         }
-
-        public override bool CanExplode(int i, int j) => false;
     }
 }

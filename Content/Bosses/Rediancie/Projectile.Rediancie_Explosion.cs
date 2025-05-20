@@ -1,7 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Helpers;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Bosses.Rediancie
 {
@@ -11,6 +10,7 @@ namespace Coralite.Content.Bosses.Rediancie
     public class Rediancie_Explosion : ModProjectile
     {
         public override string Texture => AssetDirectory.Blank;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -24,13 +24,13 @@ namespace Coralite.Content.Bosses.Rediancie
             Projectile.ignoreWater = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
-        {
-            Helper.RedJadeExplosion(Projectile.Center, false);
-        }
-
         public override void AI()
         {
+            if (!span)
+            {
+                Helper.RedJadeExplosion(Projectile.Center, false);
+                span = true;
+            }
             if (Projectile.localAI[0] == 0)
             {
                 if (Projectile.ai[0] == 0)

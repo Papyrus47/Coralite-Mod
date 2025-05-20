@@ -73,19 +73,34 @@ namespace Coralite.Content.Items.HyacinthSeries
         public override void AddRecipes()
         {
             CreateRecipe()
-            .AddIngredient(ItemID.PainterPaintballGun)
-            .AddIngredient(ItemID.SuperStarCannon)
-            .AddIngredient<ThunderDukeVine>()
-            .AddIngredient(ItemID.OnyxBlaster)
-            .AddIngredient<EternalBloom>()
-            .AddIngredient(ItemID.ChainGun)
-            .AddIngredient(ItemID.Xenopopper)
-            .AddIngredient(ItemID.VortexBeater)
-            .AddIngredient(ItemID.SDMG)
-            .AddIngredient<StarsBreath>()
-            .AddIngredient<Lycoris>()
-            .AddTile<AncientFurnaceTile>()
-            .Register();
+                .AddIngredient<Wisteria>()
+                .AddIngredient<Datura>()
+                .AddIngredient<Aloe>()
+                .AddIngredient<ThunderDukeVine>()
+                .AddIngredient<EternalBloom>()
+                .AddIngredient(ItemID.Xenopopper)
+                .AddIngredient<QueenOfNight>()
+                .AddIngredient(ItemID.VortexBeater)
+                .AddIngredient(ItemID.SDMG)
+                .AddIngredient<StarsBreath>()
+                .AddIngredient<Lycoris>()
+                .AddTile<AncientFurnaceTile>()
+                .Register();
+
+            CreateRecipe()
+                .AddIngredient<Wisteria>()
+                .AddIngredient<GhostPipe>()
+                .AddIngredient<Aloe>()
+                .AddIngredient<ThunderDukeVine>()
+                .AddIngredient<EternalBloom>()
+                .AddIngredient(ItemID.Xenopopper)
+                .AddIngredient<QueenOfNight>()
+                .AddIngredient(ItemID.VortexBeater)
+                .AddIngredient(ItemID.SDMG)
+                .AddIngredient<StarsBreath>()
+                .AddIngredient<Lycoris>()
+                .AddTile<AncientFurnaceTile>()
+                .Register();
         }
     }
 }

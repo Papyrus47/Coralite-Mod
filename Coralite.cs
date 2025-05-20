@@ -2,6 +2,9 @@
 global using InnoVault;
 global using Microsoft.Xna.Framework;
 global using Terraria.ModLoader;
+global using ATex = ReLogic.Content.Asset<Microsoft.Xna.Framework.Graphics.Texture2D>;
+global using Particle = InnoVault.PRT.BasePRT;
+
 using Coralite.Compat.BossCheckList;
 using Coralite.Core;
 using Coralite.Core.Prefabs.Projectiles;
@@ -12,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using static Coralite.Core.Systems.MagikeSystem.MagikeSystem;
 
 namespace Coralite
 {
@@ -20,10 +24,6 @@ namespace Coralite
         public const int YujianHuluContainsMax = 3;
 
         private List<IOrderedLoadable> loadCache;
-        /// <summary>
-        /// 所有继承了<see cref="ICLLoader"/>接口的类的实例
-        /// </summary>
-        internal static List<ICLLoader> Loaders { get; private set; } = new List<ICLLoader>();
 
         public NoSmoother NoSmootherInstance;
         public HeavySmoother HeavySmootherInstance;
@@ -38,20 +38,25 @@ namespace Coralite
         /// </summary>
         public ReverseX2Smoother ReverseX2Smoother;
 
+        /// <summary> 赤玉红 d33232 </summary>
         public static Color RedJadeRed => new(221, 50, 50);
-        /// <summary> ffbeec </summary>
+        /// <summary> 魔力晶体粉 ffbeec </summary>
         public static Color MagicCrystalPink => new(255, 190, 236);
         public static Color GlistentGreen => new(127, 218, 153);
         public static Color CrimsonRed => new(231, 48, 54);
         public static Color CorruptionPurple => new(107, 66, 208);
+        /// <summary> 冰晶青 2bffc6 </summary>
         public static Color IcicleCyan => new(43, 255, 198);
         public static Color ShadowPurple => new(240, 168, 255);
-        public static Color CrystallineMagikePurple => new(140, 130, 252);
+        /// <summary> 蕴魔紫 dc96ff </summary>
+        public static Color CrystallinePurple => new(220, 150, 255);
         public static Color HallowYellow => new(253, 236, 144);
         public static Color ThunderveinYellow => new(255, 202, 101);
         public static Color SoulCyan => new(122, 174, 188);
         public static Color FeatherLime => new(122, 161, 82);
         public static Color SplendorMagicoreLightBlue => new(190, 225, 235);
+
+        public static Color TextShadowColor => new Color(20, 20, 20);
 
         private static Coralite _instance;
 
@@ -100,12 +105,6 @@ namespace Coralite
                 loadCache[k].Load();
                 //SetLoadingText("Loading " + loadCache[k].GetType().Name);
             }
-
-            Loaders = VaultUtils.GetSubInterface<ICLLoader>();
-            foreach (var load in Loaders)
-            {
-                load.LoadData();
-            }
         }
 
         public override void Unload()
@@ -119,13 +118,6 @@ namespace Coralite
 
                 loadCache = null;
             }
-
-            foreach (var load in Loaders)
-            {
-                load.UnLoadData();
-            }
-
-            Loaders.Clear();
 
             Instance = null;
         }
@@ -144,19 +136,6 @@ namespace Coralite
         public override void PostSetupContent()
         {
             BossCheckListCalls.CallBossCheckList();
-
-            foreach (var load in Loaders)
-            {
-                load.SetupData();
-            }
-
-            if (!Main.dedServ)
-            {
-                foreach (var load in Loaders)
-                {
-                    load.LoadAsset();
-                }
-            }
         }
 
         public override object Call(params object[] args)
@@ -178,6 +157,16 @@ namespace Coralite
                         if (args[1] is not string)
                             return new ArgumentException("ERROR: The argument to \"Downed\" must be a string.");
                         return GetBossDowned(args[1].ToString());
+                    case "MagikeRecipe:CreateRecipe":
+                        RemodelRecipeStruct remodelRecipe = new RemodelRecipeStruct();
+                        remodelRecipe.mainItemType = VaultUtils.GetItemTypeFromFullName((string)args[1]);
+                        remodelRecipe.resultItemType = VaultUtils.GetItemTypeFromFullName((string)args[2]);
+                        remodelRecipe.magikeCost = (int)args[3];
+                        remodelRecipe.mainStack = (int)args[4];
+                        remodelRecipe.resultStack = (int)args[5];
+                        remodelRecipe.conditions = (Condition[])args[6];
+                        RemodelRecipeByActions.Add(remodelRecipe);
+                        break;
                 }
             }
             catch (Exception e)
@@ -198,41 +187,41 @@ namespace Coralite
             return bossName.ToLower() switch
             {
                 "赤玉灵" or
-                "Rediancie"
+                "rediancie"
                     => DownedBossSystem.downedRediancie,
                 "冰龙宝宝" or
-                "BabyIceDragon" or
-                "Baby Ice Dragon"
+                "babyicedragon" or
+                "baby ice dragon"
                     => DownedBossSystem.downedBabyIceDragon,
                 // "影子球" or "ShadowBalls" => DownedBossSystem.xxxx,
                 "荒雷龙" or
-                "ThunderveinDragon" or
-                "Thundervein Dragon"
+                "thunderveindragon" or
+                "thundervein dragon"
                     => DownedBossSystem.downedThunderveinDragon,
                 "史莱姆皇帝" or
                 "至高帝史莱姆王" or
                 "至高帝·史莱姆王" or
                 "至高帝" or
-                "SlimeEmperor" or
-                "Slime Emperor"
+                "slimeemperor" or
+                "slime emperor"
                     => DownedBossSystem.downedSlimeEmperor,
                 "赤血玉灵" or
                 "血咒精赤玉灵" or
                 "血咒精·赤玉灵" or
                 "血咒精" or
-                "Bloodiancie"
+                "bloodiancie"
                     => DownedBossSystem.downedBloodiancie,
                 "梦魇之花" or
                 "梦界主世纪之花" or
                 "梦界主·世纪之花" or
                 "梦界主" or
-                "NightmarePlantera" or
-                "Nightmare Plantera"
+                "nightmareplantera" or
+                "nightmare plantera"
                     => DownedBossSystem.downedNightmarePlantera,
                 _ => false,
             };
         }
 
-        public override void HandlePacket(BinaryReader reader, int whoAmI) => CLNetWork.NetWorkHander(reader, whoAmI);
+        public override void HandlePacket(BinaryReader reader, int whoAmI) => CoraliteNetWork.NetWorkHander(reader, whoAmI);
     }
 }

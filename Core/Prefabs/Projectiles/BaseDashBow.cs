@@ -1,17 +1,24 @@
-﻿using Terraria;
+﻿using InnoVault.GameContent.BaseEntity;
+using System.Linq;
+using Terraria;
 
 namespace Coralite.Core.Prefabs.Projectiles
 {
     /// <summary>
-    /// ai0用于判断玩家的手持方向,ai1用于控制是否是特殊的弹幕,ai2用于记录冲刺时间
+    /// ai0用于判断玩家的手持方向，ai1用于控制是否是特殊的弹幕，ai2用于记录冲刺时间
     /// </summary>
     public abstract class BaseDashBow : BaseHeldProj
     {
         public ref float Rotation => ref Projectile.ai[0];
+        /// <summary>
+        /// 为0时是普通射击，为1时是冲刺射击
+        /// </summary>
         public ref float Special => ref Projectile.ai[1];
         public ref float DashTime => ref Projectile.ai[2];
 
         protected bool Init = true;
+
+        public override bool ShouldUpdatePosition() => false;
 
         public override void SetDefaults()
         {
@@ -34,7 +41,7 @@ namespace Coralite.Core.Prefabs.Projectiles
         public sealed override void AI()
         {
             Owner.heldProj = Projectile.whoAmI;
-            if (Owner.HeldItem.type != GetItemType())
+            if (Item.type != GetItemType())
             {
                 Projectile.Kill();
                 return;
@@ -43,17 +50,7 @@ namespace Coralite.Core.Prefabs.Projectiles
             if (Init)
             {
                 Init = false;
-                switch (Special)
-                {
-                    default:
-                    case 0:
-                        Projectile.timeLeft = Owner.itemTimeMax;
-                        break;
-                    case 1:
-                        break;
-                }
 
-                Initialize();
             }
 
             AIBefore();
@@ -76,7 +73,29 @@ namespace Coralite.Core.Prefabs.Projectiles
             Owner.itemRotation = Rotation + (DirSign > 0 ? 0 : 3.141f);
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
+        {
+            switch (Special)
+            {
+                default:
+                case 0:
+                    Projectile.timeLeft = Owner.itemTimeMax;
+
+                    if (Main.projectile.Any(p => p.active && p.friendly
+                        && p.owner == Projectile.owner && p.type == Projectile.type && p.ai[1] == 1))
+                    {
+                        Projectile.Kill();
+                    }
+
+                    break;
+                case 1:
+                    break;
+            }
+
+            InitializeDashBow();
+        }
+
+        public virtual void InitializeDashBow()
         {
 
         }

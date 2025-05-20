@@ -2,8 +2,8 @@
 using Coralite.Content.Items.Materials;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using Terraria;
@@ -157,10 +157,10 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 else
                     scale = Vector2.SmoothStep(new Vector2(0.5f, 0.7f), new Vector2(1.5f, 1.5f), (factor - 0.8f) / 0.2f);
 
-                if (AttackTime == 1 && Main.myPlayer == Projectile.owner)
+                if (AttackTime == 1 && Projectile.IsOwnedByLocalPlayer())
                 {
                     Projectile.NewProjectileFromThis<PyropeProj>(Projectile.Center,
-                        (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.Zero) * 6.5f, Owner.GetWeaponDamage(Owner.HeldItem), Projectile.knockBack);
+                        (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.Zero) * 6.5f, Owner.GetWeaponDamage(Item), Projectile.knockBack);
 
                     Helper.PlayPitched("Crystal/CrystalBling", 0.4f, 0, Projectile.Center);
 
@@ -226,7 +226,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public override void AI()
         {
             const int trailCount = 14;
-            trail ??= new Trail(Main.graphics.GraphicsDevice, trailCount, new NoTip(), factor => Helper.Lerp(0, 12, factor),
+            trail ??= new Trail(Main.graphics.GraphicsDevice, trailCount, new EmptyMeshGenerator(), factor => Helper.Lerp(0, 12, factor),
                  factor =>
                  {
                      return Color.Lerp(Color.Transparent, brightC * 0.5f, factor.X);
@@ -243,7 +243,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Projectile.UpdateFrameNormally(8, 19);
             Projectile.UpdateOldPosCache(addVelocity: false);
             Projectile.UpdateOldRotCache();
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
 
             Lighting.AddLight(Projectile.Center, new Vector3(0.5f, 0.1f, 0.3f));
 
@@ -305,7 +305,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["uTextImage"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.ShadowCastleEvents + "Trail").Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

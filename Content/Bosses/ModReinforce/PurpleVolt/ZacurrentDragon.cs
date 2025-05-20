@@ -1,14 +1,15 @@
 ﻿using Coralite.Core;
-using Coralite.Core.SmoothFunctions;
+using Coralite.Core.Attributes;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
 {
+    [AutoloadBossHead]
+    [AutoLoadTexture(Path = AssetDirectory.ZacurrentDragon)]
     public partial class ZacurrentDragon : ModNPC
     {
         public override string Texture => AssetDirectory.ZacurrentDragon + Name;
@@ -24,45 +25,59 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
         /// </summary>
         public bool canDrawShadows;
         /// <summary>
-        /// 是否绘制冲刺是的特殊贴图
+        /// 是否绘制冲刺是的特殊贴图，如果为true会按照特殊的方式绘制自身
         /// </summary>
-        public bool isDashing;
+        public bool IsDashing
+        {
+            get => NPC.frame.X == 1;
+            set
+            {
+                if (value)
+                    NPC.frame.X = 1;
+                else
+                    NPC.frame.X = 0;
+            }
+        }
 
         /// <summary>
         /// 身上有电流环绕，会减伤并生成闪电粒子
         /// </summary>
         public bool currentSurrounding;
+
+        /// <summary>
+        /// 是否张嘴，控制帧图
+        /// </summary>
+        public bool OpenMouse { get; private set; }
+
         public float selfAlpha = 1f;
 
-        public static Asset<Texture2D> glowTex;
+        [AutoLoadTexture(Name = "ZacurrentDragon_Highlight")]
+        public static ATex GlowTex { get; private set; }
+        [AutoLoadTexture(Name = "ZacurrentDragonWhite")]
+        public static ATex WhiteTex { get; private set; }
+        internal static Color ZacurrentDustPurple = new Color(233, 195, 255);
+        internal static Color ZacurrentPurple = new(135, 94, 255);
+        internal static Color ZacurrentPink = new(255, 115, 226);
+        internal static Color ZacurrentPurpleAlpha = new(135, 94, 255,0);
+        internal static Color ZacurrentPinkAlpha = new(255, 115, 226, 0);
+        internal static Color ZacurrentRed = new(255, 28, 110);
+        internal static Color ZacurrentDustRed = new(255, 113, 160);
+        /// <summary>
+        /// 残影的透明度
+        /// </summary>
+        public float shadowAlpha = 1f;
+        /// <summary>
+        /// 残影的大小
+        /// </summary>
+        public float shadowScale = 1f;
 
-        private static SecondOrderDynamics_Vec2 CenterSmoother;
-
-        public static Color ThunderveinYellow = new(255, 202, 101);
-        public static Color ZacurrentPurple = new(135, 94, 255);
-        public static Color ThunderveinOrange = new(219, 114, 22);
+        public readonly int trailCacheLength = 12;
 
         #region tmlHooks
 
-        public override void Load()
-        {
-            if (Main.dedServ)
-                return;
-
-            glowTex = ModContent.Request<Texture2D>(Texture + "_Highlight");
-        }
-
-        public override void Unload()
-        {
-            if (Main.dedServ)
-                return;
-
-            glowTex = null;
-        }
-
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[Type] = 8;
+            Main.npcFrameCount[Type] = 9;
             NPCID.Sets.MPAllowedEnemies[Type] = true;
             NPCID.Sets.BossBestiaryPriority.Add(Type);
         }
@@ -78,7 +93,7 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
             NPC.scale = 1.2f;
             NPC.aiStyle = -1;
             NPC.npcSlots = 10f;
-            NPC.value = Item.buyPrice(0, 20, 0, 0);
+            NPC.value = Item.buyPrice(0, 45, 0, 0);
 
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -95,52 +110,53 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
 
         public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
         {
+            int expertBaseLife = 101254;
+            int masterBaseLife = 123854;
+
+            int expertAddLife = 20395;
+            int masterAddLife = 28485;
+
+            NPC.defDamage = 55;
             if (Helper.GetJourneyModeStrangth(out float journeyScale, out NPCStrengthHelper nPCStrengthHelper))
             {
                 if (nPCStrengthHelper.IsExpertMode)
                 {
-                    NPC.lifeMax = (int)((79000 + (numPlayers * 15500)) / journeyScale);
+                    NPC.lifeMax = (int)((expertBaseLife + (numPlayers * expertAddLife)) / journeyScale);
                     NPC.damage = 66;
-                    NPC.defense = 50;
                 }
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((85500 + (numPlayers * 19550)) / journeyScale);
+                    NPC.lifeMax = (int)((masterBaseLife + (numPlayers * masterAddLife)) / journeyScale);
                     NPC.damage = 72;
-                    NPC.defense = 50;
                 }
 
                 if (Main.getGoodWorld)
                 {
                     NPC.damage = 80;
-                    NPC.defense = 50;
                 }
 
                 if (Main.zenithWorld)
                 {
-                    NPC.scale = 2.4f;
+                    NPC.scale = 1.6f;
                 }
 
                 return;
             }
 
-            NPC.lifeMax = 79000 + (numPlayers * 15500);
+            NPC.lifeMax = expertBaseLife + (numPlayers * expertAddLife);
             NPC.damage = 66;
-            NPC.defense = 50;
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 85500 + (numPlayers * 19550);
+                NPC.lifeMax = masterBaseLife + (numPlayers * masterAddLife);
                 NPC.damage = 72;
-                NPC.defense = 50;
             }
 
             if (Main.getGoodWorld)
             {
                 NPC.lifeMax = 92000 + (numPlayers * 25850);
                 NPC.damage = 80;
-                NPC.defense = 50;
             }
 
             if (Main.zenithWorld)
@@ -162,6 +178,74 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
             return true;
         }
 
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            if (!IsDashing && currentSurrounding)
+                return true;
+
+            return false;
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (projectile.Colliding(projectile.getRect(), HeadHitBox()))
+                modifiers.SourceDamage += 0.25f;
+
+            if (projectile.hostile)
+                modifiers.SourceDamage -= 0.5f;
+        }
+
+        public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+        {
+            if (PurpleVolt)
+            {
+                modifiers.SourceDamage -= 0.98f;
+                modifiers.ModifyHitInfo += Modifiers_ModifyHitInfo;
+            }
+
+            if (currentSurrounding)
+            {
+                modifiers.SourceDamage -= 0.5f;
+            }
+        }
+
+        public Rectangle HeadHitBox()
+        {
+            return Utils.CenteredRectangle(GetMousePos(), new Vector2(50, 50));
+        }
+
+        private void Modifiers_ModifyHitInfo(ref NPC.HitInfo info)
+        {
+            PurpleVoltCount -= info.Damage * Helper.ScaleValueForDiffMode(1, 1, 0.5f, 0.25f);
+            if (PurpleVoltCount < 0)
+            {
+                ResetFields();
+                State = AIStates.Break;
+                PurpleVolt = false;
+                PurpleVoltCount = 0;
+            }
+        }
+
+        public override bool? CanFallThroughPlatforms() => true;
+
+        public override bool CheckDead()
+        {
+            if (State != AIStates.onKillAnim)
+            {
+                State = AIStates.onKillAnim;
+                SonState = 0;
+                Timer = 0;
+                NPC.dontTakeDamage = true;
+                currentSurrounding = true;
+                canDrawShadows = false;
+                IsDashing = false;
+                NPC.life = 1;
+                return false;
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region 绘制部分
@@ -170,68 +254,95 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
         {
             Texture2D mainTex = NPC.GetTexture();
 
-            var frameBox = mainTex.Frame(5, 8, 0, NPC.frame.Y);
+            drawColor *= selfAlpha;
             var pos = NPC.Center - screenPos;
-            var origin = frameBox.Size() / 2;
             float rot = NPC.rotation;
 
             SpriteEffects effects = SpriteEffects.None;
 
             if (NPC.spriteDirection < 0)
-            {
                 effects = SpriteEffects.FlipVertically;
-            }
 
             //绘制残影
-            //if (canDrawShadows)
-            //{
-            //    Color shadowColor = ThunderveinYellowAlpha;
-            //    shadowColor.A = 50;
-            //    shadowColor *= shadowAlpha;
-            //    for (int i = 0; i < trailCacheLength; i++)
-            //    {
-            //        Vector2 oldPos = NPC.oldPos[i] - screenPos;
-            //        float oldrot = NPC.oldRot[i];
-            //        var frameOld = mainTex.Frame(3, 8, oldFrame[i].X, oldFrame[i].Y);
-            //        float factor = (float)i / trailCacheLength;
-            //        if (Phase == 2)
-            //        {
-            //            Color c1 = ThunderveinYellowAlpha;
-            //            c1.A = 50;
-            //            Color c2 = ThunderveinPurpleAlpha;
-            //            c2.A = 50;
-            //            shadowColor = Color.Lerp(c2, c1, factor);
-            //            shadowColor *= shadowAlpha;
-            //        }
+            if (canDrawShadows)
+            {
+                Color shadowColor = ZacurrentPurple;
+                //shadowColor.A = 50;
+                //shadowColor *= shadowAlpha;
+                for (int i = 0; i < trailCacheLength; i++)
+                {
+                    Vector2 oldPos = NPC.oldPos[i] - screenPos;
+                    float oldrot = NPC.oldRot[i];
+                    float factor = (float)i / trailCacheLength;
+                    if (PurpleVolt)
+                    {
+                        Color c1 = ZacurrentPurpleAlpha with { A = 50 };
+                        Color c2 = ZacurrentRed with { A = 50 };
+                        shadowColor = Color.Lerp(c2, c1, factor);
+                        shadowColor *= shadowAlpha;
+                    }
+                    else
+                    {
+                        Color c1 = ZacurrentPurpleAlpha with { A = 50 };
+                        Color c2 = ZacurrentPinkAlpha with { A = 50 };
+                        shadowColor = Color.Lerp(c2, c1, factor);
+                        shadowColor *= shadowAlpha;
+                    }
 
-            //        SpriteEffects oldEffect = oldDirection[i] > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            //        spriteBatch.Draw(mainTex, oldPos, frameOld, shadowColor * factor, oldrot, origin
-            //            , NPC.scale * shadowScale * (1 - ((1 - factor) * 0.3f)), oldEffect, 0);
-            //    }
-            //}
+                    Color shadowColor2 = shadowColor * factor;
+                    SpriteEffects oldEffect = oldDirection[i] > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;
+
+                    float oldScale = NPC.scale * shadowScale * (1 - ((1 - factor) * 0.3f));
+                    int wingFrame = oldFrame[i].X == 0 ? oldFrame[i].Y : 8;
+                    DrawBackWing(spriteBatch, mainTex, wingFrame, oldPos, shadowColor2, oldrot, oldScale, oldEffect);
+                    DrawBody(spriteBatch, mainTex, oldFrame[i].X == 0 ? 0 : 1, oldPos, shadowColor2, oldrot, oldScale, oldEffect);
+                    DrawHead(spriteBatch, mainTex, oldFrame[i].X == 0 ? 0 : 2, oldPos, shadowColor2, oldrot, oldScale, oldEffect);
+                    DrawFrontWing(spriteBatch, mainTex, wingFrame, oldPos, shadowColor2, oldrot, oldScale, oldEffect);
+                }
+            }
 
             //绘制自己
             if (Main.zenithWorld)
                 drawColor *= 0.2f;
 
-            DrawSelf(spriteBatch, mainTex, pos, 4, drawColor, effects);//后面的翅膀
-            DrawSelf(spriteBatch, mainTex, pos, 3, drawColor, effects);//身体
-            DrawSelf(spriteBatch, mainTex, pos, 2, drawColor, effects);//头
-            DrawSelf(spriteBatch, mainTex, pos, 1, drawColor, effects);//前面的翅膀
 
             //绘制冲刺时的特效
-            if (isDashing)
+            if (IsDashing)
             {
-                //Texture2D exTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "StrikeTrail").Value;
+                //冲刺时使用特殊帧图
+                DrawBackWing(spriteBatch, mainTex, 8, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawBody(spriteBatch, mainTex, 1, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawHead(spriteBatch, mainTex, 2, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawFrontWing(spriteBatch, mainTex, 8, pos, drawColor, NPC.rotation, NPC.scale, effects);
 
-                //Vector2 exOrigin = new(exTex.Width * 6 / 10, exTex.Height / 2);
+                Texture2D exTex = ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "StrikeTrail").Value;
 
-                //Vector2 scale = new Vector2(1.3f, 1.5f) * NPC.scale;
-                //spriteBatch.Draw(exTex, pos, null, ThunderveinYellowAlpha, rot
-                //    , exOrigin, scale, effects, 0);
-                //scale.Y *= 1.2f;
-                //spriteBatch.Draw(exTex, pos - (NPC.rotation.ToRotationVector2() * 50), null, ThunderveinYellowAlpha * 0.5f, rot
-                //    , exOrigin, scale, effects, 0);
+                Vector2 exOrigin = new(exTex.Width * 6 / 10, exTex.Height / 2);
+
+                Vector2 scale = new Vector2(1.3f, 1.5f) * NPC.scale;
+                spriteBatch.Draw(exTex, pos, null, ZacurrentPurpleAlpha, rot
+                    , exOrigin, scale, effects, 0);
+                scale.Y *= 1.2f;
+                spriteBatch.Draw(exTex, pos - (NPC.rotation.ToRotationVector2() * 50), null, ZacurrentPurpleAlpha * 0.5f, rot
+                    , exOrigin, scale, effects, 0);
+            }
+            else
+            {
+                DrawBackWing(spriteBatch, mainTex,NPC.frame.Y, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawBody(spriteBatch, mainTex,0, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawHead(spriteBatch, mainTex, OpenMouse ? 1 : 0, pos, drawColor, NPC.rotation, NPC.scale, effects);
+                DrawFrontWing(spriteBatch, mainTex, NPC.frame.Y, pos, drawColor, NPC.rotation, NPC.scale, effects);
+            }
+
+            if (State == AIStates.onKillAnim)
+            {
+                Color whiteC = Color.White * shadowAlpha;
+                DrawBackWing(spriteBatch, WhiteTex.Value, NPC.frame.Y, pos, whiteC, NPC.rotation, NPC.scale, effects);
+                DrawBody(spriteBatch, WhiteTex.Value, 0, pos, whiteC, NPC.rotation, NPC.scale, effects);
+                DrawHead(spriteBatch, WhiteTex.Value, OpenMouse ? 1 : 0, pos, whiteC, NPC.rotation, NPC.scale, effects);
+                DrawFrontWing(spriteBatch, WhiteTex.Value, NPC.frame.Y, pos, whiteC, NPC.rotation, NPC.scale, effects);
+
+                return false;
             }
 
             //if (State == (int)AIStates.onKillAnim)
@@ -244,16 +355,79 @@ namespace Coralite.Content.Bosses.ModReinforce.PurpleVolt
             return false;
         }
 
-        public void DrawSelf(SpriteBatch spriteBatch, Texture2D mainTex, Vector2 pos, int frameX, Color drawColor, SpriteEffects effects)
+        /// <summary>
+        /// 绘制背后的翅膀
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="mainTex"></param>
+        /// <param name="pos"></param>
+        /// <param name="frameX"></param>
+        /// <param name="drawColor"></param>
+        /// <param name="effects"></param>
+        public void DrawBackWing(SpriteBatch spriteBatch, Texture2D mainTex,int frameY, Vector2 pos, Color drawColor, float rot,float scale,SpriteEffects effects)
         {
-            var frameBox = mainTex.Frame(5, 8, frameX, NPC.frame.Y);
-            var origin = frameBox.Size() / 2;
+            Rectangle frameBox = new(0, frameY, 4, Main.npcFrameCount[NPC.type]);
 
-            float rot = NPC.rotation;
-
-            spriteBatch.Draw(mainTex, pos, frameBox, drawColor * selfAlpha, rot, origin, NPC.scale, effects, 0);
+            //绘制本体
+            mainTex.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, drawColor, rot, scale);
             //绘制glow
-            spriteBatch.Draw(glowTex.Value, pos, frameBox, Color.White * selfAlpha, rot, origin, NPC.scale, effects, 0);
+            GlowTex.Value.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, Color.White * selfAlpha*(drawColor.A/255f), rot, scale);
+        }
+
+        /// <summary>
+        /// 绘制身体
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="mainTex"></param>
+        /// <param name="pos"></param>
+        /// <param name="frameX"></param>
+        /// <param name="drawColor"></param>
+        /// <param name="effects"></param>
+        public void DrawBody(SpriteBatch spriteBatch, Texture2D mainTex, int frameY, Vector2 pos, Color drawColor, float rot, float scale, SpriteEffects effects)
+        {
+            Rectangle frameBox = new(1, frameY, 4, Main.npcFrameCount[NPC.type]);
+
+            //绘制本体
+            mainTex.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, drawColor, rot,scale);
+            //绘制glow
+            GlowTex.Value.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, Color.White * selfAlpha * (drawColor.A / 255f), rot, scale);
+        }
+
+        /// <summary>
+        /// 绘制头
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="mainTex"></param>
+        /// <param name="pos"></param>
+        /// <param name="frameX"></param>
+        /// <param name="drawColor"></param>
+        /// <param name="effects"></param>
+        public void DrawHead(SpriteBatch spriteBatch, Texture2D mainTex, int frameY, Vector2 pos, Color drawColor, float rot, float scale, SpriteEffects effects)
+        {
+            Rectangle frameBox = new(2, frameY, 4, Main.npcFrameCount[NPC.type]);
+
+            //绘制本体
+            mainTex.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, drawColor, rot, scale);
+            //绘制glow
+            GlowTex.Value.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, Color.White * selfAlpha * (drawColor.A / 255f), rot, scale);
+        }
+
+        /// <summary>
+        /// 绘制前面的翅膀
+        /// </summary>
+        /// <param name="spriteBatch"></param>
+        /// <param name="mainTex"></param>
+        /// <param name="pos"></param>
+        /// <param name="drawColor"></param>
+        /// <param name="effects"></param>
+        public void DrawFrontWing(SpriteBatch spriteBatch, Texture2D mainTex, int frameY, Vector2 pos, Color drawColor, float rot, float scale, SpriteEffects effects)
+        {
+            Rectangle frameBox = new(3, frameY, 4, Main.npcFrameCount[NPC.type]);
+
+            //绘制本体
+            mainTex.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, drawColor, rot, scale);
+            //绘制glow
+            GlowTex.Value.QuickCenteredDraw(spriteBatch, frameBox, pos, effects, Color.White * selfAlpha * (drawColor.A / 255f), rot, scale);
         }
 
         #endregion

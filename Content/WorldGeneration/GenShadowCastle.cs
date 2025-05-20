@@ -1,6 +1,5 @@
 ﻿using Coralite.Content.Items.ShadowCastle;
 using Coralite.Content.Tiles.ShadowCastle;
-using Coralite.Content.WorldGeneration.Generators;
 using Coralite.Content.WorldGeneration.ShadowCastleRooms;
 using Coralite.Core;
 using Coralite.Helpers;
@@ -10,7 +9,6 @@ using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Generation;
@@ -64,7 +62,7 @@ namespace Coralite.Content.WorldGeneration
                 limit += 80;
                 roomCount = 50;
             }
-            if (Main.maxTilesY > 8000)
+            if (Main.maxTilesX > 8000)
             {
                 limit += 80;
                 roomCount = 60;
@@ -266,7 +264,7 @@ namespace Coralite.Content.WorldGeneration
                     //}
 
                     tile = Framing.GetTileSafely(current_x, current_y);
-                    if (tile.HasTile || !CoraliteSets.WallShadowCastle[tile.WallType])
+                    if (tile.HasTile || !CoraliteSets.Walls.ShadowCastle[tile.WallType])
                         goto over1;
 
                     //for (int m = 0; m < width; m++)
@@ -4421,8 +4419,8 @@ namespace Coralite.Content.WorldGeneration
             //    await GenRoom(clearTex, roomTex, wallClearTex, wallTex, clearDic, GenDic, clearDic, WallDic, roomRect.X, roomRect.Y);
             //}); 
 
-            GenRoom2(clearTex, roomTex, wallClearTex, wallTex, clearDic, GenDic, clearDic, WallDic
-                , roomRect.X, roomRect.Y);
+            //GenRoom2(clearTex, roomTex, wallClearTex, wallTex, clearDic, GenDic, clearDic, WallDic
+            //    , roomRect.X, roomRect.Y);
         }
 
         public virtual void GenChild()
@@ -4490,118 +4488,6 @@ namespace Coralite.Content.WorldGeneration
         }
 
         #region 一些帮助方法
-        public static Task GenRoom(Texture2D clearTex, Texture2D roomTex, Texture2D wallClearTex, Texture2D wallTex,
-            Dictionary<Color, int> clearDic, Dictionary<Color, int> roomDic, Dictionary<Color, int> wallClearDic, Dictionary<Color, int> wallDic,
-            int genOrigin_x, int genOrigin_y)
-        {
-            bool genned = false;
-            bool placed = false;
-            while (!genned)
-            {
-                if (placed)
-                    continue;
-
-                Main.QueueMainThreadAction(() =>
-                {
-                    //清理范围
-                    Texture2TileGenerator clearGenerator = TextureGeneratorDatas.GetTex2TileGenerator(clearTex, clearDic);
-                    clearGenerator.Generate(genOrigin_x, genOrigin_y, true);
-
-                    //生成主体地形
-                    Texture2TileGenerator roomGenerator = TextureGeneratorDatas.GetTex2TileGenerator(roomTex, roomDic);
-                    roomGenerator.Generate(genOrigin_x, genOrigin_y, true);
-
-                    //清理范围
-                    if (wallClearTex != null)
-                    {
-                        Texture2WallGenerator wallClearGenerator = TextureGeneratorDatas.GetTex2WallGenerator(wallClearTex, wallClearDic);
-                        wallClearGenerator.Generate(genOrigin_x, genOrigin_y, true);
-                    }
-
-                    //生成墙壁
-                    if (wallTex != null)
-                    {
-                        Texture2WallGenerator wallGenerator = TextureGeneratorDatas.GetTex2WallGenerator(wallTex, wallDic);
-                        wallGenerator.Generate(genOrigin_x, genOrigin_y, true);
-                    }
-
-                    genned = true;
-                });
-                placed = true;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public static void GenRoom2(Texture2D clearTex, Texture2D roomTex, Texture2D wallClearTex, Texture2D wallTex,
-            Dictionary<Color, int> clearDic, Dictionary<Color, int> roomDic, Dictionary<Color, int> wallClearDic, Dictionary<Color, int> wallDic,
-            int genOrigin_x, int genOrigin_y)
-        {
-            bool genned = false;
-            bool placed = false;
-
-            WorldGenHelper.ClearLiuid(genOrigin_x, genOrigin_y, clearTex.Width, clearTex.Height);
-
-            Texture2TileGenerator clearGenerator = null;
-            Texture2TileGenerator roomGenerator = null;
-            Texture2WallGenerator wallClearGenerator = null;
-            Texture2WallGenerator wallGenerator = null;
-
-            while (!genned)
-            {
-                if (placed)
-                    continue;
-
-                Main.QueueMainThreadAction(() =>
-                {
-                    //清理范围
-                    clearGenerator = TextureGeneratorDatas.GetTex2TileGenerator(clearTex, clearDic);
-
-                    //生成主体地形
-                    roomGenerator = TextureGeneratorDatas.GetTex2TileGenerator(roomTex, roomDic);
-
-                    //清理范围
-                    if (wallClearTex != null)
-                        wallClearGenerator = TextureGeneratorDatas.GetTex2WallGenerator(wallClearTex, wallClearDic);
-
-                    //生成墙壁
-                    if (wallTex != null)
-                        wallGenerator = TextureGeneratorDatas.GetTex2WallGenerator(wallTex, wallDic);
-
-                    genned = true;
-                });
-                placed = true;
-            }
-
-            clearGenerator?.Generate(genOrigin_x, genOrigin_y, true);
-            roomGenerator?.Generate(genOrigin_x, genOrigin_y, true);
-            wallClearGenerator?.Generate(genOrigin_x, genOrigin_y, true);
-            wallGenerator?.Generate(genOrigin_x, genOrigin_y, true);
-        }
-
-        public static void GenObject(Texture2D objectTex, Dictionary<Color, (int, int)> objectDic, int genOrigin_x, int genOrigin_y)
-        {
-            bool genned = false;
-            bool placed = false;
-            Texture2Object objectGenerator = null;
-
-            while (!genned)
-            {
-                if (placed)
-                    continue;
-
-                Main.QueueMainThreadAction(() =>
-                {
-                    //清理范围
-                    objectGenerator = TextureGeneratorDatas.GetTex2ObjectGenerator(objectTex, objectDic);
-                    genned = true;
-                });
-
-                placed = true;
-            }
-
-            objectGenerator?.Generate(genOrigin_x, genOrigin_y, true);
-        }
 
         /// <summary>
         /// 生成通道
@@ -4795,7 +4681,7 @@ namespace Coralite.Content.WorldGeneration
 
             Texture2D objectTex = ModContent.Request<Texture2D>(AssetDirectory.ShadowCastleRooms + ObjectTex + rand, AssetRequestMode.ImmediateLoad).Value;
 
-            GenObject(objectTex, ObjectDic, roomRect.X, roomRect.Y);
+            //GenObject(objectTex, ObjectDic, roomRect.X, roomRect.Y);
         }
 
         public void RandomPlaceBanner(int random)
@@ -4822,7 +4708,7 @@ namespace Coralite.Content.WorldGeneration
                         if (!tile.HasTile || tile.Slope is SlopeType.SlopeUpLeft or SlopeType.SlopeUpRight)
                             goto over1;
 
-                        if (!CoraliteSets.TileShadowCastle[tile.TileType])
+                        if (!CoraliteSets.Tiles.ShadowCastle[tile.TileType])
                             goto over1;
                     }
 
@@ -4830,7 +4716,7 @@ namespace Coralite.Content.WorldGeneration
                         for (int n = 0; n < height; n++)
                         {
                             tile = Framing.GetTileSafely(current_x + m, current_y + n);
-                            if (tile.HasTile || !CoraliteSets.WallShadowCastle[tile.WallType])
+                            if (tile.HasTile || !CoraliteSets.Walls.ShadowCastle[tile.WallType])
                                 goto over1;
                         }
 

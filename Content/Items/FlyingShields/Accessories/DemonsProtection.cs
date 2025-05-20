@@ -21,13 +21,15 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 40;
+            Item.damage = 65;
             Item.DamageType = DamageClass.Generic;
+            Item.defense = 2;
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
         {
-            return !(equippedItem.type == ModContent.ItemType<Terracrest>()//上位
+            return !((equippedItem.type == ModContent.ItemType<Terracrest>()//上位
+                || equippedItem.type == ModContent.ItemType<AmberAmulet>())
 
                 && incomingItem.type == ModContent.ItemType<DemonsProtection>());
         }
@@ -43,7 +45,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public void OnGuardInitialize(BaseFlyingShieldGuard projectile)
         {
             projectile.parryTime = 6;
-            projectile.strongGuard += 0.1f;
+            projectile.strongGuard += 0.20f;
             projectile.damageReduce *= 1.1f;
             projectile.distanceAdder *= 1.1f;
         }
@@ -56,8 +58,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             {
                 if (cp.parryTime < 100)
                 {
-                    Owner.immuneTime = 20;
-                    Owner.immune = true;
+                    Owner.AddImmuneTime(ImmunityCooldownID.General, 25);
                 }
 
                 int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.2f - (0.15f * cp.parryTime / 280f)));

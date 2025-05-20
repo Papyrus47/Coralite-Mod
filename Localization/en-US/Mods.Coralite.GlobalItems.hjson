@@ -5,4 +5,18 @@ CoraliteGlobalItem: {
 	RainBowCoralCat: Rainbow Cat coin
 	Cold: "[c/5cd7f9:Frost]"
 	Edible: "[c/f0d0b7:Delicious]"
+	DashPriority: Dash priority:
+	DashPriorityLevel0: Highest
+	DashPriorityLevel1: Higher
+	DashPriorityLevel2: Middle
+	DashPriorityLevel3: Lower
+	DashPriorityLevel4: Minimum
+	Dashable: Mods.Coralite.GlobalItems.CoraliteGlobalItem.Dashable
+}
+
+DigDigDigGItem: {
+	CurrentDigState: Thrown Pickaxe Status:
+	CanDigTile: "[c/ff3e3e:Can dig block]"
+	CantDigTile: "[c/6abe30:Can't dig block]"
+	RightClickExchange: Right-clicking in the inventory toggles whether the pickaxe can mine blocks
 }

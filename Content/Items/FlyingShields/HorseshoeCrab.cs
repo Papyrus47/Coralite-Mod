@@ -1,6 +1,7 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -106,7 +107,7 @@ namespace Coralite.Content.Items.FlyingShields
             base.OnHitNPC(target, hit, damageDone);
             if (State != (int)FlyingShieldStates.Backing)
             {
-                if (Owner.HeldItem.ModItem is HorseshoeCrab pr)
+                if (Item.ModItem is HorseshoeCrab pr)
                     pr.PowerfulAttack = true;
                 Vector2 dir = Helper.NextVec2Dir();
 
@@ -142,8 +143,15 @@ namespace Coralite.Content.Items.FlyingShields
         {
             DistanceToOwner /= 3;
             SoundEngine.PlaySound(CoraliteSoundID.Jellyfish_NPCHit25, Projectile.Center);
-            if (Owner.HeldItem.ModItem is HorseshoeCrab pr)
+            if (Item.ModItem is HorseshoeCrab pr)
                 pr.PowerfulAttack = true;
+
+            if (Projectile.IsOwnedByLocalPlayer())
+            {
+                Vector2 dir = (Owner.Center - Main.MouseWorld).SafeNormalize(Vector2.Zero).RotateByRandom(-0.5f, 0.5f);
+
+                Projectile.NewProjectileFromThis<HorseshoeCrabEXProj>(Projectile.Center + (dir * 16 * 10), -dir * 10, Projectile.damage, Projectile.knockBack);
+            }
         }
 
         public override float GetWidth()
@@ -178,7 +186,7 @@ namespace Coralite.Content.Items.FlyingShields
         }
     }
 
-    public class HorseshoeCrabEXProj : ModProjectile
+    public class HorseshoeCrabEXProj : BaseHeldProj
     {
         public override string Texture => AssetDirectory.FlyingShieldItems + "HorseshoeCrab";
 
@@ -200,14 +208,14 @@ namespace Coralite.Content.Items.FlyingShields
             Projectile.idStaticNPCHitCooldown = 25;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.damage = (int)(Projectile.damage * 0.85f);
+            Projectile.damage = (int)(Projectile.damage * 0.9f);
         }
 
         public override void AI()

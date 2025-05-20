@@ -1,13 +1,13 @@
 using Coralite.Content.Particles;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Systems.Trails;
+using Coralite.Core.Loaders;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.Icicle
@@ -16,22 +16,8 @@ namespace Coralite.Content.Items.Icicle
     {
         public override string Texture => AssetDirectory.IcicleItems + "IceStarLight";
 
-        BasicEffect effect;
         private Trail trail;
-
-        public IcicleStarArrow()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -44,21 +30,24 @@ namespace Coralite.Content.Items.Icicle
             Projectile.coldDamage = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             for (int i = 0; i < 15; i++)
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[15] = Projectile.Center + Projectile.velocity;
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, 16, new NoTip(), factor => 2,
+            trail ??= new Trail(Main.instance.GraphicsDevice, 16, new EmptyMeshGenerator(), factor => 2,
             factor =>
                 {
                     if (factor.X > 0.5f)
@@ -67,7 +56,7 @@ namespace Coralite.Content.Items.Icicle
                     return Color.Lerp(new Color(0, 0, 0, 0), Coralite.IcicleCyan, factor.X / 0.5f);//new Color(99, 83, 142, 0)
                 });
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
             Lighting.AddLight(Projectile.Center, Coralite.IcicleCyan.ToVector3());
             if (Projectile.timeLeft % 3 == 0)
             {
@@ -78,7 +67,7 @@ namespace Coralite.Content.Items.Icicle
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 for (int i = 0; i < 3; i++)
                 {
                     Vector2 center = Projectile.Center - new Vector2(0, Main.rand.Next(140, 220)).RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f));
@@ -102,18 +91,15 @@ namespace Coralite.Content.Items.Icicle
 
         public void DrawPrimitives()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public void DrawAdditive(SpriteBatch spriteBatch)

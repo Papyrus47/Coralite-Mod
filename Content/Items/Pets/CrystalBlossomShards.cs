@@ -1,7 +1,6 @@
 ﻿using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
-using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -93,7 +92,7 @@ namespace Coralite.Content.Items.Pets
         public override Color RarityColor => Color.Lerp(new Color(255, 152, 210), Color.Pink, Math.Abs(MathF.Sin(Main.GlobalTimeWrappedHourly * 3)));
     }
 
-    public class Petal : BasePRT
+    public class Petal : Particle
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "NightmarePetal";
 

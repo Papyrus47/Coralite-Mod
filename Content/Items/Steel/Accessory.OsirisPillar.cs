@@ -1,5 +1,7 @@
-﻿using Coralite.Content.ModPlayers;
+﻿using Coralite.Content.CustomHooks;
+using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Prefabs.Items;
 using Terraria;
 using Terraria.ID;
@@ -7,9 +9,18 @@ using Terraria.ID;
 namespace Coralite.Content.Items.Steel
 {
     [AutoloadEquip(EquipType.Head)]
-    public class OsirisPillar : BaseAccessory
+    [PlayerEffect(ExtraEffectNames = [Vanity])]
+    public class OsirisPillar : BaseAccessory, ISpecialDrawHead
     {
         public override string Texture => AssetDirectory.SteelItems + Name;
+
+        public const string Vanity = nameof(OsirisPillar) + "Vanity";
+
+        public override void SetStaticDefaults()
+        {
+            int id = EquipLoader.GetEquipSlot(Mod, nameof(OsirisPillar), EquipType.Head);
+            ArmorIDs.Head.Sets.DrawFullHair[id] = true;
+        }
 
         public OsirisPillar() : base(ItemRarityID.Pink, Item.sellPrice(0, 4, 0, 0))
         {
@@ -23,6 +34,12 @@ namespace Coralite.Content.Items.Steel
                 && incomingItem.type == ModContent.ItemType<OsirisPillar>());
         }
 
+        public override void UpdateVanity(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+                cp.AddEffect(Vanity);
+        }
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
@@ -30,7 +47,7 @@ namespace Coralite.Content.Items.Steel
                 cp.AddEffect(nameof(OsirisPillar));
 
                 if (!hideVisual)
-                    cp.AddEffect(nameof(OsirisPillar) + "Vanity");
+                    cp.AddEffect(Vanity);
             }
 
             player.statManaMax2 += 20;

@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Bosses.VanillaReinforce.SlimeEmperor;
 using Coralite.Core;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -73,7 +74,7 @@ namespace Coralite.Content.Items.Gels
         }
     }
 
-    public class SpikeGelBall_Friendly : ModProjectile
+    public class SpikeGelBall_Friendly : BaseHeldProj
     {
         public override string Texture => AssetDirectory.SlimeEmperor + "SpikeGelBall";
 
@@ -106,7 +107,7 @@ namespace Coralite.Content.Items.Gels
             Projectile.DamageType = DamageClass.Magic;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             for (int i = 0; i < 8; i++)
             {
@@ -139,7 +140,6 @@ namespace Coralite.Content.Items.Gels
             Projectile.rotation += Projectile.velocity.Length() / 80;
         }
 
-
         public override void OnKill(int timeLeft)
         {
             //生成粒子
@@ -149,7 +149,7 @@ namespace Coralite.Content.Items.Gels
                      Helper.NextVec2Dir(1f, 2.5f), 150, new Color(78, 136, 255, 80), Main.rand.NextFloat(1.2f, 1.6f));
             }
 
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 //生成一些尖刺弹幕
                 for (int i = 0; i < 3; i++)
@@ -164,27 +164,28 @@ namespace Coralite.Content.Items.Gels
         {
             Texture2D mainTex = Projectile.GetTexture();
             var pos = Projectile.Center - Main.screenPosition;
+
+            float exRot = Projectile.whoAmI * MathHelper.PiOver2;
+
             if (Main.zenithWorld)
                 lightColor = SlimeEmperor.BlackSlimeColor;
 
-            Color color = lightColor * Projectile.localAI[0];
-            var frameBox = mainTex.Frame(1, 2, 0, 0);
             Vector2 scale = Scale;
 
-            //绘制自己
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
-
             float factor = MathF.Sin(Main.GlobalTimeWrappedHourly);
-            color = new Color(194, 75 + (int)(60 * factor), 234);
+            Color color = new Color(194, 75 + (int)(60 * factor), 234);
             color *= Projectile.localAI[0] * 0.75f;
 
             //绘制影子拖尾
-            Projectile.DrawShadowTrails(color, 0.5f, 0.062f, 1, 8, 1, scale, frameBox);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
-            //绘制发光
-            frameBox = mainTex.Frame(1, 2, 0, 1);
+            for (int i = 1; i < 8; i += 2)
+                GelBall.DrawGelBall(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition
+                    , color * (0.3f - (i * 0.03f)), Projectile.oldRot[i], Projectile.oldRot[i] + exRot + i * MathHelper.PiOver2, scale, false, highlightUseRot: true);
 
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
+            //绘制自己
+            GelBall.DrawGelBall(mainTex, pos, lightColor * Projectile.localAI[0]
+                , Projectile.rotation, exRot + Projectile.rotation, scale, true, true, color, highlightUseRot: true);
 
             return false;
         }
@@ -249,7 +250,7 @@ namespace Coralite.Content.Items.Gels
     /// 使用ai0传入状态，0：在自身环绕 1：普通射出并弹弹
     /// 使用ai1传入自身环绕时的方向
     /// </summary>
-    public class SmallGelBall_Friendly : ModProjectile
+    public class SmallGelBall_Friendly : BaseHeldProj
     {
         public override string Texture => AssetDirectory.SlimeEmperor + "SmallGelBall";
 
@@ -265,7 +266,6 @@ namespace Coralite.Content.Items.Gels
 
         public ref float State => ref Projectile.ai[0];
         protected ref float ScaleState => ref Projectile.ai[2];
-        public Player Owner => Main.player[Projectile.owner];
 
         public int collisionCount;
         public float baseRot;
@@ -287,7 +287,7 @@ namespace Coralite.Content.Items.Gels
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             baseRot = (Main.MouseWorld - Owner.Center).ToRotation();
             distance = Main.rand.Next(16 * 5, 16 * 8);
@@ -414,24 +414,27 @@ namespace Coralite.Content.Items.Gels
             Texture2D mainTex = Projectile.GetTexture();
             var pos = Projectile.Center - Main.screenPosition;
 
-            Color color = lightColor * Projectile.localAI[0];
-            var frameBox = mainTex.Frame(1, 2, 0, 0);
+            float exRot = Projectile.whoAmI * 0.3f + Main.GlobalTimeWrappedHourly * 2;
+
+            if (Main.zenithWorld)
+                lightColor = SlimeEmperor.BlackSlimeColor;
+
             Vector2 scale = Scale;
 
-            //绘制自己
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
-
             float factor = MathF.Sin(Main.GlobalTimeWrappedHourly);
-            color = new Color(194, 75 + (int)(60 * factor), 234);
+            Color color = new Color(50, 152 + (int)(100 * factor), 225);
             color *= Projectile.localAI[0] * 0.75f;
 
             //绘制影子拖尾
-            Projectile.DrawShadowTrails(color, 0.5f, 0.062f, 1, 8, 1, scale, frameBox);
+            Vector2 toCenter = new(Projectile.width / 2, Projectile.height / 2);
 
-            //绘制发光
-            frameBox = mainTex.Frame(1, 2, 0, 1);
+            for (int i = 1; i < 8; i += 2)
+                GelBall.DrawGelBall(mainTex, Projectile.oldPos[i] + toCenter - Main.screenPosition
+                    , color * (0.3f - (i * 0.03f)), Projectile.oldRot[i], exRot + i * 1.1f, scale, false);
 
-            Main.spriteBatch.Draw(mainTex, pos, frameBox, color, Projectile.rotation, frameBox.Size() / 2, scale, 0, 0);
+            //绘制自己
+            GelBall.DrawGelBall(mainTex, pos, lightColor * Projectile.localAI[0]
+                , Projectile.rotation, exRot, scale, true, true, color);
 
             return false;
         }

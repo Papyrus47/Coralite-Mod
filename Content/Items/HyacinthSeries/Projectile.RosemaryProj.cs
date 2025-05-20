@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Configs;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
@@ -7,48 +8,30 @@ using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Items.HyacinthSeries
 {
+    [AutoLoadTexture(Path = AssetDirectory.HyacinthSeriesItems)]
     public class RosemaryHeldProj : BaseGunHeldProj
     {
         public RosemaryHeldProj() : base(0.05f, 14, -2, AssetDirectory.HyacinthSeriesItems) { }
 
-        public override void Initialize()
+        public static ATex RosemaryFire { get; private set; }
+
+        public override void InitializeGun()
         {
             Projectile.timeLeft = Owner.itemTime + 1;
             MaxTime = Owner.itemTime + 1;
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
                 TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (DirSign > 0 ? 0f : MathHelper.Pi);
                 if (TargetRot == 0f)
                     TargetRot = 0.0001f;
             }
-
-            Projectile.netUpdate = true;
-        }
-    }
-
-    public class RosemaryHeldProj2 : BaseGunHeldProj
-    {
-        public RosemaryHeldProj2() : base(0.05f, 16, -2, AssetDirectory.HyacinthSeriesItems) { }
-
-        public override void Initialize()
-        {
-            Projectile.timeLeft = Owner.itemTime + 1;
-            MaxTime = Owner.itemTime + 1;
-            if (Main.myPlayer == Projectile.owner)
-            {
-                Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
-                TargetRot = (Main.MouseWorld - Owner.Center).ToRotation() + (DirSign > 0 ? 0f : MathHelper.Pi);
-                if (TargetRot == 0f)
-                    TargetRot = 0.0001f;
-            }
-
-            Projectile.localAI[1] += 1;
+            if (Projectile.localAI[1] > 1)
+                Projectile.frame = 0;
             Projectile.netUpdate = true;
         }
 
@@ -57,7 +40,30 @@ namespace Coralite.Content.Items.HyacinthSeries
             if (Projectile.localAI[1] > 2)
                 return;
             if (Projectile.timeLeft < 2)
-                Initialize();
+                InitializeGun();
+
+            if (Projectile.timeLeft != MaxTime)
+            {
+                Projectile.frame++;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            base.PreDraw(ref lightColor);
+
+            if (Projectile.frame > 4)
+                return false;
+
+            Texture2D effect = RosemaryFire.Value;
+            Rectangle frameBox = effect.Frame(1, 5, 0, Projectile.frame);
+
+            float rot = Projectile.rotation + (DirSign > 0 ? 0 : MathHelper.Pi);
+            float n = rot - DirSign * MathHelper.PiOver2;
+
+            Main.spriteBatch.Draw(effect, Projectile.Center + rot.ToRotationVector2() * 24 + n.ToRotationVector2() * 6 - Main.screenPosition, frameBox, Color.Lerp(lightColor, Color.White, 0.5f)
+                , rot, new Vector2(0, frameBox.Height / 2), Projectile.scale, 0, 0f);
+            return false;
         }
     }
 
@@ -66,7 +72,15 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// </summary>
     public class RosemaryBullet : ModProjectile
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
+
+        private bool span;
+        private ref float TargetIndex => ref Projectile.ai[1];
+
+        public override void SetStaticDefaults()
+        {
+            Projectile.QuickTrailSets(Helper.TrailingMode.RecordAll, 8);
+        }
 
         public override void SetDefaults()
         {
@@ -78,23 +92,65 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.netImportant = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<ArethusaPetal>(), -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.NextFloat(0.05f, 0.15f));
             Projectile.rotation = Projectile.velocity.ToRotation();
+            TargetIndex = -1;
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
+
+            if (TargetIndex == -1)
+            {
+                //TODO: 改掉这里的鼠标位置
+                NPC npc = Helper.FindClosestEnemy(Main.MouseWorld, 600
+                    , n => n.CanBeChasedBy() && Collision.CanHit(Projectile, n));
+                if (npc != null)
+                    TargetIndex = npc.whoAmI;
+            }
+
+            if (TargetIndex.GetNPCOwner(out NPC n, () => TargetIndex = -2))
+            {
+                float distance = Projectile.Distance(n.Center);
+                if (Projectile.ai[0] == 0 && (distance < 250 || distance > 1200))
+                    TargetIndex = -2;
+                else
+                {
+                    float rot = Projectile.velocity.ToRotation();
+                    float targetRot = (n.Center - Projectile.Center).ToRotation();
+
+                    Projectile.localAI[2]++;
+
+                    float angle = 0.05f;
+                    if (Projectile.localAI[2] > 80)
+                    {
+                        angle += 0.05f + Projectile.localAI[2] / 80 * 0.04f;
+                    }
+
+                    rot = rot.AngleLerp(targetRot, angle);
+
+                    Projectile.velocity = rot.ToRotationVector2() * Projectile.velocity.Length();
+                    Projectile.rotation = rot;
+                }
+            }
+
             Lighting.AddLight(Projectile.Center, new Color(255, 179, 251).ToVector3() * 0.5f);   //粉色的魔法数字
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (VisualEffectSystem.HitEffect_Dusts)
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Ice_Purple, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(0.15f, 0.25f), Scale: Main.rand.NextFloat(1.4f, 1.6f));
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.PinkTorch, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(0.15f, 0.6f)
+                        , Alpha: 100, Scale: Main.rand.NextFloat(1f, 1.5f));
                     dust.noGravity = true;
                 }
 
@@ -117,19 +173,27 @@ namespace Coralite.Content.Items.HyacinthSeries
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (VisualEffectSystem.HitEffect_Dusts)
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 4; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Ice_Purple, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(0.15f, 0.25f), Scale: Main.rand.NextFloat(1.4f, 1.6f));
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.PinkTorch, -Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(0.15f, 0.6f)
+                        , Alpha: 100, Scale: Main.rand.NextFloat(1f, 1.5f));
                     dust.noGravity = true;
                 }
+
+            Helper.PlayPitched(CoraliteSoundID.Hit_Item10, Projectile.Center);
+            Collision.HitTiles(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height);
 
             return true;
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            lightColor = Color.White;
-            return true;
+            Color c = Color.Moccasin;
+            c.A = 20;
+            Projectile.DrawShadowTrails(c, 0.5f, 0.5f / 8, 0, 8, 1);
+            Projectile.QuickDraw(Color.White, 0);
+
+            return false;
         }
 
         public void SpawnFogProj()
@@ -167,7 +231,7 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// </summary>
     public class RosemaryFog : ModProjectile
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public ref float State => ref Projectile.ai[0];
         public ref float Rotation => ref Projectile.ai[1];
@@ -213,7 +277,7 @@ namespace Coralite.Content.Items.HyacinthSeries
                 Alpha -= 0.04f;
                 if (Timer < 13)  //射出3发弹幕
                 {
-                    if (Timer % 6 == 0 && Main.myPlayer == Projectile.owner)
+                    if (Timer % 6 == 0 && Projectile.IsOwnedByLocalPlayer())
                     {
                         NPC target = Helper.FindClosestEnemy(Projectile.Center, 440,
                             npc => npc.active && !npc.friendly && npc.CanBeChasedBy() && Collision.CanHitLine(Projectile.Center, 1, 1, npc.Center, 1, 1));

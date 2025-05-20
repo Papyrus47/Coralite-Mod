@@ -6,7 +6,6 @@ using Coralite.Helpers;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 
@@ -125,7 +124,7 @@ namespace Coralite.Content.Items.YujianHulu
 
                 yujianProj.InitTrailCaches();
 
-                if (Main.myPlayer == Projectile.owner)
+                if (Projectile.IsOwnedByLocalPlayer())
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * (Projectile.extraUpdates + 1), ModContent.ProjectileType<GlodenSpurtProj>(),
                         Projectile.damage * 2, Projectile.knockBack, Projectile.owner, spurtTime / (Projectile.extraUpdates + 1), 32);
             }
@@ -176,6 +175,7 @@ namespace Coralite.Content.Items.YujianHulu
         public ref float Width => ref Projectile.ai[1];
         public ref float Alpha => ref Projectile.localAI[1];
         public Vector2 center;
+        private bool span;
 
         public override void SetDefaults()
         {
@@ -188,13 +188,18 @@ namespace Coralite.Content.Items.YujianHulu
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             center = Projectile.Center;
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (Projectile.localAI[0] == 0)
             {
                 Projectile.localNPCHitCooldown = (int)maxTime + 12;
@@ -211,7 +216,7 @@ namespace Coralite.Content.Items.YujianHulu
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    BasePRT particle = PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(16, 16) + (i * Projectile.velocity), Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Gold, Main.rand.NextFloat(0.1f, 0.15f));
+                    Particle particle = PRTLoader.NewParticle(Projectile.Center + Main.rand.NextVector2CircularEdge(16, 16) + (i * Projectile.velocity), Vector2.Zero, CoraliteContent.ParticleType<HorizontalStar>(), Color.Gold, Main.rand.NextFloat(0.1f, 0.15f));
                     particle.Rotation = 1.57f;
                 }
             }

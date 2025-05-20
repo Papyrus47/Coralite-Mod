@@ -1,14 +1,14 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 
 namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 {
-    public class NightmareBurst : ModProjectile, IDrawPrimitive
+    public class NightmareBurst : BaseHeldProj, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -33,11 +33,9 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public override bool? CanHitNPC(NPC target) => false;
         public override bool? CanDamage() => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[20];
-            for (int i = 0; i < 20; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(20);
         }
 
         public override void AI()
@@ -65,7 +63,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             Timer++;
 
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 20, new NoTip(), factor =>
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 20, new EmptyMeshGenerator(), factor =>
             {
                 return Helper.Lerp(tentacleWidth, 0, factor);
             }, factor =>
@@ -76,7 +74,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 return burstColor;
             });
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
@@ -99,7 +97,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             effect.Parameters["flowAlpha"].SetValue(0.85f);
             effect.Parameters["warpAmount"].SetValue(3);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
     }
 }

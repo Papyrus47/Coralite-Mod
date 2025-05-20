@@ -3,8 +3,8 @@ using Coralite.Core;
 using Coralite.Helpers;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
-using Terraria.DataStructures;
 
 namespace Coralite.Content.Bosses.ShadowBalls
 {
@@ -32,6 +32,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
         public int smallBallType;
         public float ballScale = 1;
         public float ballAlpha = 1;
+        private bool span;
 
         public ShadowCircleController shadowCircle;
 
@@ -79,15 +80,25 @@ namespace Coralite.Content.Bosses.ShadowBalls
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot) => false;
-
         #region AI
-        public override void OnSpawn(IEntitySource source)
+
+        public override void SendExtraAI(BinaryWriter writer)
         {
-            NPC.frame.Y = Main.rand.Next(7);
+            writer.Write(NPC.frame.Y);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            NPC.frame.Y = reader.ReadInt32();
         }
 
         public override void AI()
         {
+            if (!span && VaultUtils.isServer)
+            {
+                NPC.frame.Y = Main.rand.Next(7);
+                span = true;
+            }
             if (!GetOwner(out NPC owner))
                 return;
 

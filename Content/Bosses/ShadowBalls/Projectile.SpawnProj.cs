@@ -2,10 +2,10 @@
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.ShadowBalls
@@ -13,7 +13,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
     /// <summary>
     /// 向下飘向中心位置
     /// </summary>
-    public class SpawnProj : ModProjectile
+    public class SpawnProj : BaseHeldProj
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "Light";
 
@@ -33,7 +33,7 @@ namespace Coralite.Content.Bosses.ShadowBalls
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => false;
         public override bool? CanDamage() => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             OriginY = Projectile.Center.Y;
             Projectile.scale = 0.02f;

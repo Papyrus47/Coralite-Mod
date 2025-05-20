@@ -1,9 +1,10 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Loaders;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -14,23 +15,8 @@ namespace Coralite.Content.Items.Icicle
     {
         public override string Texture => AssetDirectory.IcicleItems + Name;
 
-        private static BasicEffect effect;
         private GetCenter centerFunc;
         private float velocityLimit;
-
-        public IceStarLight()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override bool ShouldUpdatePosition() => false;
 
@@ -38,7 +24,7 @@ namespace Coralite.Content.Items.Icicle
         {
             Color = Color.White;
             Frame = new Rectangle(0, 0, 18, 18);
-            trail = new Trail(Main.instance.GraphicsDevice, 8, new NoTip(), factor => 2 * Scale, factor => Color.Lerp(new Color(0, 0, 0, 0), Coralite.IcicleCyan, factor.X));
+            trail = new Trail(Main.instance.GraphicsDevice, 8, new EmptyMeshGenerator(), factor => 2 * Scale, factor => Color.Lerp(new Color(0, 0, 0, 0), Coralite.IcicleCyan, factor.X));
             InitializePositionCache(8);
         }
 
@@ -77,24 +63,21 @@ namespace Coralite.Content.Items.Icicle
 
             Position += Velocity;
             UpdatePositionCache(8);
-            trail.Positions = oldPositions;
+            trail.TrailPositions = oldPositions;
         }
 
         public override void DrawPrimitive()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
             //effect.Texture = Texture2D.Value;
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch)

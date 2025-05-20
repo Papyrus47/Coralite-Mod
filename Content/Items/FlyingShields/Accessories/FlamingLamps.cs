@@ -14,6 +14,8 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         {
         }
 
+        public float Priority => IDashable.AccessoryDashLow;
+
         public override void SetDefaults()
         {
             base.SetDefaults();
@@ -29,6 +31,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             if (player.TryGetModPlayer(out CoralitePlayer cp))
             {
                 cp.FlyingShieldAccessories?.Add(this);
+                cp.AddDash(this);
             }
 
             if (isDashing)
@@ -90,7 +93,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 && cp.TryGetFlyingShieldGuardProj(out BaseFlyingShieldGuard flyingShieldGuard)
                 && flyingShieldGuard.CanDash())
             {
-                SoundEngine.PlaySound(CoraliteSoundID.FireBallExplosion_Item74, Player.Center);
+                SoundEngine.PlaySound(CoraliteSoundID.FireShoot_DD2_BetsyFireballShot, Player.Center);
 
                 flyingShieldGuard.TurnToDashing(this, 12, dashDirection, 8f);
                 Player.GetModPlayer<CoralitePlayer>().DashDelay = 75;

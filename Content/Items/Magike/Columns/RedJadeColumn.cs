@@ -32,8 +32,6 @@ namespace Coralite.Content.Items.Magike.Refractors
         public override string Texture => AssetDirectory.MagikeColumnTiles + Name;
         public override int DropItemType => ItemType<RedJadeColumn>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<RedJadeColumnTileEntity>();
-
         public override MALevel[] GetAllLevels()
         {
             return [
@@ -45,6 +43,8 @@ namespace Coralite.Content.Items.Magike.Refractors
 
     public class RedJadeColumnTileEntity : BaseSenderTileEntity<RedJadeColumnTile>
     {
+        public override int MainComponentID => MagikeComponentID.MagikeContainer;
+
         public override MagikeContainer GetStartContainer()
             => new RedJadeColumnTileContainer();
 
@@ -63,8 +63,8 @@ namespace Coralite.Content.Items.Magike.Refractors
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase / 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase / 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -82,7 +82,7 @@ namespace Coralite.Content.Items.Magike.Refractors
                 case MALevel.None:
                     MaxConnectBase = 0;
                     UnitDeliveryBase = 0;
-                    SendDelayBase = 1_0000_0000;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.RedJade:

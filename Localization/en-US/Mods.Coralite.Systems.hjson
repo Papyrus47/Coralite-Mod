@@ -83,7 +83,78 @@ FlyingShieldSystem: {
 		Can block enemies or hostile barrages
 		The backswing of some left-click attacks can be canceled by raising the shield
 		'''
+	DamageReduceDash: ""
+	ParryDash: ""
 }
 
 WoodenBowGroup.Name: Mods.Coralite.Systems.WoodenBowGroup.Name
-MTBStructureSystem.FailText: Mods.Coralite.Systems.MTBStructureSystem.FailText
+
+MultiblockSystem: {
+	FailText: Mods.Coralite.Systems.MultiblockSystem.FailText
+	PreviewMultiblock: ""
+}
+
+BisketyController: {
+	ShowTotalDamage: Show Total Damage
+	ShowProjectileDamage: Show Projectile Damage
+	ShowMeleeDamage: Show Melee Damage
+	ShowOtherDamage: Show Other Damage
+	ShowLongTimeDPS: Show Long Time DPS
+	ChangeDefence: Change Defence
+}
+
+KnowledgeSystem: {
+	MagikeS1Knowledge: {
+		Name: "[c/ffbeec:Magike Fragment - Part 1]"
+		LockTip: Go to the Magic Crystal Cave underground and look for "Page: Magike Basics"!
+		Description:
+			'''
+			Describes the basic use of magike
+			It will teach you how to build a production line of magike
+			'''
+	}
+
+	RedJadeKnowledge: {
+		Name: "[c/d33232:Red Jade Fragment]"
+		LockTip: Unlocks after obtaining "Hidden Red" or "Red Berry".
+		Description:
+			'''
+			It contains information about the red jade and the Rediancie
+			What is red energy produced out of thin air?
+			'''
+	}
+
+	NewKnowledgeUnlock: New chapter Unlocked in Coralite Note！
+
+	IceDragon1Knowledge: {
+		Name: Mods.Coralite.Systems.KnowledgeSystem.IceDragon1Knowledge.Name
+		LockTip: Mods.Coralite.Systems.KnowledgeSystem.IceDragon1Knowledge.LockTip
+		Description: Mods.Coralite.Systems.KnowledgeSystem.IceDragon1Knowledge.Description
+	}
+
+	Slime1Knowledge: {
+		Name: Mods.Coralite.Systems.KnowledgeSystem.Slime1Knowledge.Name
+		LockTip: Mods.Coralite.Systems.KnowledgeSystem.Slime1Knowledge.LockTip
+		Description: Mods.Coralite.Systems.KnowledgeSystem.Slime1Knowledge.Description
+	}
+
+	Thunder1Knowldege: {
+		Name: Mods.Coralite.Systems.KnowledgeSystem.Thunder1Knowldege.Name
+		LockTip: Mods.Coralite.Systems.KnowledgeSystem.Thunder1Knowldege.LockTip
+		Description: Mods.Coralite.Systems.KnowledgeSystem.Thunder1Knowldege.Description
+	}
+
+	MagikeInterstitial1Knowledge: {
+		Name: Mods.Coralite.Systems.KnowledgeSystem.MagikeInterstitial1Knowledge.Name
+		LockTip: Mods.Coralite.Systems.KnowledgeSystem.MagikeInterstitial1Knowledge.LockTip
+		Description: Mods.Coralite.Systems.KnowledgeSystem.MagikeInterstitial1Knowledge.Description
+	}
+
+	MagikeS2Knowledge: {
+		Name: Mods.Coralite.Systems.KnowledgeSystem.MagikeS2Knowledge.Name
+		LockTip: Mods.Coralite.Systems.KnowledgeSystem.MagikeS2Knowledge.LockTip
+		Description: Mods.Coralite.Systems.KnowledgeSystem.MagikeS2Knowledge.Description
+	}
+}
+
+CoraliteBeatiaryDatabase.CrystallineSkyIsland: Mods.Coralite.Systems.CoraliteBeatiaryDatabase.CrystallineSkyIsland

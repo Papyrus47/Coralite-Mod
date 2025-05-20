@@ -1,18 +1,18 @@
 ﻿using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 {
-    public class FantasyBall : ModProjectile, IDrawPrimitive, IDrawNonPremultiplied
+    public class FantasyBall : BaseHeldProj, IDrawPrimitive, IDrawNonPremultiplied
     {
         public override string Texture => AssetDirectory.NightmarePlantera + Name;
 
@@ -27,11 +27,9 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             Projectile.tileCollide = false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
         }
 
         public override void AI()
@@ -86,7 +84,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                     Dust.NewDustPerfect(Projectile.Center, type, dir.RotatedBy(Main.rand.NextFloat(-0.2f, 0.2f)) * Main.rand.NextFloat(1, 4), Scale: Main.rand.NextFloat(1, 1.5f));
                 }
 
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new NoTip(), factor =>
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new EmptyMeshGenerator(), factor =>
             {
                 if (factor < 0.7f)
                     return Helper.Lerp(0, 16, factor / 0.7f);
@@ -103,7 +101,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
                 return Color.Lerp(Color.White, FantasyGod.shineColor, (factor.X - 0.7f) / 0.3f);
             });
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -113,7 +111,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            BasePRT particle = PRTLoader.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), FantasyGod.shineColor, 1f);
+            Particle particle = PRTLoader.NewParticle(Vector2.Lerp(Projectile.Center, target.Center, 0.5f), Vector2.Zero, CoraliteContent.ParticleType<Strike>(), FantasyGod.shineColor, 1f);
             particle.Rotation = Projectile.velocity.ToRotation() + MathHelper.Pi + 2.2f + Main.rand.NextFloat(-0.5f, 0.5f);
         }
 
@@ -139,18 +137,14 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             Effect effect = Filters.Scene["FantasyTentacle"].GetShader().Shader;
 
-            Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
-            Matrix view = Main.GameViewMatrix.TransformationMatrix;
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
-            effect.Parameters["transformMatrix"].SetValue(world * view * projection);
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly / 2);
             effect.Parameters["sampleTexture"].SetValue(NightmarePlantera.tentacleTex.Value);
             effect.Parameters["extraTexture"].SetValue(NightmarePlantera.waterFlowTex.Value);
             effect.Parameters["flowAlpha"].SetValue(0.5f);
             effect.Parameters["warpAmount"].SetValue(3);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

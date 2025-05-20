@@ -41,6 +41,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public bool canOnlyBeHitByFantasyGod;
         public RotateTentacle[] rotateTentacles;
         public Color tentacleColor;
+        private bool span;
 
         //public static FlowerParticle[] particles_front;
         //public static FlowerParticle[] particles_ffront;
@@ -143,15 +144,15 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
                 if (nPCStrengthHelper.IsMasterMode)
                 {
-                    NPC.lifeMax = (int)((32_8000 + (numPlayers * 7_8000)) / journeyScale);
-                    NPC.defense = 65;
+                    NPC.lifeMax = (int)((30_8000 + (numPlayers * 7_8000)) / journeyScale);
+                    NPC.defense = 55;
                     NPC.damage = 120;
                 }
 
                 if (Main.getGoodWorld)
                 {
                     NPC.damage = 140;
-                    NPC.defense = 70;
+                    NPC.defense = 65;
                 }
 
                 return;
@@ -163,8 +164,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
             if (Main.masterMode)
             {
-                NPC.lifeMax = 32_8000 + (numPlayers * 7_8000);
-                NPC.defense = 65;
+                NPC.lifeMax = 30_8000 + (numPlayers * 7_8000);
+                NPC.defense = 55;
                 NPC.damage = 120;
             }
 
@@ -172,7 +173,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             {
                 NPC.lifeMax = 43_2000 + (numPlayers * 10_0000);
                 NPC.damage = 140;
-                NPC.defense = 70;
+                NPC.defense = 65;
             }
         }
 
@@ -185,7 +186,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<NightmarePlanteraMask>(), 7));
 
             //掉落磷叶石，之后记得删掉
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Phosphophyllite>(), 2));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Phosphophyllite>()));
 
             //npcLoot.Add(ItemDropRule.NotScalingWithLuck(ModContent.ItemType<NightmareHeart>()));
 
@@ -389,8 +390,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         #endregion
 
         #region AI
-
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             NPC.TargetClosest(false);
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -414,6 +414,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || /*Target.Distance(NPC.Center) > 4800 ||*/ Main.dayTime) //世花也是4800
             {
                 NPC.TargetClosest();
@@ -650,7 +655,7 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
             {
                 if (cp.nightmareCount < 28)
                 {
-                    byte howMany = (byte)Helper.ScaleValueForDiffMode(1, 2, 4, 5);
+                    byte howMany = (byte)Helper.ScaleValueForDiffMode(1, 2, 3, 4);
                     if (cp.HasEffect(nameof(NightmareHeart)))
                     {
                         howMany -= 1;

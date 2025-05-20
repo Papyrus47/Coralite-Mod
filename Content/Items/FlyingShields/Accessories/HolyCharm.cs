@@ -20,8 +20,9 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 67;
+            Item.damage = 90;
             Item.DamageType = DamageClass.Generic;
+            Item.defense = 3;
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
@@ -50,8 +51,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             {
                 if (cp.parryTime < 100)
                 {
-                    Owner.immuneTime = 30;
-                    Owner.immune = true;
+                    Owner.AddImmuneTime(ImmunityCooldownID.General, 30);
                 }
 
                 int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.35f - (0.35f * cp.parryTime / 280f)));

@@ -14,10 +14,12 @@ namespace Coralite.Content.Items.Icicle
     {
         public override string Texture => AssetDirectory.IcicleItems + Name;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
-            Item.SetWeaponValues(23, 3f);
-            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 26, 9f, true);
+            Item.SetWeaponValues(26, 3f);
+            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 24, 9f, true);
             Item.useStyle = ItemUseStyleID.Rapier;
             Item.value = Item.sellPrice(0, 1);
             Item.rare = ItemRarityID.Green;
@@ -27,6 +29,14 @@ namespace Coralite.Content.Items.Icicle
             Item.noUseGraphic = true;
             Item.channel = true;
             CoraliteGlobalItem.SetColdDamage(Item);
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

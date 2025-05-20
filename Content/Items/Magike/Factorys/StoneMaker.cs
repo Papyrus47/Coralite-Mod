@@ -73,7 +73,7 @@ namespace Coralite.Content.Items.Magike.Factorys
         public override string Texture => AssetDirectory.MagikeFactoryTiles + Name;
         public override int DropItemType => ItemType<StoneMaker>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<StoneMakerTileEntity>();
+        public override CoraliteSetsSystem.MagikeTileType PlaceType => CoraliteSetsSystem.MagikeTileType.FourWayNormal;
 
         public override MALevel[] GetAllLevels()
         {
@@ -113,6 +113,8 @@ namespace Coralite.Content.Items.Magike.Factorys
     {
         public sealed override int TargetTileID => TileType<StoneMakerTile>();
 
+        public override int MainComponentID => MagikeComponentID.MagikeFactory;
+
         public override void InitializeBeginningComponent()
         {
             AddComponent(GetStartContainer());
@@ -144,8 +146,8 @@ namespace Coralite.Content.Items.Magike.Factorys
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase * 2;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase * 2;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -295,7 +297,7 @@ namespace Coralite.Content.Items.Magike.Factorys
             }
         }
 
-        public override void OnWork()
+        public override void OnWorking()
         {
             float factor = 1 - Timer / (float)WorkTime;
 

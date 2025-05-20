@@ -68,7 +68,7 @@ namespace Coralite.Content.Bosses.ThunderveinDragon
 
                             if (!VaultUtils.isClient)
                             {
-                                NPC.NewProjectileDirectInAI<ExchangePhaseAnmi>(NPC.Center, Vector2.Zero, 1, 0, NPC.target,
+                                NPC.NewProjectileDirectInAI<ThunderveinExchangePhaseAnmi>(NPC.Center, Vector2.Zero, 1, 0, NPC.target,
                                 BurstTime, NPC.whoAmI);
                             }
                         }

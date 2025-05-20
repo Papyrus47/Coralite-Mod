@@ -1,13 +1,12 @@
 ﻿using Coralite.Content.CoraliteNotes;
+using Coralite.Content.UI;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 using Terraria.UI.Chat;
 using static System.Net.Mime.MediaTypeNames;
-using static Terraria.GameContent.Animations.IL_Actions.Sprites;
 
 namespace Coralite.Helpers
 {
@@ -39,6 +38,12 @@ namespace Coralite.Helpers
         {
             element.Width.Set(widthPixel, widthPercent);
             element.Height.Set(heightPixel, heightPercent);
+        }
+
+        public static void SetSize(this UIElement element, Vector2 size, float widthPercent = 0, float heightPercent = 0)
+        {
+            element.Width.Set(size.X, widthPercent);
+            element.Height.Set(size.Y, heightPercent);
         }
 
         public static void SetTopLeft(this UIElement element, float topPixel, float leftPixel, float topPercent = 0, float leftPercent = 0)
@@ -83,7 +88,7 @@ namespace Coralite.Helpers
         /// <param name="spriteBatch"></param>
         /// <param name="position"></param>
         /// <param name="maxWidth"></param>
-        public static void DrawText(SpriteBatch spriteBatch, string originText, float maxWidth, Vector2 position, Vector2 origin, Vector2 scale, Color shadowColor, Color textColor, out Vector2 textSize,bool useIncomeColor=false)
+        public static void DrawText(SpriteBatch spriteBatch, string originText, float maxWidth, Vector2 position, Vector2 origin, Vector2 scale, Color shadowColor, Color textColor, out Vector2 textSize, bool useIncomeColor = false)
         {
             string text = FontAssets.MouseText.Value.CreateWrappedText(originText, maxWidth);
 
@@ -91,16 +96,20 @@ namespace Coralite.Helpers
             ChatManager.ConvertNormalSnippets(textSnippets);
 
             textSize = ChatManager.GetStringSize(FontAssets.MouseText.Value, textSnippets, scale, maxWidth);
-                origin *= textSize;
+            origin *= textSize;
 
             foreach (Vector2 direction in ChatManager.ShadowDirections)
             {
+                //ChatManager.DrawColorCodedStringShadow(spriteBatch, FontAssets.MouseText.Value, textSnippets, position,
+                //shadowColor, 0f, origin, scale, maxWidth, 2f);
                 ChatManager.DrawColorCodedStringShadow(spriteBatch, FontAssets.MouseText.Value, textSnippets, position + direction,
-                    shadowColor, 0f, origin , scale, maxWidth);
+                        shadowColor, 0f, origin, scale, maxWidth, 1.5f);
+                //ChatManager.DrawColorCodedStringShadow(spriteBatch, FontAssets.MouseText.Value, textSnippets, position,
+                //    shadowColor, 0f, origin, scale, maxWidth, 1f);
             }
 
             ChatManager.DrawColorCodedString(spriteBatch, FontAssets.MouseText.Value, textSnippets,
-                position, textColor, 0f, origin , scale, out _, maxWidth, useIncomeColor);
+                position, textColor, 0f, origin, scale, out _, maxWidth, useIncomeColor);
         }
 
         /// <summary>
@@ -109,7 +118,7 @@ namespace Coralite.Helpers
         public static void DrawTextParagraph(SpriteBatch spriteBatch, string originText, float maxWidth, Vector2 position, out Vector2 textSize, Vector2? scale = null, Color? shadowColor = null, Color? textColor = null)
           => DrawText(spriteBatch, originText, maxWidth, position, Vector2.Zero
                 , scale ?? Vector2.One
-                , shadowColor ?? new Color(40, 40, 40)
+                , shadowColor ?? Coralite.TextShadowColor
                 , textColor ?? Color.White
                 , out textSize);
 
@@ -137,6 +146,13 @@ namespace Coralite.Helpers
             var scrollbar = new UIScrollbar();
             scrollbar.SetTopLeft(5000, 5000);
             list.SetScrollbar(scrollbar);
+        }
+
+        public static void QuickInvisibleScrollbar(this FixedUIGrid grid)
+        {
+            var scrollbar = new UIScrollbar();
+            scrollbar.SetTopLeft(5000, 5000);
+            grid.SetScrollbar(scrollbar);
         }
     }
 }

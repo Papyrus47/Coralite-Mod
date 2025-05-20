@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Tiles.RedJades;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.Yellow8, Item.sellPrice(0, 13));
             Item.SetWeaponValues(79, 4);
             Item.useTime = Item.useAnimation = 35;
-            Item.mana = 27;
+            Item.mana = 25;
 
             Item.shoot = ModContent.ProjectileType<SapphireHairpinProj>();
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -151,12 +151,12 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         {
             if (AttackTime > 0)
             {
-                if (AttackTime == 1 && Main.myPlayer == Projectile.owner)
+                if (AttackTime == 1 && Projectile.IsOwnedByLocalPlayer())
                 {
                     Vector2 dir2 = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.Zero);
 
                     Projectile.NewProjectileFromThis<SapphireProj>(Projectile.Center,
-                           dir2 * Main.rand.NextFloat(5, 6), Owner.GetWeaponDamage(Owner.HeldItem)
+                           dir2 * Main.rand.NextFloat(5, 6), Owner.GetWeaponDamage(Item)
                            , Projectile.knockBack);
 
                     Helper.PlayPitched("Crystal/GemShoot", 0.2f, -0.8f, Projectile.Center);
@@ -479,7 +479,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 _vertexStrip = new VertexStrip();
                 for (int i = 0; i < TrailCount; i++)
                     oldPos2[i] = Projectile.Center;
-                trail = new Trail(Main.graphics.GraphicsDevice, TrailCount, new NoTip(), factor => 54,
+                trail = new Trail(Main.graphics.GraphicsDevice, TrailCount, new EmptyMeshGenerator(), factor => 54,
                      factor =>
                      {
                          return Color.Lerp(SapphireProj.darkC, SapphireProj.brightC, factor.X);
@@ -549,7 +549,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             for (int i = 0; i < TrailCount - 1; i++)
                 oldPos2[i] = oldPos2[i + 1];
             oldPos2[^1] = Projectile.Center + Projectile.velocity;
-            trail.Positions = oldPos2;
+            trail.TrailPositions = oldPos2;
         }
 
         public override void OnKill(int timeLeft)
@@ -632,9 +632,9 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Effect effect = Filters.Scene["SimpleTrailNoHL"].GetShader().Shader;
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
-            effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["sampleTexture"].SetValue(CoraliteAssets.Trail.Meteor.Value);
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }

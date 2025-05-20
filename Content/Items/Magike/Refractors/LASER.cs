@@ -1,9 +1,11 @@
 ﻿using Coralite.Content.Items.MagikeSeries1;
+using Coralite.Content.Items.Shadow;
 using Coralite.Content.Raritys;
 using Coralite.Core;
 using Coralite.Core.Systems.MagikeSystem;
 using Coralite.Core.Systems.MagikeSystem.BaseItems;
 using Coralite.Core.Systems.MagikeSystem.Components;
+using Coralite.Core.Systems.MagikeSystem.MagikeCraft;
 using Coralite.Core.Systems.MagikeSystem.TileEntities;
 using Coralite.Core.Systems.MagikeSystem.Tiles;
 using Coralite.Helpers;
@@ -16,7 +18,7 @@ using static Terraria.ModLoader.ModContent;
 namespace Coralite.Content.Items.Magike.Refractors
 {
     public class LASER() : MagikeApparatusItem(TileType<LASERTile>(), Item.sellPrice(silver: 5)
-        , RarityType<MagicCrystalRarity>(), AssetDirectory.MagikeRefractors)
+        , RarityType<MagicCrystalRarity>(), AssetDirectory.MagikeRefractors), IMagikeCraftable
     {
         public override void AddRecipes()
         {
@@ -29,6 +31,15 @@ namespace Coralite.Content.Items.Magike.Refractors
                 .AddCondition(CoraliteConditions.UseMultiBlockStructure)
                 .Register();
         }
+
+        public void AddMagikeCraftRecipe()
+        {
+            MagikeRecipe.CreateCraftRecipe<LASERCore, LASER>(MagikeHelper.CalculateMagikeCost(MALevel.Shadow, 3))
+                .AddIngredient<ShadowEnergy>(4)
+                .AddIngredient(ItemID.CopperBar, 10)
+                .AddIngredient<HardBasalt>(6)
+                .Register();
+        }
     }
 
     public class LASERTile() : BaseMagikeTile
@@ -37,13 +48,15 @@ namespace Coralite.Content.Items.Magike.Refractors
         public override string Texture => AssetDirectory.MagikeRefractorTiles + Name;
         public override int DropItemType => ItemType<LASER>();
 
-        public override MagikeTP GetEntityInstance() => GetInstance<LASERTileEntity>();
+        public override CoraliteSetsSystem.MagikeTileType PlaceType => CoraliteSetsSystem.MagikeTileType.FourWayNormal;
 
         public override MALevel[] GetAllLevels()
         {
             return [
                 MALevel.None,
                 MALevel.MagicCrystal,
+                MALevel.Glistent,
+                MALevel.CrystallineMagike,
                 ];
         }
 
@@ -99,6 +112,8 @@ namespace Coralite.Content.Items.Magike.Refractors
     {
         public override int TargetTileID => TileType<LASERTile>();
 
+        public override int MainComponentID => MagikeComponentID.MagikeSender;
+
         public override void InitializeBeginningComponent()
         {
             AddComponent(new LASERContainer());
@@ -112,13 +127,15 @@ namespace Coralite.Content.Items.Magike.Refractors
         {
             MagikeMaxBase = incomeLevel switch
             {
-                MALevel.MagicCrystal => 1200,
+                MALevel.MagicCrystal => 1000,
+                MALevel.Glistent => 1400,
+                MALevel.CrystallineMagike => 2000,
                 _ => 0,
             };
             LimitMagikeAmount();
 
-            AntiMagikeMaxBase = MagikeMaxBase;
-            LimitAntiMagikeAmount();
+            //AntiMagikeMaxBase = MagikeMaxBase;
+            //LimitAntiMagikeAmount();
         }
     }
 
@@ -138,12 +155,20 @@ namespace Coralite.Content.Items.Magike.Refractors
             {
                 default:
                 case MALevel.None:
-                    SendDelayBase = 1_0000_0000;//随便填个大数
+                    SendDelayBase = -1;
                     ConnectLengthBase = 0;
                     break;
                 case MALevel.MagicCrystal:
-                    SendDelayBase = 60 * 5;
+                    SendDelayBase = 60 * 3;
                     ConnectLengthBase = 50 * 16;
+                    break;
+                case MALevel.Glistent:
+                    SendDelayBase = 60 * 2 + 30;
+                    ConnectLengthBase = 55 * 16;
+                    break;
+                case MALevel.CrystallineMagike:
+                    SendDelayBase = 60 * 2;
+                    ConnectLengthBase = 60 * 16;
                     break;
             }
 

@@ -5,14 +5,14 @@ using Coralite.Content.Items.ShadowCastle;
 using Coralite.Content.Items.Thunder;
 using Coralite.Core;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -24,7 +24,7 @@ namespace Coralite.Content.Items.HyacinthSeries
     {
         public HyacinthHeldProj() : base(0.2f, 16, -4, AssetDirectory.HyacinthSeriesItems) { }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void InitializeGun()
         {
             Projectile.scale = 0.8f;
         }
@@ -56,12 +56,12 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public enum GunType
         {
-            PainterPaintballGun = 1,
-            SuperStarCannon,
-            StarCannon,
+            Wisteria = 1,
+            //SuperStarCannon,
+            //StarCannon,
             OnyxBlaster,
             //VenusMagnum,
-            ChainGun,
+            //ChainGun,
             Xenopopper,
             VortexBeater,
             SDMG,
@@ -69,7 +69,6 @@ namespace Coralite.Content.Items.HyacinthSeries
             StarsBreath,
             Snowdrop,
             Rosemary,
-            Rosemary2,
             Arethusa,
             WoodWax,
             Musket,
@@ -79,7 +78,18 @@ namespace Coralite.Content.Items.HyacinthSeries
             Lycoris,
             ShadowWave,
             Floette,
-            EternalBloom
+            EternalBloom,
+            QueenOfNight,
+            Shotgun,
+            ClockworkAssaultRifle,
+            Datura,
+            Boomstick,
+            QuadBarrelShotgun,
+            FlintlockPistol,
+            GhostPipe,
+            SunflowerGun,
+            Gatligator,
+            Aloe,
         }
 
         public override void AI()
@@ -213,33 +223,37 @@ namespace Coralite.Content.Items.HyacinthSeries
         {
             switch (value)
             {
-                case (int)GunType.PainterPaintballGun://彩弹枪
-                    return Color.Silver;
-                case (int)GunType.SuperStarCannon://超级星星炮
-                    return Color.LightYellow;
-                case (int)GunType.StarCannon://星星炮
-                    return Color.Yellow;
+                case (int)GunType.Wisteria://紫藤萝
+                    return new Color(234, 173, 255);
+                //case (int)GunType.SuperStarCannon://超级星星炮
+                //    return Color.LightYellow;
+                //case (int)GunType.StarCannon://星星炮
+                //    return Color.Yellow;
+                case (int)GunType.Shotgun://霰弹枪
+                    return Color.Brown;
                 case (int)GunType.OnyxBlaster://玛瑙爆破枪
                     return Color.Purple;
                 //case (int)GunType.VenusMagnum://维纳斯万能枪
                 //    return new Color(140, 255, 102);
-                case (int)GunType.ChainGun://链式机枪
-                    return new Color(196, 17, 18);
+                case (int)GunType.QueenOfNight://夜皇后
+                    return Color.DarkRed;
+                case (int)GunType.ClockworkAssaultRifle://发条枪
+                    return Color.DarkOrange;
+                //case (int)GunType.ChainGun://链式机枪
+                //    return new Color(196, 17, 18);
                 case (int)GunType.Xenopopper://外星泡泡枪
                     return new Color(233, 148, 248);
                 case (int)GunType.VortexBeater://星旋机枪
                     return new Color(0, 242, 170);
                 case (int)GunType.SDMG://太空海豚机枪
                     return new Color(147, 227, 236);
-                case (int)GunType.ThunderDukeVine:
+                case (int)GunType.ThunderDukeVine://雷公藤
                     return Coralite.ThunderveinYellow;
                 case (int)GunType.StarsBreath://满天星
                     return Color.White;
                 case (int)GunType.Snowdrop://雪花莲
                     return new Color(152, 192, 70);
                 case (int)GunType.Rosemary://迷迭香
-                    return new Color(235, 141, 207);
-                case (int)GunType.Rosemary2://迷迭香2
                     return new Color(235, 141, 207);
                 case (int)GunType.Arethusa://幽兰
                     return new Color(95, 120, 233);
@@ -257,10 +271,26 @@ namespace Coralite.Content.Items.HyacinthSeries
                     return NightmarePlantera.nightmareRed;
                 case (int)GunType.ShadowWave://月影
                     return new Color(189, 109, 255);
-                case (int)GunType.Floette://月影
+                case (int)GunType.Floette://花叶蒂
                     return Color.Lime;
-                case (int)GunType.EternalBloom://月影
+                case (int)GunType.EternalBloom://永恒绽放
                     return Color.Pink;
+                case (int)GunType.Datura://曼陀罗
+                    return Color.LightGoldenrodYellow;
+                case (int)GunType.Boomstick://三发猎枪
+                    return Color.Silver;
+                case (int)GunType.QuadBarrelShotgun://四管霰弹枪
+                    return Color.DarkGray;
+                case (int)GunType.FlintlockPistol://燧发枪
+                    return Color.WhiteSmoke;
+                case (int)GunType.GhostPipe://水晶兰
+                    return Color.Lime;
+                case (int)GunType.SunflowerGun://向阳花
+                    return Color.Yellow;
+                case (int)GunType.Gatligator://鳄鱼机关枪
+                    return Color.SandyBrown;
+                case (int)GunType.Aloe://芦荟
+                    return new Color(125,180,145);
                 default:
                     break;
             }
@@ -279,9 +309,9 @@ namespace Coralite.Content.Items.HyacinthSeries
         }
     }
 
-    public class HyacinthBullet2 : ModProjectile
+    public class HyacinthBullet2 : BaseHeldProj
     {
-        public override string Texture => AssetDirectory.Projectiles_Shoot + Name;
+        public override string Texture => AssetDirectory.HyacinthSeriesItems + Name;
 
         public override void SetDefaults()
         {
@@ -311,7 +341,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             return color;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + 1.57f;
         }
@@ -344,7 +374,7 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// 使用ai0来控制绘制的物品，特殊列表为-1至-22
     /// ai1用于控制是否能发出枪声，为1时能发出声音
     /// </summary>
-    public class HyacinthPhantomGun : ModProjectile
+    public class HyacinthPhantomGun : BaseHeldProj
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -366,11 +396,8 @@ namespace Coralite.Content.Items.HyacinthSeries
         }
 
         public override bool? CanDamage() => false;
-
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Player Owner = Main.player[Projectile.owner];
-
             rotation = (Projectile.Center - Owner.Center).ToRotation();
             length = (Owner.Center - Projectile.Center).Length();
             Projectile.netUpdate = true;
@@ -378,7 +405,6 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public override void AI()
         {
-            Player Owner = Main.player[Projectile.owner];
 
             rotation -= 0.06f;
             if (Timer < 30)
@@ -398,7 +424,7 @@ namespace Coralite.Content.Items.HyacinthSeries
                 }
             }
 
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].Center.X ? 0 : 1;
             else
                 Projectile.spriteDirection = Main.player[Projectile.owner].direction > 0 ? 0 : 1;
@@ -410,7 +436,7 @@ namespace Coralite.Content.Items.HyacinthSeries
                     if (Timer % 20 == 0)
                     {
                         //生成弹幕
-                        if (Main.myPlayer == Projectile.owner)
+                        if (Projectile.IsOwnedByLocalPlayer())
                         {
                             float count = Timer / 20;
                             float alpha = 1.3f - (count * 0.3f);
@@ -439,7 +465,7 @@ namespace Coralite.Content.Items.HyacinthSeries
                         //}
                     }
 
-                    if (Main.myPlayer == Projectile.owner)
+                    if (Projectile.IsOwnedByLocalPlayer())
                     {
                         float x = 1.465f * (20 - (Timer % 20)) / 20;
                         float factor = x * MathF.Sin(x * x * x) / 1.186f;
@@ -488,34 +514,38 @@ namespace Coralite.Content.Items.HyacinthSeries
             switch (-(int)Projectile.ai[0])
             {
                 default: break;
-                case (int)GunType.PainterPaintballGun://彩弹枪
-                    return ItemID.PainterPaintballGun;
-                case (int)GunType.SuperStarCannon://超级星星炮
-                    return ItemID.SuperStarCannon;
-                case (int)GunType.StarCannon://星星炮
-                    return ItemID.StarCannon;
+                case (int)GunType.Wisteria://紫藤萝
+                    return ModContent.ItemType<Wisteria>();
+                //case (int)GunType.SuperStarCannon://超级星星炮
+                //    return ItemID.SuperStarCannon;
+                //case (int)GunType.StarCannon://星星炮
+                //    return ItemID.StarCannon;
+                case (int)GunType.Shotgun://霰弹枪
+                    return ItemID.Shotgun;
                 case (int)GunType.OnyxBlaster://玛瑙爆破枪
                     return ItemID.OnyxBlaster;
+                case (int)GunType.QueenOfNight://夜皇后
+                    return ModContent.ItemType<QueenOfNight>();
                 //case (int)GunType.VenusMagnum://维纳斯万能枪
                 //    return ItemID.VenusMagnum;
-                case (int)GunType.ChainGun://链式机枪
-                    return ItemID.ChainGun;
+                //case (int)GunType.ChainGun://链式机枪
+                //    return ItemID.ChainGun;
+                case (int)GunType.ClockworkAssaultRifle://发条枪
+                    return ItemID.ClockworkAssaultRifle;
                 case (int)GunType.Xenopopper://外星泡泡枪
                     return ItemID.Xenopopper;
                 case (int)GunType.VortexBeater://星旋机枪
                     return ItemID.VortexBeater;
                 case (int)GunType.SDMG://太空海豚机枪
                     return ItemID.SDMG;
-                case (int)GunType.ThunderDukeVine:
-                    return ModContent.ItemType<ThunderDukeVine>();//曾经是邓氏鱼 ，现在替换为雷公藤
+                case (int)GunType.ThunderDukeVine://雷公藤
+                    return ModContent.ItemType<ThunderDukeVine>();
                 case (int)GunType.StarsBreath://满天星
                     return ModContent.ItemType<StarsBreath>();
                 case (int)GunType.Snowdrop://雪花莲
                     return ModContent.ItemType<Snowdrop>();
                 case (int)GunType.Rosemary://迷迭香
                     return ModContent.ItemType<Rosemary>();
-                case (int)GunType.Rosemary2://迷迭香2
-                    return ModContent.ItemType<Rosemary2>();
                 case (int)GunType.Arethusa://幽兰
                     return ModContent.ItemType<Arethusa>();
                 case (int)GunType.WoodWax://木蜡
@@ -532,29 +562,43 @@ namespace Coralite.Content.Items.HyacinthSeries
                     return ModContent.ItemType<Lycoris>();
                 case (int)GunType.ShadowWave://月影
                     return ModContent.ItemType<ShadowWave>();
-                case (int)GunType.Floette://月影
+                case (int)GunType.Floette://花叶蒂
                     return ModContent.ItemType<Floette>();
-                case (int)GunType.EternalBloom://月影
+                case (int)GunType.EternalBloom://永恒绽放
                     return ModContent.ItemType<EternalBloom>();
+                case (int)GunType.Datura://曼陀罗
+                    return ModContent.ItemType<Datura>();
+                case (int)GunType.Boomstick://三发猎枪
+                    return ItemID.Boomstick;
+                case (int)GunType.QuadBarrelShotgun://四管霰弹枪
+                    return ItemID.QuadBarrelShotgun;
+                case (int)GunType.GhostPipe://水晶兰
+                    return ModContent.ItemType<GhostPipe>();
+                case (int)GunType.SunflowerGun://向阳花
+                    return ModContent.ItemType<SunflowerGun>();
+                case (int)GunType.Gatligator://鳄鱼机关枪
+                    return ItemID.Gatligator;
+                case (int)GunType.Aloe://芦荟
+                    return ModContent.ItemType<Aloe>();
             }
 
             return (int)Projectile.ai[0];
         }
 
-        public override void SendExtraAI(BinaryWriter writer)
+        public override void NetHeldSend(BinaryWriter writer)
         {
             writer.Write(rotation);
             writer.Write(length);
         }
 
-        public override void ReceiveExtraAI(BinaryReader reader)
+        public override void NetHeldReceive(BinaryReader reader)
         {
             rotation = reader.ReadSingle();
             length = reader.ReadSingle();
         }
     }
 
-    public class HyacinthRedBullet : ModProjectile, IDrawPrimitive
+    public class HyacinthRedBullet : BaseHeldProj, IDrawPrimitive
     {
         public override string Texture => AssetDirectory.Blank;
 
@@ -572,16 +616,14 @@ namespace Coralite.Content.Items.HyacinthSeries
             Projectile.usesLocalNPCImmunity = true;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[24];
-            for (int i = 0; i < 24; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(24);
         }
 
         public override void AI()
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, 24, new TriangularTip(4), factor => Helper.Lerp(4, 10, factor),
+            trail ??= new Trail(Main.instance.GraphicsDevice, 24, new ArrowheadTrailGenerator(4), factor => Helper.Lerp(4, 10, factor),
             factor =>
             {
                 if (factor.X > 0.7f)
@@ -594,12 +636,12 @@ namespace Coralite.Content.Items.HyacinthSeries
                 Projectile.oldPos[i] = Projectile.oldPos[i + 1];
 
             Projectile.oldPos[23] = Projectile.Center + Projectile.velocity;
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override void OnKill(int timeLeft)
         {
-            if (Main.myPlayer == Projectile.owner)
+            if (Projectile.IsOwnedByLocalPlayer())
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Main.rand.NextVector2CircularEdge(8, 8), Vector2.Zero,
                     ModContent.ProjectileType<HyacinthExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.ai[0]);
         }
@@ -620,7 +662,7 @@ namespace Coralite.Content.Items.HyacinthSeries
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "LightAndFogsTrail").Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
     }
 
@@ -630,7 +672,7 @@ namespace Coralite.Content.Items.HyacinthSeries
     /// localAI0用于控制光圈scale
     /// localAI1用于控制光雾scale
     /// </summary>
-    public class HyacinthExplosion : ModProjectile, IDrawNonPremultiplied, IDrawWarp
+    public class HyacinthExplosion : BaseHeldProj, IDrawNonPremultiplied, IDrawWarp
     {
         public override string Texture => AssetDirectory.OtherProjectiles + "Halo";
 
@@ -651,7 +693,7 @@ namespace Coralite.Content.Items.HyacinthSeries
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.ai[0] = Main.rand.NextFloat(6.282f);
             Projectile.localAI[0] += 0.1f;

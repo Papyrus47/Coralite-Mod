@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Terraria;
 using Terraria.Audio;
@@ -82,7 +82,7 @@ namespace Coralite.Content.Items.Glistent
         {
             CreateRecipe()
                 .AddIngredient<LeafStone>(14)
-                .AddIngredient(ItemID.IronBar, 8)
+                .AddRecipeGroup(RecipeGroupID.IronBar, 8)
                 .AddTile(TileID.WorkBenches)
                 .Register();
         }
@@ -180,11 +180,8 @@ namespace Coralite.Content.Items.Glistent
                 if (Main.rand.NextBool())
                     return;
 
-                LeafeoShieldParticle prt = PRTLoader.GetPRTInstance<LeafeoShieldParticle>();
-                prt.Position = Projectile.Center;
-                prt.Velocity = Vector2.Zero;
-                prt.Color = Color.White;
-                prt.Scale = Main.rand.NextFloat(0.6f, 1);
+                LeafeoShieldParticle prt = PRTLoader.CreateAndInitializePRT<LeafeoShieldParticle>(Projectile.Center, Vector2.Zero
+                    , Color.White, Main.rand.NextFloat(0.6f, 1));
                 prt.OwnerIndex = Projectile.whoAmI;
                 particles.Add(prt);
             }

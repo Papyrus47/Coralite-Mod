@@ -5,42 +5,63 @@ using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader.Core;
+using Terraria.ModLoader.Exceptions;
+using Terraria.ModLoader.IO;
 using static Terraria.ModLoader.ModContent;
 
 namespace Coralite.Core.Systems.MagikeSystem
 {
     public partial class MagikeSystem : ModSystem
     {
-        internal Dictionary<int, List<MagikeCraftRecipe>> magikeCraftRecipes;
-        internal static FrozenDictionary<int, List<MagikeCraftRecipe>> MagikeCraftRecipes;
+        internal static Dictionary<int, List<MagikeRecipe>> MagikeCraftRecipesDic { get; private set; } = [];
+        internal static FrozenDictionary<int, List<MagikeRecipe>> MagikeCraftRecipesFrozen { get; private set; }
+        internal static List<RemodelRecipeStruct> RemodelRecipeByActions { get; private set; } = [];
 
         private void RegisterMagikeCraft()
         {
-            Mod Mod = Coralite.Instance;
-
-            magikeCraftRecipes = [];
-
-            foreach (var magCraft in from mod in ModLoader.Mods
-                                     where mod is ICoralite or Coralite
-                                     from Type t in AssemblyManager.GetLoadableTypes(mod.Code)//添加魔能合成表
-                                     where !t.IsAbstract && t.GetInterfaces().Contains(typeof(IMagikeCraftable))
-                                     let magCraft = Activator.CreateInstance(t) as IMagikeCraftable
-                                     select magCraft)
+            List<IMagikeCraftable> magikeCraftables = VaultUtils.GetSubclassInstances<IMagikeCraftable>();
+            foreach (var mag in magikeCraftables)
             {
-                magCraft.AddMagikeCraftRecipe();
+                mag.AddMagikeCraftRecipe();
             }
 
-            foreach (var recipes in magikeCraftRecipes)     //只是简单整理一下
-                recipes.Value.Sort((r1, r2) => r1.magikeCost.CompareTo(r2.magikeCost));
+            foreach (var recipeAction in RemodelRecipeByActions)
+            {
+                AddRemodelRecipe(recipeAction);
+            }
 
+            foreach (var recipes in MagikeCraftRecipesDic)//只是简单整理一下
+            {
+                recipes.Value.Sort((r1, r2) => r1.magikeCost.CompareTo(r2.magikeCost));
+            }
             //使用性能更高的冻结字典
-            MagikeCraftRecipes = magikeCraftRecipes.ToFrozenDictionary();
-            magikeCraftRecipes = null;
+            MagikeCraftRecipesFrozen = MagikeCraftRecipesDic.ToFrozenDictionary();
+            MagikeCraftRecipesDic?.Clear();
+        }
+
+        public override void OnModUnload()
+        {
+            MagikeCraftRecipesDic?.Clear();
+            RemodelRecipeByActions?.Clear();
         }
 
         #region 重塑帮助方法
+
+        public struct RemodelRecipeStruct
+        {
+            public int mainItemType;
+            public int resultItemType;
+            public int magikeCost;
+            public int mainStack = 1;
+            public int resultStack = 1;
+            public Condition[] conditions;
+
+            public RemodelRecipeStruct()
+            {
+            }
+        }
 
         /// <summary>
         /// 向重塑合成表字典中添加重塑合成
@@ -54,9 +75,26 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <param name="resultStack">重塑成的物品数量，默认1</param>
         public static void AddRemodelRecipe(int mainItemType, int resultItemType, int magikeCost, int mainStack = 1, int resultStack = 1, params Condition[] conditions)
         {
-            MagikeCraftRecipe recipe = MagikeCraftRecipe.CreateRecipe(mainItemType, resultItemType, magikeCost, mainStack, resultStack);
+            MagikeRecipe recipe = MagikeRecipe.CreateCraftRecipe(mainItemType, resultItemType, magikeCost, mainStack, resultStack);
             if (conditions != null)
                 foreach (var condition in conditions)
+                    recipe.AddCondition(condition);
+
+            recipe.Register();
+        }
+
+        /// <summary>
+        /// 向重塑合成表字典中添加重塑合成
+        /// </summary>
+        /// <remarks>
+        /// 该重载的理想使用情况：自身和对方都是原版物品
+        /// </remarks>
+        public static void AddRemodelRecipe(RemodelRecipeStruct remodelRecipe)
+        {
+            MagikeRecipe recipe = MagikeRecipe.CreateCraftRecipe(remodelRecipe.mainItemType
+                , remodelRecipe.resultItemType, remodelRecipe.magikeCost, remodelRecipe.mainStack, remodelRecipe.resultStack);
+            if (remodelRecipe.conditions != null)
+                foreach (var condition in remodelRecipe.conditions)
                     recipe.AddCondition(condition);
 
             recipe.Register();
@@ -77,9 +115,21 @@ namespace Coralite.Core.Systems.MagikeSystem
 
         #endregion
 
-        public static bool TryGetMagikeCraftRecipes(int selfType, out List<MagikeCraftRecipe> recipes)
+        public static bool TryGetMagikeCraftRecipes(int selfType, out List<MagikeRecipe> recipes)
         {
-            if (MagikeCraftRecipes != null && MagikeCraftRecipes.TryGetValue(selfType, out List<MagikeCraftRecipe> value))
+            if (MagikeCraftRecipesFrozen != null && MagikeCraftRecipesFrozen.TryGetValue(selfType, out List<MagikeRecipe> value))
+            {
+                recipes = value;
+                return true;
+            }
+
+            recipes = null;
+            return false;
+        }
+
+        public static bool TryGetSpellRecipes(out List<MagikeRecipe> recipes)
+        {
+            if (MagikeCraftRecipesFrozen != null && MagikeCraftRecipesFrozen.TryGetValue(-1, out List<MagikeRecipe> value))
             {
                 recipes = value;
                 return true;
@@ -90,7 +140,7 @@ namespace Coralite.Core.Systems.MagikeSystem
         }
     }
 
-    public record class MagikeCraftRecipe
+    public record class MagikeRecipe
     {
         /// <summary>
         /// 主物品，以此物品为基础进行合成
@@ -102,7 +152,7 @@ namespace Coralite.Core.Systems.MagikeSystem
         public required Item ResultItem { get; set; }
 
         public int magikeCost;
-        public int antiMagikeCost;
+        //public int antiMagikeCost;
 
         private List<Condition> _conditions;
         public List<Condition> Conditions
@@ -114,22 +164,76 @@ namespace Coralite.Core.Systems.MagikeSystem
             }
         }
 
-        private List<Item> _items;
-        public List<Item> RequiredItems
+        private List<RequiredItem> _requiredItems;
+        public List<RequiredItem> RequiredItems
         {
             get
             {
-                _items ??= [];
-                return _items;
+                _requiredItems ??= [];
+                return _requiredItems;
             }
         }
+
+        /// <summary>
+        /// 是否有次要物品
+        /// </summary>
+        public bool HasRequiredItem => _requiredItems != null && _requiredItems.Count > 0;
+
+        /// <summary>
+        /// 次要物品结构体
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="stack"></param>
+        public readonly struct RequiredItem(int type, int stack)
+        {
+            public readonly int type = type;
+            public readonly int stack = stack;
+        }
+
+        private List<(RecipeGroup, int)> _itemGroups;
+        public List<(RecipeGroup, int)> RequiredItemGroups
+        {
+            get
+            {
+                _itemGroups ??= [];
+                return _itemGroups;
+            }
+        }
+
+        /// <summary>
+        /// 是否有次要合成组
+        /// </summary>
+        public bool HasRequiredItemGroup => _itemGroups != null && _itemGroups.Count > 0;
 
         public Action<Item, Item> onCraft;
 
         /// <summary>
         /// 是湮灭反应（需求的是反魔能而不是魔能）
         /// </summary>
-        public bool IsAnnihilation => magikeCost == 0 && antiMagikeCost != 0;
+        //public bool IsAnnihilation => magikeCost == 0 && antiMagikeCost != 0;
+
+        /// <summary>
+        /// 合成表类型
+        /// </summary>
+        public RecipeType recipeType = RecipeType.MagikeCraft;
+
+        public enum RecipeType : byte
+        {
+            /// <summary>
+            /// 魔能合成
+            /// </summary>
+            MagikeCraft,
+            /// <summary>
+            /// 魔能火山烧矿
+            /// </summary>
+            MagikeSmelting,
+            /// <summary>
+            /// 法术合成
+            /// </summary>
+            Spell
+        }
+
+        #region 能否合成检测
 
         /// <summary>
         /// 检测是否能够合成
@@ -139,19 +243,39 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <param name="magikeAmount"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        public bool CanCraft(IList<Item> mainItems, IDictionary<int, int> otherItems, int magikeAmount, out string text)
+        public bool CanCraft(IList<Item> mainItems, Dictionary<int, int> otherItems, int magikeAmount, out string text)
         {
             text = "";
             MagikeCraftAttempt attempt = new MagikeCraftAttempt();
 
             CanCraft_CheckCondition(ref attempt);
             CanCraft_ItemsCheck(mainItems, otherItems, ref attempt);
-            CanCraft_CheckMagike(magikeAmount, ref attempt);
+            //CanCraft_CheckMagike(magikeAmount, ref attempt);
 
             if (attempt.Success)
                 return true;
 
             text = attempt.OutputText();
+            return false;
+        }
+
+        /// <summary>
+        /// 检测是否能合成，仅检测，不输出失败信息
+        /// </summary>
+        /// <param name="mainItems"></param>
+        /// <param name="otherItems"></param>
+        /// <param name="magikeAmount"></param>
+        /// <returns></returns>
+        public bool CanCraftJustCheck(IList<Item> mainItems, Dictionary<int, int> otherItems, int magikeAmount)
+        {
+            MagikeCraftAttempt attempt = new MagikeCraftAttempt();
+
+            CanCraft_CheckCondition(ref attempt);
+            CanCraft_ItemsCheck(mainItems, otherItems, ref attempt);
+
+            if (attempt.Success)
+                return true;
+
             return false;
         }
 
@@ -172,23 +296,23 @@ namespace Coralite.Core.Systems.MagikeSystem
                 }
         }
 
-        public void CanCraft_ItemsCheck(IList<Item> mainItems, IDictionary<int, int> otherItems, ref MagikeCraftAttempt attempt)
+        public void CanCraft_ItemsCheck(IList<Item> mainItems, Dictionary<int, int> otherItems, ref MagikeCraftAttempt attempt)
         {
             foreach (var item in mainItems)
             {
-                if (item is null || item.IsAir)
+                if (item is null || item.IsAir)//是否有主要物品的检测
                 {
                     attempt.noMainItem = true;
                     continue;
                 }
 
-                if (item.type != MainItem.type)
+                if (item.type != MainItem.type)//主要物品是否正确
                 {
                     attempt.mainItemIncorrect = true;
                     continue;
                 }
 
-                if (item.stack < MainItem.stack)
+                if (item.stack < MainItem.stack)//主要物品数量够不够
                 {
                     attempt.mainItemNotEnough = true;
                     attempt.lackMainItem = MainItem.Clone();
@@ -203,51 +327,67 @@ namespace Coralite.Core.Systems.MagikeSystem
                     else
                     {
                         attempt.otherItemNotEnough = true;
-                        attempt.lackItem = requireItem;
+                        attempt.lackItemName =ContentSamples.ItemsByType[ requireItem.type].Name;
                         attempt.lackAmount = requireItem.stack - currentStack;
+                        break;
+                    }
+                }
+
+                foreach (var groupItem in RequiredItemGroups)//遍历合成组
+                {
+                    //如果数量不够就返回
+                    int currentCount = groupItem.Item1.CountUsableItems(otherItems);
+                    if (currentCount < groupItem.Item2)
+                    {
+                        attempt.otherItemNotEnough = true;
+                        attempt.lackItemName = groupItem.Item1.GetText();
+                        attempt.lackAmount = groupItem.Item2 - currentCount;
                         break;
                     }
                 }
             }
         }
 
-        public void CanCraft_CheckMagike(int magikeAmount, ref MagikeCraftAttempt attempt)
-        {
-            if (magikeAmount < 0)//反魔能
-            {
-                if (antiMagikeCost == 0 && magikeCost != 0)
-                    attempt.magikeNotEnough = true;
+        //public void CanCraft_CheckMagike(int magikeAmount, ref MagikeCraftAttempt attempt)
+        //{
+        //    //if (magikeAmount < 0)//反魔能
+        //    //{
+        //    //    if (antiMagikeCost == 0 && magikeCost != 0)
+        //    //        attempt.magikeNotEnough = true;
 
-                if (magikeAmount > antiMagikeCost)//反魔能需要反一下
-                {
-                    attempt.antimagikeNotEnough = true;
-                }
+        //    //    if (magikeAmount > -1)//反魔能需要反一下
+        //    //    {
+        //    //        attempt.antimagikeNotEnough = true;
+        //    //    }
 
-                return;
-            }
+        //    //    return;
+        //    //}
 
-            if (magikeAmount == 0 && antiMagikeCost != 0)
-                attempt.antimagikeNotEnough = true;
+        //    //if (magikeAmount == 0 && antiMagikeCost != 0)
+        //    //    attempt.antimagikeNotEnough = true;
 
-            if (magikeAmount < magikeCost)
-            {
-                attempt.magikeNotEnough = true;
-                attempt.targetMagike = magikeCost;
-                attempt.selfMagike = magikeAmount;
-            }
-        }
+        //    if (magikeAmount < 1)
+        //    {
+        //        attempt.magikeNotEnough = true;
+        //        attempt.targetMagike = magikeCost;
+        //        attempt.selfMagike = magikeAmount;
+        //    }
+        //}
 
-        #region 新建合成表部分
+        #endregion
+
+        #region 新建魔能合成的合成表部分
 
         /// <summary>
+        /// 创建魔能合成表
         /// </summary>
         /// <param name="magikeCost"></param>
         /// <param name="resultItemStack"></param>
         /// <returns></returns>
-        public static MagikeCraftRecipe CreateRecipe<TMainItem, TResultItem>(int magikeCost, int MainItemStack = 1, int resultItemStack = 1)
+        public static MagikeRecipe CreateCraftRecipe<TMainItem, TResultItem>(int magikeCost, int MainItemStack = 1, int resultItemStack = 1)
             where TMainItem : ModItem where TResultItem : ModItem
         {
-            return new MagikeCraftRecipe()
+            return new MagikeRecipe()
             {
                 MainItem = new(ItemType<TMainItem>(), MainItemStack),
                 ResultItem = new(ItemType<TResultItem>(), resultItemStack),
@@ -256,71 +396,41 @@ namespace Coralite.Core.Systems.MagikeSystem
         }
 
         /// <summary>
+        /// 创建魔能合成表
         /// </summary>
         /// <param name="magikeCost"></param>
         /// <param name="resultItemStack"></param>
         /// <returns></returns>
-        public static MagikeCraftRecipe CreateRecipe(int mainItemType, int resultItemType, int magikeCost, int MainItenStack = 1, int resultItemStack = 1)
+        public static MagikeRecipe CreateCraftRecipe(int mainItemType, int resultItemType, int magikeCost, int MainItenStack = 1, int resultItemStack = 1)
         {
-            return new MagikeCraftRecipe()
+            return new MagikeRecipe()
             {
                 MainItem = new(mainItemType, MainItenStack),
                 ResultItem = new(resultItemType, resultItemStack),
                 magikeCost = magikeCost
             };
         }
-
-        public MagikeCraftRecipe SetMainStack(int mainItemStack)
+        public static MagikeRecipe[] CreateCraftRecipes(int[] mainItemType, int resultItemType, int magikeCost, int MainItenStack = 1, int resultItemStack = 1)
         {
-            MainItem.stack = mainItemStack;
-            return this;
+            MagikeRecipe[] recipes = new MagikeRecipe[mainItemType.Length];
+            for (int i = 0; i < mainItemType.Length; i++)
+            {
+                recipes[i] = new MagikeRecipe()
+                {
+                    MainItem = new(mainItemType[i], MainItenStack),
+                    ResultItem = new(resultItemType, resultItemStack),
+                    magikeCost = magikeCost
+                };
+            }
+            return recipes;
         }
 
-        public MagikeCraftRecipe SetAntiMagikeCost(int antiMagikeCost)
-        {
-            magikeCost = 0;
-            this.antiMagikeCost = antiMagikeCost;
-            return this;
-        }
-
-        public MagikeCraftRecipe SetMagikeCost(int MagikeCost)
-        {
-            antiMagikeCost = 0;
-            magikeCost = MagikeCost;
-            return this;
-        }
-
-        public MagikeCraftRecipe AddIngredient(int itemID, int stack = 1)
-        {
-            RequiredItems.Add(new Item(itemID, stack));
-            return this;
-        }
-
-        public MagikeCraftRecipe AddIngredient<T>(int stack = 1) where T : ModItem
-        {
-            RequiredItems.Add(new Item(ItemType<T>(), stack));
-            return this;
-        }
-
-        public MagikeCraftRecipe AddCondition(Condition condition)
-        {
-            Conditions.Add(condition);
-            return this;
-        }
-
-        public void Register()
-        {
-            Dictionary<int, List<MagikeCraftRecipe>> MagikeCraftRecipes = GetInstance<MagikeSystem>().magikeCraftRecipes;
-            if (MagikeCraftRecipes == null)
-                return;
-
-            if (MagikeCraftRecipes.TryGetValue(MainItem.type, out List<MagikeCraftRecipe> value))
-                value.Add(this);
-            else
-                MagikeCraftRecipes.Add(MainItem.type, [this]);
-
-            AddVanillaRecipe();
-        }
+        //public MagikeRecipe SetAntiMagikeCost(int antiMagikeCost)
+        //{
+        //    magikeCost = 0;
+        //    this.antiMagikeCost = antiMagikeCost;
+        //    return this;
+        //}
 
         /// <summary>
         /// 在注册的同时新建一个拥有相同主物品类型和堆叠数的合成表
@@ -329,10 +439,10 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <param name="magikeCost"></param>
         /// <param name="resultItemStack"></param>
         /// <returns></returns>
-        public MagikeCraftRecipe RegisterNew(int resultItemType, int magikeCost, int resultItemStack = 1)
+        public MagikeRecipe RegisterNewCraft(int resultItemType, int magikeCost, int resultItemStack = 1)
         {
             Register();
-            return CreateRecipe(MainItem.type, resultItemType, magikeCost, MainItem.stack, resultItemStack);
+            return CreateCraftRecipe(MainItem.type, resultItemType, magikeCost, MainItem.stack, resultItemStack);
         }
 
         /// <summary>
@@ -342,34 +452,252 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <param name="magikeCost"></param>
         /// <param name="resultItemStack"></param>
         /// <returns></returns>
-        public MagikeCraftRecipe RegisterNew<TResultItem>(int magikeCost, int resultItemStack = 1)
+        public MagikeRecipe RegisterNewCraft<TResultItem>(int magikeCost, int resultItemStack = 1)
             where TResultItem : ModItem
         {
             Register();
-            return CreateRecipe(MainItem.type, ItemType<TResultItem>(), magikeCost, MainItem.stack, resultItemStack);
+            return CreateCraftRecipe(MainItem.type, ItemType<TResultItem>(), magikeCost, MainItem.stack, resultItemStack);
         }
 
         #endregion
 
+        #region 通用方法
+
+        /// <summary>
+        /// 设置主要物品的需求量
+        /// </summary>
+        /// <param name="mainItemStack"></param>
+        /// <returns></returns>
+        public MagikeRecipe SetMainStack(int mainItemStack)
+        {
+            MainItem.stack = mainItemStack;
+            return this;
+        }
+
+        /// <summary>
+        /// 重新设置魔能需求量
+        /// </summary>
+        /// <param name="MagikeCost"></param>
+        /// <returns></returns>
+        public MagikeRecipe SetMagikeCost(int MagikeCost)
+        {
+            //antiMagikeCost = 0;
+            magikeCost = MagikeCost;
+            return this;
+        }
+
+        /// <summary>
+        /// 添加次要物品
+        /// </summary>
+        /// <param name="itemID"></param>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddIngredient(int itemID, int stack = 1)
+        {
+            RequiredItems.Add(new RequiredItem(itemID, stack));
+            return this;
+        }
+
+        /// <summary>
+        /// 添加次要物品
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddIngredient<T>(int stack = 1) where T : ModItem
+        {
+            RequiredItems.Add(new RequiredItem(ItemType<T>(), stack));
+            return this;
+        }
+
+        /// <summary>
+        /// 添加次要合成组
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddIngredientGroup(string groupName, int stack = 1)
+        {
+            if (!RecipeGroup.recipeGroupIDs.TryGetValue(groupName, out int value))
+                throw new RecipeException($"A recipe group with the name {groupName} does not exist.");
+
+            int id = value;
+            var group = RecipeGroup.recipeGroups[id];
+
+            RequiredItemGroups.Add((group, stack));
+            return this;
+        }
+
+        /// <summary>
+        /// 添加次要合成组
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stack"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddIngredientGroup(int recipeGroupId, int stack = 1)
+        {
+            if (!RecipeGroup.recipeGroups.TryGetValue(recipeGroupId, out RecipeGroup rec))
+                throw new RecipeException($"A recipe group with the ID {recipeGroupId} does not exist.");
+
+            RequiredItemGroups.Add((rec, stack));
+            return this;
+        }
+
+        /// <summary>
+        /// 向合成表内添加合成条件
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddCondition(Condition condition)
+        {
+            Conditions.Add(condition);
+            return this;
+        }
+
+        /// <summary>
+        /// 向合成表内添加一堆合成条件
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public MagikeRecipe AddConditions(params Condition[] condition)
+        {
+            Conditions.AddRange(condition);
+            return this;
+        }
+
+        /// <summary>
+        /// 注册合成表
+        /// </summary>
+        public void Register()
+        {
+            Dictionary<int, List<MagikeRecipe>> MagikeCraftRecipes = MagikeSystem.MagikeCraftRecipesDic;
+            if (MagikeCraftRecipes == null)
+                return;
+
+            if (MainItem != null)
+            {
+                if (MagikeCraftRecipes.TryGetValue(MainItem.type, out List<MagikeRecipe> value))
+                    value.Add(this);
+                else
+                    MagikeCraftRecipes.Add(MainItem.type, [this]);
+            }
+            else
+            {
+                if (MagikeCraftRecipes.TryGetValue(-1, out List<MagikeRecipe> value))
+                    value.Add(this);
+                else
+                    MagikeCraftRecipes.Add(-1, [this]);
+            }
+
+            AddVanillaRecipe();
+        }
+
+        /// <summary>
+        /// 添加原版合成表用于方便查找
+        /// </summary>
         private void AddVanillaRecipe()
         {
             Recipe recipe = Recipe.Create(ResultItem.type, ResultItem.stack);
             if (magikeCost > 0)
                 recipe.AddIngredient<SymbolOfMagike>(magikeCost);
 
-            recipe.AddIngredient(MainItem.type, MainItem.stack);
+            if (MainItem != null)
+                recipe.AddIngredient(MainItem.type, MainItem.stack);
 
-            if (_items != null)
+            if (_requiredItems != null)
                 foreach (var item in RequiredItems)
                     recipe.AddIngredient(item.type, item.stack);
 
-            recipe.AddCondition(CoraliteConditions.MagikeCraft);
+            if (_itemGroups != null)
+                foreach (var item in RequiredItemGroups)
+                    recipe.AddRecipeGroup(item.Item1, item.Item2);
+
+            switch (recipeType)
+            {
+                case RecipeType.MagikeCraft:
+                    recipe.AddCondition(CoraliteConditions.MagikeCraft);
+                    break;
+                case RecipeType.MagikeSmelting:
+
+                    break;
+                case RecipeType.Spell:
+                    recipe.AddCondition(CoraliteConditions.MagikeCraft);
+                    break;
+                default:
+                    break;
+            }
 
             if (_conditions != null)
                 recipe.AddCondition(Conditions);
 
             recipe.DisableDecraft();
             recipe.Register();
+        }
+
+        #endregion
+
+        #region 法术合成部分
+
+        /// <summary>
+        /// 创建魔能合成表
+        /// </summary>
+        /// <param name="magikeCost"></param>
+        /// <param name="resultItemStack"></param>
+        /// <returns></returns>
+        public static void RegisterSpell<TResultItem>(int magikeCost, int resultItemStack = 1)
+            where TResultItem : ModItem
+        {
+            var recipe = new MagikeRecipe()
+            {
+                MainItem = null,
+                ResultItem = new(ItemType<TResultItem>(), resultItemStack),
+                magikeCost = magikeCost,
+                recipeType = RecipeType.Spell,
+            };
+
+            recipe.Register();
+        }
+
+        /// <summary>
+        /// 创建魔能合成表
+        /// </summary>
+        /// <param name="magikeCost"></param>
+        /// <param name="resultItemStack"></param>
+        /// <returns></returns>
+        public static void RegisterSpell(int resultItemType, int magikeCost, int resultItemStack = 1)
+        {
+            var recipe = new MagikeRecipe()
+            {
+                MainItem = null,
+                ResultItem = new(resultItemType, resultItemStack),
+                magikeCost = magikeCost,
+                recipeType = RecipeType.Spell,
+            };
+
+            recipe.Register();
+        }
+
+        #endregion
+
+        public void Save(TagCompound tag)
+        {
+            tag.Add("ResultItem", ResultItem);
+            tag.Add("MainItem", MainItem);
+            tag.Add("RecipeType", (int)recipeType);
+
+            tag.Add(nameof(magikeCost), magikeCost);
+        }
+
+        public static MagikeRecipe Load(TagCompound tag)
+        {
+            if (tag.TryGet("ResultItem", out Item resultItem) && tag.TryGet("MainItem", out Item mainItem) && tag.TryGet("RecipeType", out int recipeType)
+                && MagikeSystem.TryGetMagikeCraftRecipes(mainItem.type, out List<MagikeRecipe> recipes))
+            {
+                int magikeCost = tag.GetInt(nameof(magikeCost));
+                return recipes.FirstOrDefault(r => r.ResultItem.type == resultItem.type && r.magikeCost == magikeCost && r.recipeType == (RecipeType)recipeType, null);
+            }
+
+            return null;
         }
     }
 
@@ -399,14 +727,14 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <summary>
         /// 魔能不够
         /// </summary>
-        public bool magikeNotEnough = false;
-        public int targetMagike;
-        public int selfMagike;
+        //public bool magikeNotEnough = false;
+        //public int targetMagike;
+        //public int selfMagike;
 
         /// <summary>
         /// 魔能不够
         /// </summary>
-        public bool antimagikeNotEnough = false;
+        //public bool antimagikeNotEnough = false;
         /// <summary>
         /// 其他物品不足
         /// </summary>
@@ -414,7 +742,7 @@ namespace Coralite.Core.Systems.MagikeSystem
         /// <summary>
         /// 缺失的物品
         /// </summary>
-        public Item lackItem = null;
+        public string lackItemName = null;
         /// <summary>
         /// 缺失的数量
         /// </summary>
@@ -436,13 +764,13 @@ namespace Coralite.Core.Systems.MagikeSystem
                 text = ConcatText(text, MagikeSystem.GetCraftText(MagikeSystem.CraftTextID.ConditionNotMet) + conditionFailText);
 
             if (otherItemNotEnough)
-                text = ConcatText(text, MagikeSystem.CraftText[(int)MagikeSystem.CraftTextID.OtherItemNotEnough].Format(lackItem.Name, lackAmount));
+                text = ConcatText(text, MagikeSystem.CraftText[(int)MagikeSystem.CraftTextID.OtherItemNotEnough].Format(lackItemName, lackAmount));
 
-            if (magikeNotEnough)
-                text = ConcatText(text, MagikeSystem.CraftText[(int)MagikeSystem.CraftTextID.MagikeNotEnough].Format(selfMagike, targetMagike));
+            //if (magikeNotEnough)
+            //    text = ConcatText(text, MagikeSystem.CraftText[(int)MagikeSystem.CraftTextID.MagikeNotEnough].Format(selfMagike, targetMagike));
 
-            if (antimagikeNotEnough)
-                text = ConcatText(text, MagikeSystem.GetCraftText(MagikeSystem.CraftTextID.AntimagikeNotEnough));
+            //if (antimagikeNotEnough)
+            //    text = ConcatText(text, MagikeSystem.GetCraftText(MagikeSystem.CraftTextID.AntimagikeNotEnough));
 
             return text;
         }
@@ -460,7 +788,7 @@ namespace Coralite.Core.Systems.MagikeSystem
             get
             {
                 return !(noMainItem || mainItemIncorrect || mainItemNotEnough
-                    || conditionNotMet || magikeNotEnough || otherItemNotEnough);
+                    || conditionNotMet /*|| magikeNotEnough*/ || otherItemNotEnough);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Terraria;
 using Terraria.ID;
 
@@ -42,6 +43,7 @@ namespace Coralite.Content.Items.RedJades
         }
     }
 
+    [PlayerEffect]
     public class FlaskOfRedJadeBuff : ModBuff
     {
         public override string Texture => AssetDirectory.RedJadeItems + Name;
@@ -55,7 +57,7 @@ namespace Coralite.Content.Items.RedJades
         public override void Update(Player player, ref int buffIndex)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
-                cp.AddEffect(nameof(FlaskOfRedJade));
+                cp.AddEffect(nameof(FlaskOfRedJadeBuff));
         }
     }
 }

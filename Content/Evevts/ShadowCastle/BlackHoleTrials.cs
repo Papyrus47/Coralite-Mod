@@ -1,10 +1,10 @@
 ﻿using Coralite.Core;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader.IO;
@@ -26,7 +26,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
         }
     }
 
-    public class BlackHoleMainProj : ModProjectile, IDrawWarp
+    public class BlackHoleMainProj : BaseHeldProj, IDrawWarp
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "BlackBall";
 
@@ -47,7 +47,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
             Projectile.tileCollide = false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Helper.PlayPitched(CoraliteSoundID.ShieldDestroyed_NPCDeath58, Projectile.Center, pitch: 0.5f);
         }
@@ -307,11 +307,11 @@ namespace Coralite.Content.Evevts.ShadowCastle
     /// <summary>
     /// 使用ai0传入主人,ai1传入状态
     /// </summary>
-    public class BlackStarProj : ModProjectile, IDrawPrimitive, IDrawNonPremultiplied
+    public class BlackStarProj : BaseHeldProj, IDrawPrimitive, IDrawNonPremultiplied
     {
         public override string Texture => AssetDirectory.NightmarePlantera + "BlackBall";
 
-        Projectile Owner
+        private Projectile HomeProj
         {
             get
             {
@@ -340,7 +340,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
             Projectile.tileCollide = false;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
             Projectile.InitOldPosCache(TrailCount);
         }
@@ -359,10 +359,10 @@ namespace Coralite.Content.Evevts.ShadowCastle
 
         public override void AI()
         {
-            Projectile owner = Owner;
+            Projectile owner = HomeProj;
             if (owner == null) return;
 
-            trail ??= new Trail(Main.graphics.GraphicsDevice, TrailCount, new NoTip(), factor => Helper.Lerp(0, 8, factor),
+            trail ??= new Trail(Main.graphics.GraphicsDevice, TrailCount, new EmptyMeshGenerator(), factor => Helper.Lerp(0, 8, factor),
                 factor =>
                 {
                     return Color.Lerp(Color.Transparent, Color.DarkOrange, factor.X);
@@ -434,7 +434,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
             }
 
             Projectile.rotation = Projectile.velocity.ToRotation();
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -473,7 +473,7 @@ namespace Coralite.Content.Evevts.ShadowCastle
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["uTextImage"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.ShadowCastleEvents + "Trail").Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

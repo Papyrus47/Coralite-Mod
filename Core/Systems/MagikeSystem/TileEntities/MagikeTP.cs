@@ -1,7 +1,9 @@
 ﻿using Coralite.Core.Systems.CoraliteActorComponent;
+using Coralite.Core.Systems.MagikeSystem.Components;
 using Coralite.Core.Systems.MagikeSystem.Tiles;
 using Coralite.Helpers;
 using InnoVault.TileProcessors;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -41,6 +43,18 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
         public virtual int ExtendFilterCapacity { get => 2; }
 
         /// <summary>
+        /// 在UI中显示的主要组件，会在开启UI的时候设置
+        /// </summary>
+        public abstract int MainComponentID { get; }
+
+        /// <summary>
+        /// 获取主要组件在列表中的索引
+        /// </summary>
+        /// <returns></returns>
+        public int GetMainComponentIndex()
+            => ComponentsCache.FindIndex(c => c.ID == MainComponentID);
+
+        /// <summary>
         /// 检测滤镜容量，如果已经满了那么就无法插入
         /// </summary>
         /// <returns></returns>
@@ -61,6 +75,10 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
         public override void SetProperty()
         {
             InitializeComponentCache();
+            ApparatusInformation c = AddInformation();
+            if (c != null)
+                AddComponent(c);
+
             InitializeBeginningComponent();
         }
 
@@ -74,6 +92,18 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
         }
 
         /// <summary>
+        /// 加入显示信息的组件
+        /// </summary>
+        /// <returns></returns>
+        public virtual ApparatusInformation AddInformation()
+        {
+            int tileType = TargetTileID;
+            int itemType = TileLoader.GetItemDropFromTypeAndStyle(tileType);
+            Item i = ContentSamples.ItemsByType[itemType].Clone();
+            return new ApparatusInformation() { SelfItem = i };
+        }
+
+        /// <summary>
         /// 初始化起始时的组件
         /// </summary>
         public abstract void InitializeBeginningComponent();
@@ -83,8 +113,13 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
             RemoveAllComponent();
         }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (var component in ComponentsCache)
+                component.Draw(spriteBatch);
+        }
 
-        #region 数据存储
+        #region 网络同步与数据存储
 
         public override void SendData(ModPacket data)
         {
@@ -184,6 +219,9 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
 
         public bool HasComponent(int componentId)
             => Components.Contains(componentId);
+
+        public bool HasComponent<T>() where T : MagikeComponent
+            => ComponentsCache.FirstOrDefault(c => c is T, null) != null;
 
         /// <summary>
         /// 向实体内加入组件
@@ -288,6 +326,17 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
             return result != null;
         }
 
+        public bool TryGetFilters(out List<MagikeComponent> result)
+        {
+            result = null;
+            if (!HasComponent(MagikeComponentID.MagikeFilter))
+                return false;
+
+            result = (List<MagikeComponent>)Components[MagikeComponentID.MagikeFilter];
+
+            return result != null;
+        }
+
         public MagikeComponent GetSingleComponent(int index)
         {
             if (!HasComponent(index))
@@ -310,45 +359,28 @@ namespace Coralite.Core.Systems.MagikeSystem.TileEntities
                 return (T)((List<MagikeComponent>)Components[index]).First();
         }
 
+        /// <summary>
+        /// 查找组件的索引
+        /// </summary>
+        /// <param name="component"></param>
+        /// <returns></returns>
+        public int IndexOf(MagikeComponent component)
+        {
+            return ComponentsCache.IndexOf(component);
+        }
+
         #endregion
     }
 
     public class MagikeGloblaTP : GlobalTileProcessor
     {
-        public override Point16? GetTopLeftPoint(int x, int y)
+        public override Point16? GetTopLeftOrNull(Tile tile, int i, int j)
         {
-            Tile t = Framing.GetTileSafely(x, y);
-            if (t.TileType < TileID.Count)
-                return null;
-
-            ModTile mt = TileLoader.GetTile(t.TileType);
-
-            if (mt is BaseMagikeTile)
-                return MagikeHelper.ToTopLeft(x, y);
-
-            return null;
-        }
-
-        public override bool? TryIsTopLeftPoint(int x, int y, out Point16 position)
-        {
-            position = default;
-            Tile t = Framing.GetTileSafely(x, y);
-            if (t.TileType < TileID.Count)
-                return null;
-
-            ModTile mt = TileLoader.GetTile(t.TileType);
-
-            if (mt is BaseMagikeTile)
+            if (TileLoader.GetTile(tile.TileType) is BaseMagikeTile magikeTile)
             {
-                Point16? p = MagikeHelper.ToTopLeft(x, y);
-                if (p.HasValue)
-                {
-                    position = p.Value;
-                    return x == position.X && y == position.Y;
-                }
+                return magikeTile.ToTopLeft(i, j) ?? MagikeHelper.ToTopLeft(i, j);
             }
-
-            return null;
+            return base.GetTopLeftOrNull(tile, i, j);
         }
     }
 }

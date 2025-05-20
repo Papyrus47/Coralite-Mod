@@ -2,8 +2,8 @@
 using Coralite.Content.Tiles.RedJades;
 using Coralite.Core;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public override void SetDefs()
         {
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.StrongRed10, Item.sellPrice(0, 24));
-            Item.SetWeaponValues(95, 4, 6);
+            Item.SetWeaponValues(80, 4, 6);
             Item.useTime = Item.useAnimation = 37;
             Item.mana = 18;
 
@@ -158,7 +158,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     for (int i = 0; i < 3; i++)
                     {
                         int p = Projectile.NewProjectileFromThis<ZirconProj>(Projectile.Center + new Vector2(0, -25), -Vector2.UnitY.RotateByRandom(-0.2f, 0.2f) * (12 + (i * 2.5f))
-                             , Owner.GetWeaponDamage(Owner.HeldItem), 5);
+                             , Owner.GetWeaponDamage(Item), 5);
                         Main.projectile[p].localNPCHitCooldown += i;
                     }
                 }
@@ -258,7 +258,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 FlyingTime = 20 * 5;
             }
 
-            trail ??= new Trail(Main.instance.GraphicsDevice, trailPoint, new NoTip(), factor =>
+            trail ??= new Trail(Main.instance.GraphicsDevice, trailPoint, new EmptyMeshGenerator(), factor =>
             {
                 if (factor < 0.8f)
                     return Helper.Lerp(6, 8, factor / 0.8f);
@@ -321,7 +321,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             }
 
             Projectile.UpdateOldPosCache();
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
             fireParticles.Update();
         }
 
@@ -374,12 +374,12 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             Effect effect = Filters.Scene["Flow2"].GetShader().Shader;
 
             effect.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly * 5);
-            effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["uTextImage"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ExtraLaserFlow").Value);
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.Additive;
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
 
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }

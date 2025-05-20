@@ -11,6 +11,8 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
     {
         public override string Texture => AssetDirectory.MagikeLensTiles + Name;
 
+        public override CoraliteSetsSystem.MagikeTileType PlaceType => CoraliteSetsSystem.MagikeTileType.FourWayNormal;
+
         public override void DrawExtraTex(SpriteBatch spriteBatch, Texture2D tex, Rectangle tileRect, Vector2 offset, Color lightColor, float rotation, MagikeTP entity, MALevel level)
         {
             Vector2 selfCenter = tileRect.Center();
@@ -30,10 +32,18 @@ namespace Coralite.Core.Systems.MagikeSystem.Tiles
                 drawPos += new Vector2(0f, offset2 * 4f);
             }
             else
-                drawPos -= rotation.ToRotationVector2() * (halfHeight - ((tileRect.Width > tileRect.Height ? tex.Width : tex.Height) / 2) - 4);
+            {
+                Vector2 frameSize = GetTexFrameSize(tex, level);
+                drawPos -= rotation.ToRotationVector2() * (halfHeight - ((tileRect.Width > tileRect.Height ? frameSize.X : frameSize.Y) / 2) - 4);
+            }
 
             // 绘制主帖图
             DrawTopTex(spriteBatch, tex, drawPos, lightColor, level, canProduce);
+        }
+
+        public virtual Vector2 GetTexFrameSize(Texture2D tex, MALevel level)
+        {
+            return new Vector2(tex.Width, tex.Height);
         }
 
         /// <summary>

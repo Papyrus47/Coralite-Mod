@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.FlyingShieldSystem;
 using Terraria;
 using Terraria.ID;
@@ -10,6 +11,12 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
     {
         public GravitationalCatapult() : base(ItemRarityID.Red, Item.sellPrice(0, 12))
         {
+        }
+
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Item.defense = 6;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
@@ -36,6 +43,10 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             projectile.dashTime += 6;
             projectile.dashSpeed += speedAdder;
             projectile.Owner.AddBuff(ModContent.BuffType<GravitationalCatapultBuff>(), (int)(projectile.dashTime * 2f));
+            if (projectile.Owner.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.FlyingShieldDashDamageReduce = 50;
+            }
         }
 
         public override void AddRecipes()
@@ -48,6 +59,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         }
     }
 
+    [PlayerEffect]
     public class GravitationalCatapultBuff : ModBuff
     {
         public override string Texture => AssetDirectory.FlyingShieldAccessories + Name;

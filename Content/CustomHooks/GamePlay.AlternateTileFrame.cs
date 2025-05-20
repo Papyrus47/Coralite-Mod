@@ -1,4 +1,4 @@
-﻿using Coralite.Core.Systems.MagikeSystem.Tiles;
+﻿using Coralite.Core;
 using Coralite.Helpers;
 using System.Reflection;
 using Terraria;
@@ -39,8 +39,8 @@ namespace Coralite.Content.CustomHooks
             if (tileData == null)
                 return;
 
-            ModTile m = TileLoader.GetTile(type);
-            if (!Main.tileSolidTop[type] && m is BaseMagikeTile)
+            if (CoraliteSetsSystem.MagikeTileTypes.TryGetValue(type, out var placeType)
+                && placeType != CoraliteSetsSystem.MagikeTileType.None)
             {
                 Tile t = Main.tile[i, j];
                 int width = tileData.Width;
@@ -49,8 +49,13 @@ namespace Coralite.Content.CustomHooks
 
                 TileObjectData alternateData;
                 int style = 0;
-
                 int partFrameY = t.TileFrameY % tileData.CoordinateFullHeight;
+
+                int leftHeight = placeType switch
+                {
+                    CoraliteSetsSystem.MagikeTileType.FourWayNormal => (height * 2) + width,
+                    _ => height * 3
+                };
 
                 if (y1 < height)
                     alternateData = tileData;
@@ -59,17 +64,25 @@ namespace Coralite.Content.CustomHooks
                     style = 1;
                     alternateData = TileObjectData.GetTileData(type, 0, style + 1);// ((List<TileObjectData>)_alternateInfo.GetValue(tileData))[style];
                 }
-                else if (y1 < (height * 2) + width)
+                else if (y1 < leftHeight)
                 {
                     style = 2;
                     alternateData = TileObjectData.GetTileData(type, 0, style + 1);// ((List<TileObjectData>)_alternateInfo.GetValue(tileData))[style];
-                    partFrameY = (t.TileFrameY - (alternateData.CoordinateFullWidth * 2)) % alternateData.CoordinateFullHeight;
+                    partFrameY = placeType switch
+                    {
+                        CoraliteSetsSystem.MagikeTileType.FourWayNormal => (t.TileFrameY - (alternateData.CoordinateFullWidth * 2)) % alternateData.CoordinateFullHeight,
+                        _ => t.TileFrameY % tileData.CoordinateFullHeight
+                    };
                 }
                 else
                 {
                     style = 3;
                     alternateData = TileObjectData.GetTileData(type, 0, style + 1);// ((List<TileObjectData>)_alternateInfo.GetValue(tileData))[style];
-                    partFrameY = (t.TileFrameY - (alternateData.CoordinateFullWidth * 2)) % alternateData.CoordinateFullHeight;
+                    partFrameY = placeType switch
+                    {
+                        CoraliteSetsSystem.MagikeTileType.FourWayNormal => (t.TileFrameY - (alternateData.CoordinateFullWidth * 2)) % alternateData.CoordinateFullHeight,
+                        _ => t.TileFrameY % tileData.CoordinateFullHeight
+                    };
                 }
 
                 //因为放下来的时候就是0所以不管他

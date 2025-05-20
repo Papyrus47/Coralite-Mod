@@ -403,8 +403,8 @@ FloetteHeldProj.DisplayName: 花叶蒂
 PosionedSeedPlantera.DisplayName: 剧毒种子
 SeedPlantera.DisplayName: 种子
 ThornBall.DisplayName: 尖刺球
-VirgoBullet.DisplayName: 处女弹
-VirgoFeather.DisplayName: 处女飞羽
+VirgoBullet.DisplayName: 羽球
+VirgoFeather.DisplayName: 羽毛弹
 VirgoHeldProj.DisplayName: 处女座
 ThunderMinion.DisplayName: 闪电
 MeowmeoProj.DisplayName: 彩虹猫圣剑
@@ -470,7 +470,7 @@ SteelBreakerProj.DisplayName: 破魔旋刃
 ElfTradeProj.DisplayName: 仙灵交易
 PyropeCrownProj.DisplayName: 红榴之冠
 PyropeProj.DisplayName: 魔法红榴石
-AmethystNeckLaceProj.DisplayName: Amethyst Neck Lace Proj
+AmethystNeckLaceProj.DisplayName: 第六轮回项链
 AmethystLaser.DisplayName: 紫晶光束
 FriedShrimpProj.DisplayName: 炸虾
 ChocomintIceProj.DisplayName: 薄荷巧克力冰淇淋
@@ -512,57 +512,157 @@ TerranascenceGuard.DisplayName: 泰拉勇者的盾
 TerranascenceSwing.DisplayName: 泰拉勇者的剑
 TerranascenceTag.DisplayName: 自然水晶
 TerranascenceSpurt.DisplayName: 泰拉勇者的剑
-// TourmalineSlash.DisplayName: Tourmaline
-// ZirconGrailProj.DisplayName: Zircon Grail Proj
-// BigMacExProj.DisplayName: Big Mac Ex Proj
-// BigMacHamburgerGuard.DisplayName: Big Mac Hamburger Guard
-// BigMacHamburgerProj.DisplayName: Big Mac Hamburger Proj
-// ZirconProj.DisplayName: Zircon Proj
-// SurviveAndPerishHeldProj.DisplayName: Survive And Perish Held Proj
-// PerishProj.DisplayName: Perish Proj
-// SurviveHeldProj.DisplayName: Survive Held Proj
-// MiniDynamite.DisplayName: Mini Dynamite
-// PerishMissile.DisplayName: Perish Missile
-// AmberEardropProj.DisplayName: Amber Eardrop Proj
-// AmberProj.DisplayName: Amber Proj
-// BigAmber.DisplayName: Big Amber
-// DiamondExplosion.DisplayName: Diamond Explosion
-// DiamondFlowerProj.DisplayName: Diamond Flower Proj
-// DiamondProj.DisplayName: Diamond Proj
-// ArcaneFlameDaggerProj.DisplayName: Arcane Flame Dagger Proj
-// ArcaneFlameDaggerSlash.DisplayName: Arcane Flame Dagger Slash
-// MagikeWorldBallProj.DisplayName: Magike World Ball Proj
-// MagicCrystalBobber.DisplayName: Magic Crystal Bobber
-// FilterProj.DisplayName: Filter Proj
-// InfinityClusterWandProj.DisplayName: Infinity Cluster Wand Proj
-// GelFiberBall.DisplayName: Gel Fiber Ball
-// TremblingElectric.DisplayName: Trembling Electric
-// PlasmaBall.DisplayName: Plasma Ball
-// LeafeoShield.DisplayName: Leafeo Shield
-// AfterglowHeldProj.DisplayName: Afterglow Held Proj
-// FarAwaySkyHeldProj.DisplayName: Far Away Sky Held Proj
-// EternalVengeanceSword.DisplayName: Eternal Vengeance Sword
-// RadiantSunHeldProj.DisplayName: Radiant Sun Held Proj
-// RadiantSunLaser.DisplayName: Radiant Sun Laser
-// GreenOnionBurritosFSProj.DisplayName: Green Onion Burritos F S Proj
-// GreenOnionBurritosGuard.DisplayName: Green Onion Burritos Guard
-// SpringOnion.DisplayName: Spring Onion
-// ReverseFlashHeldProj.DisplayName: Reverse Flash Held Proj
-// LeprechaunBaitHeldProj.DisplayName: Leprechaun Bait Held Proj
-// ReverseFlashThunder.DisplayName: Reverse Flash Thunder
-// ThyphionHeldProj.DisplayName: Thyphion Held Proj
-// BrilliantConnectStaffProj.DisplayName: Brilliant Connect Staff Proj
-// DisconnectProj.DisplayName: Disconnect Proj
-// BrilliantCalibratorProj.DisplayName: Brilliant Calibrator Proj
-// BrilliantMagikeActivatorProj.DisplayName: Brilliant Magike Activator Proj
-// ThyphionTagProj.DisplayName: Thyphion Tag Proj
-// ConchBubble.DisplayName: Conch Bubble
+TourmalineSlash.DisplayName: 绯红刺击
+ZirconGrailProj.DisplayName: 无色的火彩
+BigMacExProj.DisplayName: 汉堡王中王
+BigMacHamburgerGuard.DisplayName: 汉堡王中王
+BigMacHamburgerProj.DisplayName: 汉堡王中王
+ZirconProj.DisplayName: 火彩
+SurviveAndPerishHeldProj.DisplayName: 生存与毁灭
+PerishProj.DisplayName: Perish Proj
+SurviveHeldProj.DisplayName: Survive Held Proj
+MiniDynamite.DisplayName: Mini Dynamite
+PerishMissile.DisplayName: Perish Missile
+AmberEardropProj.DisplayName: 琥珀耳环
+AmberProj.DisplayName: 琥珀
+BigAmber.DisplayName: 大琥珀
+DiamondExplosion.DisplayName: 钻石绽放
+DiamondFlowerProj.DisplayName: 钻石花
+DiamondProj.DisplayName: 钻石
+ArcaneFlameDaggerProj.DisplayName: Arcane Flame Dagger Proj
+ArcaneFlameDaggerSlash.DisplayName: Arcane Flame Dagger Slash
+MagikeWorldBallProj.DisplayName: Magike World Ball Proj
+MagicCrystalBobber.DisplayName: Magic Crystal Bobber
+FilterProj.DisplayName: Filter Proj
+InfinityClusterWandProj.DisplayName: Infinity Cluster Wand Proj
+GelFiberBall.DisplayName: 凝胶纤维球
+TremblingElectric.DisplayName: Trembling Electric
+PlasmaBall.DisplayName: Plasma Ball
+LeafeoShield.DisplayName: Leafeo Shield
+AfterglowHeldProj.DisplayName: Afterglow Held Proj
+FarAwaySkyHeldProj.DisplayName: Far Away Sky Held Proj
+EternalVengeanceSword.DisplayName: Eternal Vengeance Sword
+RadiantSunHeldProj.DisplayName: Radiant Sun Held Proj
+RadiantSunLaser.DisplayName: Radiant Sun Laser
+GreenOnionBurritosFSProj.DisplayName: Green Onion Burritos F S Proj
+GreenOnionBurritosGuard.DisplayName: Green Onion Burritos Guard
+SpringOnion.DisplayName: Spring Onion
+ReverseFlashHeldProj.DisplayName: Reverse Flash Held Proj
+LeprechaunBaitHeldProj.DisplayName: Leprechaun Bait Held Proj
+ReverseFlashThunder.DisplayName: Reverse Flash Thunder
+ThyphionHeldProj.DisplayName: Thyphion Held Proj
+BrilliantConnectStaffProj.DisplayName: Brilliant Connect Staff Proj
+DisconnectProj.DisplayName: Disconnect Proj
+BrilliantCalibratorProj.DisplayName: Brilliant Calibrator Proj
+BrilliantMagikeActivatorProj.DisplayName: Brilliant Magike Activator Proj
+ThyphionTagProj.DisplayName: Thyphion Tag Proj
+ConchBubble.DisplayName: Conch Bubble
 
 PremissionProj: {
 	// SoulOfLightText: Mods.Coralite.Projectiles.PremissionProj.SoulOfLightText
 	// SoulOfNightText: Mods.Coralite.Projectiles.PremissionProj.SoulOfNightText
 	// PremissionText: Mods.Coralite.Projectiles.PremissionProj.PremissionText
-	// DisplayName: Premission Proj
+	DisplayName: Premission Proj
 }
 
-// PurpleDash.DisplayName: Purple Dash
+PurpleDash.DisplayName: Purple Dash
+CircumhorizonHeldProj.DisplayName: Circumhorizon Held Proj
+HorizonArcHeldProj.DisplayName: Horizon Arc Held Proj
+RainbowArrow.DisplayName: Rainbow Arrow
+TurbulenceArrow.DisplayName: Turbulence Arrow
+TurbulenceHeldProj.DisplayName: Turbulence Held Proj
+TurbulencePin.DisplayName: Turbulence Pin
+PreviewMultiblockPeoj.DisplayName: Preview Multiblock Peoj
+FullMoonHeldProj.DisplayName: Full Moon Held Proj
+FullMoonStrike.DisplayName: Full Moon Strike
+WhiteGardeniaAimProj.DisplayName: White Gardenia Aim Proj
+WhiteGardeniaFloat.DisplayName: White Gardenia Float
+WhiteGardeniaFloatLaser.DisplayName: White Gardenia Float Laser
+WhiteGardeniaHeldProj.DisplayName: White Gardenia Held Proj
+WhiteGardeniaPowerfulShoot.DisplayName: White Gardenia Powerful Shoot
+ThrownPickaxe.DisplayName: Thrown Pickaxe
+SeismicWaveHeldProj.DisplayName: Seismic Wave Held Proj
+SeismicWaveStrike.DisplayName: Seismic Wave Strike
+GlaciateHeldProj.DisplayName: Glaciate Held Proj
+GlaciateWave.DisplayName: Glaciate Wave
+GlaciateIceCube.DisplayName: Glaciate Ice Cube
+LeafShieldGuard.DisplayName: 生命大叶子
+LeafShieldProj.DisplayName: 生命大叶子
+WoodenShieldGuard.DisplayName: 木盾
+WoodenShieldProj.DisplayName: 木盾
+AuroraArrow.DisplayName: 极光箭
+AuroraArrowTag.DisplayName: 极光印记
+AuroraHeldProj.DisplayName: 极光
+ThyphionArrow.DisplayName: 千气象箭
+ThyphionShadowBow.DisplayName: 气象之子
+SolunarBall.DisplayName: 同辉球
+SolunarHeldProj.DisplayName: 日月同辉
+CrystalBombProj.DisplayName: 晶体炸弹
+SolunarArrow.DisplayName: 同辉箭
+SolunarStrike.DisplayName: 同辉之光
+SolunarBallLaser.DisplayName: 同辉光束
+PlatinumMagshieldGuard.DisplayName: 铂金魔能盾
+PlatinumMagshieldParry.DisplayName: 铂金魔能冲击
+PlatinumMagshieldProj.DisplayName: 铂金魔能盾
+AquariusBall.DisplayName: 水球
+AquariusHeldProj.DisplayName: 水瓶座
+TaurusMeteor.DisplayName: 金牛座流星
+TaurusStar.DisplayName: 金牛座
+B94WindbreakingArrow.DisplayName: B9-4 破风箭
+EyeOfGlistentOnKill.DisplayName: Eye Of Glistent On Kill
+SpellStructurePreviewProj.DisplayName: 回路预览
+CrystallinePieces.DisplayName: 水晶刺碎片
+CrystallineSpike.DisplayName: 水晶刺
+VinicLaser.DisplayName: 模仿激光
+CrystallineLanceProj.DisplayName: 锋芒
+CrystallinePiecesFriendly.DisplayName: 水晶刺碎片
+CrystallineSpikeFriendly.DisplayName: 水晶刺
+CrystallineSkyIslandCloudScreen.DisplayName: 蕴魔云雾
+CrystallineSentinelSpurtProj.DisplayName: 水晶战斗突刺
+BringerHarpy.DisplayName: 信使鸟妖
+CrystallineHookProjectile.DisplayName: 蕴魔水晶钩
+WisteriaHeldProj.DisplayName: 紫藤萝
+WisteriaPetal.DisplayName: 紫藤萝花瓣
+MabirdRouteDrawProj.DisplayName: 魔鸟路线绘制
+BloodmarkTopperProj.DisplayName: 血礼帽
+// BloodBite.DisplayName: Blood Bite
+// ShadowBite.DisplayName: Shadow Bite
+// BloodPool.DisplayName: Blood Pool
+// BloodTearProj.DisplayName: Blood Tear Proj
+// LittleShadowMonster.DisplayName: Little Shadow Monster
+// PrisonProj.DisplayName: Prison Proj
+// FishScissors.DisplayName: Fish Scissors
+// QueenOfNightHeldProj.DisplayName: Queen Of Night Held Proj
+// QueenOfNightSpilitProj.DisplayName: Queen Of Night Spilit Proj
+// QueenOfNightSmallProj.DisplayName: Queen Of Night Small Proj
+// DaturaHeldProj.DisplayName: Datura Held Proj
+// DaturaProj.DisplayName: Datura Proj
+// MidasGunpowdeProj2.DisplayName: Midas Gunpowde Proj2
+// MidasGunpowderProj.DisplayName: Midas Gunpowder Proj
+// GhostPipeBullet.DisplayName: Ghost Pipe Bullet
+// GhostPipeHeldProj.DisplayName: Ghost Pipe Held Proj
+// GhostPipeFireBall.DisplayName: Ghost Pipe Fire Ball
+// GhostPipeParasitic.DisplayName: Ghost Pipe Parasitic
+// SunflowerGunBullet.DisplayName: Sunflower Gun Bullet
+// SunflowerGunHeldProj.DisplayName: Sunflower Gun Held Proj
+// AloeChaseProj.DisplayName: Aloe Chase Proj
+// AloeHeldProj.DisplayName: Aloe Held Proj
+// PurpleElectricBreath.DisplayName: Purple Electric Breath
+// PurpleElectricBall.DisplayName: Purple Electric Ball
+// PurpleElectricBallThunder.DisplayName: Purple Electric Ball Thunder
+// PurpleLightningBall.DisplayName: Purple Lightning Ball
+// ZacurrentChainBall.DisplayName: Zacurrent Chain Ball
+// PurpleDischargingBurst.DisplayName: Purple Discharging Burst
+// ElectricChain.DisplayName: Electric Chain
+// RedVoltBall.DisplayName: Red Volt Ball
+// PurpleElectromagneticCannon.DisplayName: Purple Electromagnetic Cannon
+// PurpleGravitationThunderBall.DisplayName: Purple Gravitation Thunder Ball
+// PurpleSmallThunderFall.DisplayName: Purple Small Thunder Fall
+// PurpleThunderFalling.DisplayName: Purple Thunder Falling
+// AimThunderBall.DisplayName: Aim Thunder Ball
+// ZacurrentExchangeAnmi.DisplayName: Zacurrent Exchange Anmi
+// ThunderveinExchangePhaseAnmi.DisplayName: Thundervein Exchange Phase Anmi
+// AimThunderBallRed.DisplayName: Aim Thunder Ball Red
+// RedDash.DisplayName: Red Dash
+// RedChainBall.DisplayName: Red Chain Ball
+// RedLightningBall.DisplayName: Red Lightning Ball

@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 
 namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
@@ -42,6 +41,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         public float circleSparkleScale;
         public int timer;
 
+        public override void SetStaticDefaults()
+        {
+            NPC.SetHideInBestiary();
+        }
+
         public override void SetDefaults()
         {
             NPC.noGravity = true;
@@ -70,8 +74,8 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
         {
             return false;
         }
-
-        public override void OnSpawn(IEntitySource source)
+        bool span;
+        public void Initialize()
         {
             for (int i = 0; i < 14; i++)
             {
@@ -92,6 +96,11 @@ namespace Coralite.Content.Bosses.VanillaReinforce.NightmarePlantera
 
         public override void AI()
         {
+            if (span)
+            {
+                Initialize();
+                span = true;
+            }
             if (!NightmarePlantera.NightmarePlanteraAlive(out NPC np))
             {
                 NPC.Kill();

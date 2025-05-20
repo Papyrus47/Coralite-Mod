@@ -3,8 +3,8 @@ using Coralite.Content.Particles;
 using Coralite.Content.Tiles.RedJades;
 using Coralite.Core;
 using Coralite.Core.Configs;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
@@ -20,7 +20,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
         public override void SetDefs()
         {
             Item.SetShopValues(Terraria.Enums.ItemRarityColor.Orange3, Item.sellPrice(0, 3));
-            Item.SetWeaponValues(21, 4);
+            Item.SetWeaponValues(20, 4);
             Item.useTime = Item.useAnimation = 35;
             Item.mana = 7;
 
@@ -203,13 +203,13 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                 }
 
                 Projectile.rotation = MathF.Sin((1 - (AttackTime / Owner.itemTimeMax)) * MathHelper.TwoPi) * 0.5f;
-                if ((int)AttackTime % (Owner.itemTimeMax / 3) == 0 && Owner.CheckMana(Owner.HeldItem.mana, true))
+                if ((int)AttackTime % (Owner.itemTimeMax / 3) == 0 && Owner.CheckMana(Item.mana, true))
                 {
                     Owner.manaRegenDelay = 40;
 
                     float angle = (Main.rand.NextFromList(-1, 1) * 0.35f) + Main.rand.NextFloat(-0.5f, 0.5f);
                     Projectile.NewProjectileFromThis<AquamarineProj>(Projectile.Center
-                        , Vector2.UnitY.RotatedBy(angle) * 8, Owner.GetWeaponDamage(Owner.HeldItem), Projectile.knockBack);
+                        , Vector2.UnitY.RotatedBy(angle) * 8, Owner.GetWeaponDamage(Item), Projectile.knockBack);
 
                     for (int i = 0; i < 4; i++)
                     {
@@ -281,7 +281,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             if (trail == null)
             {
                 const int maxPoint = 12;
-                trail ??= new Trail(Main.graphics.GraphicsDevice, maxPoint, new NoTip()
+                trail ??= new Trail(Main.graphics.GraphicsDevice, maxPoint, new EmptyMeshGenerator()
                     , factor => Helper.Lerp(2, 13, factor),
                       factor =>
                       {
@@ -301,6 +301,10 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
                     Chase();
                     break;
                 case 2:
+                    Timer++;
+                    Projectile.rotation = Projectile.velocity.ToRotation();
+                    if (Timer > 30)
+                        Projectile.Kill();
                     break;
             }
 
@@ -311,7 +315,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             Projectile.UpdateFrameNormally(8, 19);
             Projectile.UpdateOldPosCache();
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
         }
 
         public void Spawn()
@@ -426,7 +430,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
 
             effect.Parameters["noiseTexture"].SetValue(noiseTex);
             effect.Parameters["TrailTexture"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.OtherProjectiles + "ExtraLaser").Value);
-            effect.Parameters["transformMatrix"].SetValue(Helper.GetTransfromMaxrix());
+            effect.Parameters["transformMatrix"].SetValue(VaultUtils.GetTransfromMatrix());
             effect.Parameters["basePos"].SetValue((Projectile.Center - Main.screenPosition + rand) * Main.GameZoomTarget);
             effect.Parameters["scale"].SetValue(new Vector2(0.7f / Main.GameZoomTarget));
             effect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * (Main.gamePaused ? 0.02f : 0.01f));
@@ -437,7 +441,7 @@ namespace Coralite.Content.Items.LandOfTheLustrousSeries
             effect.Parameters["brightC"].SetValue(brightC.ToVector4());
             effect.Parameters["darkC"].SetValue(darkC.ToVector4());
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public void DrawNonPremultiplied(SpriteBatch spriteBatch)

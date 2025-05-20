@@ -57,6 +57,11 @@ namespace Coralite.Content.Bosses.BabyIceDragon
         internal ref float DoubleDashLength => ref NPC.localAI[2];
         internal ref float DropScaleCount => ref NPC.localAI[3];
 
+        /// <summary>
+        /// 脱战计时器
+        /// </summary>
+        public int FlyAwayTimer;
+
         public int movePhase;
         public bool canDrawShadows;
         internal List<int> Moves;
@@ -290,7 +295,12 @@ namespace Coralite.Content.Bosses.BabyIceDragon
                 spwan = true;
             }
 
-            if (State != (int)AIStates.onKillAnim && NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000 || !Target.ZoneSnow)
+            if (Target.ZoneSnow)
+                FlyAwayTimer = 0;
+            else
+                FlyAwayTimer++;
+
+            if ((State != (int)AIStates.onKillAnim && State != (int)AIStates.onSpawnAnim) && (NPC.target < 0 || NPC.target == 255 || Target.dead || !Target.active || Target.Distance(NPC.Center) > 3000 || FlyAwayTimer > 60 * 6))
             {
                 NPC.TargetClosest();
 
@@ -434,6 +444,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
 
                             if (Timer >= 260)
                             {
+                                NPC.netUpdate = true;
                                 NPC.dontTakeDamage = false;
                                 ResetStates();
                                 break;
@@ -818,7 +829,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
         internal void SendMovesRemoveData()
         {
             ModPacket modpak = Coralite.Instance.GetPacket();
-            modpak.Write((byte)CLNetWorkEnum.BabyIceDragon);
+            modpak.Write((byte)CoraliteNetWorkEnum.BabyIceDragon);
             modpak.Write(NPC.whoAmI);
             modpak.Write(State);
             modpak.Send();
@@ -841,7 +852,7 @@ namespace Coralite.Content.Bosses.BabyIceDragon
             if (VaultUtils.isServer)
             {
                 ModPacket modpak = Coralite.Instance.GetPacket();
-                modpak.Write((byte)CLNetWorkEnum.BabyIceDragon);
+                modpak.Write((byte)CoraliteNetWorkEnum.BabyIceDragon);
                 modpak.Write(npcWhoAmI);
                 modpak.Write(state);
                 modpak.Send(-1, whoAmI);

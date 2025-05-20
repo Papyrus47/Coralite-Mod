@@ -3,13 +3,13 @@ using Coralite.Content.Items.Materials;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
 using Coralite.Core.Systems.FlyingShieldSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -25,14 +25,16 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 100;
+            Item.damage = 150;
+            Item.defense = 5;
             Item.DamageType = DamageClass.Generic;
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
         {
             return !((equippedItem.type == ModContent.ItemType<DemonsProtection>()//下位
-                || equippedItem.type == ModContent.ItemType<HolyCharm>())//下位
+                || equippedItem.type == ModContent.ItemType<HolyCharm>()//下位
+                || equippedItem.type == ModContent.ItemType<AmberAmulet>())
 
                 && incomingItem.type == ModContent.ItemType<Terracrest>());
         }
@@ -40,15 +42,13 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.TryGetModPlayer(out CoralitePlayer cp))
-            {
                 cp.FlyingShieldAccessories?.Add(this);
-            }
         }
 
         public void OnGuardInitialize(BaseFlyingShieldGuard projectile)
         {
             projectile.parryTime = 10;
-            projectile.strongGuard += 0.18f;
+            projectile.strongGuard += 0.25f;
             projectile.damageReduce *= 1.2f;
             projectile.distanceAdder *= 1.2f;
         }
@@ -61,8 +61,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             {
                 if (cp.parryTime < 100)
                 {
-                    Owner.immuneTime = 30;
-                    Owner.immune = true;
+                    Owner.AddImmuneTime(ImmunityCooldownID.General, 30);
                 }
 
                 int damage = (int)(projectile.Owner.GetWeaponDamage(Item) * (1.35f - (0.3f * cp.parryTime / 280f)));
@@ -114,7 +113,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         }
     }
 
-    public class TerracrestSpike : ModProjectile, IDrawPrimitive, IDrawWarp
+    public class TerracrestSpike : BaseHeldProj, IDrawPrimitive, IDrawWarp
     {
         public override string Texture => AssetDirectory.Trails + "SlashFlatBlurHVMirror";
 
@@ -123,8 +122,6 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public ref float Alpha => ref Projectile.localAI[0];
         public ref float Length => ref Projectile.localAI[1];
-
-        public Player Owner => Main.player[Projectile.owner];
 
         private Trail trail;
 
@@ -145,11 +142,9 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             Projectile.localNPCHitCooldown = 45;
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public override void Initialize()
         {
-            Projectile.oldPos = new Vector2[16];
-            for (int i = 0; i < 16; i++)
-                Projectile.oldPos[i] = Projectile.Center;
+            Projectile.InitOldPosCache(16);
 
             Alpha = 1;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -165,7 +160,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
 
         public override void AI()
         {
-            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new NoTip(), WidthFunction, ColorFunction);
+            trail ??= new Trail(Main.graphics.GraphicsDevice, 16, new EmptyMeshGenerator(), WidthFunction, ColorFunction);
 
             Lighting.AddLight(Projectile.Center, Color.LimeGreen.ToVector3());
 
@@ -200,7 +195,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             }
 
 
-            trail.Positions = Projectile.oldPos;
+            trail.TrailPositions = Projectile.oldPos;
 
             Timer++;
             if (Timer > DelayTime)
@@ -237,12 +232,13 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
             effect.Parameters["gradientTexture"].SetValue(ModContent.Request<Texture2D>(AssetDirectory.FlyingShieldAccessories + "TerracrestGradient").Value);
             effect.Parameters["alpha"].SetValue(Alpha);
 
-            trail.Render(effect);
+            trail.DrawTrail(effect);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-
+            if (Projectile.oldPos.Length < 13)
+                return false;
             Helper.DrawPrettyStarSparkle(Projectile.Opacity, 0, Projectile.oldPos[12] - Main.screenPosition,
                 Color.White, Color.LimeGreen, Timer / 35, 0, 0.2f, 0.6f, 1, Projectile.rotation + 1.57f,
                 new Vector2(0.1f, 2.4f), Vector2.One);
@@ -256,7 +252,7 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
         {
             if (Timer < 0)
                 return;
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             float w = 1f;
             Vector2 up = (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2();
@@ -271,8 +267,8 @@ namespace Coralite.Content.Items.FlyingShields.Accessories
                 Vector2 Top = Center + (up * width);
                 Vector2 Bottom = Center + (down * width);
 
-                bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
-                bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
+                bars.Add(new ColoredVertex(Top, new Color(dir, w, 0f, 1f), new Vector3(factor, 0f, w)));
+                bars.Add(new ColoredVertex(Bottom, new Color(dir, w, 0f, 1f), new Vector3(factor, 1f, w)));
             }
 
             Main.spriteBatch.End();

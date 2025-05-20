@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.Items.Shadow;
 using Coralite.Content.ModPlayers;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Systems.ParticleSystem;
 using Coralite.Helpers;
 using Terraria;
@@ -8,6 +9,7 @@ using Terraria.ID;
 
 namespace Coralite.Content.Items.Phantom
 {
+    [PlayerEffect]
     public class PhantomMirror : ModItem
     {
         public override string Texture => AssetDirectory.PhantomItems + Name;
@@ -36,6 +38,15 @@ namespace Coralite.Content.Items.Phantom
                 }
             }
         }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient<ShadowMirror>()
+                .AddIngredient(ItemID.Ectoplasm, 12)
+                .AddTile(TileID.TinkerersWorkbench)
+                .Register();
+        }
     }
 
     public class PhantomMirrorProj : ModProjectile
@@ -58,8 +69,8 @@ namespace Coralite.Content.Items.Phantom
             Projectile.height = 16 * 3;
             Projectile.timeLeft = 100;
             Projectile.penetrate = -1;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 30;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 12;
 
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;

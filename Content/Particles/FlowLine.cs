@@ -1,8 +1,9 @@
 using Coralite.Core;
+using Coralite.Core.Loaders;
 using Coralite.Core.Systems.ParticleSystem;
-using Coralite.Core.Systems.Trails;
 using Coralite.Helpers;
 using InnoVault.PRT;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 
@@ -12,23 +13,8 @@ namespace Coralite.Content.Particles
     {
         public override string Texture => AssetDirectory.Blank;
 
-        private static BasicEffect effect;
         private int spawnTime;
         private float rotate;
-
-        public FlowLine()
-        {
-            if (Main.dedServ)
-            {
-                return;
-            }
-
-            Main.QueueMainThreadAction(() =>
-            {
-                effect = new BasicEffect(Main.instance.GraphicsDevice);
-                effect.VertexColorEnabled = true;
-            });
-        }
 
         public override void SetProperty()
         {
@@ -46,7 +32,7 @@ namespace Coralite.Content.Particles
                     Velocity = Velocity.RotatedBy(-rotate);
 
                 UpdatePositionCache(spawnTime);
-                trail.Positions = oldPositions;
+                trail.TrailPositions = oldPositions;
             }
 
             if (Opacity < -120 || Color.A < 10)
@@ -62,18 +48,15 @@ namespace Coralite.Content.Particles
 
         public override void DrawPrimitive()
         {
-            if (effect == null)
-                return;
-
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
             Matrix view = Main.GameViewMatrix.TransformationMatrix;
             Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-            effect.World = world;
-            effect.View = view;
-            effect.Projection = projection;
+            EffectLoader.ColorOnlyEffect.World = world;
+            EffectLoader.ColorOnlyEffect.View = view;
+            EffectLoader.ColorOnlyEffect.Projection = projection;
 
-            trail?.Render(effect);
+            trail?.DrawTrail(EffectLoader.ColorOnlyEffect);
         }
 
 
@@ -88,7 +71,7 @@ namespace Coralite.Content.Particles
             {
                 particle.Opacity = spawnTime;
                 particle.InitializePositionCache(spawnTime);
-                particle.trail = new Trail(Main.instance.GraphicsDevice, spawnTime, new NoTip(), factor => trailWidth, factor =>
+                particle.trail = new Trail(Main.instance.GraphicsDevice, spawnTime, new EmptyMeshGenerator(), factor => trailWidth, factor =>
                 {
                     if (factor.X > 0.5f)
                         return Color.Lerp(particle.Color, new Color(0, 0, 0, 0), (factor.X - 0.5f) * 2);

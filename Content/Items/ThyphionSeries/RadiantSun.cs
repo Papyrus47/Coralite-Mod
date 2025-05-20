@@ -1,12 +1,13 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
+using Coralite.Core.Attributes;
 using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Core.Systems.CameraSystem;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Linq;
 using Terraria;
@@ -22,18 +23,29 @@ namespace Coralite.Content.Items.ThyphionSeries
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + Name;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
-            Item.SetWeaponValues(39, 6f);
-            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 25, 10f);
+            Item.SetWeaponValues(48, 6f);
+            Item.DefaultToRangedWeapon(10, AmmoID.Arrow, 20, 10f);
 
             Item.rare = ItemRarityID.LightRed;
             Item.useStyle = ItemUseStyleID.Rapier;
-            Item.value = Item.sellPrice(0, 2);
+            Item.value = Item.sellPrice(0, 3);
 
             Item.noUseGraphic = true;
+            Item.autoReuse = true;
 
             Item.UseSound = CoraliteSoundID.Bow_Item5;
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -75,7 +87,7 @@ namespace Coralite.Content.Items.ThyphionSeries
                     return false;
             }
 
-            Player.GetModPlayer<CoralitePlayer>().DashDelay = 100;
+            Player.GetModPlayer<CoralitePlayer>().DashDelay = 85;
             Player.GetModPlayer<CoralitePlayer>().DashTimer = 20;
             Player.immune = true;
             Player.AddImmuneTime(ImmunityCooldownID.General, 20);
@@ -106,15 +118,19 @@ namespace Coralite.Content.Items.ThyphionSeries
         }
     }
 
+    [AutoLoadTexture(Path = AssetDirectory.ThyphionSeriesItems)]
     public class RadiantSunHeldProj : BaseDashBow, IDrawAdditive
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + "RadiantSun";
 
         private Vector2 arrowPos;
 
-        private static Asset<Texture2D> GlowTex;
-        private static Asset<Texture2D> ArrowTex;
-        private static Asset<Texture2D> LightTex;
+        [AutoLoadTexture(Name = "RadiantSun_Glow")]
+        public static ATex GlowTex { get; private set; }
+        [AutoLoadTexture(Name = "RadiantSunArrow")]
+        public static ATex ArrowTex { get; private set; }
+        [AutoLoadTexture(Name = "RadiantSunLight")]
+        public static ATex LightTex { get; private set; }
 
         public ref float ArrowLength => ref Projectile.localAI[0];
         public ref float Timer => ref Projectile.localAI[1];
@@ -124,23 +140,6 @@ namespace Coralite.Content.Items.ThyphionSeries
 
         public float handOffset = 14;
         public int State;
-
-        public override void Load()
-        {
-            if (Main.dedServ)
-                return;
-
-            GlowTex = Request<Texture2D>(AssetDirectory.ThyphionSeriesItems + "RadiantSun_Glow");
-            ArrowTex = Request<Texture2D>(AssetDirectory.ThyphionSeriesItems + "RadiantSunArrow");
-            LightTex = Request<Texture2D>(AssetDirectory.ThyphionSeriesItems + "RadiantSunLight");
-        }
-
-        public override void Unload()
-        {
-            GlowTex = null;
-            ArrowTex = null;
-            LightTex = null;
-        }
 
         public override int GetItemType()
             => ItemType<RadiantSun>();
@@ -183,16 +182,16 @@ namespace Coralite.Content.Items.ThyphionSeries
                 return;
             }
 
-            if (Owner.controlUseItem && Timer < DashTime + 180)
+            if (!DownLeft && Timer < DashTime + 60)
             {
-                if (Main.myPlayer == Projectile.owner)
-                {
-                    if (Main.rand.NextBool(10))
-                    {
-                        Vector2 dir = Rotation.ToRotationVector2();
-                        Vector2 center = Projectile.Center + dir * 20;
-                    }
-                }
+                //if (Projectile.IsOwnedByLocalPlayer())
+                //{
+                //    if (Main.rand.NextBool(10))
+                //    {
+                //        Vector2 dir = Rotation.ToRotationVector2();
+                //        Vector2 center = Projectile.Center + dir * 20;
+                //    }
+                //}
 
                 Projectile.timeLeft = 2;
                 Owner.itemTime = Owner.itemAnimation = 2;
@@ -201,7 +200,7 @@ namespace Coralite.Content.Items.ThyphionSeries
             {
                 SoundEngine.PlaySound(CoraliteSoundID.Bow2_Item102, Owner.Center);
 
-                if (Main.myPlayer == Projectile.owner)
+                if (Projectile.IsOwnedByLocalPlayer())
                 {
                     State = 1;
                     Timer = 0;
@@ -211,7 +210,7 @@ namespace Coralite.Content.Items.ThyphionSeries
                     PRTLoader.NewParticle<RadiantSunFlow>(Projectile.Center, dir * 8, Color.White, 0.9f);
 
                     Projectile.NewProjectileFromThis<RadiantSunLaser>(Projectile.Center, Projectile.rotation.ToRotationVector2() * 10
-                        , (int)(Owner.GetWeaponDamage(Owner.HeldItem) * (Main.dayTime ? 1.15f : 1f)), Projectile.knockBack);
+                        , (int)(Owner.GetDamageWithAmmo(Item) * (Main.dayTime ? 1.75f : 1.5f)), Projectile.knockBack);
                 }
             }
         }
@@ -243,7 +242,7 @@ namespace Coralite.Content.Items.ThyphionSeries
             }
         }
 
-        public override void Initialize()
+        public override void InitializeDashBow()
         {
             RecordAngle = Rotation;
         }
@@ -294,7 +293,7 @@ namespace Coralite.Content.Items.ThyphionSeries
         }
     }
 
-    public class RadiantSunLaser : ModProjectile, IDrawAdditive
+    public class RadiantSunLaser : BaseHeldProj, IDrawAdditive
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + "RadiantSunArrow";
 
@@ -365,7 +364,7 @@ namespace Coralite.Content.Items.ThyphionSeries
             if (Projectile.localAI[1] == 0)
             {
                 Projectile.localAI[1] = 1;
-                Vector2 pos = Main.MouseWorld;
+                Vector2 pos = InMousePos;
                 Main.player[Projectile.owner].LimitPointToPlayerReachableArea(ref pos);
                 recordPos = pos;
             }
@@ -374,6 +373,7 @@ namespace Coralite.Content.Items.ThyphionSeries
             {
                 State = 1;
                 Projectile.velocity *= 0;
+                Projectile.localAI[2] = -1;
                 LaserRotation = (recordPos - Projectile.Center).ToRotation();
 
                 SpawnSpeedLine(Projectile.Center);
@@ -397,15 +397,44 @@ namespace Coralite.Content.Items.ThyphionSeries
             int width = (int)(Projectile.Center - endPoint).Length() - 100;
             Vector2 dir = Vector2.UnitX.RotatedBy(LaserRotation);
             Color color = Color.Gold;
+            Projectile.velocity = LaserRotation.ToRotationVector2();
 
             do
             {
                 if (Timer < ReadyTime)
                 {
-                    LaserHeight = Helper.Lerp(0, 0.5f, Timer / ReadyTime);
-                    Vector2 pos = Main.MouseWorld;
-                    Main.player[Projectile.owner].LimitPointToPlayerReachableArea(ref pos);
-                    recordPos = recordPos.MoveTowards(pos, 8);
+                    float factor = Timer / ReadyTime;
+                    LaserHeight = Helper.Lerp(0, 0.5f, factor);
+
+                    if (Projectile.localAI[2] == -1)
+                    {
+                        NPC n = Helper.FindClosestEnemy(recordPos, 800, n => n.CanBeChasedBy());
+                        if (n != null)
+                        {
+                            Projectile.localAI[2] = n.whoAmI;
+                        }
+                    }
+
+                    if (Projectile.localAI[2].GetNPCOwner(out NPC owner, () => Projectile.localAI[2] = -1))
+                    {
+                        Vector2 aimPos = Projectile.Center;
+                        Vector2 dir2 = (owner.Center - aimPos).SafeNormalize(Vector2.Zero);
+                        float cost = (recordPos.Y - aimPos.Y) / dir2.Y;
+
+                        recordPos = recordPos.MoveTowards(aimPos + dir2 * cost, 50 * factor);
+                    }
+                    else
+                    {
+                        Vector2 pos = InMousePos;
+
+                        Main.player[Projectile.owner].LimitPointToPlayerReachableArea(ref pos);
+                        Vector2 aimPos = Projectile.Center;
+                        Vector2 dir2 = (pos - aimPos).SafeNormalize(Vector2.Zero);
+                        float cost = (recordPos.Y - aimPos.Y) / dir2.Y;
+
+                        recordPos = recordPos.MoveTowards(aimPos + dir2 * cost, 40 * factor);
+                    }
+
                     LaserRotation = (recordPos - Projectile.Center).ToRotation();
                     break;
                 }
@@ -448,7 +477,7 @@ namespace Coralite.Content.Items.ThyphionSeries
 
                 for (int i = 0; i < width; i += 16)
                 {
-                    Lighting.AddLight(Projectile.position + (Vector2.UnitX.RotatedBy(LaserRotation) * i), color.ToVector3() * height * 0.030f);
+                    Lighting.AddLight(Projectile.position + (dir * i), color.ToVector3() * height * 0.030f);
                     if (Main.rand.NextBool(15))
                     {
                         PRTLoader.NewParticle<SpeedLine>(Projectile.Center + (dir * i) + Main.rand.NextVector2Circular(8, 8),
@@ -544,7 +573,7 @@ namespace Coralite.Content.Items.ThyphionSeries
         }
     }
 
-    public class RadiantSunFlow : BasePRT
+    public class RadiantSunFlow : Particle
     {
         public override string Texture => AssetDirectory.ThyphionSeriesItems + "RadiantSunFlow";
 

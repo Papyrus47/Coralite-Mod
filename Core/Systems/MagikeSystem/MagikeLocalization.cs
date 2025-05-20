@@ -7,7 +7,7 @@ namespace Coralite.Core.Systems.MagikeSystem
     {
         public string LocalizationCategory => "MagikeSystem";
 
-        public static LocalizedText NewKnowledgeUnlocked { get; private set; }
+        //public static LocalizedText NewKnowledgeUnlocked { get; private set; }
 
         public static LocalizedText LearnedMagikeBase { get; private set; }
         public static LocalizedText LearnedMagikeAdvanced { get; private set; }
@@ -16,15 +16,28 @@ namespace Coralite.Core.Systems.MagikeSystem
 
         public static LocalizedText CanMagikeCraft { get; private set; }
         public static LocalizedText ItemMagikeAmount { get; private set; }
+        public static LocalizedText PressShiftToShowMore { get; private set; }
+        public static LocalizedText RightClickStopCraft { get; private set; }
+        public static LocalizedText RightClickRemoveRecipe { get; private set; }
+
+        public static LocalizedText ItemContainsMagike { get; private set; }
+        public static LocalizedText RightClickToGetPermission { get; private set; }
+        public static LocalizedText CrystallineSkyIslandUnlock { get; private set; }
 
         public void LoadLocalization()
         {
             LearnedMagikeBase = this.GetLocalization("learnedMagikeBase");
             LearnedMagikeAdvanced = this.GetLocalization("learnedMagikeAdvanced");
-            NewKnowledgeUnlocked = this.GetLocalization("NewKnowledgeUnlocked", () => "魔能辞典中解锁了新的知识");
+            //NewKnowledgeUnlocked = this.GetLocalization("NewKnowledgeUnlocked", () => "魔能辞典中解锁了新的知识");
             Error = this.GetLocalization("Error");
             CanMagikeCraft = this.GetLocalization(nameof(CanMagikeCraft));
             ItemMagikeAmount = this.GetLocalization(nameof(ItemMagikeAmount));
+            PressShiftToShowMore = this.GetLocalization(nameof(PressShiftToShowMore));
+            RightClickStopCraft = this.GetLocalization(nameof(RightClickStopCraft));
+            RightClickRemoveRecipe = this.GetLocalization(nameof(RightClickRemoveRecipe));
+            ItemContainsMagike = this.GetLocalization(nameof(ItemContainsMagike));
+            RightClickToGetPermission = this.GetLocalization(nameof(RightClickToGetPermission));
+            CrystallineSkyIslandUnlock = this.GetLocalization(nameof(CrystallineSkyIslandUnlock));
 
             this.GetLocalization("PolarizedFilterTooltip");
 
@@ -35,13 +48,14 @@ namespace Coralite.Core.Systems.MagikeSystem
             LoadUIText();
             LoadCraftText();
             LoadUIPanelText();
+            LoadMALevelText();
         }
 
         public void UnloadLocalization()
         {
             LearnedMagikeBase = null;
             LearnedMagikeAdvanced = null;
-            NewKnowledgeUnlocked = null;
+            //NewKnowledgeUnlocked = null;
 
             Staffs = null;
             Filter = null;
@@ -50,6 +64,9 @@ namespace Coralite.Core.Systems.MagikeSystem
             UIText = null;
             CraftText = null;
             UIPanelText = null;
+            MALevelText = null;
+
+            RightClickToGetPermission = null;
         }
 
         #region 魔能连接仪相关
@@ -127,6 +144,8 @@ namespace Coralite.Core.Systems.MagikeSystem
             MagikeLinerSenderNotFound,
             MagikeProducerNotFound,
             TimerNotFound,
+
+            NotSpellCore,
 
             Count,
         }
@@ -212,26 +231,36 @@ namespace Coralite.Core.Systems.MagikeSystem
 
         public static LocalizedText[] ItemDescription { get; private set; }
 
-        public class ItemDescriptionID
+        public enum ItemDescriptionID
         {
             /*
              * 物品描述部分
              *      - 能够插入哪些偏振滤镜
              */
-            public const int PolarizedFilter = 0;
+            PolarizedFilter = 0,
+            CanInsertTo,
 
-            public const int Count = 1;
+            //魔鸟描述
+            MabirdSendLength,
+            MabirdFlySpeed,
+            MabirdCatchItemCount,
+            MabirdRestTime,
+
+            Count
         }
 
         public void LoadItemDescription()
         {
-            ItemDescription = new LocalizedText[ItemDescriptionID.Count];
+            ItemDescription = new LocalizedText[(int)ItemDescriptionID.Count];
 
-            ItemDescription[ItemDescriptionID.PolarizedFilter] = this.GetLocalization(nameof(ItemDescription) + "PolarizedFilter");
+            for (int i = 0; i < (int)ItemDescriptionID.Count; i++)
+                ItemDescription[i] = this.GetLocalization(nameof(ItemDescription) + "." + Enum.GetName((ItemDescriptionID)i));
         }
 
-        public static string GetItemDescriptionText(int id)
-            => ItemDescription[id].Value;
+        public static string GetItemDescriptionText(ItemDescriptionID id)
+            => ItemDescription[(int)id].Value;
+        public static LocalizedText GetItemDescription(ItemDescriptionID id)
+            => ItemDescription[(int)id];
 
         #endregion
 
@@ -367,6 +396,43 @@ namespace Coralite.Core.Systems.MagikeSystem
             FastStack,
             ItemContainerName,
             GetOnlyItemContainerName,
+            NeedPolarizedFilter,
+            CurrentLevel,
+            CraftAltarBarMode,
+            CraftAltarSlotMode,
+            CraftAltarIntoSlot,
+            CraftAltarThrowOut,
+            CraftAltarAutoChoseAll,
+            CraftAltarAutoChoseOnlyOne,
+            CraftAltarAutoChoseNever,
+            CraftAltarShowOnlyCanCraft,
+            CraftAltarShowOnlyCantCraft,
+            CraftAltarShowAll,
+            Charger,
+            ChargerPerCharge,
+            ChargerChargeItem,
+            ChargerNotChargeItem,
+            ChargerChargePlayer,
+            ChargerNotChargePlayer,
+            ChargerDescription,
+            ChargerItemNotFound,
+            ApothecaryTable,
+            ApothecaryTableDescription,
+            Second,
+
+            FilterController,
+            MabirdController,
+            MabirdOuting,
+
+            ItemContainerNotFound,
+            ClickToDrawRoute,
+            NoItem,
+            NoRouteCanCopy,
+            ClickToCopyRoute,
+            ClickToPasteRoute,
+            ClickToActiveMabird,
+            ClickToInactiveMabird,
+            MabirdSendLengthTooFar,
 
             Count
         }
@@ -386,10 +452,30 @@ namespace Coralite.Core.Systems.MagikeSystem
 
         #endregion
 
+        #region 等级
+
+        public static LocalizedText[] MALevelText { get; private set; }
+
+        public void LoadMALevelText()
+        {
+            MALevelText = new LocalizedText[Enum.GetValues<MALevel>().Length];
+
+            for (int i = 0; i < MALevelText.Length; i++)
+            {
+                MALevelText[i] = this.GetLocalization(nameof(MALevelText) + "." + Enum.GetName((MALevel)i));
+            }
+        }
+
+        public static string GetMALevelText(MALevel id)
+            => MALevelText[(int)id].Value;
+
+        #endregion
+
         public static LocalizedText[] UIPanelText { get; private set; }
 
         public enum UIPalelTextID
         {
+            ApparatusInformation,
             MagikeContainer,
             MagikeSender,
             MagikeProducer,

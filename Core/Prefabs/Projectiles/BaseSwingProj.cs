@@ -1,8 +1,8 @@
 ﻿using Coralite.Content.Items.Icicle;
 using Coralite.Core.Configs;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,39 +14,129 @@ namespace Coralite.Core.Prefabs.Projectiles
 {
     public abstract class BaseSwingProj(float spriteRotation = 0.785f, short trailCount = 15) : BaseHeldProj
     {
+        #region Data
+        /// <summary>
+        /// 旧的旋转角度记录
+        /// </summary>
         protected float[] oldRotate;
+        /// <summary>
+        /// 旧的与玩家的距离记录
+        /// </summary>
         protected float[] oldDistanceToOwner;
+        /// <summary>
+        /// 旧的长度记录
+        /// </summary>
         public float[] oldLength;
-
+        /// <summary>
+        /// 刀光贴图路径
+        /// </summary>
         protected string TrailTexture = AssetDirectory.Trails + "Slash";
-
+        /// <summary>
+        /// 是否处于初始状态，默认 <see langword="true"/>
+        /// </summary>
         protected bool onStart = true;
+        /// <summary>
+        /// 是否已初始化，默认 <see langword="true"/>
+        /// </summary>
+        protected bool init = true;
+        /// <summary>
+        /// 是否发送基础网络数据，默认 <see langword="true"/>
+        /// </summary>
+        protected bool netSendBasicValues = false;
+        /// <summary>
+        /// 是否可绘制自身贴图，默认 <see langword="true"/>
+        /// </summary>
         protected bool canDrawSelf = true;
+        /// <summary>
+        /// 是否启用影子拖尾，默认 <see langword="false"/>
+        /// </summary>
         protected bool useShadowTrail = false;
+        /// <summary>
+        /// 是否启用刀光拖尾，默认 <see langword="false"/>
+        /// </summary>
         protected bool useSlashTrail = false;
+        /// <summary>
+        /// 是否在初始时启用转向，默认 <see langword="true"/>
+        /// </summary>
         protected bool useTurnOnStart = true;
+        /// <summary>
+        /// 受击计时器，默认 0
+        /// </summary>
         protected byte onHitTimer = 0;
+        /// <summary>
+        /// 受击冻结时间，默认 5 帧
+        /// </summary>
         protected byte onHitFreeze = 5;
-
+        /// <summary>
+        /// 影子拖尾数量，默认 5
+        /// </summary>
         protected int shadowCount = 5;
+        /// <summary>
+        /// 挥舞前的最小时间，默认 0 帧
+        /// </summary>
         protected int minTime = 0;
+        /// <summary>
+        /// 挥舞的最大时间，默认 60 帧
+        /// </summary>
         protected int maxTime = 60;
+        /// <summary>
+        /// 拖尾顶部延伸距离，默认 10
+        /// </summary>
         protected int trailTopWidth = 10;
+        /// <summary>
+        /// 拖尾底部延伸距离，默认 10
+        /// </summary>
         protected int trailBottomWidth = 10;
+        /// <summary>
+        /// 初始角度（正值表示从头顶向下挥舞），默认 2.5f
+        /// </summary>
         protected float startAngle = 2.5f;
+        /// <summary>
+        /// 终止角度，默认 2.5f
+        /// </summary>
         protected float totalAngle = 2.5f;
-        public float _Rotation;// 实际角度，通过一系列计算得到的每一帧的弹幕角度
+        /// <summary>
+        /// 实际角度，每帧计算得到
+        /// </summary>
+        public float _Rotation;
+        /// <summary>
+        /// 计时器
+        /// </summary>
         public float Timer;
-
+        /// <summary>
+        /// 贴图旋转角度（水平向右为 0）
+        /// </summary>
         protected float spriteRotation = spriteRotation;
+        /// <summary>
+        /// 拖尾数组长度，默认 15
+        /// </summary>
         protected short trailCount = trailCount;
+        /// <summary>
+        /// 弹幕底部与玩家中心的距离，默认 15
+        /// </summary>
         public float distanceToOwner = 15;
-
+        /// <summary>
+        /// 平滑处理器接口
+        /// </summary>
         protected ISmoother Smoother;
-
+        /// <summary>
+        /// 旋转向量引用（指向弹幕速度）
+        /// </summary>
         public ref Vector2 RotateVec2 => ref Projectile.velocity;
+        /// <summary>
+        /// 顶部位置
+        /// </summary>
         public Vector2 Top;
+        /// <summary>
+        /// 底部位置
+        /// </summary>
         public Vector2 Bottom;
+        public override bool CanFire => true;
+        #endregion
+        /// <summary>
+        /// 设定挥舞属性
+        /// </summary>
+        public abstract void SetSwingProperty();
 
         public sealed override void SetDefaults()
         {
@@ -56,36 +146,12 @@ namespace Coralite.Core.Prefabs.Projectiles
             Projectile.friendly = true;
 
             Smoother = new BezierEaseSmoother();
-            SetDefs();
+            SetSwingProperty();
 
             Projectile.netUpdate = true;
             Projectile.netImportant = true;
             Projectile.usesLocalNPCImmunity = true;
         }
-
-        /// <summary>
-        /// 可以自由设定的值（等号后面的是默认值）
-        /// <para></para>
-        /// 开始挥舞前的时间  <see cref="minTime"/>  = 0<br></br>
-        /// 挥舞所用时间 <see cref="maxTime"/> = 60<br></br>
-        /// 起始角度，为正时则从人物头顶向下挥舞 <see cref="startAngle"/> = 2.5f<br></br>
-        /// 终止角度 <see cref="totalAngle"/> = 2.5f<br></br>
-        /// 弹幕底部与玩家中心的距离 <see cref="distanceToOwner"/> = 15<br></br>
-        /// 贴图旋转角度 <see cref="spriteRotation"/>（水平向右为0）<br></br>
-        /// 卡肉时长 onHitFreeze = 5 
-        /// <para> 
-        /// 拖尾相关部分
-        /// </para>
-        /// 是否应用影子拖尾  <see cref="useShadowTrail"/> = false，
-        /// 是否应用刀光效果 <see cref="useSlashTrail"/> = false，
-        /// 是否可绘制自己的贴图 <see cref="canDrawSelf"/> = true <br></br>
-        /// 刀光贴图 <see cref="TrailTexture"/> 建议单独声明一个静态<see cref="Asset{T}"/>字段 <br></br>
-        /// 影子拖尾数量 <see cref="shadowCount"/>
-        /// 拖尾数组长度 <see cref="trailCount"/> = 15 <br></br>
-        /// 刀光顶部延申的距离 <see cref="trailTopWidth"/> = 10,
-        /// 刀光顶部延申的距离<see cref="trailBottomWidth"/> = 10 <br></br>
-        /// </summary>
-        public abstract void SetDefs();
 
         public override bool ShouldUpdatePosition() => false;
 
@@ -95,7 +161,8 @@ namespace Coralite.Core.Prefabs.Projectiles
         {
             AIBefore();
 
-            if (onHitTimer != 0 && VisualEffectSystem.HitEffect_HitFreeze && onHitTimer < onHitFreeze)//轻微的卡肉效果
+            if (/*VaultUtils.isClient &&*/ onHitTimer != 0 && VisualEffectSystem.HitEffect_HitFreeze
+                && onHitTimer < onHitFreeze)//轻微的卡肉效果
             {
                 Projectile.Center = OwnerCenter() + (RotateVec2 * ((Projectile.scale * Projectile.height / 2) + distanceToOwner));
                 Top = Projectile.Center + (RotateVec2 * ((Projectile.scale * Projectile.height / 2) + trailTopWidth));
@@ -106,7 +173,15 @@ namespace Coralite.Core.Prefabs.Projectiles
 
             if (onStart)
             {
-                Initializer();
+                if (init && Projectile.IsOwnedByLocalPlayer())
+                {
+                    InitBasicValues();
+                    InitializeSwing();
+                }
+
+                if (!Projectile.IsOwnedByLocalPlayer())//客户端和其他端等待本地端同步完数据后再运行
+                    return;
+
                 return;
             }
 
@@ -147,35 +222,41 @@ namespace Coralite.Core.Prefabs.Projectiles
             Bottom = Projectile.Center - (RotateVec2 * (Projectile.scale * Projectile.height / 2));//弹幕的底端和顶端计算，用于检测碰撞以及绘制
             Owner.itemRotation = _Rotation + (Owner.direction > 0 ? 0 : MathHelper.Pi);
 
-            if (useShadowTrail || useSlashTrail)
+            if (!VaultUtils.isServer && (useShadowTrail || useSlashTrail))
                 UpdateCaches();
         }
 
         /// <summary>
         /// 用于各项初始化操作
         /// </summary>
-        protected virtual void Initializer()
+        protected virtual void InitializeSwing()
         {
             Projectile.velocity *= 0f;
-            if (Owner.whoAmI == Main.myPlayer)
+            if (Projectile.IsOwnedByLocalPlayer())
             {
                 _Rotation = startAngle = GetStartAngle() - (DirSign * startAngle);//设定起始角度
                 totalAngle *= DirSign;
+                Projectile.netUpdate = true;
+                onStart = false;
+                netSendBasicValues = true;
+                init = false;
             }
 
             Slasher();
             Smoother.ReCalculate(maxTime - minTime);
 
-            if (useShadowTrail || useSlashTrail)
+            if (!VaultUtils.isServer && (useShadowTrail || useSlashTrail))
             {
-                oldRotate = new float[trailCount];
-                oldDistanceToOwner = new float[trailCount];
-                oldLength = new float[trailCount];
+                oldRotate ??= new float[trailCount];
+                oldDistanceToOwner ??= new float[trailCount];
+                oldLength ??= new float[trailCount];
                 InitializeCaches();
             }
+        }
 
-            onStart = false;
-            Projectile.netUpdate = true;
+        protected virtual void InitBasicValues()
+        {
+
         }
 
         /// <summary>
@@ -193,16 +274,6 @@ namespace Coralite.Core.Prefabs.Projectiles
         protected virtual void TimeUpdater()
         {
             Timer++;
-        }
-
-        public override void NetCodeHeldSend(BinaryWriter writer)
-        {
-            writer.Write(Timer);
-        }
-
-        public override void NetCodeReceiveHeld(BinaryReader reader)
-        {
-            Timer = reader.ReadSingle();
         }
 
         #region 关于挥舞
@@ -252,6 +323,10 @@ namespace Coralite.Core.Prefabs.Projectiles
 
         protected virtual void InitializeCaches()
         {
+            if (VaultUtils.isServer || oldRotate == null || oldDistanceToOwner == null || oldLength == null)
+            {
+                return;
+            }
             for (int j = trailCount - 1; j >= 0; j--)
             {
                 oldRotate[j] = 100f;
@@ -262,6 +337,11 @@ namespace Coralite.Core.Prefabs.Projectiles
 
         protected virtual void UpdateCaches()
         {
+            if (VaultUtils.isServer || oldRotate == null || oldDistanceToOwner == null || oldLength == null)
+            {
+                return;
+            }
+
             for (int i = trailCount - 1; i > 0; i--)
             {
                 oldRotate[i] = oldRotate[i - 1];
@@ -283,7 +363,11 @@ namespace Coralite.Core.Prefabs.Projectiles
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (onHitTimer == 0)
+            {
                 onHitTimer = 1;
+                if (Projectile.IsOwnedByLocalPlayer())
+                    Projectile.netUpdate = true;
+            }
 
             OnHitEvent(target, hit, damageDone);
         }
@@ -317,10 +401,82 @@ namespace Coralite.Core.Prefabs.Projectiles
 
         #endregion
 
+        #region 同步
+
+        public override BitsByte SandBitsByte(BitsByte flags)
+        {
+            flags = base.SandBitsByte(flags);
+
+            flags[2] = onStart;
+            flags[3] = netSendBasicValues;
+
+            return flags;
+        }
+
+        public override void ReceiveBitsByte(BitsByte flags)
+        {
+            base.ReceiveBitsByte(flags);
+
+            onStart = flags[2];
+            netSendBasicValues = flags[3];
+        }
+
+        public override void NetHeldSend(BinaryWriter writer)
+        {
+            if (netSendBasicValues)
+            {
+                writer.Write(Timer);
+                writer.Write(_Rotation);
+                writer.Write(startAngle);
+                writer.Write(totalAngle);
+                writer.Write(distanceToOwner);
+
+                netSendBasicValues = false;
+            }
+
+            writer.Write(onHitTimer);
+        }
+
+        public override void NetHeldReceive(BinaryReader reader)
+        {
+            if (netSendBasicValues)
+            {
+                if (init)
+                    InitBasicValues();
+
+                Timer = reader.ReadSingle();
+                _Rotation = reader.ReadSingle();
+                startAngle = reader.ReadSingle();
+                totalAngle = reader.ReadSingle();
+                distanceToOwner = reader.ReadSingle();
+
+                if (init)
+                {
+                    InitializeSwing();
+                    init = false;
+                }
+
+                if (VaultUtils.isServer)
+                {
+                    Projectile.netUpdate = true;
+                    netSendBasicValues = true;
+                }
+                else
+                    netSendBasicValues = false;
+            }
+
+            onHitTimer = reader.ReadByte();
+        }
+
+        #endregion
+
         #region 绘制
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (onStart)
+                return false;
+
             if (useSlashTrail && VisualEffectSystem.DrawKniefLight && Timer > minTime)
                 DrawSlashTrail();
 
@@ -329,6 +485,9 @@ namespace Coralite.Core.Prefabs.Projectiles
 
         public override void PostDraw(Color lightColor)
         {
+            if (onStart)
+                return;
+
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(0, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
@@ -355,7 +514,7 @@ namespace Coralite.Core.Prefabs.Projectiles
         protected virtual void DrawSlashTrail()
         {
             RasterizerState originalState = Main.graphics.GraphicsDevice.RasterizerState;
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
 
             float length = 1;
             for (int i = 1; i < oldRotate.Length; i++)
@@ -462,6 +621,11 @@ namespace Coralite.Core.Prefabs.Projectiles
         protected virtual void GetCurrentTrailCount(out float count)
         {
             count = 0f;
+            if (VaultUtils.isServer)
+            {
+                return;
+            }
+
             if (oldRotate == null)
                 return;
 
@@ -479,7 +643,7 @@ namespace Coralite.Core.Prefabs.Projectiles
             if (Timer < minTime || oldRotate == null)
                 return;
 
-            List<CustomVertexInfo> bars = new();
+            List<ColoredVertex> bars = new();
             GetCurrentTrailCount(out float count);
 
             float w = 1f;
@@ -495,8 +659,8 @@ namespace Coralite.Core.Prefabs.Projectiles
                 Vector2 Top = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] + trailTopWidth + oldDistanceToOwner[i]));
                 Vector2 Bottom = Center + (oldRotate[i].ToRotationVector2() * (oldLength[i] - (ControlTrailBottomWidth(factor) * trailBottomExtraMult) + oldDistanceToOwner[i]));
 
-                bars.Add(new CustomVertexInfo(Top, new Color(dir, w, 0f, alpha), new Vector3(factor, 0f, w)));
-                bars.Add(new CustomVertexInfo(Bottom, new Color(dir, w, 0f, alpha), new Vector3(factor, 1f, w)));
+                bars.Add(new ColoredVertex(Top, new Color(dir, w, 0f, alpha), new Vector3(factor, 0f, w)));
+                bars.Add(new ColoredVertex(Bottom, new Color(dir, w, 0f, alpha), new Vector3(factor, 1f, w)));
             }
 
             Main.spriteBatch.End();

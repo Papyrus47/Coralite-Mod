@@ -1,6 +1,7 @@
 ﻿using Coralite.Content.ModPlayers;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
+using Coralite.Core.Attributes;
+using InnoVault.GameContent.BaseEntity;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -99,6 +100,7 @@ namespace Coralite.Content.Items.Misc_Magic
     }
 
     [AutoloadEquip(EquipType.Body, EquipType.Legs)]
+    [PlayerEffect]
     public class ConchRobe : ModItem
     {
         public override string Texture => AssetDirectory.Misc_Magic + Name;

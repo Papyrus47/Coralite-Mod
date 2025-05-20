@@ -2,8 +2,8 @@
 using Coralite.Content.ModPlayers;
 using Coralite.Content.Particles;
 using Coralite.Core;
-using Coralite.Core.Prefabs.Projectiles;
 using Coralite.Helpers;
+using InnoVault.GameContent.BaseEntity;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -21,6 +21,8 @@ namespace Coralite.Content.Items.Nightmare
 
         public int Combo;
 
+        public float Priority => IDashable.HeldItemDash;
+
         public override void SetDefaults()
         {
             Item.useAnimation = Item.useTime = 14;
@@ -36,6 +38,14 @@ namespace Coralite.Content.Items.Nightmare
             Item.noMelee = true;
             Item.useTurn = false;
             Item.shootSpeed = 22;
+        }
+
+        public override void HoldItem(Player player)
+        {
+            if (player.TryGetModPlayer(out CoralitePlayer cp))
+            {
+                cp.AddDash(this);
+            }
         }
 
         public override bool AltFunctionUse(Player player) => false;
@@ -297,10 +307,10 @@ namespace Coralite.Content.Items.Nightmare
                         Owner.itemRotation = Projectile.rotation + (DirSign > 0 ? 0 : 3.141f);
 
                         //如果满足条件且没有右键过 那么就再次射击
-                        if (NotRightClicked && Main.mouseRight && Main.mouseRightRelease
+                        if (NotRightClicked && DownRight && Main.mouseRightRelease
                             && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy > 0)
                         {
-                            if (Owner.PickAmmo(Owner.HeldItem, out int type, out float speed, out int damage, out float knockBack, out _))
+                            if (Owner.PickAmmo(Item, out int type, out float speed, out int damage, out float knockBack, out _))
                             {
                                 cp.nightmareEnergy -= 1;
 
@@ -329,10 +339,10 @@ namespace Coralite.Content.Items.Nightmare
                         Owner.itemRotation = Projectile.rotation + (DirSign > 0 ? 0 : 3.141f);
 
                         //如果满足条件且没有右键过 那么就再次射击
-                        if (NotRightClicked && Main.mouseRight && Main.mouseRightRelease
+                        if (NotRightClicked && DownRight && Main.mouseRightRelease
                             && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy > 0)
                         {
-                            if (Owner.PickAmmo(Owner.HeldItem, out int type, out float speed, out int damage, out float knockBack, out _))
+                            if (Owner.PickAmmo(Item, out int type, out float speed, out int damage, out float knockBack, out _))
                             {
                                 cp.nightmareEnergy -= 1;
 
@@ -396,7 +406,7 @@ namespace Coralite.Content.Items.Nightmare
                         {
                             if (Owner.controlUseItem)
                             {
-                                if (Main.myPlayer == Projectile.owner)
+                                if (Projectile.IsOwnedByLocalPlayer())
                                 {
                                     Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
                                     Rotation = Rotation.AngleLerp((Main.MouseWorld - Owner.MountedCenter).ToRotation(), 0.25f);
@@ -415,7 +425,7 @@ namespace Coralite.Content.Items.Nightmare
                                     {
                                         if (dashHited)//冲刺途中有碰撞到东西
                                         {
-                                            if (Owner.HeldItem.ModItem is QueensWreath qw)
+                                            if (Item.ModItem is QueensWreath qw)
                                                 qw.Combo = 4;
 
                                             for (int i = 0; i < 3; i++)
@@ -439,7 +449,7 @@ namespace Coralite.Content.Items.Nightmare
                                 {
                                     if (dashHited)//冲刺途中有碰撞到东西
                                     {
-                                        if (Owner.HeldItem.ModItem is QueensWreath qw)
+                                        if (Item.ModItem is QueensWreath qw)
                                             qw.Combo = 4;
 
                                         for (int i = 0; i < 3; i++)
@@ -459,7 +469,7 @@ namespace Coralite.Content.Items.Nightmare
                         }
 
                         //射完后检测右键
-                        if (NotRightClicked && Main.mouseRight && Main.mouseRightRelease
+                        if (NotRightClicked && DownRight && Main.mouseRightRelease
                             && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy > 0)
                         {
                             ShootArrow((source, position, velocity, type, knockBack, damage) =>
@@ -523,7 +533,7 @@ namespace Coralite.Content.Items.Nightmare
                         {
                             if (Owner.controlUseItem)
                             {
-                                if (Main.myPlayer == Projectile.owner)
+                                if (Projectile.IsOwnedByLocalPlayer())
                                 {
                                     Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
                                     Rotation = Rotation.AngleLerp((Main.MouseWorld - Owner.MountedCenter).ToRotation(), 0.25f);
@@ -556,7 +566,7 @@ namespace Coralite.Content.Items.Nightmare
                         }
 
                         //射完后检测右键
-                        if (NotRightClicked && Main.mouseRight && Main.mouseRightRelease
+                        if (NotRightClicked && DownRight && Main.mouseRightRelease
                             && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy > 0)
                         {
                             ShootArrow((source, position, velocity, type, knockBack, damage) =>
@@ -599,7 +609,7 @@ namespace Coralite.Content.Items.Nightmare
 
                                 Projectile.Center = Owner.Center + (Projectile.rotation.ToRotationVector2() * 16);
 
-                                CheckDashHited(npc => npc.SimpleStrikeNPC(Owner.GetWeaponDamage(Owner.HeldItem), Math.Sign(Owner.Center.X - npc.Center.X),
+                                CheckDashHited(npc => npc.SimpleStrikeNPC(Owner.GetWeaponDamage(Item), Math.Sign(Owner.Center.X - npc.Center.X),
                                     damageType: DamageClass.Ranged));
 
                                 if (dashHited)//冲刺过程中命中了什么东西
@@ -630,7 +640,7 @@ namespace Coralite.Content.Items.Nightmare
                                 Projectile.rotation = Projectile.rotation.AngleLerp((Main.MouseWorld - Owner.MountedCenter).ToRotation(), 0.25f);
 
                                 //射完后检测右键
-                                if (NotRightClicked && Main.mouseRight && Main.mouseRightRelease
+                                if (NotRightClicked && DownRight && Main.mouseRightRelease
                                     && Owner.TryGetModPlayer(out CoralitePlayer cp) && cp.nightmareEnergy > 0)
                                 {
                                     ShootArrow((source, position, velocity, type, knockBack, damage) =>
@@ -749,7 +759,7 @@ namespace Coralite.Content.Items.Nightmare
                             {
                                 Projectile.rotation = Projectile.rotation.AngleLerp((Main.MouseWorld - Owner.MountedCenter).ToRotation(), 0.25f);
 
-                                if (Main.myPlayer == Projectile.owner)
+                                if (Projectile.IsOwnedByLocalPlayer())
                                 {
                                     Owner.direction = Main.MouseWorld.X > Owner.Center.X ? 1 : -1;
                                     Rotation = Rotation.AngleLerp((Main.MouseWorld - Owner.MountedCenter).ToRotation(), 0.25f);
@@ -839,7 +849,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public void ShootArrow(Action<IEntitySource, Vector2, Vector2, int, float, int> shoot = null)
         {
-            if (Owner.PickAmmo(Owner.HeldItem, out int type, out float _, out int damage, out float knockBack, out _))
+            if (Owner.PickAmmo(Item, out int type, out float _, out int damage, out float knockBack, out _))
             {
                 IEntitySource source = Projectile.GetSource_FromAI();
                 Vector2 position = Owner.Center;
@@ -892,6 +902,7 @@ namespace Coralite.Content.Items.Nightmare
 
         public ref float State => ref Projectile.ai[0];
         public bool CanGetNightmareEnergy => Projectile.ai[1] == 1;
+        private bool span;
 
         public override void SetStaticDefaults()
         {
@@ -924,13 +935,18 @@ namespace Coralite.Content.Items.Nightmare
                 cp.GetNightmareEnergy(1);
         }
 
-        public override void OnSpawn(IEntitySource source)
+        public void Initialize()
         {
             Projectile.frame = Main.rand.Next(6);
         }
 
         public override void AI()
         {
+            if (!span)
+            {
+                Initialize();
+                span = true;
+            }
             if (Projectile.localAI[0] == 0)
             {
                 if (State == 1)

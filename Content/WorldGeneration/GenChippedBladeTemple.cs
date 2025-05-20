@@ -1,10 +1,7 @@
 ﻿using Coralite.Content.Items.CoreKeeper;
 using Coralite.Core;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -19,38 +16,20 @@ namespace Coralite.Content.WorldGeneration
 
         public void GenChippedBladeTemple(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = ChippedBladeTemple.Value;//"正在生成破碎剑刃神庙";
+            progress.Message = ChippedBladeTemple.Value;
 
-            int itemCount = 1;
+            int itemCount = ValueByWorldSize(1, 2, 3);
             int gened = 0;
-
-            if (Main.maxTilesX > 8000)
-            {
-                itemCount++;
-            }
-
-            if (Main.maxTilesX > 6000)
-            {
-                itemCount++;
-            }
-
-            Dictionary<Color, int> clearDic = new()
-            {
-                [Color.White] = -2,
-                [Color.Black] = -1
-            };
 
             Dictionary<Color, int> mainDic = new()
             {
                 [new Color(155, 173, 183)] = TileID.LeadBrick,
                 [new Color(7, 60, 49)] = ModContent.TileType<HartcoreObsidianTile>(),
-                [Color.Black] = -1
             };
 
             Dictionary<Color, int> wallDic = new()
             {
                 [new Color(77, 146, 185)] = WallID.LeadBrick,
-                [Color.Black] = -1
             };
 
             for (int i = 0; i < 1000; i++)
@@ -81,23 +60,18 @@ namespace Coralite.Content.WorldGeneration
                     if (tileDictionary[TileID.Dirt] + tileDictionary[TileID.Mud] + tileDictionary[TileID.JungleGrass] < 550)
                         continue; //如果不是，则返回false，这将导致调用方法尝试一个不同的origin。
 
-                    Texture2D shrineTex = ModContent.Request<Texture2D>(AssetDirectory.WorldGen + "CoreKeeper/ChippedBladeTemple", AssetRequestMode.ImmediateLoad).Value;
-                    Texture2D clearTex = ModContent.Request<Texture2D>(AssetDirectory.WorldGen + "CoreKeeper/ChippedBladeTempleClear", AssetRequestMode.ImmediateLoad).Value;
-                    Texture2D wallTex = ModContent.Request<Texture2D>(AssetDirectory.WorldGen + "CoreKeeper/ChippedBladeTempleWall", AssetRequestMode.ImmediateLoad).Value;
+                    TextureGenerator generator = new TextureGenerator("ChippedBladeTemple", path: AssetDirectory.WorldGen + "CoreKeeper/");
 
                     position += new Point(-12, -13);
                     if (!WorldGen.InWorld(position.X, position.Y))
                         continue;
-                    if (!WorldGen.InWorld(position.X + shrineTex.Width, position.Y + shrineTex.Height))
+                    if (!WorldGen.InWorld(position.X + generator.Width, position.Y + generator.Height))
                         continue;
 
                     if (!GenVars.structures.CanPlace(new Rectangle(position.X, position.Y, 12 * 2, 14 * 2)))
                         continue;
 
-                    Task.Run(async () =>
-                    {
-                        await GenShrine(clearTex, shrineTex, wallTex, clearDic, mainDic, wallDic, position.X, position.Y);
-                    }).Wait();
+                    generator.GenerateByTopLeft(position, mainDic, wallDic);
 
                     //放门
 
