@@ -36,7 +36,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         }
     }
 
-    public class LuminwardParticle : Particle
+    public class LuminwardParticle : BasePRT
     {
         public override string Texture => AssetDirectory.MagikeSeries2Item + Name;
 
@@ -64,7 +64,7 @@ namespace Coralite.Content.Items.MagikeSeries2
         }
     }
 
-    public class LuminwardParticleExplosion : Particle
+    public class LuminwardParticleExplosion : BasePRT
     {
         public override string Texture => AssetDirectory.MagikeSeries2Item + Name;
 

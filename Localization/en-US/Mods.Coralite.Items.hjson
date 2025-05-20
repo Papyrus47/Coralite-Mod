@@ -5875,3 +5875,8 @@ CrystallineMusicBox: {
 	DisplayName: Crystalline Music Box
 	Tooltip: ""
 }
+
+TaiJiYujian: {
+	DisplayName: Tai Ji Yujian
+	Tooltip: ""
+}
