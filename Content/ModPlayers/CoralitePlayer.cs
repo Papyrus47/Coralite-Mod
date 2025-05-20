@@ -6,6 +6,7 @@ using Coralite.Content.Items.Thunder;
 using Coralite.Content.Projectiles.Globals;
 using Coralite.Content.WorldGeneration;
 using Coralite.Core;
+using Coralite.Core.Systems.YujianSystem;
 using Coralite.Helpers;
 using InnoVault.PRT;
 using Microsoft.Xna.Framework.Graphics;
@@ -163,6 +164,7 @@ namespace Coralite.Content.ModPlayers
             HurtTimer = 0;
             ResetNightmare_Respawn();
             bloodPoolCount = 0;
+            TempYujians = new Item[BaseHulu.slotCount];
         }
 
         public override bool CanUseItem(Item item)
