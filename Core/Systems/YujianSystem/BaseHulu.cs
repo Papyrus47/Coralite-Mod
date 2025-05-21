@@ -2,6 +2,7 @@
 using Coralite.Content.UI;
 using Coralite.Core.Loaders;
 using Coralite.Core.Systems.YujianSystem.HuluEffects;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -149,6 +150,10 @@ namespace Coralite.Core.Systems.YujianSystem
             }
 
             return false;
+        }
+        public override void HoldItem(Player player)
+        {
+            player.maxMinions = Math.Max(player.maxMinions, MaxSlot);
         }
         public override void UpdateInventory(Player player)
         {

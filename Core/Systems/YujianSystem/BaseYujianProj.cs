@@ -140,6 +140,7 @@ namespace Coralite.Core.Systems.YujianSystem
             if (source is YujianSource yujianSource)
             {
                 SourceYujian = yujianSource.Yujian;
+                MainYujianProj = yujianSource.yujianProj;
             }
             Projectile.InitOldPosCache(trailCacheLength);
             Projectile.InitOldRotCache(trailCacheLength);
@@ -179,6 +180,16 @@ namespace Coralite.Core.Systems.YujianSystem
                 cp.ownedYujianProj = false;
 
             Projectile.timeLeft = 2;
+
+            #region 强制进入连携攻击
+            if (!SourceYujian.MainYujian && MainYujianProj?.State == PowerfulMoveState && State != PowerfulMoveState)
+            {
+                State = PowerfulMoveState;
+                powerfulAI.OnStart(this);
+                return false;
+            }
+            #endregion
+
             if (Item.ModItem is BaseHulu)
             {
                 if (Owner.controlUseItem)
@@ -187,7 +198,7 @@ namespace Coralite.Core.Systems.YujianSystem
                     Vector2 vector2 = Main.MouseWorld - Owner.Center;
                     Owner.itemRotation = MathF.Atan2(vector2.Y * Owner.direction, vector2.X * Owner.direction);
                 }
-                Projectile.minionSlots = 1;
+                Projectile.minionSlots = 1f;
             }
             else
                 Projectile.minionSlots = 0;
@@ -197,7 +208,6 @@ namespace Coralite.Core.Systems.YujianSystem
                 Timer = 0f;
                 Projectile.netUpdate = true;
             }
-
             switch (State)
             {
                 default:
@@ -233,18 +243,18 @@ namespace Coralite.Core.Systems.YujianSystem
                 case -0.5f:     //尝试开始攻击
                     Helper.GetMyProjIndexWithModProj<BaseYujianProj>(Projectile, out var index2, out var totalIndexesInGroup2);
                     GetIdlePosition(index2, totalIndexesInGroup2, out var idleSpot2, out var idleRotation2);
-                    Projectile.velocity = Vector2.UnitY.RotatedBy((MathHelper.PiOver2 * 1.5f * Owner.direction) + (0.2 * index2 * totalIndexesInGroup2 * Owner.direction));
-                    Projectile.Center = idleSpot2 + (Projectile.velocity * 10);
-                    Projectile.rotation = idleRotation2;
+                    Projectile.velocity = Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.PiOver2 * Owner.direction);
+                    Projectile.Center = idleSpot2 + Projectile.velocity.RotatedBy((-MathHelper.PiOver2 - MathHelper.PiOver4) * Owner.direction) * (index2 * 6 + 16) * Owner.direction + Projectile.velocity * Owner.direction * 12;
+                    Projectile.rotation = idleRotation2 + MathHelper.PiOver4 * 0.2f * Owner.direction;
                     Projectile.tileCollide = false;
 
-                    if (Item.ModItem is BaseHulu && Owner.controlUseItem) // 手持葫芦则左键攻击,否则自动攻击
+                    if (Item.ModItem is BaseHulu && Owner.controlUseItem && SourceYujian.MainYujian) // 主御剑情况：按住左键，手持葫芦，才能拔刀攻击
                     {
                         State = 0;
                         //State = Main.rand.Next(1, yujianAIs.Length);
                         //yujianAIs[(int)State - 1].OnStart(this);
                     }
-                    else if (Item.ModItem is not BaseHulu && Main.rand.NextBool(20) && index2 < player.maxMinions - Helper.GetMinionSlot(player))
+                    else if ((Item.ModItem is not BaseHulu && Main.rand.NextBool(20) && index2 < player.maxMinions - Helper.GetMinionSlot(player)) || (Item.ModItem is BaseHulu && !SourceYujian.MainYujian)) // 自动攻击情况：且不是主御剑手持葫芦时，或者是需要自动攻击时
                     {
                         int targetNPCIndex = TryAttackingNPCs(Projectile);
                         if (targetNPCIndex != -1)
@@ -276,7 +286,7 @@ namespace Coralite.Core.Systems.YujianSystem
                         GetYujianRandomState();
                     }
                     else
-                        Projectile.Center = Owner.Center + (Projectile.velocity * (MathHelper.SmoothStep(1, 100, Timer / 60f) + 10));
+                        Projectile.Center = Owner.Center + (Projectile.velocity * (MathHelper.SmoothStep(1, 100, Timer / 60f) + 10) * Owner.direction);
                     return false;
             }
 
@@ -316,23 +326,17 @@ namespace Coralite.Core.Systems.YujianSystem
             bool CanAttack = Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength;
             AimMouse = Item.ModItem is BaseHulu; // 如果手持葫芦则瞄准鼠标，不是则瞄准敌人
             if (AimMouse)
-                CanAttack = CanAttack && Owner.controlUseItem;
+                CanAttack = CanAttack && ((Owner.controlUseItem && SourceYujian.MainYujian) || (!SourceYujian.MainYujian));
             else
                 CanAttack = CanAttack && State > 0 && index0 < Owner.maxMinions - Helper.GetMinionSlot(Owner);
 
-            if (AimMouse && (cp.useSpecialAttack || MainYujianProj?.State == PowerfulMoveState) && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength)
+            if (AimMouse && cp.useSpecialAttack && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength)
             {
-                if (SourceYujian.MainYujian && cp.nianli > PowerfulAttackCost)
+                if (cp.nianli > PowerfulAttackCost && SourceYujian.MainYujian)
                 {
                     State = PowerfulMoveState;
                     powerfulAI.OnStart(this);
                     cp.nianli -= PowerfulAttackCost;
-                    return true;
-                }
-                else if(!SourceYujian.MainYujian)
-                {
-                    State = PowerfulMoveState;
-                    powerfulAI.OnStart(this);
                     return true;
                 }
             }
@@ -397,7 +401,7 @@ namespace Coralite.Core.Systems.YujianSystem
         /// <param name="idleRotation"></param>
         public void GetIdlePosition(int stackedIndex, int totalIndexes, out Vector2 idleSpot, out float idleRotation)
         {
-            idleRotation = (MathHelper.PiOver2 * 1.5f * Owner.direction) + (Owner.direction * 0.2f * (totalIndexes * stackedIndex));
+            idleRotation = (MathHelper.Pi * Owner.direction) + (Owner.direction * 0.02f * (totalIndexes * stackedIndex));
             //idleRotation = (-Vector2.UnitX).RotatedBy(stackedIndex * 0.1f * totalIndexes * Owner.direction).ToRotation();
             //float num2 = (totalIndexes - 1f) / 2f;
             //idleSpot = Owner.Center - Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 33f - new Vector2(Owner.direction * 16, 8);
@@ -543,11 +547,17 @@ namespace Coralite.Core.Systems.YujianSystem
         {
             if (Item.ModItem is not BaseHulu)
                 modifiers.SourceDamage *= 0.5f;
+            else if (SourceYujian.MainYujian)
+                modifiers.SourceDamage += 0.3f;
         }
         public sealed override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             HitEffect(target, hit.Damage, hit.Knockback, hit.Crit);
             huluEffect?.HitEffect(Projectile, target, hit.Damage, hit.Knockback, hit.Crit);
+            if (SourceYujian.MainYujian)
+            {
+                Owner.MinionAttackTargetNPC = target.whoAmI;
+            }
         }
 
         public virtual void HitEffect(NPC target, int damage, float knockback, bool crit) { }
@@ -571,6 +581,26 @@ namespace Coralite.Core.Systems.YujianSystem
         {
             huluEffect?.PreDrawEffect(Projectile, ref lightColor);
             PreDrawEffect(ref lightColor);
+
+            SpriteEffects effect = SpriteEffects.None;
+            if (State > 0)
+                effect = GetCurrentAI().GetSpriteEffect(this);
+            Texture2D mainTex = Projectile.GetTexture();
+            if (SourceYujian.MainYujian)
+            {
+                Color white = Color.White;
+                white.A = 0;
+                white *= 0.5f;
+                const int offset = 5;
+                Vector2 position = Projectile.Center - Main.screenPosition;
+                SpriteBatch spriteBatch = Main.spriteBatch;
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(offset, offset), Projectile.scale, effect, 0f);
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(offset, -offset), Projectile.scale, effect, 0f);
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(-offset, -offset), Projectile.scale, effect, 0f);
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(-offset, offset), Projectile.scale, effect, 0f);
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(0, offset * 2), Projectile.scale, effect, 0f);
+                spriteBatch.Draw(mainTex, position, mainTex.Frame(), white, Projectile.rotation, mainTex.Size() * 0.5f + new Vector2(0, -offset * 2), Projectile.scale, effect, 0f);
+            }
             if (State < 0.01f)
                 DrawSelf(Main.spriteBatch, lightColor);
             return false;
