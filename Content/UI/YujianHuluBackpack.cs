@@ -214,7 +214,7 @@ namespace Coralite.Content.UI
             }
             else
             {
-                Texture2D lockTex = ModContent.Request<Texture2D>(AssetDirectory.UI + "HuluLock").Value;
+                Texture2D lockTex = ModContent.Request<Texture2D>(AssetDirectory.UI + "YujianHuluLock").Value;
                 spriteBatch.Draw(lockTex, center, lockTex.Frame(), Color.White, 0f, new Vector2(lockTex.Width / 2, lockTex.Height / 2), 1f, SpriteEffects.None, 0f);
             }
         }
@@ -236,7 +236,7 @@ namespace Coralite.Content.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.UI + "YujianHuluBackpack1").Value;
+            Texture2D mainTex = ModContent.Request<Texture2D>(AssetDirectory.UI + "YujianHuluBackpack2").Value;
             spriteBatch.Draw(mainTex, GetDimensions().Position(), Color.White);
         }
     }

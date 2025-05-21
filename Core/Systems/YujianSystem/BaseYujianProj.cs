@@ -32,6 +32,10 @@ namespace Coralite.Core.Systems.YujianSystem
         public Vector2 aimCenter;
         public IHuluEffect huluEffect;
         /// <summary>
+        /// 主要的御剑弹幕,为null就是母御剑
+        /// </summary>
+        public BaseYujianProj MainYujianProj;
+        /// <summary>
         /// 御剑的攻击AI
         /// </summary>
         public YujianAI[] yujianAIs;
@@ -106,14 +110,16 @@ namespace Coralite.Core.Systems.YujianSystem
             Projectile.penetrate = -1;
             Projectile.aiStyle = -1;
             Projectile.timeLeft = 300;
-            Projectile.localNPCHitCooldown = 25;
+            Projectile.localNPCHitCooldown = 15;
             Projectile.extraUpdates = 2;
+            Projectile.DamageType = DamageClass.Summon;
 
             Projectile.ignoreWater = false;
             Projectile.tileCollide = TileCollide;
             Projectile.friendly = true;
             Projectile.netImportant = true;
             Projectile.usesLocalNPCImmunity = true;
+            Projectile.minion = true;
 
             PostSetDefaults();
         }
@@ -143,11 +149,11 @@ namespace Coralite.Core.Systems.YujianSystem
 
         public sealed override void AI()
         {
-            if (Item.ModItem is not BaseHulu && !SourceYujian.MainYujian) // 如果手上不是葫芦并且不是主御剑，则清除自己
-            {
-                Projectile.Kill();
-                return;
-            }
+            //if (Item.ModItem is not BaseHulu && !SourceYujian.MainYujian) // 如果手上不是葫芦并且不是主御剑，则清除自己
+            //{
+            //    Projectile.Kill();
+            //    return;
+            //}
 
             if (!AIBefore())
                 return;
@@ -232,7 +238,7 @@ namespace Coralite.Core.Systems.YujianSystem
                         //State = Main.rand.Next(1, yujianAIs.Length);
                         //yujianAIs[(int)State - 1].OnStart(this);
                     }
-                    else if (Item.ModItem is not BaseHulu && Main.rand.NextBool(20))
+                    else if (Item.ModItem is not BaseHulu && Main.rand.NextBool(20) && index2 < player.maxMinions - Helper.GetMinionSlot(player))
                     {
                         int targetNPCIndex = TryAttackingNPCs(Projectile);
                         if (targetNPCIndex != -1)
@@ -264,9 +270,7 @@ namespace Coralite.Core.Systems.YujianSystem
                         GetYujianRandomState();
                     }
                     else
-                    {
                         Projectile.Center = Owner.Center + (Projectile.velocity * (MathHelper.SmoothStep(1, 100, Timer / 60f) + 10));
-                    }
                     return false;
             }
 
@@ -281,7 +285,8 @@ namespace Coralite.Core.Systems.YujianSystem
                 return;
 
             int targetNPCIndex = TryAttackingNPCs(Projectile);
-            if ((AimMouse && Owner.controlUseItem) || (!AimMouse && targetNPCIndex != -1))
+            Helper.GetMyProjIndexWithModProj<BaseYujianProj>(Projectile, out var index0, out _);
+            if ((AimMouse && Owner.controlUseItem) || (!AimMouse && targetNPCIndex != -1 && index0 < Owner.maxMinions - Helper.GetMinionSlot(Owner)))
             {
                 //随机一个攻击状态，或进行指定攻击状态
                 targetIndex = targetNPCIndex;
@@ -294,32 +299,34 @@ namespace Coralite.Core.Systems.YujianSystem
             {
                 State = -1f;
                 Timer = 0f;
-                Projectile.tileCollide = true;
+                Projectile.tileCollide = false;
                 Projectile.netUpdate = true;
             }
         }
 
         private bool ChangeState(CoralitePlayer cp)
         {
+            Helper.GetMyProjIndexWithModProj<BaseYujianProj>(Projectile, out var index0, out _);
             bool CanAttack = Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength;
             AimMouse = Item.ModItem is BaseHulu; // 如果手持葫芦则瞄准鼠标，不是则瞄准敌人
             if (AimMouse)
-            {
                 CanAttack = CanAttack && Owner.controlUseItem;
-            }
             else
-                CanAttack = CanAttack && State > 0;
-            if (SourceYujian.MainYujian && AimMouse && cp.useSpecialAttack && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength && cp.nianli > PowerfulAttackCost)
+                CanAttack = CanAttack && State > 0 && index0 < Owner.maxMinions - Helper.GetMinionSlot(Owner);
+
+            if (AimMouse && (cp.useSpecialAttack || MainYujianProj?.State == PowerfulMoveState) && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength && cp.nianli > PowerfulAttackCost)
             {
                 State = PowerfulMoveState;
                 powerfulAI.OnStart(this);
-                cp.nianli -= PowerfulAttackCost;
+                if(MainYujianProj == null)
+                    cp.nianli -= PowerfulAttackCost;
                 return true;
             }
             else if (CanAttack)
             {
                 //State = Main.rand.Next(1, yujianAIs.Length + 1);
                 //yujianAIs[(int)State - 1].OnStart(this);
+                targetIndex = TryAttackingNPCs(Projectile);
                 GetYujianRandomState();
                 return true;
             }
@@ -334,17 +341,18 @@ namespace Coralite.Core.Systems.YujianSystem
                 if (Projectile.owner == Main.myPlayer)
                 {
                     Vector2 mousePos = Main.MouseWorld;
-                    if (Collision.CanHitLine(Main.player[Projectile.owner].Center, 1, 1, mousePos, 1, 1))
-                    {
-                        aimCenter = mousePos;
-                        Projectile.netUpdate = true;
-                    }
-                    else
-                    {
-                        // If the mouse target is behind a wall, cancel the attack
-                        aimCenter = Vector2.Zero;
-                        State = -1f;
-                    }
+                    aimCenter = mousePos;
+                    Projectile.netUpdate = true;
+                    //if (Collision.CanHitLine(Main.player[Projectile.owner].Center, 1, 1, mousePos, 1, 1))
+                    //{
+
+                    //}
+                    //else
+                    //{
+                    //    // If the mouse target is behind a wall, cancel the attack
+                    //    aimCenter = Vector2.Zero;
+                    //    State = -1f;
+                    //}
                     Projectile.netUpdate = true;
                 }
 
@@ -375,7 +383,7 @@ namespace Coralite.Core.Systems.YujianSystem
         /// <param name="idleRotation"></param>
         public void GetIdlePosition(int stackedIndex, int totalIndexes, out Vector2 idleSpot, out float idleRotation)
         {
-            idleRotation = (MathHelper.PiOver2 * 1.5f * Owner.direction) + (Owner.direction * 0.2f * totalIndexes * stackedIndex);
+            idleRotation = (MathHelper.PiOver2 * 1.5f * Owner.direction) + (Owner.direction * 0.2f * (totalIndexes * stackedIndex));
             //idleRotation = (-Vector2.UnitX).RotatedBy(stackedIndex * 0.1f * totalIndexes * Owner.direction).ToRotation();
             //float num2 = (totalIndexes - 1f) / 2f;
             //idleSpot = Owner.Center - Vector2.UnitY.RotatedBy(4.3982296f / totalIndexes * (stackedIndex - num2)) * 33f - new Vector2(Owner.direction * 16, 8);
@@ -418,6 +426,8 @@ namespace Coralite.Core.Systems.YujianSystem
 
         public int TryAttackingNPCs(Projectile Projectile)
         {
+            if (Owner.HasMinionAttackTargetNPC)
+                return Owner.MinionAttackTargetNPC;
             Vector2 ownerCenter = Main.player[Projectile.owner].Center;
             int result = -1;
             float num = -1f;
@@ -496,7 +506,7 @@ namespace Coralite.Core.Systems.YujianSystem
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
             height = width;
-            return true;
+            return false;
         }
 
         //public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

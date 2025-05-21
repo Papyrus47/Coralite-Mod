@@ -21,7 +21,7 @@ namespace Coralite
 {
     public class Coralite : Mod
     {
-        public const int YujianHuluContainsMax = 3;
+        public const int YujianHuluContainsMax = 10;
 
         private List<IOrderedLoadable> loadCache;
 

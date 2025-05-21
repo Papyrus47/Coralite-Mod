@@ -19,7 +19,7 @@ namespace Coralite.Core.Systems.YujianSystem
         private readonly int Value;
         private readonly int Damage;
         private readonly float Knockback;
-        public const int slotCount = 3;
+        public const int slotCount = 10;
 
         public Item[] Yujians;
         private bool rightClick;
@@ -131,12 +131,14 @@ namespace Coralite.Core.Systems.YujianSystem
                         proj.Kill();
                 }
 
+                Projectile mainYujian = null;
                 for (int i = 0; i < slotCount; i++)
                 {
                     //虽说不是御剑物品根本放不进来，但是这里还是判断一下以防止出现意想不到的意外状况
                     if (Yujians[i].ModItem is BaseYujian yujianItem)
                     {
-                        yujianItem.ShootYujian(player, source, damage, SetHuluEffect());
+                        var proj = yujianItem.ShootYujian(player, source, damage, SetHuluEffect(),mainYujian);
+                        mainYujian ??= proj;
                     }
 
                 }
@@ -150,7 +152,7 @@ namespace Coralite.Core.Systems.YujianSystem
             {
                 BaseYujian item = Yujians[i].ModItem as BaseYujian;
                 if (item == null) continue;
-                if (i == 1)
+                if (i == 0)
                 {
                     item.MainYujian = true;
                 }

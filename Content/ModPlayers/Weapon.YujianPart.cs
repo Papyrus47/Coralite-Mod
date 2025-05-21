@@ -1,5 +1,6 @@
 ﻿using Coralite.Content.UI;
 using Coralite.Core;
+using Coralite.Core.Systems.YujianSystem;
 using System;
 using Terraria.Audio;
 using Terraria.ID;
@@ -29,7 +30,7 @@ namespace Coralite.Content.ModPlayers
         /// </summary>
         public float nianliRegain = BaseNianliRegain;
 
-        public const float BaseNianliMax = 300f;
+        public const float BaseNianliMax = 2000f;
         public const float BaseNianliRegain = 0.5f;
 
         private void ResetYujianNianli()
@@ -40,16 +41,14 @@ namespace Coralite.Content.ModPlayers
 
         private void UpdateNianli()
         {
-            if (ownedYujianProj)
+            if (ownedYujianProj && Player.HeldItem.ModItem is BaseHulu) // 只有拥有御剑弹幕且手持葫芦的玩家才会更新念力
             {
                 bool justCompleteCharge = nianli < nianliMax;
-                nianli += nianliRegain;
+                nianli += nianliRegain * 6;
                 nianli = Math.Clamp(nianli, 0f, nianliMax);
                 if (nianli == nianliMax && justCompleteCharge)      //蓄力完成的时刻发出声音
                     SoundEngine.PlaySound(CoraliteSoundID.Ding_Item4);
             }
-            else
-                nianli = 0f;
         }
 
         private void UpdateNianliUI()

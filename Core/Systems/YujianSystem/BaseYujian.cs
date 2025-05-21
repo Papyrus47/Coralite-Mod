@@ -58,13 +58,15 @@ namespace Coralite.Core.Systems.YujianSystem
         /// <param name="source"></param>
         /// <param name="damage"></param>
         /// <param name="effect"></param>
-        public virtual void ShootYujian(Player player, EntitySource_ItemUse_WithAmmo source, int damage, IHuluEffect effect)
+        public virtual Projectile ShootYujian(Player player, EntitySource_ItemUse_WithAmmo source, int damage, IHuluEffect effect,Projectile mainYujian = null)
         {
             if (player.whoAmI == Main.myPlayer)
             {
-                int index = Projectile.NewProjectile(new YujianSource(player, Item), Main.MouseWorld, Vector2.Zero, ProjType, damage + Item.damage, Item.knockBack, player.whoAmI, -1);
+                int index = Projectile.NewProjectile(new YujianSource(player, Item,mainYujian?.ModProjectile as BaseYujianProj), Main.MouseWorld, Vector2.Zero, ProjType, damage + Item.damage, Item.knockBack, player.whoAmI, -1);
                 (Main.projectile[index].ModProjectile as BaseYujianProj).huluEffect = effect;
+                return Main.projectile[index];
             }
+            return null;
 
         }
 

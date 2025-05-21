@@ -109,7 +109,7 @@ namespace Coralite.Helpers
 
             return true;
         }
-
+        
         /// <summary>
         /// 找到同类弹幕并知道自己是第几个弹幕
         /// </summary>
@@ -256,7 +256,25 @@ namespace Coralite.Helpers
                 }
             }
         }
-
+        /// <summary>
+        /// 获取玩家已经召唤物的召唤物槽位
+        /// </summary>
+        /// <param name="player">玩家</param>
+        /// <returns>所占用的召唤物的槽位</returns>
+        [DebuggerHidden]
+        public static float GetMinionSlot(Player player)
+        {
+            float num = 0;
+            for (int i = 0; i < 1000; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active && projectile.owner == player.whoAmI)
+                {
+                    num += projectile.minionSlots;
+                }
+            }
+            return num;
+        }
         /// <summary>
         /// 非常正常的更新弹幕的帧，从0到最大之间循环
         /// </summary>

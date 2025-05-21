@@ -1,9 +1,9 @@
 ﻿using Coralite.Content.Items.FlyingShields;
 using Coralite.Core.Prefabs.Projectiles;
-using Coralite.Core.Systems.Trails;
 using Coralite.Core.Systems.YujianSystem;
 using Coralite.Core.Systems.YujianSystem.YujianAIs;
 using Coralite.Helpers;
+using InnoVault.Trails;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -44,17 +44,8 @@ namespace Coralite.Content.Items.YujianHulu
                         Coralite.Instance.HeavySmootherInstance),
             },
             yujianAIsRandom:new int[] { 2, 5 },
-            //powerfulAI: new YujianAI_TaiJiSlash(startTime: 70,
-            //        slashWidth: 90,
-            //        slashTime: 40,
-            //        startAngle: -4f,
-            //        totalAngle: 3f,
-            //        turnSpeed: 2.2f,
-            //        roughlyVelocity: 0.9f,
-            //        halfShortAxis: 1f,
-            //        halfLongAxis: 1f,
-            //        Coralite.Instance.HeavySmootherInstance),
-            powerfulAI:null,
+            powerfulAI: new YujianAI_TaiJiSlash(),
+            //powerfulAI:null,
             PowerfulAttackCost: 200,
             attackLength: 400,
             width: 30,height: 58,
@@ -80,6 +71,7 @@ namespace Coralite.Content.Items.YujianHulu
                 switch (yujianProj.State)
                 {
                     case 0: // 横砍
+
                         break;
                     case 1:
                         break;
@@ -140,7 +132,7 @@ namespace Coralite.Content.Items.YujianHulu
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(yujianProj.SlashTexture).Value);
 
-            trail?.Render(effect);
+            trail?.DrawTrail(effect);
         }
     }
 }
