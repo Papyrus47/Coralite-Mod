@@ -179,12 +179,18 @@ namespace Coralite.Core.Systems.YujianSystem
                 cp.ownedYujianProj = false;
 
             Projectile.timeLeft = 2;
-            if (Item.ModItem is BaseHulu && Owner.controlUseItem)
+            if (Item.ModItem is BaseHulu)
             {
-                Owner.itemTime = Owner.itemAnimation = 6;
-                Vector2 vector2 = Main.MouseWorld - Owner.Center;
-                Owner.itemRotation = MathF.Atan2(vector2.Y * Owner.direction, vector2.X * Owner.direction);
+                if (Owner.controlUseItem)
+                {
+                    Owner.itemTime = Owner.itemAnimation = 6;
+                    Vector2 vector2 = Main.MouseWorld - Owner.Center;
+                    Owner.itemRotation = MathF.Atan2(vector2.Y * Owner.direction, vector2.X * Owner.direction);
+                }
+                Projectile.minionSlots = 1;
             }
+            else
+                Projectile.minionSlots = 0;
             if (player.active && Vector2.Distance(player.Center, Projectile.Center) > 2000f)
             {
                 State = -1f;
@@ -314,13 +320,21 @@ namespace Coralite.Core.Systems.YujianSystem
             else
                 CanAttack = CanAttack && State > 0 && index0 < Owner.maxMinions - Helper.GetMinionSlot(Owner);
 
-            if (AimMouse && (cp.useSpecialAttack || MainYujianProj?.State == PowerfulMoveState) && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength && cp.nianli > PowerfulAttackCost)
+            if (AimMouse && (cp.useSpecialAttack || MainYujianProj?.State == PowerfulMoveState) && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength)
             {
-                State = PowerfulMoveState;
-                powerfulAI.OnStart(this);
-                if(MainYujianProj == null)
+                if (SourceYujian.MainYujian && cp.nianli > PowerfulAttackCost)
+                {
+                    State = PowerfulMoveState;
+                    powerfulAI.OnStart(this);
                     cp.nianli -= PowerfulAttackCost;
-                return true;
+                    return true;
+                }
+                else if(!SourceYujian.MainYujian)
+                {
+                    State = PowerfulMoveState;
+                    powerfulAI.OnStart(this);
+                    return true;
+                }
             }
             else if (CanAttack)
             {

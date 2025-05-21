@@ -6,6 +6,7 @@ namespace Coralite.Content.Items.YujianHulu
 {
     public class IronHulu : BaseHulu
     {
+        public override int MaxSlot => 3;
         public IronHulu() : base(ItemRarityID.White, Item.sellPrice(0, 0, 5, 0), 7, 1.5f) { }
 
         public override void AddRecipes()

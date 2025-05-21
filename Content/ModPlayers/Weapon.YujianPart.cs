@@ -44,7 +44,7 @@ namespace Coralite.Content.ModPlayers
             if (ownedYujianProj && Player.HeldItem.ModItem is BaseHulu) // 只有拥有御剑弹幕且手持葫芦的玩家才会更新念力
             {
                 bool justCompleteCharge = nianli < nianliMax;
-                nianli += nianliRegain * 6;
+                nianli += nianliRegain;
                 nianli = Math.Clamp(nianli, 0f, nianliMax);
                 if (nianli == nianliMax && justCompleteCharge)      //蓄力完成的时刻发出声音
                     SoundEngine.PlaySound(CoraliteSoundID.Ding_Item4);

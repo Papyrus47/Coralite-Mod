@@ -7,6 +7,7 @@ namespace Coralite.Content.Items.YujianHulu
 {
     public class HellStoneHulu : BaseHulu
     {
+        public override int MaxSlot => 5;
         public HellStoneHulu() : base(ItemRarityID.Orange, Item.sellPrice(0, 0, 5, 0), 11, 1.5f) { }
 
         public override IHuluEffect SetHuluEffect()

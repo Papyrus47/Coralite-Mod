@@ -23,6 +23,10 @@ namespace Coralite.Core.Systems.YujianSystem
 
         public Item[] Yujians;
         private bool rightClick;
+        /// <summary>
+        /// 最大栏位数
+        /// </summary>
+        public virtual int MaxSlot => slotCount;
 
         public override string Texture => string.IsNullOrEmpty(TexturePath) ? base.Texture : TexturePath + (PathHasName ? string.Empty : Name);
         public override bool CanRightClick() => true;
@@ -151,11 +155,10 @@ namespace Coralite.Core.Systems.YujianSystem
             for (int i = 0; i < slotCount; i++)
             {
                 BaseYujian item = Yujians[i].ModItem as BaseYujian;
-                if (item == null) continue;
+                if (item == null)
+                    continue;
                 if (i == 0)
-                {
                     item.MainYujian = true;
-                }
                 else
                     item.MainYujian = false;
             }
@@ -194,7 +197,7 @@ namespace Coralite.Core.Systems.YujianSystem
         /// <returns></returns>
         public bool CanUseSlot(int index)
         {
-            if (index < slotCount)
+            if (index < MaxSlot)
                 return true;
 
             return false;

@@ -8,6 +8,7 @@ namespace Coralite.Content.Items.RedJades
 {
     public class RedJadeHulu : BaseHulu
     {
+        public override int MaxSlot => 6;
         public RedJadeHulu() : base(ItemRarityID.Blue, Item.sellPrice(0, 0, 20, 0), 9, 1.5f, AssetDirectory.RedJadeItems) { }
 
         public override IHuluEffect SetHuluEffect()
