@@ -32,107 +32,52 @@ namespace Coralite.Content.Items.YujianHulu
             yujianAIs: new YujianAI[]
             {
                 new YujianAI_BetterSpurt(80,20,35,180,0.95f),
-                new YujianAI_Slash(startTime: 180,
-                        slashWidth: 150,
-                        slashTime: 120,
-                        startAngle: -3f,
-                        totalAngle: 3f,
-                        turnSpeed: 1.2f,
-                        roughlyVelocity: 0.9f,
-                        halfShortAxis: 1f,
-                        halfLongAxis: 1.2f,
-                        Coralite.Instance.HeavySmootherInstance),
+                new YujianAI_PreciseSlash(startTime: 100,
+                    slashWidth: 150,
+                    slashTime: 70,
+                    startAngle: -2f,
+                    totalAngle: 3f,
+                    turnSpeed: 2.2f,
+                    roughlyVelocity: 0.9f,
+                    halfShortAxis: 1f,
+                    halfLongAxis: 1.5f,
+                    Coralite.Instance.HeavySmootherInstance),
             },
-            yujianAIsRandom:new int[] { 2, 5 },
+            yujianAIsRandom:new int[] { 2, 6 },
             powerfulAI: new YujianAI_TaiJiSlash(),
             //powerfulAI:null,
-            PowerfulAttackCost: 200,
+            PowerfulAttackCost: 100,
             attackLength: 400,
             width: 30,height: 58,
             color1: new Color(200,230,220), color2: new Color(10,5,9),
             trailCacheLength: 18)
         { }
     }
-    public class YujianAI_TaiJiSlash : YujianAI
+    public class YujianAI_TaiJiSlash : YujianAI_DoubleSlash
     {
-        private Trail trail;
-        /// <summary>
-        /// 可以进行攻击
-        /// </summary>
-        private bool CanAtk;
-        public YujianAI_TaiJiSlash()
+        public YujianAI_TaiJiSlash() : base(180, 150, 150, -MathHelper.TwoPi,MathHelper.TwoPi, 1.2f, 0.9f, 1f, 1.2f, Coralite.Instance.HeavySmootherInstance)
         {
         }
-
-        protected override void Attack(BaseYujianProj yujianProj)
+        public override void Reset()
         {
-            if (CanAtk)
-            {
-                switch (yujianProj.State)
-                {
-                    case 0: // 横砍
+            StartTime = 130;
 
-                        break;
-                    case 1:
-                        break;
-                }
+            SlashTime = 100;
+            StartAngle = 2.5f;
 
-                return;
-            }
-
-            Move(yujianProj);
+            halfShortAxis = 1.8f;
+            halfLongAxis = 1f;
         }
-        /// <summary>
-        /// 移动AI
-        /// </summary>
-        /// <param name="yujianProj"></param>
-        public bool Move(BaseYujianProj yujianProj)
+
+        public override void Init()
         {
-            Projectile projectile = yujianProj.Projectile;
-            Vector2 targetCenter = yujianProj.GetTargetCenter(IsAimingMouse);
-            Vector2 targetDirection = targetCenter - projectile.Center;
+            StartTime = 90;
 
-            projectile.velocity = targetDirection.SafeNormalize(Vector2.Zero) * 10;
-            if(targetDirection.LengthSquared() < 10000)
-            {
-                projectile.velocity *= targetDirection.LengthSquared() / 15000;
+            SlashTime = 40;
+            StartAngle = -2.5f;
 
-                if(targetDirection.LengthSquared() < 5000) 
-                    return true;
-            }
-            projectile.rotation = projectile.rotation.AngleLerp(projectile.velocity.RotatedBy((projectile.velocity.X > 0).ToDirectionInt() * 0.3).ToRotation(), 0.01f);
-            Type type = GetType();
-            type.GetField("_innerTimer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(this,0); // 反射阻止技能调用失败
-            return false;
-        }
-        protected override void OnStartAttack(BaseYujianProj yujianProj)    //这里用于重置各种计时器,保存位置什么的
-        {
-            Vector2 TargetPos = yujianProj.GetTargetCenter(IsAimingMouse);
-            Projectile projectile = yujianProj.Projectile;
-
-            CanAtk = false;
-            yujianProj.State = 0;
-            projectile.localAI[0] = TargetPos.X;
-            projectile.localAI[1]= TargetPos.Y;
-        }
-        protected override bool UpdateTime(BaseYujianProj yujianProj)
-        {
-            if (CanAtk)
-                return true;
-            return false;
-        }
-        public override void DrawPrimitives(BaseYujianProj yujianProj)
-        {
-            Effect effect = Filters.Scene["SimpleTrail"].GetShader().Shader;
-
-            Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
-            Matrix view = Main.GameViewMatrix.TransformationMatrix;
-            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
-            effect.Parameters["transformMatrix"].SetValue(world * view * projection);
-            effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(yujianProj.SlashTexture).Value);
-
-            trail?.DrawTrail(effect);
+            halfShortAxis = 1.3f;
+            halfLongAxis = 1f;
         }
     }
 }

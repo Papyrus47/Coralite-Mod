@@ -254,3 +254,8 @@ PrisonBuff: {
 	// DisplayName: Prison Buff
 	// Description: Mods.Coralite.Buffs.PrisonBuff.Description
 }
+
+YujianBuff: {
+	DisplayName: 御剑
+	Description: 御剑跟着你！
+}

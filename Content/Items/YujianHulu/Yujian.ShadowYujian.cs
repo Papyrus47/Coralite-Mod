@@ -46,8 +46,7 @@ namespace Coralite.Content.Items.YujianHulu
             yujianAIsRandom: new int[]
             {
                 5,2
-            }
-            )
+            })
         { }
 
         public override void HitEffect(NPC target, int damage, float knockback, bool crit)

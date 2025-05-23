@@ -1,4 +1,5 @@
-﻿using Coralite.Content.ModPlayers;
+﻿using Coralite.Content.Buffs;
+using Coralite.Content.ModPlayers;
 using Coralite.Content.UI;
 using Coralite.Core.Loaders;
 using Coralite.Core.Systems.YujianSystem.HuluEffects;
@@ -132,9 +133,10 @@ namespace Coralite.Core.Systems.YujianSystem
                 {
                     Projectile proj = Main.projectile[i];
                     if (proj.active && proj.friendly && proj.owner == player.whoAmI &&
-                            (proj.ModProjectile is BaseYujianProj || proj.minion))
+                            proj.ModProjectile is BaseYujianProj)
                         proj.Kill();
                 }
+                player.AddBuff(ModContent.BuffType<YujianBuff>(), 200);
 
                 Projectile mainYujian = null;
                 for (int i = 0; i < slotCount; i++)

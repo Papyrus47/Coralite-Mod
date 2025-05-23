@@ -31,7 +31,7 @@ namespace Coralite.Content.ModPlayers
         public float nianliRegain = BaseNianliRegain;
 
         public const float BaseNianliMax = 2000f;
-        public const float BaseNianliRegain = 0.5f;
+        public const float BaseNianliRegain = 0.1f;
 
         private void ResetYujianNianli()
         {

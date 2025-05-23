@@ -87,11 +87,12 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
 
                 yujianProj.InitTrailCaches();
 
-                if (Projectile.IsOwnedByLocalPlayer())
-                {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * (Projectile.extraUpdates + 1), ModContent.ProjectileType<SpurtProj>(),
-                        Projectile.damage, Projectile.knockBack, Projectile.owner, spurtTime / (Projectile.extraUpdates + 1));
-                }
+                canDamage = true;
+                //if (Projectile.IsOwnedByLocalPlayer())
+                //{
+                //    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity * (Projectile.extraUpdates + 1), ModContent.ProjectileType<SpurtProj>(),
+                //        Projectile.damage, Projectile.knockBack, Projectile.owner, spurtTime / (Projectile.extraUpdates + 1));
+                //}
             }
 
             if (yujianProj.Timer > SecondPhaseTime)     //突刺阶段
@@ -103,6 +104,7 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
             if (yujianProj.Timer == SecondPhaseTime)
             {
                 Projectile.tileCollide = yujianProj.TileCollide;
+                canDamage = false;
             }
 
             //后摇休息阶段

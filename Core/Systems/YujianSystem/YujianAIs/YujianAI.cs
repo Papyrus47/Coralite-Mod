@@ -15,7 +15,7 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
         public bool IsAimingMouse { get => _isAimingMouse; private set => _isAimingMouse = value; }
         private bool _isAimingMouse;
 
-        private short _innerTimer;
+        protected short _innerTimer;
         public bool canDamage;
         /// <summary>
         /// 仅供外部调用的AI

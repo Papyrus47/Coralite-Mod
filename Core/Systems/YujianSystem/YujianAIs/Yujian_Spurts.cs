@@ -53,7 +53,7 @@ namespace Coralite.Core.Systems.YujianSystem.YujianAIs
             float factor = (0.008f * turnSpeed) + (0.01f * roughlyVelocity);
             Projectile.rotation = Projectile.rotation.AngleLerp(targetAngle + 1.57f, factor);
 
-            if (distance < SpurtsLength * 2 && distance > SpurtsLength * 1.8f)
+            if (distance < SpurtsLength * 2 && distance > SpurtsLength * 0.2f)
             {
                 canSpurts = true;
                 canDamage = true;

@@ -470,7 +470,7 @@ RedJadeWorkBench: {
 }
 
 RedJadeYujian: {
-	DisplayName: 赤玉御剑
+	DisplayName: 赤玉飞剑
 	Tooltip: ""
 }
 
@@ -643,27 +643,27 @@ WoodenHulu: {
 }
 
 AncientCrimtaneYujian: {
-	DisplayName: 远古血腥御剑
+	DisplayName: 远古血腥飞剑
 	Tooltip: ""
 }
 
 AncientDemoniteYujian: {
-	DisplayName: 远古腐化御剑
+	DisplayName: 远古腐化飞剑
 	Tooltip: ""
 }
 
 CrimtaneYujian: {
-	DisplayName: 血腥御剑
+	DisplayName: 血腥飞剑
 	Tooltip: ""
 }
 
 DemoniteYujian: {
-	DisplayName: 魔化御剑
+	DisplayName: 魔化飞剑
 	Tooltip: ""
 }
 
 GoldYujian: {
-	DisplayName: 金御剑
+	DisplayName: 金飞剑
 	Tooltip: ""
 }
 
@@ -683,12 +683,12 @@ IronHulu: {
 }
 
 IronYujian: {
-	DisplayName: 铁御剑
+	DisplayName: 铁飞剑
 	Tooltip: ""
 }
 
 PlatinumYujian: {
-	DisplayName: 铂金御剑
+	DisplayName: 铂金飞剑
 	Tooltip: ""
 }
 
@@ -698,12 +698,12 @@ ShadowYujian: {
 }
 
 SilverYujian: {
-	DisplayName: 银御剑
+	DisplayName: 银飞剑
 	Tooltip: ""
 }
 
 WoodenYujian: {
-	DisplayName: 木御剑
+	DisplayName: 木飞剑
 	Tooltip: ""
 }
 

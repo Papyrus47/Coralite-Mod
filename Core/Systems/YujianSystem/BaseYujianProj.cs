@@ -26,6 +26,10 @@ namespace Coralite.Core.Systems.YujianSystem
         private readonly bool PathHasName;
         private readonly float PowerfulAttackCost;
         public readonly bool TileCollide;
+        /// <summary>
+        /// 使用强化攻击AI
+        /// </summary>
+        public bool usePowerfulAI;
         public bool AimMouse;
         public int targetIndex;
         private int attackLength;
@@ -110,7 +114,7 @@ namespace Coralite.Core.Systems.YujianSystem
             Projectile.penetrate = -1;
             Projectile.aiStyle = -1;
             Projectile.timeLeft = 300;
-            Projectile.localNPCHitCooldown = 15;
+            Projectile.localNPCHitCooldown = 25;
             Projectile.extraUpdates = 2;
             Projectile.DamageType = DamageClass.Summon;
 
@@ -165,7 +169,7 @@ namespace Coralite.Core.Systems.YujianSystem
             if (!CheckCanAttack(currentAI))
                 ChangeState();
 
-            currentAI.AttackAI(this);
+            currentAI?.AttackAI(this);
 
             UpdateCaches();
             huluEffect?.AIEffect(Projectile);
@@ -179,14 +183,20 @@ namespace Coralite.Core.Systems.YujianSystem
             if (player.dead)
                 cp.ownedYujianProj = false;
 
+            if (Main.myPlayer == player.whoAmI)
+                player.ChangeDir(Main.MouseWorld.X - player.Center.X > 0 ? 1 : -1);
             Projectile.timeLeft = 2;
 
             #region 强制进入连携攻击
             if (!SourceYujian.MainYujian && MainYujianProj?.State == PowerfulMoveState && State != PowerfulMoveState)
             {
-                State = PowerfulMoveState;
-                powerfulAI.OnStart(this);
-                return false;
+                if (cp.nianli > PowerfulAttackCost)
+                {
+                    State = PowerfulMoveState;
+                    powerfulAI.OnStart(this);
+                    cp.nianli -= PowerfulAttackCost;
+                    return false;
+                }
             }
             #endregion
 
@@ -198,6 +208,10 @@ namespace Coralite.Core.Systems.YujianSystem
                     Vector2 vector2 = Main.MouseWorld - Owner.Center;
                     Owner.itemRotation = MathF.Atan2(vector2.Y * Owner.direction, vector2.X * Owner.direction);
                 }
+                #region 进入连携攻击预备
+                if (cp.useSpecialAttack && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength && cp.nianli > PowerfulAttackCost)
+                    usePowerfulAI = true;
+                #endregion
                 Projectile.minionSlots = 1f;
             }
             else
@@ -330,8 +344,9 @@ namespace Coralite.Core.Systems.YujianSystem
             else
                 CanAttack = CanAttack && State > 0 && index0 < Owner.maxMinions - Helper.GetMinionSlot(Owner);
 
-            if (AimMouse && cp.useSpecialAttack && Vector2.Distance(GetTargetCenter(true), Owner.Center) < AttackLength)
+            if (usePowerfulAI)
             {
+                usePowerfulAI = false;
                 if (cp.nianli > PowerfulAttackCost && SourceYujian.MainYujian)
                 {
                     State = PowerfulMoveState;
@@ -340,6 +355,7 @@ namespace Coralite.Core.Systems.YujianSystem
                     return true;
                 }
             }
+
             else if (CanAttack)
             {
                 //State = Main.rand.Next(1, yujianAIs.Length + 1);
@@ -350,11 +366,12 @@ namespace Coralite.Core.Systems.YujianSystem
             }
 
             return false;
+
         }
 
         public Vector2 GetTargetCenter(bool isAimingMouse)
         {
-            if (isAimingMouse)
+            if (isAimingMouse && SourceYujian.MainYujian)
             {
                 if (Projectile.owner == Main.myPlayer)
                 {
@@ -413,20 +430,23 @@ namespace Coralite.Core.Systems.YujianSystem
         /// </summary>
         protected virtual void GetYujianRandomState()
         {
+            if (yujianAIs == null)
+                return;
             if (AIsRandomMax <= 0)
-                for (int i = 0; i < yujianAIs.Length; i++)
+                for (int i = 0; i < yujianAIsRandom.Length; i++)
                 {
                     AIsRandomMax += yujianAIsRandom[i];
                 }
             int rand = Main.rand.Next(AIsRandomMax);
-            for (int j = 0; j < yujianAIs.Length; j++)
+            for (int j = 0; j < yujianAIsRandom.Length; j++)
             {
                 rand -= yujianAIsRandom[j];
                 if (rand <= 0)
                 {
                     State = j + 1;
+                    //Main.NewText(State - 1);
                     yujianAIs[(int)State - 1].OnStart(this);
-                    break;
+                    return;
                 }
             }
         }
@@ -472,12 +492,17 @@ namespace Coralite.Core.Systems.YujianSystem
         {
             if (State == PowerfulMoveState)
                 return powerfulAI;
-
+            if (yujianAIs == null)
+                return null;
+            if (State >= yujianAIs.Length)
+                State = yujianAIs.Length;
             return yujianAIs[(int)(State - 1)];
         }
 
         public bool CheckCanAttack(YujianAI currentAI)
         {
+            if (currentAI == null)
+                return false;
             if (currentAI.IsAimingMouse)
                 return true;
 
@@ -554,9 +579,14 @@ namespace Coralite.Core.Systems.YujianSystem
         {
             HitEffect(target, hit.Damage, hit.Knockback, hit.Crit);
             huluEffect?.HitEffect(Projectile, target, hit.Damage, hit.Knockback, hit.Crit);
-            if (SourceYujian.MainYujian)
+            if (Item.ModItem is BaseHulu)
             {
-                Owner.MinionAttackTargetNPC = target.whoAmI;
+                if(SourceYujian.MainYujian)
+                    Owner.MinionAttackTargetNPC = target.whoAmI;
+                CoralitePlayer coralitePlayer = Owner.GetModPlayer<CoralitePlayer>();
+                coralitePlayer.nianli += SourceYujian.OnHitAddNianli;
+                if (coralitePlayer.nianli > coralitePlayer.nianliMax)
+                    coralitePlayer.nianli = coralitePlayer.nianliMax;
             }
         }
 

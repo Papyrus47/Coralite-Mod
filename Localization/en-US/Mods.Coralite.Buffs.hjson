@@ -250,3 +250,8 @@ PrisonBuff: {
 	DisplayName: Prison Buff
 	Description: Mods.Coralite.Buffs.PrisonBuff.Description
 }
+
+YujianBuff: {
+	DisplayName: Yujian Buff
+	Description: Yujian flowing you.
+}

@@ -17,6 +17,7 @@ namespace Coralite.Core.Systems.YujianSystem
         private readonly int Value;
         private readonly int Damage;
         private readonly float Knockback;
+        public readonly float OnHitAddNianli;
         /// <summary>
         /// 主要的御剑
         /// </summary>
@@ -26,7 +27,7 @@ namespace Coralite.Core.Systems.YujianSystem
 
         public override string Texture => string.IsNullOrEmpty(TexturePath) ? base.Texture : TexturePath + (PathHasName ? string.Empty : Name);
 
-        public BaseYujian(int rare, int value, int damage, float knockback, string texturePath = AssetDirectory.YujianHulu, bool pathHasName = false)
+        public BaseYujian(int rare, int value, int damage, float knockback, string texturePath = AssetDirectory.YujianHulu, bool pathHasName = false, float onHitAddNianli = 10f)
         {
             Rare = rare;
             Value = value;
@@ -34,6 +35,7 @@ namespace Coralite.Core.Systems.YujianSystem
             Knockback = knockback;
             TexturePath = texturePath;
             PathHasName = pathHasName;
+            OnHitAddNianli = onHitAddNianli;
         }
 
         public override void SetDefaults()
